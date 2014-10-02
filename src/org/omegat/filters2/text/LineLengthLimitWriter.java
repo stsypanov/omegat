@@ -137,8 +137,7 @@ public class LineLengthLimitWriter extends Writer {
         }
         // try to break on the space ends
         int spacesStart = -1;
-        for (int i = 0; i < tokens.length; i++) {
-            Token t = tokens[i];
+        for (Token t : tokens) {
             if (t == null) {
                 // less than begin
                 continue;
@@ -158,8 +157,7 @@ public class LineLengthLimitWriter extends Writer {
             }
         }
         // try to break on the space boundaries
-        for (int i = 0; i < tokens.length; i++) {
-            Token t = tokens[i];
+        for (Token t : tokens) {
             if (t == null) {
                 // less than begin
                 continue;
@@ -176,8 +174,7 @@ public class LineLengthLimitWriter extends Writer {
             }
         }
         // impossible to break on space boundaries - break at any token, except brackets
-        for (int i = 0; i < tokens.length; i++) {
-            Token t = tokens[i];
+        for (Token t : tokens) {
             if (t == null) {
                 // less than begin
                 continue;

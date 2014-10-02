@@ -43,12 +43,12 @@ public class TagRepair {
         case DUPLICATE:
         case ORDER:
         case MALFORMED:
-            tags = new ArrayList<String>();
+            tags = new ArrayList<>();
             StaticUtils.buildTagList(source, ste.getProtectedParts(), tags);
             fixMalformed(tags, translation, tag);
             break;
         case MISSING:
-            tags = new ArrayList<String>();
+            tags = new ArrayList<>();
             StaticUtils.buildTagList(source, ste.getProtectedParts(), tags);
             fixMissing(tags, translation, tag);
             break;

@@ -108,8 +108,7 @@ public class MemoryUtils {
             } else {
                 result = SZ_OBJFOOT;
                 Field[] fields = oc.getDeclaredFields();
-                for (int i = 0; i < fields.length; i++) {
-                    Field f = fields[i];
+                for (Field f : fields) {
                     if (Modifier.isStatic(f.getModifiers())) {
                         continue; // static fields doesn't use memory
                     }

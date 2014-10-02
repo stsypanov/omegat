@@ -53,7 +53,7 @@ public class ExternalTMX {
     public ExternalTMX(final ProjectProperties props, final File file, final boolean extTmxLevel2,
             final boolean useSlash) throws Exception {
         this.name = file.getName();
-        entries = new ArrayList<PrepareTMXEntry>();
+        entries = new ArrayList<>();
 
         TMXReader2.LoadCallback loader = new TMXReader2.LoadCallback() {
             public boolean onEntry(TMXReader2.ParsedTu tu, TMXReader2.ParsedTuv tuvSource,
@@ -85,8 +85,8 @@ public class ExternalTMX {
                         tu.creationdate);
                 long created = StringUtil.nvlLong(tuvTarget.creationdate, tu.creationdate);
 
-                List<String> sources = new ArrayList<String>();
-                List<String> targets = new ArrayList<String>();
+                List<String> sources = new ArrayList<>();
+                List<String> targets = new ArrayList<>();
                 Segmenter.segmentEntries(props.isSentenceSegmentingEnabled() && isParagraphSegtype,
                         props.getSourceLanguage(), tuvSource.text, props.getTargetLanguage(), tuvTarget.text,
                         sources, targets);

@@ -189,9 +189,9 @@ public class DictionaryInstallerDialog extends JDialog {
         Cursor oldCursor = getCursor();
         setCursor(hourglassCursor);
         Object[] selection = dictionaryList.getSelectedValues();
-        for (int i = 0; i < selection.length; i++) {
+        for (Object aSelection : selection) {
             // install the respective dictionaries
-            String item = (String) selection[i];
+            String item = (String) aSelection;
             String langCode = (item).substring(0, item.indexOf(" "));
             try {
                 dicMan.installRemoteDictionary(langCode);

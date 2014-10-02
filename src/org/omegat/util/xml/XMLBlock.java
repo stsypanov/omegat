@@ -248,8 +248,8 @@ public class XMLBlock {
             return null;
         XMLAttribute attr = null;
 
-        for (int i = 0; i < m_attrList.size(); i++) {
-            attr = m_attrList.get(i);
+        for (XMLAttribute aM_attrList : m_attrList) {
+            attr = aM_attrList;
             if (attr.name.equals(name))
                 break;
             else

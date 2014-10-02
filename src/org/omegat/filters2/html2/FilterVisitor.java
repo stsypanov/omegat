@@ -1084,8 +1084,7 @@ public class FilterVisitor extends NodeVisitor {
      * entity
      */
     private int lookupEntity(String entity) {
-        for (int i = 0; i < ENTITIES.length; i++) {
-            Object[] ONENT = ENTITIES[i];
+        for (Object[] ONENT : ENTITIES) {
             if (entity.equals(ONENT[0]))
                 return ((Integer) ONENT[1]).intValue();
         }

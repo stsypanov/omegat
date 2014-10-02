@@ -70,7 +70,7 @@ public class Languagerules {
      */
     public List<Languagerule> getLanguagerule() {
         if (languagerule == null) {
-            languagerule = new ArrayList<Languagerule>();
+            languagerule = new ArrayList<>();
         }
         return this.languagerule;
     }

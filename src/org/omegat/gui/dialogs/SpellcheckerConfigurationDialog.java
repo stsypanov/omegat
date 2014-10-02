@@ -417,8 +417,8 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
 
         if (currentLanguage != null) {
             Object[] selection = languageList.getSelectedValues();
-            for (int i = 0; i < selection.length; i++) {
-                String selectedItem = (String) selection[i];
+            for (Object aSelection : selection) {
+                String selectedItem = (String) aSelection;
                 String selectedLocaleName = selectedItem.substring(0, selectedItem.indexOf(" "));
 
                 if (selectedLocaleName.equals(currentLanguage.getLocaleCode())) {

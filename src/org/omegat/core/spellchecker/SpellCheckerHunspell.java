@@ -145,7 +145,7 @@ public class SpellCheckerHunspell implements ISpellCheckerProvider {
                 // Just eat exception
             }
 
-        List<String> aList = new ArrayList<String>();
+        List<String> aList = new ArrayList<>();
         if (pointerArray != null) { // If there are sugggestions
             // convert it back
             Charset charset = Charset.forName(encoding);

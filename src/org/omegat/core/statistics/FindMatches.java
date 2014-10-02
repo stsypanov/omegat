@@ -236,9 +236,7 @@ public class FindMatches {
                 List<String> fsrc = new ArrayList<String>(segments.size());
                 List<String> ftrans = new ArrayList<String>(segments.size());
                 // multiple segments
-                for (short i = 0; i < segments.size(); i++) {
-                    String onesrc = segments.get(i);
-
+                for (String onesrc : segments) {
                     // find match for separate segment
                     List<NearString> segmentMatch = separateSegmentMatcher.search(project, onesrc,
                             requiresTranslation, false, stop);

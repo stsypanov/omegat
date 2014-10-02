@@ -210,7 +210,7 @@ public interface IProject {
          * Characterset name used for parsing the source file.
          */
         public String fileEncoding;
-        public List<SourceTextEntry> entries = new ArrayList<SourceTextEntry>();
+        public List<SourceTextEntry> entries = new ArrayList<>();
     }
 
     public interface DefaultTranslationsIterator {

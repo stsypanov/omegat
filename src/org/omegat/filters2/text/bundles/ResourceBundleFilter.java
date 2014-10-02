@@ -6,7 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2009 Alex Buloichik
                2011 Martin Fleurke
-               2013-2014 Enrique Estévez, Didier Briel
+               2013-2014 Enrique Estï¿½vez, Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -62,7 +62,7 @@ import org.omegat.util.StringUtil;
  * @author Keith Godfrey
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Martin Fleurke
- * @author Enrique Estévez (keko.gl@gmail.com)
+ * @author Enrique Estï¿½vez (keko.gl@gmail.com)
  * @author Didier Briel
  *
  * Option to remove untranslated segments in the target files
@@ -318,7 +318,7 @@ public class ResourceBundleFilter extends AbstractFilter {
                 // Save the comments
                 comments = (comments==null? str : comments + "\n" + str);
                 // checking if the next string shouldn't be internationalized
-                if (trimmed.indexOf("NOI18N") >= 0)
+                if (trimmed.contains("NOI18N"))
                     noi18n = true;
 
                 continue;

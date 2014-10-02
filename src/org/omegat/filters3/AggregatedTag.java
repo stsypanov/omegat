@@ -54,7 +54,7 @@ public class AggregatedTag extends Tag {
      * Returns the tags belonging to this aggregated tag in their original form.
      */
     public String toOriginal() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         for (Tag tag : tags) {
             buf.append(tag.toOriginal());
@@ -64,5 +64,5 @@ public class AggregatedTag extends Tag {
     }
 
     /** List of aggregated tags. */
-    private List<Tag> tags = new ArrayList<Tag>();
+    private List<Tag> tags = new ArrayList<>();
 }

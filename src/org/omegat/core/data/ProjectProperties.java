@@ -464,7 +464,7 @@ public class ProjectProperties {
     private String projectName;
     private String projectRoot;
     private String sourceRoot;
-    private final List<String> sourceRootExcludes = new ArrayList<String>();
+    private final List<String> sourceRootExcludes = new ArrayList<>();
     private String targetRoot;
     private String glossaryRoot;
     private String writeableGlossaryFile;

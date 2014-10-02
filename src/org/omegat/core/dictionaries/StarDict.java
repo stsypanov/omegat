@@ -84,7 +84,7 @@ public class StarDict implements IDictionary {
      * Read dictionarie's header.
      */
     public Map<String, Object> readHeader() throws IOException {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         String f = ifoFile.getPath();
         if (f.endsWith(".ifo")) {
             f = f.substring(0, f.length() - 4);
@@ -208,7 +208,7 @@ public class StarDict implements IDictionary {
             if (!"StarDict's dict ifo file".equals(first)) {
                 throw new Exception("Invalid header of .ifo file: " + first);
             }
-            Map<String, String> result = new TreeMap<String, String>();
+            Map<String, String> result = new TreeMap<>();
             while ((line = rd.readLine()) != null) {
                 if (line.trim().length() == 0) {
                     continue;

@@ -158,8 +158,8 @@ public class HTMLFilter2 extends AbstractFilter {
         String skipMetaString = options.getSkipMeta();
         skipMetaAttributes = new HashMap<String, String>();
         String[] skipMetaAttributesStringarray = skipMetaString.split(",");
-        for (int i = 0; i < skipMetaAttributesStringarray.length; i++) {
-            String keyvalue = skipMetaAttributesStringarray[i].trim().toUpperCase();
+        for (String aSkipMetaAttributesStringarray : skipMetaAttributesStringarray) {
+            String keyvalue = aSkipMetaAttributesStringarray.trim().toUpperCase();
             skipMetaAttributes.put(keyvalue, "");
         }
 
@@ -167,8 +167,8 @@ public class HTMLFilter2 extends AbstractFilter {
         String ignoreTagString = options.getIgnoreTags();
         ignoreTagsAttributes = new HashMap<String, String>();
         String[] ignoreTagsAttributesStringarray = ignoreTagString.split(",");
-        for (int i = 0; i < ignoreTagsAttributesStringarray.length; i++) {
-            String keyvalue = ignoreTagsAttributesStringarray[i].trim().toUpperCase();
+        for (String anIgnoreTagsAttributesStringarray : ignoreTagsAttributesStringarray) {
+            String keyvalue = anIgnoreTagsAttributesStringarray.trim().toUpperCase();
             ignoreTagsAttributes.put(keyvalue, "");
         }
 

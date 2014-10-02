@@ -302,8 +302,7 @@ public class MainWindow extends JFrame implements IMainWindow {
             File sourcedir = new File(projectsource);
             File[] selFiles = chooser.getSelectedFiles();
             try {
-                for (int i = 0; i < selFiles.length; i++) {
-                    File selSrc = selFiles[i];
+                for (File selSrc : selFiles) {
                     if (selSrc.isDirectory()) {
                         List<String> files = new ArrayList<String>();
                         StaticUtils.buildFileList(files, selSrc, true);
@@ -315,7 +314,7 @@ public class MainWindow extends JFrame implements IMainWindow {
                             LFileCopy.copy(src, dest);
                         }
                     } else {
-                        File dest = new File(sourcedir, selFiles[i].getName());
+                        File dest = new File(sourcedir, selSrc.getName());
                         LFileCopy.copy(selSrc, dest);
                     }
                 }

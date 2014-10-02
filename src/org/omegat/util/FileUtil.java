@@ -184,8 +184,8 @@ public class FileUtil {
      * @return list of filtered found files
      */
     public static List<File> findFiles(final File dir, final FileFilter filter) {
-        final List<File> result = new ArrayList<File>();
-        Set<String> knownDirs = new HashSet<String>();
+        final List<File> result = new ArrayList<>();
+        Set<String> knownDirs = new HashSet<>();
         findFiles(dir, filter, result, knownDirs);
         return result;
     }

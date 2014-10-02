@@ -55,7 +55,7 @@ public class MultipleTransFindThread extends EntryInfoSearchThread<List<Multiple
     }
 
     protected List<MultipleTransFoundEntry> search() throws Exception {
-        final List<MultipleTransFoundEntry> result = new ArrayList<MultipleTransFoundEntry>();
+        final List<MultipleTransFoundEntry> result = new ArrayList<>();
         project.iterateByDefaultTranslations(new IProject.DefaultTranslationsIterator() {
             public void iterate(String source, TMXEntry trans) {
                 if (sourceText.equals(source)) {

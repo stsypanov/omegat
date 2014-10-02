@@ -39,6 +39,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.Instance;
@@ -311,15 +312,13 @@ public class LatexFilter extends AbstractFilter {
             String par) {
         int counter = 0;
 
-        for (Iterator<String> it = commands.iterator(); it.hasNext();) {
-            String command = it.next();
-
+        for (String command : commands) {
             StringBuffer sb = new StringBuffer();
 
             if (oneArgNoText.contains(command)) {
                 String find = ("\\" + command + "\\*?" + "(" + "\\[" + "[^\\]]*" + "\\]" + // opt
-                                                                                           // []
-                                                                                           // arg
+                        // []
+                        // arg
                         "|" + "\\(" + "[^\\)]*" + "\\)" + // opt () arg
                         ")?\\s*" + "\\{" + "[^\\}]*+" + "\\}");
 
@@ -327,7 +326,7 @@ public class LatexFilter extends AbstractFilter {
                 Matcher m = p.matcher(par);
                 while (m.find()) {
                     String replace = "<n" + String.valueOf(counter) + ">";
-                    String[] subst = { reHarden(m.group(0)), reHarden(replace) };
+                    String[] subst = {reHarden(m.group(0)), reHarden(replace)};
                     substituted.addFirst(subst);
                     m.appendReplacement(sb, replace);
                     counter++;
@@ -344,9 +343,7 @@ public class LatexFilter extends AbstractFilter {
             String par) {
         int counter = 0;
 
-        for (Iterator<String> it = commands.iterator(); it.hasNext();) {
-            String command = it.next();
-
+        for (String command : commands) {
             StringBuffer sb = new StringBuffer();
 
             if (oneArgInlineText.contains(command)) {
@@ -358,10 +355,10 @@ public class LatexFilter extends AbstractFilter {
                     String preReplace = "<i" + String.valueOf(counter) + ">";
                     String postReplace = "</i" + String.valueOf(counter) + ">";
 
-                    String[] s1 = { reHarden(m.group(1)), reHarden(preReplace) };
+                    String[] s1 = {reHarden(m.group(1)), reHarden(preReplace)};
                     substituted.addFirst(s1);
 
-                    String[] s2 = { reHarden("}"), reHarden(postReplace) };
+                    String[] s2 = {reHarden("}"), reHarden(postReplace)};
                     substituted.addFirst(s2);
 
                     String replace = (preReplace + "$2" + postReplace);
@@ -380,9 +377,7 @@ public class LatexFilter extends AbstractFilter {
             String par) {
         int counter = 0;
 
-        for (Iterator<String> it = commands.iterator(); it.hasNext();) {
-            String command = it.next();
-
+        for (String command : commands) {
             StringBuffer sb = new StringBuffer();
 
             if (oneArgParText.contains(command)) {
@@ -396,7 +391,7 @@ public class LatexFilter extends AbstractFilter {
                     if (m.group(2) != null)
                         content = processParagraph(commands, m.group(2));
 
-                    String[] subst = { reHarden(m.group(1) + "{" + content + "}"), reHarden(replace) };
+                    String[] subst = {reHarden(m.group(1) + "{" + content + "}"), reHarden(replace)};
 
                     substituted.addFirst(subst);
                     m.appendReplacement(sb, replace);
@@ -414,10 +409,8 @@ public class LatexFilter extends AbstractFilter {
             String par) {
         int counter = 0;
 
-        for (Iterator<String> it = commands.iterator(); it.hasNext();) {
-            String command = it.next();
-
-            if (command.equals("\\\\") || command.equals("\\{") || command.equals("\\[") || command.equals("\\|")) {                
+        for (String command : commands) {
+            if (command.equals("\\\\") || command.equals("\\{") || command.equals("\\[") || command.equals("\\|")) {
                 // continue;
                 command = "\\" + command;
             }
@@ -430,7 +423,7 @@ public class LatexFilter extends AbstractFilter {
                 Matcher m = p.matcher(par);
                 while (m.find()) {
                     String replace = "<u" + String.valueOf(counter) + ">";
-                    String[] subst = { reHarden(m.group(0)), reHarden(replace) };
+                    String[] subst = {reHarden(m.group(0)), reHarden(replace)};
                     substituted.addFirst(subst);
                     m.appendReplacement(sb, replace);
                     counter++;
@@ -438,10 +431,10 @@ public class LatexFilter extends AbstractFilter {
                 m.appendTail(sb);
 
                 par = sb.toString();
-             } catch (java.util.regex.PatternSyntaxException e) {
-               //TODO: understand the exceptions
-               Log.log("LaTeX PatternSyntaxException: " + e.getMessage());
-               Log.log(command);
+            } catch (PatternSyntaxException e) {
+                //TODO: understand the exceptions
+                Log.log("LaTeX PatternSyntaxException: " + e.getMessage());
+                Log.log(command);
             }
 
         }

@@ -59,8 +59,7 @@ public class Attributes {
      * @return attribute value, or null if not found
      */
     public String getValueByName(String attrName) {
-        for (int i = 0; i < list.size(); i++) {
-            Attribute oneAttribute = list.get(i);
+        for (Attribute oneAttribute : list) {
             if (attrName.equalsIgnoreCase(oneAttribute.getName())) {
                 return oneAttribute.getValue();
             }

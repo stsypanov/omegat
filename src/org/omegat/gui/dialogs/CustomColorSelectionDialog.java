@@ -32,6 +32,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JTextArea;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.colorchooser.ColorSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -119,10 +120,10 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
 
         // Remove sample Swatches
         javax.swing.colorchooser.AbstractColorChooserPanel[] oldPanels = colorChooser.getChooserPanels();
-        for (int i = 0; i < oldPanels.length; i++) {
-            String clsName = oldPanels[i].getClass().getName();
+        for (AbstractColorChooserPanel oldPanel : oldPanels) {
+            String clsName = oldPanel.getClass().getName();
             if (clsName.equals("javax.swing.colorchooser.DefaultSwatchChooserPanel")) {
-                colorChooser.removeChooserPanel(oldPanels[i]);
+                colorChooser.removeChooserPanel(oldPanel);
             }
         }
 

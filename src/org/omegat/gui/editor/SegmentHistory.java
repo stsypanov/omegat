@@ -42,7 +42,7 @@ class SegmentHistory {
      */
     private int pointer = -1;
 
-    private List<Integer> history = new ArrayList<Integer>();
+    private List<Integer> history = new ArrayList<>();
 
     /** Creates a new instance of SegmentHistory */
     protected SegmentHistory() {

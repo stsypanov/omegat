@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Filters {
     /** Holds the list of available filters. */
-    private List<OneFilter> filters = new ArrayList<OneFilter>();
+    private List<OneFilter> filters = new ArrayList<>();
 
     /**
      * Returns all the filters as an array.
@@ -50,6 +50,6 @@ public class Filters {
      * Sets all filters from the array.
      */
     public void setFilter(OneFilter[] filter) {
-        filters = new ArrayList<OneFilter>(Arrays.asList(filter));
+        filters = new ArrayList<>(Arrays.asList(filter));
     }
 }

@@ -49,9 +49,9 @@ public class TextUtil {
         for (int c = 0; c < columnHeaders.length; c++) {
             maxColSize[c] = columnHeaders[c].length();
         }
-        for (int r = 0; r < table.length; r++) {
-            for (int c = 0; c < table[r].length; c++) {
-                maxColSize[c] = Math.max(maxColSize[c], table[r][c].length());
+        for (String[] aTable1 : table) {
+            for (int c = 0; c < aTable1.length; c++) {
+                maxColSize[c] = Math.max(maxColSize[c], aTable1[c].length());
             }
         }
 
@@ -59,9 +59,9 @@ public class TextUtil {
             appendField(out, columnHeaders[c], maxColSize[c], alignRight[c]);
         }
         out.append('\n');
-        for (int r = 0; r < table.length; r++) {
-            for (int c = 0; c < table[r].length; c++) {
-                appendField(out, table[r][c], maxColSize[c], alignRight[c]);
+        for (String[] aTable : table) {
+            for (int c = 0; c < aTable.length; c++) {
+                appendField(out, aTable[c], maxColSize[c], alignRight[c]);
             }
             out.append('\n');
         }

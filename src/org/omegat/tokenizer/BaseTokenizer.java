@@ -49,11 +49,11 @@ import org.omegat.util.Token;
  * @author Aaron Madlon-Kay
  */
 public abstract class BaseTokenizer implements ITokenizer {
-    private static Map<String, Token[]> tokenCacheNone = new HashMap<String, Token[]>(
+    private static Map<String, Token[]> tokenCacheNone = new HashMap<>(
             5000);
-    private static Map<String, Token[]> tokenCacheMatching = new HashMap<String, Token[]>(
+    private static Map<String, Token[]> tokenCacheMatching = new HashMap<>(
             5000);
-    private static Map<String, Token[]> tokenCacheGlossary = new HashMap<String, Token[]>(
+    private static Map<String, Token[]> tokenCacheGlossary = new HashMap<>(
             5000);
 
     /**
@@ -66,7 +66,7 @@ public abstract class BaseTokenizer implements ITokenizer {
      * <p>
      * See {@link LuceneGermanTokenizer} for an example class that modifies this map.
      */
-    protected static final Map<Version, String> supportedBehaviors = new LinkedHashMap<Version, String>(
+    protected static final Map<Version, String> supportedBehaviors = new LinkedHashMap<>(
             Version.values().length);
 
     protected static final String[] EMPTY_STOP_WORDS_LIST = new String[0];
@@ -193,7 +193,7 @@ public abstract class BaseTokenizer implements ITokenizer {
             return EMPTY_TOKENS_LIST;
         }
 
-        List<Token> result = new ArrayList<Token>(DEFAULT_TOKENS_COUNT);
+        List<Token> result = new ArrayList<>(DEFAULT_TOKENS_COUNT);
 
         WordIterator iterator = new WordIterator();
         iterator.setText(strOrig.toLowerCase());
@@ -214,7 +214,7 @@ public abstract class BaseTokenizer implements ITokenizer {
             return EMPTY_TOKENS_LIST;
         }
 
-        List<Token> result = new ArrayList<Token>(64);
+        List<Token> result = new ArrayList<>(64);
 
         final TokenStream in = getTokenStream(strOrig, stemsAllowed,
                 stopWordsAllowed);

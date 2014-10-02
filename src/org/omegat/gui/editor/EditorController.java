@@ -827,10 +827,10 @@ public class EditorController implements IEditor {
      * Refresh some entries. Usually after external translation changes replacement.
      */
     public void refreshEntries(Set<Integer> entryNumbers) {
-        for (int i = 0; i < m_docSegList.length; i++) {
-            if (entryNumbers.contains(m_docSegList[i].ste.entryNum())) {
+        for (SegmentBuilder aM_docSegList : m_docSegList) {
+            if (entryNumbers.contains(aM_docSegList.ste.entryNum())) {
                 // the same source text - need to update
-                m_docSegList[i].createSegmentElement(false);
+                aM_docSegList.createSegmentElement(false);
             }
         }
     }

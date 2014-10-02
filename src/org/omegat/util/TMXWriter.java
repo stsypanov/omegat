@@ -208,7 +208,7 @@ public class TMXWriter {
 
             // Check if the corresponding end tag is in this segment too
             String endTag = "&lt;/" + tag.substring(4);
-            boolean paired = segment.indexOf(endTag) > -1;
+            boolean paired = segment.contains(endTag);
 
             // Wrap the OmegaT tag in TMX tags in the result
             result.append(segment.substring(previousMatchEnd, match.start())); // text
@@ -252,7 +252,7 @@ public class TMXWriter {
 
             // Check if the corresponding start tag is in this segment too
             String startTag = "&lt;" + tag.substring(5);
-            boolean paired = segment.indexOf(startTag) > -1;
+            boolean paired = segment.contains(startTag);
 
             // Wrap the OmegaT tag in TMX tags in the result
             result.append(segment.substring(previousMatchEnd, match.start())); // text

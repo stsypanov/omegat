@@ -68,7 +68,7 @@ public class TaasArrayOfTerm {
      */
     public List<TaasTerm> getTerm() {
         if (term == null) {
-            term = new ArrayList<TaasTerm>();
+            term = new ArrayList<>();
         }
         return this.term;
     }

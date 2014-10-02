@@ -65,7 +65,7 @@ public class GlossaryReaderTSV {
             return null;
         }
 
-        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
+        List<GlossaryEntry> result = new ArrayList<>();
         BufferedReader in = new BufferedReader(reader);
         try {
             // BOM (byte order mark) bugfix

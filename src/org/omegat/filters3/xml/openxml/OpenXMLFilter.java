@@ -256,8 +256,8 @@ public class OpenXMLFilter extends AbstractFilter {
 
                     // Specific case for Excel
                     // because "comments" is present twice in DOCUMENTS
-                    if (shortname1.indexOf("sharedStrings") >= 0 || shortname2.indexOf("sharedStrings") >= 0) {
-                        if (shortname2.indexOf("sharedStrings") >= 0)
+                    if (shortname1.contains("sharedStrings") || shortname2.contains("sharedStrings")) {
+                        if (shortname2.contains("sharedStrings"))
                             return 1; // sharedStrings must be first
                         else
                             return -1;

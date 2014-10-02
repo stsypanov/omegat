@@ -71,7 +71,7 @@ public class AutoCompleter {
     /**
      * a list of the views associated with this auto-completer
      */
-    List<AbstractAutoCompleterView> views = new ArrayList<AbstractAutoCompleterView>();
+    List<AbstractAutoCompleterView> views = new ArrayList<>();
     
     /**
      * the current view

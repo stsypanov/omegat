@@ -89,7 +89,7 @@ public abstract class BaseTranslate implements IMachineTranslation, ActionListen
         Matcher tag = PatternConsts.OMEGAT_TAG_SPACE.matcher(machineText);
         while (tag.find()) {
             String searchTag = tag.group();
-            if (sourceText.indexOf(searchTag) == -1) { // The tag didn't appear with a trailing space in the source text
+            if (!sourceText.contains(searchTag)) { // The tag didn't appear with a trailing space in the source text
                 String replacement = searchTag.substring(0, searchTag.length() - 1);
                 machineText = machineText.replace(searchTag, replacement);
             }
@@ -99,7 +99,7 @@ public abstract class BaseTranslate implements IMachineTranslation, ActionListen
         tag = PatternConsts.SPACE_OMEGAT_TAG.matcher(machineText);
         while (tag.find()) {
             String searchTag = tag.group();
-            if (sourceText.indexOf(searchTag) == -1) { // The tag didn't appear with a leading space in the source text
+            if (!sourceText.contains(searchTag)) { // The tag didn't appear with a leading space in the source text
                 String replacement = searchTag.substring(1, searchTag.length());
                 machineText = machineText.replace(searchTag, replacement);
             }

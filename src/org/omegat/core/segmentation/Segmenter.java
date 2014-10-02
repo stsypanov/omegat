@@ -283,11 +283,11 @@ public final class Segmenter {
         if (sentences.size() <= 0)
             return "";
 
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         res.append(sentences.get(0));
 
         for (int i = 1; i < sentences.size(); i++) {
-            StringBuffer sp = new StringBuffer();
+            StringBuilder sp = new StringBuilder();
             sp.append(spaces.get(2 * i - 1));
             sp.append(spaces.get(2 * i));
 

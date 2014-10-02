@@ -55,7 +55,7 @@ public class OneFilter {
     }
 
     /** Holds instances property. */
-    private List<Instance> instances = new ArrayList<Instance>();
+    private List<Instance> instances = new ArrayList<>();
 
     /**
      * Returns all the instances of the filter.
@@ -68,7 +68,7 @@ public class OneFilter {
      * Sets all the instances of the filter at once.
      */
     public void setInstance(Instance[] instance) {
-        instances = new ArrayList<Instance>(Arrays.asList(instance));
+        instances = new ArrayList<>(Arrays.asList(instance));
     }
 
     /** Holds whether the filter's source encoding can be varied by user */

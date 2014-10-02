@@ -71,8 +71,7 @@ public class PrepareTMXEntry {
         if (otherProperties == null) {
             return null;
         }
-        for (int i = 0; i < otherProperties.size(); i++) {
-            TMXProp kv = otherProperties.get(i);
+        for (TMXProp kv : otherProperties) {
             if (propType.equals(kv.getType())) {
                 return kv.getValue();
             }
@@ -84,8 +83,7 @@ public class PrepareTMXEntry {
         if (otherProperties == null) {
             return false;
         }
-        for (int i = 0; i < otherProperties.size(); i++) {
-            TMXProp kv = otherProperties.get(i);
+        for (TMXProp kv : otherProperties) {
             if (propType.equals(kv.getType())) {
                 if (propValue == null) {
                     return true;

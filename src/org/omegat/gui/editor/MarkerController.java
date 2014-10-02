@@ -140,9 +140,9 @@ public class MarkerController {
 
         MarkInfo[] me = sb.marks[makerIndex];
         if (me != null) {
-            for (int j = 0; j < me.length; j++) {
-                if (me[j] != null && me[j].highlight != null) {
-                    highlighter.removeHighlight(me[j].highlight);
+            for (MarkInfo aMe : me) {
+                if (aMe != null && aMe.highlight != null) {
+                    highlighter.removeHighlight(aMe.highlight);
                 }
             }
             sb.marks[makerIndex] = null;
@@ -221,11 +221,11 @@ public class MarkerController {
             return null;
         }
         StringBuilder res = new StringBuilder();
-        for (int i = 0; i < m.length; i++) {
-            if (m[i] == null) {
+        for (MarkInfo[] aM : m) {
+            if (aM == null) {
                 continue;
             }
-            for (MarkInfo t : m[i]) {
+            for (MarkInfo t : aM) {
                 if (t != null && t.tooltip != null) {
                     if (t.tooltip.p0.getOffset() <= pos && t.tooltip.p1.getOffset() >= pos) {
                         if (res.length() > 0) {
@@ -282,8 +282,7 @@ public class MarkerController {
         Document3 doc = ec.editor.getOmDocument();
         doc.trustedChangesInProgress = true;
         try {
-            for (int i = 0; i < evs.size(); i++) {
-                EntryMarks ev = evs.get(i);
+            for (EntryMarks ev : evs) {
                 if (!ev.isSegmentChanged()) {
                     remove(ev.builder, ev.markerIndex);
                     try {

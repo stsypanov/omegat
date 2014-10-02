@@ -48,8 +48,8 @@ import org.omegat.util.gui.UIThreadsUtil;
  */
 public class TranslationUndoManager implements UndoableEditListener {
     private final EditorTextArea3 editor;
-    private final List<Change> undos = new ArrayList<Change>();
-    private final List<Change> redos = new ArrayList<Change>();
+    private final List<Change> undos = new ArrayList<>();
+    private final List<Change> redos = new ArrayList<>();
     private Change currentState;
     private boolean inProgress;
 

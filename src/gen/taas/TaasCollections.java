@@ -68,7 +68,7 @@ public class TaasCollections {
      */
     public List<TaasCollection> getCollection() {
         if (collection == null) {
-            collection = new ArrayList<TaasCollection>();
+            collection = new ArrayList<>();
         }
         return this.collection;
     }

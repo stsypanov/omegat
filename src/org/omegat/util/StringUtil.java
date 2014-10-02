@@ -85,9 +85,9 @@ public class StringUtil {
      * Returns first not null object from list, or null if all values is null.
      */
     public static <T> T nvl(T... values) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != null) {
-                return values[i];
+        for (T value : values) {
+            if (value != null) {
+                return value;
             }
         }
         return null;
@@ -97,9 +97,9 @@ public class StringUtil {
      * Returns first non-zero object from list, or zero if all values is null.
      */
     public static long nvlLong(long... values) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != 0) {
-                return values[i];
+        for (long value : values) {
+            if (value != 0) {
+                return value;
             }
         }
         return 0;

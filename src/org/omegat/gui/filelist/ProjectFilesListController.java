@@ -871,8 +871,8 @@ public class ProjectFilesListController {
             newPos = Math.max(newPos, 0);
             newPos = Math.min(newPos, viewToModel.size());
 
-            for(int i = 0; i < temp.length; i++) {
-                viewToModel.add(newPos, temp[i]);
+            for (int aTemp : temp) {
+                viewToModel.add(newPos, aTemp);
             }
             recalc();
             save();
@@ -884,8 +884,8 @@ public class ProjectFilesListController {
 
         private void save() {
             List<String> filenames = new ArrayList<String>();
-            for (int i = 0; i < viewToModel.size(); i++) {
-                String fn = files.get(viewToModel.get(i)).filePath;
+            for (Integer aViewToModel : viewToModel) {
+                String fn = files.get(aViewToModel).filePath;
                 filenames.add(fn);
             }
             Core.getProject().setSourceFilesOrder(filenames);

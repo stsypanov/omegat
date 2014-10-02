@@ -120,11 +120,11 @@ public class DictionaryManager {
 
         // match them
         if (affixFiles != null && dictionaryFiles != null) {
-            for (int i = 0; i < affixFiles.length; i++) {
+            for (String affixFile : affixFiles) {
                 boolean match = false;
 
                 // get the affix file name
-                String affixName = getFileNameOnly(affixFiles[i]);
+                String affixName = getFileNameOnly(affixFile);
                 if (affixName == null || affixName.equals(""))
                     continue;
 

@@ -41,7 +41,7 @@ public class MultiMap<K, V> {
 
     /** Creates an empty MultiMap. */
     public MultiMap() {
-        map = new HashMap<K, Set<V>>();
+        map = new HashMap<>();
     }
 
     /**
@@ -75,7 +75,7 @@ public class MultiMap<K, V> {
             Set<V> values = map.get(key);
             values.add(value);
         } else {
-            Set<V> values = new HashSet<V>();
+            Set<V> values = new HashSet<>();
             values.add(value);
             map.put(key, values);
         }

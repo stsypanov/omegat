@@ -59,7 +59,7 @@ public class SpellCheckerMarker implements IMarker {
             // spell checker disabled
             return null;
         }
-        List<Mark> result = new ArrayList<Mark>();
+        List<Mark> result = new ArrayList<>();
         for (Token tok : Core.getProject().getTargetTokenizer().tokenizeWordsForSpelling(translationText)) {
             int st = tok.getOffset();
             int en = tok.getOffset() + tok.getLength();

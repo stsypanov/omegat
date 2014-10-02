@@ -76,7 +76,7 @@ public final class LanguageCodes {
     public static final String F_HTML_KEY = "CORE_SRX_RULES_FORMATTING_HTML";
 
     /** A Map from language codes to language keys. */
-    private static Map<String, String> codeKeyHash = new HashMap<String, String>();
+    private static Map<String, String> codeKeyHash = new HashMap<>();
 
     static {
         codeKeyHash.put(CATALAN_CODE, CATALAN_KEY);

@@ -50,8 +50,8 @@ public class XMLStreamReader {
     public XMLStreamReader() {
         m_pos = -1;
         m_stringStream = "";
-        m_charStack = new Stack<Character>();
-        m_charCache = new ArrayList<Character>();
+        m_charStack = new Stack<>();
+        m_charCache = new ArrayList<>();
         m_killEmptyBlocks = false;
         m_ignoreWhiteSpace = false;
         m_breakWhitespace = false;
@@ -1046,7 +1046,7 @@ public class XMLStreamReader {
      */
     public List<XMLBlock> closeBlock(XMLBlock block, boolean includeTerminationBlock)
             throws TranslationException {
-        List<XMLBlock> lst = new ArrayList<XMLBlock>();
+        List<XMLBlock> lst = new ArrayList<>();
 
         // sanity check
         if (block == null)
