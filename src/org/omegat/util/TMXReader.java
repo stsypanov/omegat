@@ -114,7 +114,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     /** Returns an original text of a source segment #n */
     public String getSourceSegment(int n) {
         if (n < 0 || n >= numSegments())
-            return new String();
+            return "";
         else
             return m_srcList.get(n);
     }
@@ -122,7 +122,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     /** Returns a translation of a target segment #n */
     public String getTargetSegment(int n) {
         if (n < 0 || n >= numSegments())
-            return new String();
+            return "";
         else
             return m_tarList.get(n);
     }
@@ -958,7 +958,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         // "pad" with empty strings, or omit segments if necessary
         // NOTE: this is not the most ideal solution, but the best possible
         for (int i = 0; i < source.subSegments.size(); i++) {
-            String starget = new String();
+            String starget = "";
             if (i < target.subSegments.size())
                 starget = target.subSegments.get(i).toString();
             storeSegment(source.subSegments.get(i).toString(), starget, changeId, changeDate);
