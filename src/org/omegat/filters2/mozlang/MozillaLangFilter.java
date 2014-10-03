@@ -3,7 +3,7 @@
           with fuzzy matching, translation memory, keyword search,
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2014 Enrique Estévez Fernández 
+ Copyright (C) 2014 Enrique Estï¿½vez Fernï¿½ndez 
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -58,7 +58,7 @@ import org.omegat.util.StaticUtils;
  * 
  * Code adapted from the files: PoFilter.java and SrtFilter.java
  *
- * @author Enrique Estévez (keko.gl@gmail.com)
+ * @author Enrique Estï¿½vez (keko.gl@gmail.com)
  */
 public class MozillaLangFilter extends AbstractFilter {
 
@@ -67,8 +67,8 @@ public class MozillaLangFilter extends AbstractFilter {
     
     enum READ_STATE {
         WAIT_SOURCE, WAIT_TARGET
-    };
-    
+    }
+
     private StringBuilder source, target, localizationNote;
 
     private BufferedWriter out;

@@ -59,7 +59,7 @@ public class RcFilter extends AbstractFilter {
 
     enum PART {
         DIALOG, MENU, MESSAGETABLE, STRINGTABLE, OTHER, UNKNOWN
-    };
+    }
 
     protected String blockId;
     protected int b, e;

@@ -47,15 +47,15 @@ import org.omegat.util.OConsts;
 public class SearchExpression {
     public enum SearchExpressionType {
         EXACT, KEYWORD, REGEXP
-    };
+    }
 
     public enum SearchPlace {
         SOURCE_TRANSLATION, SOURCE_ONLY, TRANSLATION_ONLY
-    };
+    }
 
     public enum SearchState {
         TRANSLATED_UNTRANSLATED, TRANSLATED, UNTRANSLATED
-    };
+    }
 
     public SearchMode mode;
     public String text;

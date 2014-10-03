@@ -53,7 +53,7 @@ public class Document3 extends DefaultStyledDocument {
         ALL_RTL,
         /** different texts/segments have different orientation, depending on language/locale. */
         DIFFER
-    };
+    }
 
     protected final EditorController controller;
 

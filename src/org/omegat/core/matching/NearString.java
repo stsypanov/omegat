@@ -47,8 +47,8 @@ import org.omegat.util.TMXProp;
 public class NearString {
     public enum MATCH_SOURCE {
         MEMORY, TM, FILES
-    };
-    
+    }
+
     public enum SORT_KEY {
         SCORE, SCORE_NO_STEM, ADJUSTED_SCORE
     }

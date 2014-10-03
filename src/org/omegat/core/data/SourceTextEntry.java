@@ -59,7 +59,7 @@ public class SourceTextEntry {
         FIRST,
         /** There is entries with the same source, and this is not first entry. */
         NEXT
-    };
+    }
 
     /** If entry with the same source already exist in project. */
     DUPLICATE duplicate;

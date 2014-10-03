@@ -63,7 +63,7 @@ public final class PluginUtils {
 
     enum PLUGIN_TYPE {
         FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
-    };
+    }
 
     protected static URLClassLoader pluginsClassLoader;
     protected static List<Class<?>> loadedPlugins = new ArrayList<Class<?>>();

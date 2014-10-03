@@ -53,7 +53,7 @@ public class SrtFilter extends AbstractFilter {
 
     enum READ_STATE {
         WAIT_TIME, WAIT_TEXT
-    };
+    }
 
     protected Map<String, String> align;
 

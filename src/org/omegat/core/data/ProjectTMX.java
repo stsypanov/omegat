@@ -348,7 +348,7 @@ public class ProjectTMX {
             }
             return true;
         }
-    };
+    }
 
     private TMXEntry.ExternalLinked calcExternalLinkedMode(PrepareTMXEntry te) {
         String id = te.getPropValue(PROP_ID);

@@ -45,7 +45,7 @@ public class LinebreakPreservingReader extends Reader {
     }
 
     /** Buffer that contains the last linebreak */
-    private StringBuffer linebreak = new StringBuffer(2);;
+    private StringBuffer linebreak = new StringBuffer(2);
 
     /**
      * Creates a new reader.

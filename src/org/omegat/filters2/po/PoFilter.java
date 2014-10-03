@@ -268,7 +268,7 @@ public class PoFilter extends AbstractFilter {
 
     enum MODE {
         MSGID, MSGSTR, MSGID_PLURAL, MSGSTR_PLURAL, MSGCTX
-    };
+    }
 
     private StringBuilder[] sources, targets;
     private StringBuilder translatorComments, extractedComments, references;

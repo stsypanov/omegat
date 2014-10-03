@@ -403,8 +403,8 @@ public class MainWindow extends JFrame implements IMainWindow {
      */
     public void displayWarningRB(String warningKey, Object... params) {
         displayWarningRB(warningKey, null, params);
-    };
-    
+    }
+
     /**
      * {@inheritDoc}
      */

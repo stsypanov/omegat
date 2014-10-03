@@ -97,7 +97,7 @@ public class Main {
                 return GUI;
             }
         }
-    };
+    }
 
     /**
      * Choice of types of translation for all segments in the optional, special
@@ -113,7 +113,7 @@ public class Main {
                 return EQUAL;
             }
         }
-    };
+    }
 
     /** Regexp for parse parameters. */
     protected static final Pattern PARAM = Pattern.compile("\\-\\-([A-Za-z\\-]+)(=(.+))?");

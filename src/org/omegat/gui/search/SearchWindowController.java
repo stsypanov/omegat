@@ -172,7 +172,7 @@ public class SearchWindowController {
             form.m_allResultsCB.setVisible(false);
             form.m_fileNamesCB.setVisible(false);
             form.m_filterButton.setVisible(false);
-            form.m_numberLabel.setVisible(false);;
+            form.m_numberLabel.setVisible(false);
             form.m_numberOfResults.setVisible(false);
             form.m_panelSearch.setVisible(false);
             form.m_panelReplace.setVisible(true);

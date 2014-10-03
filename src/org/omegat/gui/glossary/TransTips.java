@@ -54,7 +54,7 @@ public class TransTips {
         afterExcludeCases.add('<');
         afterExcludeCases.add(')');
         afterExcludeCases.add('-');
-    };
+    }
 
     // List containing the characters that may be found at the beginning of a
     // word, that
@@ -64,7 +64,7 @@ public class TransTips {
         beforeExcludeCases.add('>');
         beforeExcludeCases.add('(');
         beforeExcludeCases.add(' ');
-    };
+    }
 
     /**
      * Search for a word and returns the offset of the first occurrence.

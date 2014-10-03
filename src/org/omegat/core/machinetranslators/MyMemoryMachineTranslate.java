@@ -110,7 +110,7 @@ public class MyMemoryMachineTranslate extends AbstractMyMemoryTranslate {
             MTresponse = node.getTextContent();
         } catch(Exception ex) {       	
             // silently catch the exception and provide details to user
-            MTresponse = OStrings.getString("MT_ENGINE_MYMEMORY_MACHINE_ERROR") + ex.getMessage();;                      
+            MTresponse = OStrings.getString("MT_ENGINE_MYMEMORY_MACHINE_ERROR") + ex.getMessage();
         }
         
         MTresponse = cleanUpText(MTresponse);

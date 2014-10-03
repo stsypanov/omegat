@@ -36,7 +36,7 @@ import javax.swing.text.Highlighter.HighlightPainter;
 public class Mark {
     public enum ENTRY_PART {
         SOURCE, TRANSLATION
-    };
+    }
 
     public final ENTRY_PART entryPart;
     public final int startOffset, endOffset;

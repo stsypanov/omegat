@@ -60,7 +60,7 @@ public class StatisticsWindow extends JDialog {
 
     public static enum STAT_TYPE {
         STANDARD, MATCHES, MATCHES_PER_FILE
-    };
+    }
 
     private JProgressBar progressBar;
     private JTextArea output;

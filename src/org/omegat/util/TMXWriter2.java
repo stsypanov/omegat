@@ -293,7 +293,7 @@ public class TMXWriter2 {
 
     enum TAG_TYPE {
         SINGLE, START, END
-    };
+    }
 
     private void writeLevelTwo(String segment) throws Exception {
         xml.writeCharacters("        ");

@@ -82,7 +82,7 @@ public class HTMLOptions extends AbstractOptions {
         IFMETA,
         /** (X)HTML filter should never rewrite encoding declaration. */
         NEVER
-    };
+    }
 
     public static final String OPTION_REWRITE_ENCODING = "rewriteEncoding";
     public static final String OPTION_TRANSLATE_HREF = "translateHref";

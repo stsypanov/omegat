@@ -252,7 +252,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                             item.addActionListener(new ActionListener() {
                                 public void actionPerformed(ActionEvent e) {
                                     manager.addIgnoreWord(w);
-                                };
+                                }
                             });
                         }
                     }

@@ -125,7 +125,7 @@ public class EditorController implements IEditor {
 
     /** Some predefined translations that OmegaT can assign by popup. */
     enum ForceTranslation {
-        UNTRANSLATED, EMPTY, EQUALS_TO_SOURCE;
+        UNTRANSLATED, EMPTY, EQUALS_TO_SOURCE
     }
 
     /** Dockable pane for editor. */
@@ -163,7 +163,7 @@ public class EditorController implements IEditor {
 
     private enum SHOW_TYPE {
         INTRO, EMPTY_PROJECT, FIRST_ENTRY, NO_CHANGE
-    };
+    }
 
     Document3.ORIENTATION currentOrientation;
     protected boolean sourceLangIsRTL, targetLangIsRTL;

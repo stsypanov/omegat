@@ -100,7 +100,7 @@ public class AutoCompleter {
         views.add(new CharTableAutoCompleterView(this));
 
         viewLabel = new JLabel();
-        viewLabel.setBorder(new EmptyBorder(4, 4, 4, 4));;
+        viewLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
         popup.setBorder(BorderFactory.createLineBorder(Color.black));
         popup.setLayout(new BorderLayout());
         popup.add(scroll, BorderLayout.CENTER); 

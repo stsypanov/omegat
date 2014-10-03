@@ -1643,7 +1643,7 @@ public class RealProject implements IProject {
             existSource.add(segmentSource);
             existKeys.add(srcTextEntry.getKey());
         }
-    };
+    }
 
     private class TranslateFilesCallback extends TranslateEntry {
         private String currentFile;
@@ -1675,7 +1675,7 @@ public class RealProject implements IProject {
             }
             return tr != null ? tr.translation : null;
         }
-    };
+    }
 
     static class AlignFilesCallback implements IAlignCallback {
         public AlignFilesCallback(ProjectProperties props) {

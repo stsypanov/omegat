@@ -198,7 +198,7 @@ public class NewTeamProject extends javax.swing.JDialog {
             updateDialog();
             stopDetectingRepo();
         }
-    };
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

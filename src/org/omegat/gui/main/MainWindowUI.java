@@ -80,7 +80,7 @@ public class MainWindowUI {
     public enum STATUS_BAR_MODE {
         DEFAULT,
         PERCENTAGE,
-    };
+    }
 
     /**
      * Create main UI panels.
