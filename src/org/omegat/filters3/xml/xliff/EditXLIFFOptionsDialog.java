@@ -56,7 +56,7 @@ public class EditXLIFFOptionsDialog extends javax.swing.JDialog {
     /** Creates new form EditOpenDocOptionsDialog */
     public EditXLIFFOptionsDialog(java.awt.Dialog parent, Map<String, String> config) {
         super(parent, true);
-        this.options = new XLIFFOptions(new TreeMap<String, String>(config));
+        this.options = new XLIFFOptions(new TreeMap<>(config));
         initComponents();
 
         compatibility26CB.setSelected(options.get26Compatibility());

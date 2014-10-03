@@ -69,7 +69,7 @@ public class MarkerController {
         this.ec = ec;
         this.highlighter = ec.editor.getHighlighter();
 
-        List<IMarker> ms = new ArrayList<IMarker>();
+        List<IMarker> ms = new ArrayList<>();
         // start all markers threads
         for (Class<?> mc : PluginUtils.getMarkerClasses()) {
             try {
@@ -175,7 +175,7 @@ public class MarkerController {
 
         entryBuilder.resetTextAttributes();
 
-        List<EntryMarks> evs = new ArrayList<EntryMarks>();
+        List<EntryMarks> evs = new ArrayList<>();
         for (int i = 0; i < markerNames.length; i++) {
             remove(entryBuilder, i);
             try {
@@ -245,7 +245,7 @@ public class MarkerController {
         return "<html>" + r + "</html>";
     }
 
-    private final Queue<EntryMarks> outputQueue = new LinkedList<EntryMarks>();
+    private final Queue<EntryMarks> outputQueue = new LinkedList<>();
 
     public void queueMarksOutput(EntryMarks ev) {
         synchronized (outputQueue) {
@@ -255,7 +255,7 @@ public class MarkerController {
         }
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                List<EntryMarks> evs = new ArrayList<EntryMarks>();
+                List<EntryMarks> evs = new ArrayList<>();
                 synchronized (outputQueue) {
                     while (true) {
                         EntryMarks ev = outputQueue.poll();

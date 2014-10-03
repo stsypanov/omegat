@@ -58,7 +58,7 @@ public class HelpAndManualDialect extends DefaultXMLDialect {
 
         defineShortcut("link", "li");
         
-        ignoreTagsAttributes = new HashMap<String, String>();
+        ignoreTagsAttributes = new HashMap<>();
         ignoreTagsAttributes.put("TRANSLATE=FALSE", "");
     }
 

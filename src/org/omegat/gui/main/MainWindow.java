@@ -106,7 +106,7 @@ public class MainWindow extends JFrame implements IMainWindow {
     private Font m_font;
 
     /** Set of all open search windows. */
-    private final Set<SearchWindowController> m_searches = new HashSet<SearchWindowController>();
+    private final Set<SearchWindowController> m_searches = new HashSet<>();
 
     protected JLabel lengthLabel;
     protected JLabel progressLabel;
@@ -146,7 +146,7 @@ public class MainWindow extends JFrame implements IMainWindow {
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
 
         // set two icons, 16x16 and 32x32
-        final List<Image> icons = new ArrayList<Image>();
+        final List<Image> icons = new ArrayList<>();
         final String RESOURCES = "/org/omegat/gui/resources/";
         icons.add(ResourcesUtil.getIcon(RESOURCES + "OmegaT_small.gif").getImage());
         icons.add(ResourcesUtil.getIcon(RESOURCES + "OmegaT.gif").getImage());
@@ -304,7 +304,7 @@ public class MainWindow extends JFrame implements IMainWindow {
             try {
                 for (File selSrc : selFiles) {
                     if (selSrc.isDirectory()) {
-                        List<String> files = new ArrayList<String>();
+                        List<String> files = new ArrayList<>();
                         StaticUtils.buildFileList(files, selSrc, true);
                         String selSourceParent = selSrc.getParent();
                         for (String filename : files) {

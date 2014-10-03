@@ -55,7 +55,7 @@ public abstract class TranslateEntry implements ITranslateCallback {
     private int pass;
     
     /** Collected segments. */
-    private List<TranslateEntryQueueItem> translateQueue = new ArrayList<TranslateEntryQueueItem>();
+    private List<TranslateEntryQueueItem> translateQueue = new ArrayList<>();
     
     /**
      * Index of currently processed segment. It required for multiple translation for use right segment.
@@ -110,8 +110,8 @@ public abstract class TranslateEntry implements ITranslateCallback {
 
         if (m_config.isSentenceSegmentingEnabled()) {
             boolean translated = false;
-            List<StringBuffer> spaces = new ArrayList<StringBuffer>();
-            List<Rule> brules = new ArrayList<Rule>();
+            List<StringBuffer> spaces = new ArrayList<>();
+            List<Rule> brules = new ArrayList<>();
             Language sourceLang = m_config.getSourceLanguage();
             Language targetLang = m_config.getTargetLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);

@@ -50,7 +50,7 @@ public class DirectoryMonitor extends Thread {
     protected final File dir;
     protected final Callback callback;
     protected final DirectoryCallback directoryCallback;
-    private final Map<String, FileInfo> existFiles = new TreeMap<String, FileInfo>();
+    private final Map<String, FileInfo> existFiles = new TreeMap<>();
     protected static final long LOOKUP_PERIOD = 1000;
 
     /**
@@ -103,7 +103,7 @@ public class DirectoryMonitor extends Thread {
     }
 
     public synchronized Set<File> getExistFiles() {
-        Set<File> result = new TreeSet<File>();
+        Set<File> result = new TreeSet<>();
         for (String fn : existFiles.keySet()) {
             result.add(new File(fn));
         }
@@ -117,7 +117,7 @@ public class DirectoryMonitor extends Thread {
     public synchronized void checkChanges() {
     	boolean directoryChanged = false;
         // find deleted or changed files
-        for (String fn : new ArrayList<String>(existFiles.keySet())) {
+        for (String fn : new ArrayList<>(existFiles.keySet())) {
             if (stopped)
                 return;
             File f = new File(fn);

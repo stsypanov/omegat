@@ -79,7 +79,7 @@ public class TextOptionsDialog extends javax.swing.JDialog {
      */
     public TextOptionsDialog(Dialog parent, Map<String, String> options) {
         super(parent, true);
-        this.options = new TreeMap<String, String>(options);
+        this.options = new TreeMap<>(options);
         initComponents();
 
         String segmentOn = options.get(TextFilter.OPTION_SEGMENT_ON);

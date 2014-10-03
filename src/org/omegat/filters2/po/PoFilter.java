@@ -88,7 +88,7 @@ public class PoFilter extends AbstractFilter {
 
     private static final Map<String, PluralInfo> pluralInfos;
     static {
-        HashMap<String, PluralInfo> info = new HashMap<String, PluralInfo>();
+        HashMap<String, PluralInfo> info = new HashMap<>();
         //list taken from http://translate.sourceforge.net/wiki/l10n/pluralforms d.d. 14-09-2012
         //See also http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html
         info.put("ach", new PluralInfo(2, "(n > 1)"));

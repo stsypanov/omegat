@@ -108,7 +108,7 @@ public class MicrosoftTranslate extends BaseTranslate {
         
     }
     private void requestToken() throws Exception {
-        Map<String, String> p = new TreeMap<String, String>();
+        Map<String, String> p = new TreeMap<>();
 
         if (System.getProperty("microsoft.api.client_id") == null
                 || System.getProperty("microsoft.api.client_secret") == null) {
@@ -125,7 +125,7 @@ public class MicrosoftTranslate extends BaseTranslate {
     }
 
     private String requestTranslate(String langFrom, String langTo, String text) throws Exception {
-        Map<String, String> p = new TreeMap<String, String>();
+        Map<String, String> p = new TreeMap<>();
         p.put("appId", "Bearer " + accessToken);
         p.put("text", text);
         p.put("from", langFrom);
@@ -155,7 +155,7 @@ public class MicrosoftTranslate extends BaseTranslate {
         str = v.substring(1, v.length() - 1);
         pos = 0;
 
-        Map<String, String> result = new TreeMap<String, String>();
+        Map<String, String> result = new TreeMap<>();
 
         while (true) {
             String key = readString();

@@ -37,7 +37,7 @@ import org.omegat.util.OStrings;
  */
 public class AutotextTableModel extends AbstractTableModel {
 
-    private List<AutotextPair> data = new ArrayList<AutotextPair>();
+    private List<AutotextPair> data = new ArrayList<>();
     
     public AutotextTableModel() {}
     

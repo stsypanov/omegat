@@ -52,7 +52,7 @@ public class ComesFromAutoTMMarker implements IMarker {
     public synchronized List<Mark> getMarksForEntry(SourceTextEntry ste, String sourceText,
             String translationText, boolean isActive) {
         TMXEntry e = Core.getProject().getTranslationInfo(ste);
-        List<Mark> marks = new ArrayList<Mark>(1);
+        List<Mark> marks = new ArrayList<>(1);
         if (Core.getEditor().getSettings().isMarkAutoPopulated() && e.linked != null) {
             Mark m = new Mark(Mark.ENTRY_PART.TRANSLATION, 0, translationText.length());
             switch (e.linked) {

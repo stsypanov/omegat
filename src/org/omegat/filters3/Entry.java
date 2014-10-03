@@ -137,7 +137,7 @@ public class Entry {
      * filter.
      */
     private void aggregateTags() {
-        List<Element> newElements = new ArrayList<Element>();
+        List<Element> newElements = new ArrayList<>();
         AggregatedTag aggregated = null;
 
         for (Element elem : elements) {

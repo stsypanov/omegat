@@ -56,7 +56,7 @@ import org.xml.sax.InputSource;
  */
 public class DefaultXMLDialect implements XMLDialect {
     /** The set of defined paragraph tags. */
-    private Set<String> paragraphTags = new HashSet<String>();
+    private Set<String> paragraphTags = new HashSet<>();
 
     /** Defines paragraph tag. Allows duplicates. */
     public void defineParagraphTag(String tag) {
@@ -70,14 +70,14 @@ public class DefaultXMLDialect implements XMLDialect {
     }
 
     /** The set of defined content based tags. */
-    private Map<String, Tag.Type> contentBasedTags = new HashMap<String, Tag.Type>();
+    private Map<String, Tag.Type> contentBasedTags = new HashMap<>();
 
     public void defineContentBasedTag(String tag, Tag.Type type) {
         contentBasedTags.put(tag, type);
     }
 
     /** The set of defined tags that surround preformatted text. */
-    private Set<String> preformatTags = new HashSet<String>();
+    private Set<String> preformatTags = new HashSet<>();
 
     /** Defines preformat tag. Allows duplicates. */
     public void definePreformatTag(String tag) {
@@ -91,7 +91,7 @@ public class DefaultXMLDialect implements XMLDialect {
     }
 
     /** The set of defined tags that surround intact text. */
-    private Set<String> intactTags = new HashSet<String>();
+    private Set<String> intactTags = new HashSet<>();
 
     /** Defines intact tag. Allows duplicates. */
     public void defineIntactTag(String tag) {
@@ -105,7 +105,7 @@ public class DefaultXMLDialect implements XMLDialect {
     }
 
     /** The set of defined paragraph tags. */
-    private MultiMap<String, String> translatableTagAttributes = new MultiMap<String, String>();
+    private MultiMap<String, String> translatableTagAttributes = new MultiMap<>();
 
     /** Defines translatable attribute of a tag. */
     public void defineTranslatableTagAttribute(String tag, String attribute) {
@@ -125,7 +125,7 @@ public class DefaultXMLDialect implements XMLDialect {
     }
 
     /** The set of defined paragraph tags. */
-    private Set<String> translatableAttributes = new HashSet<String>();
+    private Set<String> translatableAttributes = new HashSet<>();
 
     /**
      * Defines always translatable attribute (no matter what tag it belongs to).
@@ -147,7 +147,7 @@ public class DefaultXMLDialect implements XMLDialect {
      * The set of defined out of turn tags that surround chunks of text that
      * should be translated separately, not breaking currently collected text.
      */
-    private Set<String> outOfTurnTags = new HashSet<String>();
+    private Set<String> outOfTurnTags = new HashSet<>();
 
     /**
      * Defines out of turn tag. Such tag surrounds chunk of text that should be
@@ -166,7 +166,7 @@ public class DefaultXMLDialect implements XMLDialect {
             defineOutOfTurnTag(tag);
     }
 
-    Map<Integer, Pattern> constraints = new HashMap<Integer, Pattern>();
+    Map<Integer, Pattern> constraints = new HashMap<>();
 
     /**
      * Defines a constraint to restrict supported subset of XML files. There can
@@ -181,7 +181,7 @@ public class DefaultXMLDialect implements XMLDialect {
         constraints.put(constraintType, template);
     }
 
-    Map<String, String> shortcuts = new HashMap<String, String>();
+    Map<String, String> shortcuts = new HashMap<>();
 
     /**
      * Defines a shortcut for a tag, useful for formatting tags. Shortcut is a

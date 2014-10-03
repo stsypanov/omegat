@@ -3,7 +3,7 @@ OmegaT - Computer Assisted Translation (CAT) tool
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2013 Enrique Estévez
+ Copyright (C) 2013 Enrique Estï¿½vez
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -40,7 +40,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * 
  * Code modified from the file: MozillaDTDOptionsDialog.java
  * 
- * @author Enrique Estévez (keko.gl@gmail.com)
+ * @author Enrique Estï¿½vez (keko.gl@gmail.com)
  */
 @SuppressWarnings("serial")
 public class ResourceBundleOptionsDialog extends javax.swing.JDialog {
@@ -56,7 +56,7 @@ public class ResourceBundleOptionsDialog extends javax.swing.JDialog {
      */
     public ResourceBundleOptionsDialog(Dialog parent, Map<String, String> options) {
         super(parent, true);
-        this.options = new TreeMap<String, String>(options);
+        this.options = new TreeMap<>(options);
         initComponents();
 
         String removeStringsUntranslated = options.get(ResourceBundleFilter.OPTION_REMOVE_STRINGS_UNTRANSLATED);

@@ -53,7 +53,7 @@ public class SnowballEnglishTokenizer extends BaseTokenizer {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(
                         in, "UTF-8"));
                 String s;
-                List<String> words = new ArrayList<String>();
+                List<String> words = new ArrayList<>();
                 while ((s = rd.readLine()) != null) {
                     s = s.trim();
                     if (s.length() == 0 || s.startsWith("#")) {

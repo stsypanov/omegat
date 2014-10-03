@@ -68,10 +68,10 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
     private MainWindow mainWindow;
 
     // variables for one check iteration, by all entries or only by one entry
-    private List<String> srcTags = new ArrayList<String>(32);
-    private List<String> locTags = new ArrayList<String>(32);
-    private HashSet<String> printfSourceSet = new HashSet<String>();
-    private HashSet<String> printfTargetSet = new HashSet<String>();
+    private List<String> srcTags = new ArrayList<>(32);
+    private List<String> locTags = new ArrayList<>(32);
+    private HashSet<String> printfSourceSet = new HashSet<>();
+    private HashSet<String> printfTargetSet = new HashSet<>();
 
     public TagValidationTool(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -166,7 +166,7 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
 
         Pattern FILE_PATTERN = Pattern.compile(sourcePattern);
         
-        List<ErrorReport> suspects = new ArrayList<ErrorReport>(16);
+        List<ErrorReport> suspects = new ArrayList<>(16);
         for (FileInfo fi : Core.getProject().getProjectFiles()) {
             Matcher fileMatch = FILE_PATTERN.matcher(fi.filePath);
             if (fileMatch.matches()) {
@@ -261,7 +261,7 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
         }
 
         // Sort the map first to ensure that fixing works properly.
-        Map<String, TagError> sortedErrors = new TreeMap<String, TagError>(new StaticUtils.TagComparator(
+        Map<String, TagError> sortedErrors = new TreeMap<>(new StaticUtils.TagComparator(
                 report.source));
         sortedErrors.putAll(report.srcErrors);
         sortedErrors.putAll(report.transErrors);

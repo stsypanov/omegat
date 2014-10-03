@@ -51,10 +51,10 @@ public class FiltersTableModel extends AbstractTableModel {
 
     private final List<Filter> filters;
     
-    private final Map<String, String> filterNames = new TreeMap<String, String>();
+    private final Map<String, String> filterNames = new TreeMap<>();
 
     public FiltersTableModel(final Filters config) {
-        filters = new ArrayList<Filter>();
+        filters = new ArrayList<>();
         // add only exist filters
         for (Filter f : config.getFilters()) {
             IFilter fi = FilterMaster.getFilterInstance(f.getClassName());

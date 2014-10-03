@@ -76,9 +76,9 @@ public final class Segmenter {
             return null;
         }
         List<String> segments = breakParagraph(lang, paragraph, brules);
-        List<String> sentences = new ArrayList<String>(segments.size());
+        List<String> sentences = new ArrayList<>(segments.size());
         if (spaces == null)
-            spaces = new ArrayList<StringBuffer>();
+            spaces = new ArrayList<>();
         spaces.clear();
         for (String one : segments) {
             int len = one.length();
@@ -122,11 +122,11 @@ public final class Segmenter {
     private static List<String> breakParagraph(Language lang, String paragraph, List<Rule> brules) {
         List<Rule> rules = Segmenter.srx.lookupRulesForLanguage(lang);
         if (brules == null)
-            brules = new ArrayList<Rule>();
+            brules = new ArrayList<>();
 
         // determining the applicable break positions
-        Set<BreakPosition> dontbreakpositions = new TreeSet<BreakPosition>();
-        Set<BreakPosition> breakpositions = new TreeSet<BreakPosition>();
+        Set<BreakPosition> dontbreakpositions = new TreeSet<>();
+        Set<BreakPosition> breakpositions = new TreeSet<>();
         for (int i = rules.size() - 1; i >= 0; i--) {
             Rule rule = rules.get(i);
             List<BreakPosition> rulebreaks = getBreaks(paragraph, rule);
@@ -141,7 +141,7 @@ public final class Segmenter {
         breakpositions.removeAll(dontbreakpositions);
 
         // and now breaking the string according to the positions
-        List<String> segments = new ArrayList<String>();
+        List<String> segments = new ArrayList<>();
         brules.clear();
         int prevpos = 0;
         for (BreakPosition bposition : breakpositions) {
@@ -174,7 +174,7 @@ public final class Segmenter {
      * Returns the places of possible breaks between sentences.
      */
     private static List<BreakPosition> getBreaks(String paragraph, Rule rule) {
-        List<BreakPosition> res = new ArrayList<BreakPosition>();
+        List<BreakPosition> res = new ArrayList<>();
 
         Matcher bbm = null;
         if (rule.getBeforebreak() != null)
@@ -335,7 +335,7 @@ public final class Segmenter {
     }
 
     /** CJK languages. */
-    private static final Set<String> CJK_LANGUAGES = new HashSet<String>();
+    private static final Set<String> CJK_LANGUAGES = new HashSet<>();
     static {
         CJK_LANGUAGES.add("ZH");
         CJK_LANGUAGES.add("JA");

@@ -82,7 +82,7 @@ public class EditorTextArea3 extends JEditorPane {
 
     protected final EditorController controller;
 
-    protected final List<PopupMenuConstructorInfo> popupConstructors = new ArrayList<PopupMenuConstructorInfo>();
+    protected final List<PopupMenuConstructorInfo> popupConstructors = new ArrayList<>();
 
     protected String currentWord;
 

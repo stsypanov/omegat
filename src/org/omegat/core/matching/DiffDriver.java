@@ -278,7 +278,7 @@ public class DiffDriver {
      */
     public static class Render {
 
-        public List<TextRun> formatting = new LinkedList<TextRun>();
+        public List<TextRun> formatting = new LinkedList<>();
         public String text;
 
         public void addRun(int start, int length, Type type) {

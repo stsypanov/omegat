@@ -141,7 +141,7 @@ public class LanguageToolWrapper implements IMarker, IProjectEventListener {
             return null;
         }
 
-        List<Mark> r = new ArrayList<Mark>();
+        List<Mark> r = new ArrayList<>();
         List<RuleMatch> matches;
         if (ltSource != null && bRules != null) {
             // LT knows about source and target languages both and has bitext rules

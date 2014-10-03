@@ -225,7 +225,7 @@ public class TagValidationFrame extends JFrame {
      */
     private String formatPlaceholders(String str, String color, ProtectedPart[] protectedParts,
             Map<String, TagError> errors) {
-        List<TextPart> text = new ArrayList<TextPart>();
+        List<TextPart> text = new ArrayList<>();
         text.add(new TextPart(str, false));
         while (true) {
             boolean updated = false;
@@ -363,7 +363,7 @@ public class TagValidationFrame extends JFrame {
             // Although NetBeans mentions that the HashSet can be replaced with java.util.EnumSet
             // Set<TagError> allErrors = EnumSet.copyOf(report.srcErrors.values());
             // creates a runtime exception in some cases, while the HashSet does not
-            Set<TagError> allErrors = new HashSet<TagError>(report.srcErrors.values());
+            Set<TagError> allErrors = new HashSet<>(report.srcErrors.values());
             allErrors.addAll(report.transErrors.values());
             for (TagError err : allErrors) {
                 output.append(colorize(ErrorReport.localizedTagError(err), err));
@@ -470,7 +470,7 @@ public class TagValidationFrame extends JFrame {
      * @return A list of fixed entries
      */
     private List<Integer> fixAllEntries() {
-        List<Integer> fixed = new ArrayList<Integer>();
+        List<Integer> fixed = new ArrayList<>();
         for (ErrorReport report : m_errorList) {
             if (!doFix(report) && report.ste.getDuplicate() != SourceTextEntry.DUPLICATE.NEXT) {
                 // Fixes will fail on duplicates of previously fixed segments. Ignore this.

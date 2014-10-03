@@ -135,7 +135,7 @@ class EntryListPane extends JTextPane {
     protected class DisplayMatches implements Runnable {
         protected final DefaultStyledDocument doc;
 
-        private final List<SearchMatch> matches = new ArrayList<SearchMatch>();
+        private final List<SearchMatch> matches = new ArrayList<>();
 
         public DisplayMatches(final List<SearchResultEntry> entries) {
             UIThreadsUtil.mustBeSwingThread();
@@ -294,8 +294,8 @@ class EntryListPane extends JTextPane {
     }
 
     private volatile Searcher m_searcher;
-    private final List<Integer> m_entryList = new ArrayList<Integer>();
-    private final List<Integer> m_offsetList = new ArrayList<Integer>();
+    private final List<Integer> m_entryList = new ArrayList<>();
+    private final List<Integer> m_offsetList = new ArrayList<>();
     private DisplayMatches currentlyDisplayedMatches;
     private int numberOfResults;
 }

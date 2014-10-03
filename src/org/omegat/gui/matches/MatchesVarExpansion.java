@@ -145,7 +145,7 @@ public class MatchesVarExpansion extends VarExpansion<NearString> {
     public static class Result {
         public String text = null; 
         public int sourcePos = -1;
-        public final Map<Integer, List<TextRun>> diffInfo = new HashMap<Integer, List<TextRun>>();
+        public final Map<Integer, List<TextRun>> diffInfo = new HashMap<>();
     }
     
     /** A simple interface for making anonymous functions that perform string replacements. */
@@ -156,7 +156,7 @@ public class MatchesVarExpansion extends VarExpansion<NearString> {
     // ------------------------------ non-static part -------------------
 
     /** A sorted map that ensures styled replacements are performed in the order of appearance. */
-    private Map<Integer, Replacer> styledComponents = new TreeMap<Integer, Replacer>();
+    private Map<Integer, Replacer> styledComponents = new TreeMap<>();
 
     public MatchesVarExpansion (String template) {
         super(template);

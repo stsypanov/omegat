@@ -133,8 +133,8 @@ public class CalcStandardStatistics extends LongProcessThread {
         StatCount remainingUnique = new StatCount();
 
         // find unique segments
-        Map<String, SourceTextEntry> uniqueSegment = new HashMap<String, SourceTextEntry>();
-        Set<String> translated = new HashSet<String>();
+        Map<String, SourceTextEntry> uniqueSegment = new HashMap<>();
+        Set<String> translated = new HashSet<>();
         for (SourceTextEntry ste : project.getAllEntries()) {
             String src = ste.getSrcText();
             for (ProtectedPart pp : ste.getProtectedParts()) {
@@ -148,8 +148,8 @@ public class CalcStandardStatistics extends LongProcessThread {
                 translated.add(src);
             }
         }
-        Set<String> filesUnique = new HashSet<String>();
-        Set<String> filesRemainingUnique = new HashSet<String>();
+        Set<String> filesUnique = new HashSet<>();
+        Set<String> filesRemainingUnique = new HashSet<>();
         for (Map.Entry<String, SourceTextEntry> en : uniqueSegment.entrySet()) {
             /* Number of words and chars calculated without all tags and protected parts. */
             StatCount count = new StatCount(en.getValue());
@@ -166,8 +166,8 @@ public class CalcStandardStatistics extends LongProcessThread {
         unique.addFiles(filesUnique.size());
         remainingUnique.addFiles(filesRemainingUnique.size());
 
-        List<FileData> counts = new ArrayList<FileData>();
-        Map<String, Boolean> firstSeenUniqueSegment = new HashMap<String, Boolean>();
+        List<FileData> counts = new ArrayList<>();
+        Map<String, Boolean> firstSeenUniqueSegment = new HashMap<>();
         for (FileInfo file : project.getProjectFiles()) {
             FileData numbers = new FileData();
             numbers.filename = file.filePath;

@@ -42,8 +42,8 @@ public class DefaultEntityFilter {
     private static HashMap<String, Character> m_escMap;
 
     static {
-        m_escMap = new HashMap<String, Character>(512);
-        m_charMap = new HashMap<Character, String>(512);
+        m_escMap = new HashMap<>(512);
+        m_charMap = new HashMap<>(512);
 
         addMapEntry('\'', "apos");
         addMapEntry('"', "quot");

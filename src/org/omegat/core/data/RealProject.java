@@ -129,7 +129,7 @@ public class RealProject implements IProject {
     private boolean m_modifiedFlag;
 
     /** List of all segments in project. */
-    protected List<SourceTextEntry> allProjectEntries = new ArrayList<SourceTextEntry>(4096);
+    protected List<SourceTextEntry> allProjectEntries = new ArrayList<>(4096);
 
     protected ImportFromAutoTMX importHandler;
 
@@ -155,12 +155,12 @@ public class RealProject implements IProject {
      * This map recreated each time when files changed. So, you can free use it without thinking about
      * synchronization.
      */
-    private Map<String, ExternalTMX> transMemories = new TreeMap<String, ExternalTMX>();
+    private Map<String, ExternalTMX> transMemories = new TreeMap<>();
     
     /**
      * Storage for all translation memories of translations to other languages.
      */
-    private Map<Language, ProjectTMX> otherTargetLangTMs = new TreeMap<Language, ProjectTMX>();
+    private Map<Language, ProjectTMX> otherTargetLangTMs = new TreeMap<>();
 
     protected ProjectTMX projectTMX;
 
@@ -170,11 +170,11 @@ public class RealProject implements IProject {
     private boolean loaded = false;
 
     // Sets of exist entries for check orphaned
-    private Set<String> existSource = new HashSet<String>();
-    private Set<EntryKey> existKeys = new HashSet<EntryKey>();
+    private Set<String> existSource = new HashSet<>();
+    private Set<EntryKey> existKeys = new HashSet<>();
 
     /** Segments count in project files. */
-    protected List<FileInfo> projectFilesList = new ArrayList<FileInfo>();
+    protected List<FileInfo> projectFilesList = new ArrayList<>();
 
     /** This instance returned if translation not exist. */
     private final TMXEntry EMPTY_TRANSLATION;
@@ -185,7 +185,7 @@ public class RealProject implements IProject {
      * A list of external processes. Allows previously-started, hung or long-running processes to be
      * forcibly terminated when compiling the project anew or when closing the project.
      */
-    private Stack<Process> processCache = new Stack<Process>();
+    private Stack<Process> processCache = new Stack<>();
 
     /**
      * Create new project instance. It required to call {@link #createProject() createProject} or
@@ -386,7 +386,7 @@ public class RealProject implements IProject {
             throws Exception {
         FilterMaster fm = Core.getFilterMaster();
         
-        List<String> srcFileList = new ArrayList<String>();
+        List<String> srcFileList = new ArrayList<>();
         File root = new File(m_config.getSourceRoot());
         StaticUtils.buildFileList(srcFileList, root, true);
 
@@ -540,7 +540,7 @@ public class RealProject implements IProject {
         }
 
         // build mirror directory of source tree
-        List<String> fileList = new ArrayList<String>(256);
+        List<String> fileList = new ArrayList<>(256);
         String srcRoot = m_config.getSourceRoot();
         String locRoot = m_config.getTargetRoot();
 
@@ -925,9 +925,9 @@ public class RealProject implements IProject {
                 } else {
                     again = true;
                     headGlossaryEntries = GlossaryReaderTSV.read(glossaryFile, true);
-                    List<GlossaryEntry> deltaAddedGlossaryLocal = new ArrayList<GlossaryEntry>(glossaryEntries);
+                    List<GlossaryEntry> deltaAddedGlossaryLocal = new ArrayList<>(glossaryEntries);
                     deltaAddedGlossaryLocal.removeAll(baseGlossaryEntries);
-                    List<GlossaryEntry> deltaRemovedGlossaryLocal = new ArrayList<GlossaryEntry>(baseGlossaryEntries);
+                    List<GlossaryEntry> deltaRemovedGlossaryLocal = new ArrayList<>(baseGlossaryEntries);
                     deltaRemovedGlossaryLocal.removeAll(glossaryEntries);
                     headGlossaryEntries.addAll(deltaAddedGlossaryLocal);
                     headGlossaryEntries.removeAll(deltaRemovedGlossaryLocal);
@@ -1062,7 +1062,7 @@ public class RealProject implements IProject {
         long st = System.currentTimeMillis();
         FilterMaster fm = Core.getFilterMaster();
 
-        List<String> srcFileList = new ArrayList<String>();
+        List<String> srcFileList = new ArrayList<>();
         File root = new File(m_config.getSourceRoot());
         StaticUtils.buildFileList(srcFileList, root, true);
         for (int i = 0; i < srcFileList.size(); i++) {
@@ -1115,7 +1115,7 @@ public class RealProject implements IProject {
      * {@inheritDoc}
      */
     protected void findNonUniqueSegments() {
-        Map<String, SourceTextEntry> exists = new HashMap<String, SourceTextEntry>(16384);
+        Map<String, SourceTextEntry> exists = new HashMap<>(16384);
 
         for (FileInfo fi : projectFilesList) {
             for (int i = 0; i < fi.entries.size(); i++) {
@@ -1157,7 +1157,7 @@ public class RealProject implements IProject {
     void importTranslationsFromSources() {
         // which default translations we added - allow to add alternatives
         // except the same translation
-        Map<String, String> allowToImport = new HashMap<String, String>();
+        Map<String, String> allowToImport = new HashMap<>();
         
         for (FileInfo fi : projectFilesList) {
             for (int i = 0; i < fi.entries.size(); i++) {
@@ -1223,7 +1223,7 @@ public class RealProject implements IProject {
                     return;
                 }
                 // create new translation memories map
-                Map<String, ExternalTMX> newTransMemories = new TreeMap<String, ExternalTMX>(transMemories);
+                Map<String, ExternalTMX> newTransMemories = new TreeMap<>(transMemories);
                 if (file.exists()) {
                     try {
                         ExternalTMX newTMX = new ExternalTMX(m_config, file,
@@ -1270,7 +1270,7 @@ public class RealProject implements IProject {
                 }
                 Language targetLanguage = new Language(file.getName().substring(0, file.getName().length()-4));
                 // create new translation memories map
-                Map<Language, ProjectTMX> newOtherTargetLangTMs = new TreeMap<Language, ProjectTMX>(otherTargetLangTMs);
+                Map<Language, ProjectTMX> newOtherTargetLangTMs = new TreeMap<>(otherTargetLangTMs);
                 if (file.exists()) {
                     try {
                         ProjectTMX newTMX = new ProjectTMX(m_config.getSourceLanguage(), targetLanguage,
@@ -1539,7 +1539,7 @@ public class RealProject implements IProject {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            List<String> result = new ArrayList<String>();
+            List<String> result = new ArrayList<>();
             String s;
             while ((s = rd.readLine()) != null) {
                 result.add(s);

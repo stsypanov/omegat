@@ -382,9 +382,9 @@ public class Preferences {
     /** Private constructor, because this file is singleton */
     static {
         m_loaded = false;
-        m_preferenceMap = new HashMap<String, Integer>(64);
-        m_nameList = new ArrayList<String>(32);
-        m_valList = new ArrayList<String>(32);
+        m_preferenceMap = new HashMap<>(64);
+        m_nameList = new ArrayList<>(32);
+        m_valList = new ArrayList<>(32);
         m_changed = false;
         doLoad();
     }

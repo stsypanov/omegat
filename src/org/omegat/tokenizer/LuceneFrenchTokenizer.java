@@ -43,7 +43,7 @@ public class LuceneFrenchTokenizer extends BaseTokenizer {
 
     @Override
     public Map<Version, String> getSupportedBehaviors() {
-        Map<Version, String> result = new LinkedHashMap<Version, String>();
+        Map<Version, String> result = new LinkedHashMap<>();
         result.putAll(super.getSupportedBehaviors());
         result.put(Version.LUCENE_36, result.get(Version.LUCENE_36) + " (UniNE)");
         result.put(Version.LUCENE_31, result.get(Version.LUCENE_31) + " (Snowball)");

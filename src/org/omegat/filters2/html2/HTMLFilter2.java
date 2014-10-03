@@ -156,7 +156,7 @@ public class HTMLFilter2 extends AbstractFilter {
 
         // prepare set of attributes that indicate not to translate a meta-tag
         String skipMetaString = options.getSkipMeta();
-        skipMetaAttributes = new HashMap<String, String>();
+        skipMetaAttributes = new HashMap<>();
         String[] skipMetaAttributesStringarray = skipMetaString.split(",");
         for (String aSkipMetaAttributesStringarray : skipMetaAttributesStringarray) {
             String keyvalue = aSkipMetaAttributesStringarray.trim().toUpperCase();
@@ -165,7 +165,7 @@ public class HTMLFilter2 extends AbstractFilter {
 
         // Prepare set of attributes that indicate not to translate a tag
         String ignoreTagString = options.getIgnoreTags();
-        ignoreTagsAttributes = new HashMap<String, String>();
+        ignoreTagsAttributes = new HashMap<>();
         String[] ignoreTagsAttributesStringarray = ignoreTagString.split(",");
         for (String anIgnoreTagsAttributesStringarray : ignoreTagsAttributesStringarray) {
             String keyvalue = anIgnoreTagsAttributesStringarray.trim().toUpperCase();

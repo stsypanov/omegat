@@ -56,7 +56,7 @@ public class PoOptionsDialog extends javax.swing.JDialog {
      */
     public PoOptionsDialog(Dialog parent, Map<String, String> options) {
         super(parent, true);
-        this.options = new TreeMap<String, String>(options);
+        this.options = new TreeMap<>(options);
         initComponents();
 
         String allowBlank = options.get(PoFilter.OPTION_ALLOW_BLANK);

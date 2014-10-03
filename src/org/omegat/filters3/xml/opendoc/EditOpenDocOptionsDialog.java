@@ -51,7 +51,7 @@ public class EditOpenDocOptionsDialog extends javax.swing.JDialog {
     /** Creates new form EditOpenDocOptionsDialog */
     public EditOpenDocOptionsDialog(java.awt.Dialog parent, Map<String, String> config) {
         super(parent, true);
-        this.options = new OpenDocOptions(new TreeMap<String, String>(config));
+        this.options = new OpenDocOptions(new TreeMap<>(config));
         initComponents();
 
         translateIndexesCB.setSelected(options.getTranslateIndexes());

@@ -80,15 +80,15 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     public TMXReader(String encoding, Language sourceLanguage, Language targetLanguage,
             boolean isSegmentingEnabled) {
         m_encoding = encoding;
-        m_srcList = new ArrayList<String>();
-        m_tarList = new ArrayList<String>();
-        m_tarChangeIdList = new ArrayList<String>(); // list of changeIds
+        m_srcList = new ArrayList<>();
+        m_tarList = new ArrayList<>();
+        m_tarChangeIdList = new ArrayList<>(); // list of changeIds
                                                      // (authors) for the target
                                                      // segments
-        m_tarChangeDateList = new ArrayList<Long>(); // //list of change dates
+        m_tarChangeDateList = new ArrayList<>(); // //list of change dates
                                                      // for the target segments
-        m_properties = new HashMap<String, String>();
-        m_variantLanguages = new HashSet<String>();
+        m_properties = new HashMap<>();
+        m_variantLanguages = new HashSet<>();
         this.sourceLang = sourceLanguage;
         this.targetLang = targetLanguage;
         this.sourceLanguage = sourceLanguage.getLanguage();
@@ -316,11 +316,11 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
 
             Tag tag = new Tag(end, name, num, alone);
 
-            List<Tag> unclosedTags = new ArrayList<Tag>();
-            List<Tag> unopenedTags = new ArrayList<Tag>();
+            List<Tag> unclosedTags = new ArrayList<>();
+            List<Tag> unopenedTags = new ArrayList<>();
 
-            Map<String, Tag> unclosedTagsNames = new HashMap<String, Tag>();
-            Map<String, Tag> unopenedTagsNames = new HashMap<String, Tag>();
+            Map<String, Tag> unclosedTagsNames = new HashMap<>();
+            Map<String, Tag> unopenedTagsNames = new HashMap<>();
             if (end) {
                 unopenedTags.add(tag);
                 unopenedTagsNames.put(name, tag);

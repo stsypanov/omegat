@@ -136,7 +136,7 @@ public class XHTMLDialect extends DefaultXMLDialect {
 
         // Prepare set of attributes that indicate not to translate a meta-tag
         String skipMetaString = options.getSkipMeta();
-        skipMetaAttributes = new HashMap<String, String>();
+        skipMetaAttributes = new HashMap<>();
         String[] skipMetaAttributesStringarray = skipMetaString.split(",");
         for (String aSkipMetaAttributesStringarray : skipMetaAttributesStringarray) {
             String keyvalue = aSkipMetaAttributesStringarray.trim().toUpperCase();
@@ -145,7 +145,7 @@ public class XHTMLDialect extends DefaultXMLDialect {
 
         // Prepare set of attributes that indicate that a tag should be intact
         String ignoreTagsString = options.getIgnoreTags();
-        ignoreTagsAttributes = new HashMap<String, String>();
+        ignoreTagsAttributes = new HashMap<>();
         String[] ignoreTagsAttributesStringarray = ignoreTagsString.split(",");
         for (String anIgnoreTagsAttributesStringarray : ignoreTagsAttributesStringarray) {
             String keyvalue = anIgnoreTagsAttributesStringarray.trim().toUpperCase();

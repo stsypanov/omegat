@@ -153,7 +153,7 @@ public class ResourceBundleFilter extends AbstractFilter {
         if (ascii == null)
             return null;
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < ascii.length(); i++) {
             char ch = ascii.charAt(i);
             if (ch == '\\' && i != ascii.length() - 1) {
@@ -204,7 +204,7 @@ public class ResourceBundleFilter extends AbstractFilter {
         }
         CharsetEncoder charsetEncoder = Charset.forName(targetEncoding).newEncoder();
         
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
@@ -246,7 +246,7 @@ public class ResourceBundleFilter extends AbstractFilter {
      * >#1606595</a>.
      */
     private String removeExtraSlashes(String string) {
-        StringBuffer result = new StringBuffer(string.length());
+        StringBuilder result = new StringBuilder(string.length());
         for (int i = 0; i < string.length(); i++) {
             char ch = string.charAt(i);
             if (ch == '\\') {
@@ -455,8 +455,8 @@ public class ResourceBundleFilter extends AbstractFilter {
 
     @Override
     protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<String, String>();
-        Map<String, String> translated = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<>();
+        Map<String, String> translated = new HashMap<>();
 
         align = source;
         processFile(sourceFile, new NullBufferedWriter(), fc);

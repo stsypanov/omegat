@@ -5,7 +5,7 @@
 
  Copyright (C) 2010 Alex Buloichik, Didier Briel
                2011-2012 Didier Briel
-               2014 Enrique Estévez Fernández
+               2014 Enrique Estï¿½vez Fernï¿½ndez
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -42,7 +42,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * 
  * Code modified from the file: PoOptionsDialog.java
  * 
- * @author Enrique Estévez (keko.gl@gmail.com)
+ * @author Enrique Estï¿½vez (keko.gl@gmail.com)
  */
 @SuppressWarnings("serial")
 public class MozillaDTDOptionsDialog extends javax.swing.JDialog {
@@ -58,7 +58,7 @@ public class MozillaDTDOptionsDialog extends javax.swing.JDialog {
      */
     public MozillaDTDOptionsDialog(Dialog parent, Map<String, String> options) {
         super(parent, true);
-        this.options = new TreeMap<String, String>(options);
+        this.options = new TreeMap<>(options);
         initComponents();
 
         String removeStringsUntranslated = options.get(MozillaDTDFilter.OPTION_REMOVE_STRINGS_UNTRANSLATED);

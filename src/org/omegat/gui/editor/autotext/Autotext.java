@@ -46,7 +46,7 @@ import org.omegat.util.StaticUtils;
  */
 public class Autotext {
     
-    private List<AutotextPair> list = new ArrayList<AutotextPair>();
+    private List<AutotextPair> list = new ArrayList<>();
     
     private String name;
     

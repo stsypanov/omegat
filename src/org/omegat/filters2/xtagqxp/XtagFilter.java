@@ -133,7 +133,7 @@ public class XtagFilter extends AbstractFilter {
     /**
      * Lists of Xtags in an entry
      */
-    private List<Xtag> listTags = new ArrayList<Xtag>();
+    private List<Xtag> listTags = new ArrayList<>();
 
     /**
      * Finds the Xtag corresponding to an OmegaT tag

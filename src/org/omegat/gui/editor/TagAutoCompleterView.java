@@ -60,7 +60,7 @@ public class TagAutoCompleterView extends AutoCompleterListView {
         }
 
         // Check for partial matches among missing tag groups.
-        List<String> matchGroups = new ArrayList<String>();
+        List<String> matchGroups = new ArrayList<>();
         for (String g : missingGroups) {
             if (g.startsWith(wordChunk)) matchGroups.add(g);
         }
@@ -74,7 +74,7 @@ public class TagAutoCompleterView extends AutoCompleterListView {
     }
 
     private static List<AutoCompleterItem> convertList(List<String> list, int replacementLength) {
-        List<AutoCompleterItem> result = new ArrayList<AutoCompleterItem>();
+        List<AutoCompleterItem> result = new ArrayList<>();
         for (String s : list) {
             int sep = s.indexOf(TagUtil.TAG_SEPARATOR_SENTINEL);
             String cleaned = s;

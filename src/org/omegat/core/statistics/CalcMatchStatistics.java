@@ -89,8 +89,8 @@ public class CalcMatchStatistics extends LongProcessThread {
     private int entriesToProcess;
 
     /** Already processed segments. Used for repetitions detect. */
-    private Set<String> alreadyProcessedInFile = new HashSet<String>();
-    private Set<String> alreadyProcessedInProject = new HashSet<String>();
+    private Set<String> alreadyProcessedInFile = new HashSet<>();
+    private Set<String> alreadyProcessedInProject = new HashSet<>();
 
     private ISimilarityCalculator distanceCalculator;
     private FindMatches finder;

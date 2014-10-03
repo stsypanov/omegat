@@ -5,7 +5,7 @@
 
  Copyright (C) 2010 Alex Buloichik, Didier Briel
                2011-2012 Didier Briel
-               2014 Enrique Estévez Fernández
+               2014 Enrique Estï¿½vez Fernï¿½ndez
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -64,7 +64,7 @@ import org.omegat.util.StringUtil;
  * Option to remove untranslated segments in the target files
  * Code adapted from the file: PoFilter.java
  *
- * @author Enrique Estévez (keko.gl@gmail.com)
+ * @author Enrique Estï¿½vez (keko.gl@gmail.com)
  */
 public class MozillaDTDFilter extends AbstractFilter {
 
@@ -178,8 +178,8 @@ public class MozillaDTDFilter extends AbstractFilter {
 
     @Override
     protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<String, String>();
-        Map<String, String> translated = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<>();
+        Map<String, String> translated = new HashMap<>();
 
         align = source;
         processFile(sourceFile, new NullBufferedWriter(), fc);

@@ -76,7 +76,7 @@ public abstract class AbstractMarker implements IMarker {
             return null;
         }
 
-        List<Mark> r = new ArrayList<Mark>();
+        List<Mark> r = new ArrayList<>();
         Matcher match;
         if (isActive || Core.getEditor().getSettings().isDisplaySegmentSources() || translationText == null) {// TODO
             initDrawers(true, isActive);

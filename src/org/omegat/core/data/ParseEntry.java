@@ -61,7 +61,7 @@ public abstract class ParseEntry implements IParseCallback {
     private final ProjectProperties m_config;
     
     /** Cached segments. */
-    private List<ParseEntryQueueItem> parseQueue = new ArrayList<ParseEntryQueueItem>();
+    private List<ParseEntryQueueItem> parseQueue = new ArrayList<>();
 
     public ParseEntry(final ProjectProperties m_config) {
         this.m_config = m_config;
@@ -161,8 +161,8 @@ public abstract class ParseEntry implements IParseCallback {
         }
 
         if (m_config.isSentenceSegmentingEnabled()) {
-            List<StringBuffer> spaces = new ArrayList<StringBuffer>();
-            List<Rule> brules = new ArrayList<Rule>();
+            List<StringBuffer> spaces = new ArrayList<>();
+            List<Rule> brules = new ArrayList<>();
             Language sourceLang = m_config.getSourceLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             if (segments.size() == 1) {

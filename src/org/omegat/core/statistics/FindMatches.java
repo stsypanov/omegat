@@ -97,7 +97,7 @@ public class FindMatches {
     private final int maxCount;
 
     /** Result list. */
-    private List<NearString> result = new ArrayList<NearString>(OConsts.MAX_NEAR_STRINGS + 1);
+    private List<NearString> result = new ArrayList<>(OConsts.MAX_NEAR_STRINGS + 1);
 
     private final boolean searchExactlyTheSame;
     private String originalText;
@@ -227,14 +227,14 @@ public class FindMatches {
         if (ALLOW_PARTIALY_MATCH && separateSegmentMatcher != null
                 && !project.getProjectProperties().isSentenceSegmentingEnabled()) {
             // split paragraph even when segmentation disabled, then find matches for every segment
-            List<StringBuffer> spaces = new ArrayList<StringBuffer>();
-            List<Rule> brules = new ArrayList<Rule>();
+            List<StringBuffer> spaces = new ArrayList<>();
+            List<Rule> brules = new ArrayList<>();
             Language sourceLang = project.getProjectProperties().getSourceLanguage();
             Language targetLang = project.getProjectProperties().getTargetLanguage();
             List<String> segments = Segmenter.segment(sourceLang, srcText, spaces, brules);
             if (segments.size() > 1) {
-                List<String> fsrc = new ArrayList<String>(segments.size());
-                List<String> ftrans = new ArrayList<String>(segments.size());
+                List<String> fsrc = new ArrayList<>(segments.size());
+                List<String> ftrans = new ArrayList<>(segments.size());
                 // multiple segments
                 for (String onesrc : segments) {
                     // find match for separate segment
@@ -447,9 +447,9 @@ public class FindMatches {
     /*
      * Methods for tokenize strings with caching.
      */
-    Map<String, Token[]> tokenizeStemCache = new HashMap<String, Token[]>();
-    Map<String, Token[]> tokenizeNoStemCache = new HashMap<String, Token[]>();
-    Map<String, Token[]> tokenizeAllCache = new HashMap<String, Token[]>();
+    Map<String, Token[]> tokenizeStemCache = new HashMap<>();
+    Map<String, Token[]> tokenizeNoStemCache = new HashMap<>();
+    Map<String, Token[]> tokenizeAllCache = new HashMap<>();
 
     public Token[] tokenizeStem(String str) {
         Token[] result = tokenizeStemCache.get(str);

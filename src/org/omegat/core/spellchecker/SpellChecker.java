@@ -62,15 +62,15 @@ public class SpellChecker implements ISpellChecker {
     private ISpellCheckerProvider checker;
 
     /** the list of ignored words */
-    private List<String> ignoreList = new ArrayList<String>();
+    private List<String> ignoreList = new ArrayList<>();
 
     /** the list of learned (valid) words */
-    private List<String> learnedList = new ArrayList<String>();
+    private List<String> learnedList = new ArrayList<>();
 
     /** Cache of correct words. */
-    private final Set<String> correctWordsCache = new HashSet<String>();
+    private final Set<String> correctWordsCache = new HashSet<>();
     /** Cache of incorrect words. */
-    private final Set<String> incorrectWordsCache = new HashSet<String>();
+    private final Set<String> incorrectWordsCache = new HashSet<>();
 
     /**
      * the file name with the ignored words
@@ -131,14 +131,14 @@ public class SpellChecker implements ISpellChecker {
             ignoreFileName = projectDir + OConsts.IGNORED_WORD_LIST_FILE_NAME;
 
             // Since we read from disk, we clean the list first
-            ignoreList = new ArrayList<String>();
+            ignoreList = new ArrayList<>();
             fillWordList(ignoreFileName, ignoreList);
 
             // now the correct words
             learnedFileName = projectDir + OConsts.LEARNED_WORD_LIST_FILE_NAME;
 
             // Since we read from disk, we clean the list first
-            learnedList = new ArrayList<String>();
+            learnedList = new ArrayList<>();
             fillWordList(learnedFileName, learnedList);
 
             checker = null;

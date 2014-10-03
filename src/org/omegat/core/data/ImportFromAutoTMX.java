@@ -43,14 +43,14 @@ import org.omegat.util.TMXProp;
 public class ImportFromAutoTMX {
     final RealProject project;
     /** Map of all segments in project by source text. Just for optimize some processes. */
-    Map<String, List<SourceTextEntry>> existEntries = new HashMap<String, List<SourceTextEntry>>();
+    Map<String, List<SourceTextEntry>> existEntries = new HashMap<>();
 
     public ImportFromAutoTMX(RealProject project, List<SourceTextEntry> allProjectEntries) {
         this.project = project;
         for (SourceTextEntry ste : allProjectEntries) {
             List<SourceTextEntry> list = existEntries.get(ste.getSrcText());
             if (list == null) {
-                list = new ArrayList<SourceTextEntry>();
+                list = new ArrayList<>();
                 existEntries.put(ste.getSrcText(), list);
             }
             list.add(ste);

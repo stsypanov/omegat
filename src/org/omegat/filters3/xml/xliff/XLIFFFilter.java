@@ -57,13 +57,13 @@ public class XLIFFFilter extends XMLFilter {
 
     private String resname;
     private boolean ignored;
-    private ArrayList<String> groupResname = new ArrayList<String>();
+    private ArrayList<String> groupResname = new ArrayList<>();
     private int groupLevel;
-    private ArrayList<String> notes = new ArrayList<String>();
+    private ArrayList<String> notes = new ArrayList<>();
     private StringBuilder text = new StringBuilder();
-    private ArrayList<String> entryText = new ArrayList<String>();
-    private ArrayList<List<ProtectedPart>> protectedParts = new ArrayList<List<ProtectedPart>>();
-    private HashSet<String> altIDCache = new HashSet<String>();
+    private ArrayList<String> entryText = new ArrayList<>();
+    private ArrayList<List<ProtectedPart>> protectedParts = new ArrayList<>();
+    private HashSet<String> altIDCache = new HashSet<>();
     
     private String id;
    /**

@@ -54,7 +54,7 @@ public class EditOpenXMLOptionsDialog extends javax.swing.JDialog {
     /** Creates new form EditOpenXMLOptionsDialog */
     public EditOpenXMLOptionsDialog(java.awt.Dialog parent, Map<String, String> config) {
         super(parent, true);
-        this.options = new OpenXMLOptions(new TreeMap<String, String>(config));
+        this.options = new OpenXMLOptions(new TreeMap<>(config));
         initComponents();
 
         translateHiddenTextCB.setSelected(options.getTranslateHiddenText());

@@ -78,7 +78,7 @@ public class GlossaryEntry {
     public String[] getLocTerms(boolean uniqueOnly) {
         if (!uniqueOnly || m_loc.length == 1) return m_loc;
         
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < m_loc.length; i++) {
             if (i > 0 && m_loc[i].equals(m_loc[i - 1])) continue;
             list.add(m_loc[i]);
@@ -190,8 +190,8 @@ public class GlossaryEntry {
 
     static class StyledString {
         public StringBuilder text = new StringBuilder();
-        public List<Integer> boldStarts = new ArrayList<Integer>();
-        public List<Integer> boldLengths = new ArrayList<Integer>();
+        public List<Integer> boldStarts = new ArrayList<>();
+        public List<Integer> boldLengths = new ArrayList<>();
 
         void markBoldStart() {
             boldStarts.add(text.length());

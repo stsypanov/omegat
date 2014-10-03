@@ -52,7 +52,7 @@ public class RecentProjects {
     
     static {
         mostRecentProjectSize = Preferences.getPreferenceDefault(Preferences.MOST_RECENT_PROJECTS_SIZE, 5);
-        recentProjects = new ArrayList<String>(mostRecentProjectSize);
+        recentProjects = new ArrayList<>(mostRecentProjectSize);
         for (int i = 0; i < mostRecentProjectSize; i++) {
             String project = Preferences.getPreferenceDefault(Preferences.MOST_RECENT_PROJECTS_PREFIX + i, null);
             if (project != null) {

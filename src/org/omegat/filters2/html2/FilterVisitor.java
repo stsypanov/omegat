@@ -411,7 +411,7 @@ public class FilterVisitor extends NodeVisitor {
         // detecting the first starting tag in 'befors'
         // that has its ending in the paragraph
         // all before this "first good" are simply written out
-        List<Node> all = new ArrayList<Node>();
+        List<Node> all = new ArrayList<>();
         all.addAll(befors);
         all.addAll(translatable);
         int firstgoodlimit = befors.size();
@@ -634,12 +634,12 @@ public class FilterVisitor extends NodeVisitor {
         text = false;
         recurse = true;
         // paragraph = new StringBuffer();
-        befors = new ArrayList<Node>();
-        translatable = new ArrayList<Node>();
-        afters = new ArrayList<Node>();
-        s_tags = new ArrayList<Tag>();
-        s_tag_numbers = new ArrayList<Integer>();
-        s_shortcuts = new ArrayList<String>();
+        befors = new ArrayList<>();
+        translatable = new ArrayList<>();
+        afters = new ArrayList<>();
+        s_tags = new ArrayList<>();
+        s_tag_numbers = new ArrayList<>();
+        s_shortcuts = new ArrayList<>();
         s_nshortcuts = 0;
     }
 

@@ -49,7 +49,7 @@ public class GlossaryReaderCSV {
     public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
         InputStreamReader reader = new InputStreamReader(new FileInputStream(file), OConsts.UTF8);
 
-        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
+        List<GlossaryEntry> result = new ArrayList<>();
         BufferedReader in = new BufferedReader(reader);
         try {
             // BOM (byte order mark) bugfix
@@ -84,7 +84,7 @@ public class GlossaryReaderCSV {
     }
 
     private static String[] parseLine(String line) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         StringBuilder w = new StringBuilder();
         boolean fopened = false; // field opened by "
         for (int i = 0; i < line.length(); i++) {

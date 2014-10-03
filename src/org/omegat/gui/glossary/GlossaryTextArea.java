@@ -172,7 +172,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         UIThreadsUtil.mustBeSwingThread();
 
         if (entries == null) {
-            nowEntries = new ArrayList<GlossaryEntry>();
+            nowEntries = new ArrayList<>();
             setText("");
             return;
         }

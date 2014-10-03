@@ -55,7 +55,7 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
 
     private static final String EXPLANATION = OStrings.getString("GUI_COMMENTSWINDOW_explanation");
 
-    private final List<ProviderStorage> providers = new ArrayList<ProviderStorage>();
+    private final List<ProviderStorage> providers = new ArrayList<>();
 
     /** Creates new Comments Text Area Pane */
     public CommentsTextArea(MainWindow mw) {
@@ -79,7 +79,7 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
 
         List<ProviderStorage> list;
         synchronized (providers) {
-            list = new ArrayList<ProviderStorage>(providers);
+            list = new ArrayList<>(providers);
         }
         StringBuilder text = new StringBuilder(1024);
         for (ProviderStorage ps : list) {

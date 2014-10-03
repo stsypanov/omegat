@@ -87,7 +87,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
     private BufferedWriter extWriter = null;
     
     /** Current path in XML. */
-    private final Stack<String> currentTagPath = new Stack<String>();
+    private final Stack<String> currentTagPath = new Stack<>();
 
     /**
      * Returns current writer we should write into. If we're in main file,
@@ -107,28 +107,28 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
     /** Current entry that collects normal text. */
     Entry entry;
     /** Stack of entries that collect out-of-turn text. */
-    Stack<Entry> outofturnEntries = new Stack<Entry>();
+    Stack<Entry> outofturnEntries = new Stack<>();
     /** Current entry that collects the text surrounded by intact tag. */
     Entry intacttagEntry = null;
     /** Keep the attributes of an intact tag. */
     org.omegat.filters3.Attributes intacttagAttributes = null;
     /** Keep the attributes of paragraph tags. */
-    Stack<org.omegat.filters3.Attributes> paragraphTagAttributes = new Stack<org.omegat.filters3.Attributes>();
+    Stack<org.omegat.filters3.Attributes> paragraphTagAttributes = new Stack<>();
     /** Keep the attributes of preformat tags. */
-    Stack<org.omegat.filters3.Attributes> preformatTagAttributes = new Stack<org.omegat.filters3.Attributes>();
+    Stack<org.omegat.filters3.Attributes> preformatTagAttributes = new Stack<>();
     /** Keep the attributes of xml tags. */
-    Stack<org.omegat.filters3.Attributes> xmlTagAttributes = new Stack<org.omegat.filters3.Attributes>();
+    Stack<org.omegat.filters3.Attributes> xmlTagAttributes = new Stack<>();
 
     /** Current entry that collects the text surrounded by intact tag. */
     String intacttagName = null;
     /** Names of possible paragraph tags. */
-    Stack<String> paragraphTagName = new Stack<String>();
+    Stack<String> paragraphTagName = new Stack<>();
     /** Names of possible preformat tags. */
-    Stack<String> preformatTagName = new Stack<String>();
+    Stack<String> preformatTagName = new Stack<>();
     /** Name of the current variable translatable tag */
-    Stack<String> translatableTagName = new Stack<String>();
+    Stack<String> translatableTagName = new Stack<>();
     /** Names of xml tags. */
-    Stack<String> xmlTagName = new Stack<String>();
+    Stack<String> xmlTagName = new Stack<>();
     /** Status of the xml:space="preserve" flag */
     private boolean spacePreserve = false;
 
@@ -175,13 +175,13 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
      * External entities declared in source file. Each entry is of type
      * {@link Entity}.
      */
-    private List<Entity> externalEntities = new ArrayList<Entity>();
+    private List<Entity> externalEntities = new ArrayList<>();
 
     /**
      * Internal entities declared in source file. A {@link Map} from
      * {@link String}/entity name/ to {@link Entity}.
      */
-    private Map<String, Entity> internalEntities = new HashMap<String, Entity>();
+    private Map<String, Entity> internalEntities = new HashMap<>();
     /** Internal entity just started. */
     private Entity internalEntityStarted = null;
 
@@ -203,7 +203,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
      * External files this handler has processed, because they were included
      * into main file. Each entry is of type {@link File}.
      */
-    private List<File> processedFiles = new ArrayList<File>();
+    private List<File> processedFiles = new ArrayList<>();
 
     /**
      * Returns external files this handler has processed, because they were
@@ -587,7 +587,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
         if (currEntry().size() == 0)
             return;
 
-        List<ProtectedPart> shortcutDetails = new ArrayList<ProtectedPart>();
+        List<ProtectedPart> shortcutDetails = new ArrayList<>();
         boolean tagsAggregation = isTagsAggregationEnabled();
         String src = currEntry().sourceToShortcut(tagsAggregation, dialect, shortcutDetails);
         Element lead = currEntry().get(0);

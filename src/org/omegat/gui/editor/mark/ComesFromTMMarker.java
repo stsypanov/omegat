@@ -78,7 +78,7 @@ public class ComesFromTMMarker implements IMarker {
         }
         Mark m = new Mark(Mark.ENTRY_PART.TRANSLATION, 0, translationText.length());
         m.painter = PAINTER;
-        List<Mark> marks = new ArrayList<Mark>(1);
+        List<Mark> marks = new ArrayList<>(1);
         marks.add(m);
         return marks;
     }

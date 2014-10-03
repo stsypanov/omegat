@@ -44,8 +44,8 @@ import org.omegat.util.OStrings;
  */
 public class ErrorReport {
 
-    final public Map<String, TagError> srcErrors = new HashMap<String, TagError>();
-    final public Map<String, TagError> transErrors = new HashMap<String, TagError>();
+    final public Map<String, TagError> srcErrors = new HashMap<>();
+    final public Map<String, TagError> transErrors = new HashMap<>();
 
     final public SourceTextEntry ste;
     final public String source;
@@ -70,7 +70,7 @@ public class ErrorReport {
      * @return A map between errors and tags
      */
     public Map<TagError, List<String>> inverseReport() {
-        Map<TagError, List<String>> result = new HashMap<TagError, List<String>>();
+        Map<TagError, List<String>> result = new HashMap<>();
         fillInverseReport(srcErrors, result);
         fillInverseReport(transErrors, result);
         return result;
@@ -80,7 +80,7 @@ public class ErrorReport {
         for (Entry<String, TagError> e : input.entrySet()) {
             List<String> existing = collector.get(e.getValue());
             if (existing == null) {
-                existing = new ArrayList<String>();
+                existing = new ArrayList<>();
                 collector.put(e.getValue(), existing);
             }
             existing.add(e.getKey());

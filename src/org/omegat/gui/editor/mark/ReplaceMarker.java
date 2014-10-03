@@ -62,7 +62,7 @@ public class ReplaceMarker implements IMarker {
             return Collections.emptyList();
         }
 
-        List<Mark> r = new ArrayList<Mark>(matches.size());
+        List<Mark> r = new ArrayList<>(matches.size());
         for (SearchMatch s : matches) {
             Mark m = new Mark(Mark.ENTRY_PART.TRANSLATION, s.getStart(), s.getEnd());
             m.painter = PAINTER;

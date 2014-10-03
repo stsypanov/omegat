@@ -57,7 +57,7 @@ public class DefaultTokenizer implements ITokenizer {
      * of tokens for every string, memory is saved. Token lists are not saved
      * when all tokens are requested. Again to save memory.
      */
-    private static Map<String, Token[]> tokenCache = new HashMap<String, Token[]>(5000);
+    private static Map<String, Token[]> tokenCache = new HashMap<>(5000);
 
     private static final Token[] EMPTY_TOKENS_LIST = new Token[0];
 
@@ -135,7 +135,7 @@ public class DefaultTokenizer implements ITokenizer {
         }
 
         // create a new token list
-        List<Token> tokens = new ArrayList<Token>(64);
+        List<Token> tokens = new ArrayList<>(64);
 
         // get a word breaker
         String str = strOrig.toLowerCase(); // HP: possible error, this makes

@@ -96,7 +96,7 @@ public class BrowseTaasCollectionsController {
 
                     CollectionsTable model = new CollectionsTable(list, sourceLang, targetLang);
                     dialog.tableCollections.setModel(model);
-                    TableRowSorter<CollectionsTable> sorter = new TableRowSorter<CollectionsTable>(model);
+                    TableRowSorter<CollectionsTable> sorter = new TableRowSorter<>(model);
                     dialog.tableCollections.setRowSorter(sorter);
                     sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
                     dialog.tableCollections.setColumnModel(createColumnModel());

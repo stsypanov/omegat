@@ -101,7 +101,7 @@ public class MapRule implements Serializable {
         MapRule result = new MapRule();
         result.languageCode = languageCode;
         result.pattern = pattern;
-        result.rules = new ArrayList<Rule>(rules.size());
+        result.rules = new ArrayList<>(rules.size());
         for (Rule rule : rules) {
             result.rules.add(rule.clone());
         }

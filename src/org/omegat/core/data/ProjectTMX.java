@@ -82,8 +82,8 @@ public class ProjectTMX {
 
     public ProjectTMX(Language sourceLanguage, Language targetLanguage, boolean isSentenceSegmentingEnabled, File file, CheckOrphanedCallback callback) throws Exception {
         this.checkOrphanedCallback = callback;
-        alternatives = new HashMap<EntryKey, TMXEntry>();
-        defaults = new HashMap<String, TMXEntry>();
+        alternatives = new HashMap<>();
+        defaults = new HashMap<>();
 
         if (!file.exists()) {
             // file not exist - new project
@@ -105,8 +105,8 @@ public class ProjectTMX {
      * Constructor for TMX delta.
      */
     public ProjectTMX() {
-        alternatives = new HashMap<EntryKey, TMXEntry>();
-        defaults = new HashMap<String, TMXEntry>();
+        alternatives = new HashMap<>();
+        defaults = new HashMap<>();
         checkOrphanedCallback = null;
     }
 
@@ -160,8 +160,8 @@ public class ProjectTMX {
         TMXWriter2 wr = new TMXWriter2(outFile, props.getSourceLanguage(), props.getTargetLanguage(),
                 props.isSentenceSegmentingEnabled(), levelTwo, forceValidTMX);
         try {
-            Map<String, TMXEntry> tempDefaults = new TreeMap<String, TMXEntry>();
-            Map<EntryKey, TMXEntry> tempAlternatives = new TreeMap<EntryKey, TMXEntry>();
+            Map<String, TMXEntry> tempDefaults = new TreeMap<>();
+            Map<EntryKey, TMXEntry> tempAlternatives = new TreeMap<>();
 
             synchronized (this) {
                 if (useOrphaned) {
@@ -183,9 +183,9 @@ public class ProjectTMX {
                 }
             }
 
-            List<String> p=new ArrayList<String>();
+            List<String> p=new ArrayList<>();
             wr.writeComment(" Default translations ");
-            for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(tempDefaults).entrySet()) {
+            for (Map.Entry<String, TMXEntry> en : new TreeMap<>(tempDefaults).entrySet()) {
                 p.clear();
                 if (Preferences.isPreferenceDefault(Preferences.SAVE_AUTO_STATUS, false)) {
                     if (en.getValue().linked == TMXEntry.ExternalLinked.xAUTO) {
@@ -197,7 +197,7 @@ public class ProjectTMX {
             }
 
             wr.writeComment(" Alternative translations ");
-            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<EntryKey, TMXEntry>(tempAlternatives)
+            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<>(tempAlternatives)
                     .entrySet()) {
                 EntryKey k = en.getKey();
                 p.clear();
@@ -306,8 +306,8 @@ public class ProjectTMX {
                 translation = tuvTarget.text;
             }
 
-            List<String> sources = new ArrayList<String>();
-            List<String> targets = new ArrayList<String>();
+            List<String> sources = new ArrayList<>();
+            List<String> targets = new ArrayList<>();
             Segmenter.segmentEntries(sentenceSegmentingEnabled && isParagraphSegtype, sourceLang,
                     tuvSource.text, targetLang, translation, sources, targets);
 

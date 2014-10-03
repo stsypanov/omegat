@@ -53,7 +53,7 @@ public class AutotextAutoCompleterView extends AutoCompleterListView {
     @Override
     public List<AutoCompleterItem> computeListData(String prevText) {
         
-        List<AutoCompleterItem> result = new ArrayList<AutoCompleterItem>();
+        List<AutoCompleterItem> result = new ArrayList<>();
         for (AutotextPair s : Core.getAutoText().getList()) {
             if (prevText.endsWith(s.source)) {
                 result.add(new AutoCompleterItem(s.target,

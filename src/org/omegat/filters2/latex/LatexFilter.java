@@ -137,11 +137,11 @@ public class LatexFilter extends AbstractFilter {
      * @throws java.io.IOException
      */
     private void processLatexFile(BufferedReader in, Writer out) throws IOException {
-        StringBuffer par = new StringBuffer();
+        StringBuilder par = new StringBuilder();
         String s;
-        StringBuffer comment = new StringBuffer();
+        StringBuilder comment = new StringBuilder();
 
-        LinkedList<String> commands = new LinkedList<String>();
+        LinkedList<String> commands = new LinkedList<>();
 
         /**
          * Possible states: N: beginning of a new line M: middle S: skipping
@@ -267,9 +267,9 @@ public class LatexFilter extends AbstractFilter {
         return par;
     }
 
-    private LinkedList<String> oneArgNoText = new LinkedList<String>();
-    private LinkedList<String> oneArgInlineText = new LinkedList<String>();
-    private LinkedList<String> oneArgParText = new LinkedList<String>();
+    private LinkedList<String> oneArgNoText = new LinkedList<>();
+    private LinkedList<String> oneArgInlineText = new LinkedList<>();
+    private LinkedList<String> oneArgParText = new LinkedList<>();
 
     private void init() {
         oneArgNoText.add("\\begin");
@@ -451,7 +451,7 @@ public class LatexFilter extends AbstractFilter {
     }
 
     private String processParagraph(LinkedList<String> commands, String par) {
-        LinkedList<String[]> substituted = new LinkedList<String[]>();
+        LinkedList<String[]> substituted = new LinkedList<>();
 
         par = substituteUnicode(par);
 

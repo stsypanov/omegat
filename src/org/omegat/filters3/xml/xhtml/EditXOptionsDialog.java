@@ -58,7 +58,7 @@ public class EditXOptionsDialog extends javax.swing.JDialog {
     /** Creates new form EditOptionsDialog */
     public EditXOptionsDialog(java.awt.Dialog parent, Map<String, String> config) {
         super(parent, true);
-        this.options = new XHTMLOptions(new TreeMap<String, String>(config));
+        this.options = new XHTMLOptions(new TreeMap<>(config));
         initComponents();
 
         translateHrefCB.setSelected(options.getTranslateHref());

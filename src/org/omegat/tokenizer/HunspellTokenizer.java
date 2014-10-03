@@ -125,8 +125,8 @@ public class HunspellTokenizer extends BaseTokenizer {
     }
     
     private static void populateInstalledDicts() {
-        AFFIX_FILES = new HashMap<Language, File>();
-        DICTIONARY_FILES = new HashMap<Language, File>();
+        AFFIX_FILES = new HashMap<>();
+        DICTIONARY_FILES = new HashMap<>();
         
         String dictionaryDirPath = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY);
         if (dictionaryDirPath.isEmpty()) {
@@ -154,7 +154,7 @@ public class HunspellTokenizer extends BaseTokenizer {
     }
     
     private static String[] langsToStrings(Set<Language> langs) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (Language lang : langs) {
             result.add(lang.getLanguage().toLowerCase());
             result.add(lang.getLanguageCode().toLowerCase());

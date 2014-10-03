@@ -109,7 +109,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
         // Plain Scripts
     	// Only display files with an extension supported by the engines 
     	// currently installed.
-        ArrayList<ScriptItem> scriptsList = new ArrayList<ScriptItem>();
+        ArrayList<ScriptItem> scriptsList = new ArrayList<>();
 		// Replace the script filename by its description, if available
         for (File script : m_scriptDir.listFiles(m_filter))
         {
@@ -141,7 +141,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
         m_entryEventListener = new IEntryEventListener() {
 			@Override
 			public void onNewFile(String activeFileName) {
-				HashMap<String, Object> binding = new HashMap<String, Object>();
+				HashMap<String, Object> binding = new HashMap<>();
 				binding.put("activeFileName", activeFileName);
 				for (ScriptItem si : m_eventsScript.get(EventType.NEW_FILE))
 				{
@@ -151,7 +151,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 
 			@Override
 			public void onEntryActivated(SourceTextEntry newEntry) {
-				HashMap<String, Object> binding = new HashMap<String, Object>();
+				HashMap<String, Object> binding = new HashMap<>();
 				binding.put("newEntry", newEntry);
 
 				for (ScriptItem si : m_eventsScript.get(EventType.ENTRY_ACTIVATED))
@@ -175,7 +175,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 			
 			@Override
 			public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-				HashMap<String, Object> binding = new HashMap<String, Object>();
+				HashMap<String, Object> binding = new HashMap<>();
 				binding.put("eventType", eventType);
 
 				for (ScriptItem si : m_eventsScript.get(EventType.PROJECT_CHANGED)) {
@@ -228,7 +228,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 		m_editorEventListener = new IEditorEventListener() {
 			@Override
 			public void onNewWord(String newWord) {
-				HashMap<String, Object> binding = new HashMap<String, Object>();
+				HashMap<String, Object> binding = new HashMap<>();
 				binding.put("newWord", newWord);
 				
 				for (ScriptItem si : m_eventsScript.get(EventType.NEW_WORD)) {
@@ -296,5 +296,5 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 	private IEditorEventListener m_editorEventListener;
 	
 	// Map holding the script fired for the different event listeners.
-	private HashMap<EventType, ArrayList<ScriptItem>> m_eventsScript = new HashMap<EventType, ArrayList<ScriptItem>>();
+	private HashMap<EventType, ArrayList<ScriptItem>> m_eventsScript = new HashMap<>();
 }

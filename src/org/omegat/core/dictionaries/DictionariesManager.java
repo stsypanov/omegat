@@ -54,11 +54,11 @@ import org.omegat.util.OConsts;
  */
 public class DictionariesManager implements DirectoryMonitor.Callback {
     protected DirectoryMonitor monitor;
-    protected final Map<String, DictionaryInfo> infos = new TreeMap<String, DictionaryInfo>();
+    protected final Map<String, DictionaryInfo> infos = new TreeMap<>();
     private final DictionariesTextArea pane;
     protected static String DICTIONARY_SUBDIR = "dictionary";
 
-    protected final Set<String> ignoreWords = new TreeSet<String>();
+    protected final Set<String> ignoreWords = new TreeSet<>();
 
     public DictionariesManager(final DictionariesTextArea pane) {
         this.pane = pane;
@@ -173,9 +173,9 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     public List<DictionaryEntry> findWords(Set<String> words) {
         List<DictionaryInfo> dicts;
         synchronized (this) {
-            dicts = new ArrayList<DictionaryInfo>(infos.values());
+            dicts = new ArrayList<>(infos.values());
         }
-        List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
+        List<DictionaryEntry> result = new ArrayList<>();
         for (String word : words) {
             for (DictionaryInfo di : dicts) {
                 try {

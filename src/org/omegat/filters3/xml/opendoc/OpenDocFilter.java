@@ -54,7 +54,7 @@ import org.omegat.util.OStrings;
  * @author Maxym Mykhalchuk
  */
 public class OpenDocFilter extends AbstractFilter {
-    private static final Set<String> TRANSLATABLE = new HashSet<String>(Arrays.asList(new String[] {
+    private static final Set<String> TRANSLATABLE = new HashSet<>(Arrays.asList(new String[] {
             "content.xml", "styles.xml", "meta.xml", }));
 
     protected boolean requirePrevNextFields() {

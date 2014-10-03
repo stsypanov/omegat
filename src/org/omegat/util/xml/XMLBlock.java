@@ -64,7 +64,7 @@ public class XMLBlock {
 
     private void setAttribute(XMLAttribute attr) {
         if (m_attrList == null)
-            m_attrList = new ArrayList<XMLAttribute>(8);
+            m_attrList = new ArrayList<>(8);
 
         // assume that this attribute doesn't exist already
         m_attrList.add(attr);

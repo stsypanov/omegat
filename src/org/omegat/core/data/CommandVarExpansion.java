@@ -95,7 +95,7 @@ public class CommandVarExpansion extends VarExpansion<ProjectProperties> {
     }
     
     static {
-        ArrayList<String> vars = new ArrayList<String>();
+        ArrayList<String> vars = new ArrayList<>();
         vars.add(PROJECT_NAME);
         vars.add(PROJECT_ROOT);
         vars.add(SOURCE_ROOT);

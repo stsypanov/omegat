@@ -102,9 +102,9 @@ public class GlossaryReaderTBX {
         StringBuilder note = new StringBuilder();
         StringBuilder descTerm = new StringBuilder();
         StringBuilder descTig = new StringBuilder();
-        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
-        List<String> sTerms = new ArrayList<String>();
-        List<String> tTerms = new ArrayList<String>();
+        List<GlossaryEntry> result = new ArrayList<>();
+        List<String> sTerms = new ArrayList<>();
+        List<String> tTerms = new ArrayList<>();
         for (TermEntry te : tbx.getText().getBody().getTermEntry()) {
             note.setLength(0);
             descTerm.setLength(0);

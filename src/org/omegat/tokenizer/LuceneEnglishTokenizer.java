@@ -42,7 +42,7 @@ import org.omegat.core.Core;
  */
 @Tokenizer(languages = { "en" }, isDefault = true)
 public class LuceneEnglishTokenizer extends BaseTokenizer {
-    public static final Set<String> STOP_WORDS = new HashSet<String>();
+    public static final Set<String> STOP_WORDS = new HashSet<>();
 
     static {
         // Load stopwords

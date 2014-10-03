@@ -63,7 +63,7 @@ public class ProtectedPartsMarker implements IMarker {
             painter = PAINTERrtl;
         }
 
-        List<Mark> r = new ArrayList<Mark>();
+        List<Mark> r = new ArrayList<>();
 
         // find protected parts
         for (ProtectedPart pp : ste.getProtectedParts()) {

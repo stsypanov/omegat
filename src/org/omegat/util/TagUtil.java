@@ -45,7 +45,7 @@ public class TagUtil {
         
     public static List<String> getAllTagsInSource() {
         
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         
         // Add tags.
         SourceTextEntry ste = Core.getEditor().getCurrentEntry();
@@ -56,7 +56,7 @@ public class TagUtil {
     }
 
     public static List<String> getAllTagsMissingFromTarget() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         
         String target = Core.getEditor().getCurrentTranslation();
         
@@ -70,7 +70,7 @@ public class TagUtil {
     
     public static List<String> getGroupedMissingTagsFromTarget() {
         String sourceText = Core.getEditor().getCurrentEntry().getSrcText();
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         
         int index = -1;
         StringBuilder group = null;

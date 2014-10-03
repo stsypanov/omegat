@@ -79,7 +79,7 @@ public class WordIterator extends BreakIterator {
         return breaker.current();
     }
 
-    LinkedList<Integer> nextItems = new LinkedList<Integer>();
+    LinkedList<Integer> nextItems = new LinkedList<>();
 
     /**
      * Return the boundary of the word following the current boundary.

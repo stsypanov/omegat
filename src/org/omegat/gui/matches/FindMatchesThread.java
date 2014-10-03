@@ -71,7 +71,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
     protected List<NearString> search() throws Exception {
         if (!project.isProjectLoaded()) {
             // project is closed
-            return new ArrayList<NearString>();
+            return new ArrayList<>();
         }
 
         if (project.getSourceTokenizer() == null) {

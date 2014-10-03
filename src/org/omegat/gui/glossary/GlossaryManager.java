@@ -57,7 +57,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
     protected DirectoryMonitor monitor;
 
     private final GlossaryTextArea pane;
-    private final Map<String, List<GlossaryEntry>> glossaries = new TreeMap<String, List<GlossaryEntry>>();
+    private final Map<String, List<GlossaryEntry>> glossaries = new TreeMap<>();
 
     protected File priorityGlossary;
     protected IGlossary[] externalGlossaries;
@@ -65,7 +65,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
     public GlossaryManager(final GlossaryTextArea pane) {
         this.pane = pane;
 
-        List<IGlossary> gl = new ArrayList<IGlossary>();
+        List<IGlossary> gl = new ArrayList<>();
         for (Class<?> glc : PluginUtils.getGlossaryClasses()) {
             try {
                 gl.add((IGlossary) glc.newInstance());
@@ -77,7 +77,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
     }
 
     public void addGlossaryProvider(IGlossary provider) {
-        List<IGlossary> providers = new ArrayList<IGlossary>(Arrays.asList(externalGlossaries));
+        List<IGlossary> providers = new ArrayList<>(Arrays.asList(externalGlossaries));
         providers.add(provider);
         externalGlossaries = providers.toArray(new IGlossary[providers.size()]);
     }

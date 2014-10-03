@@ -48,11 +48,11 @@ import org.omegat.util.Log;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class CoreEvents {
-    private static final List<IProjectEventListener> projectEventListeners = new CopyOnWriteArrayList<IProjectEventListener>();
-    private static final List<IApplicationEventListener> applicationEventListeners = new CopyOnWriteArrayList<IApplicationEventListener>();
-    private static final List<IEntryEventListener> entryEventListeners = new CopyOnWriteArrayList<IEntryEventListener>();
-    private static final List<IFontChangedEventListener> fontChangedEventListeners = new CopyOnWriteArrayList<IFontChangedEventListener>();
-    private static final List<IEditorEventListener> editorEventListeners = new CopyOnWriteArrayList<IEditorEventListener>();
+    private static final List<IProjectEventListener> projectEventListeners = new CopyOnWriteArrayList<>();
+    private static final List<IApplicationEventListener> applicationEventListeners = new CopyOnWriteArrayList<>();
+    private static final List<IEntryEventListener> entryEventListeners = new CopyOnWriteArrayList<>();
+    private static final List<IFontChangedEventListener> fontChangedEventListeners = new CopyOnWriteArrayList<>();
+    private static final List<IEditorEventListener> editorEventListeners = new CopyOnWriteArrayList<>();
 
     /** Register listener. */
     public static void registerProjectChangeListener(final IProjectEventListener listener) {

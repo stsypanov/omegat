@@ -40,9 +40,9 @@ import org.omegat.filters3.Tag;
  */
 public class InlineTagHandler {
     /** map of 'i' attributes to tag numbers */
-    Map<String, Integer> pairTags = new TreeMap<String, Integer>();
-    Map<String, ArrayDeque<Integer>> pairedOtherTags = new TreeMap<String, ArrayDeque<Integer>>();
-    Map<String, Character> shortcutLetters = new TreeMap<String, Character>();
+    Map<String, Integer> pairTags = new TreeMap<>();
+    Map<String, ArrayDeque<Integer>> pairedOtherTags = new TreeMap<>();
+    Map<String, Character> shortcutLetters = new TreeMap<>();
     String currentI;
     String currentPos;
     int tagIndex;
@@ -189,7 +189,7 @@ public class InlineTagHandler {
     private void cacheTagIndex(String tagName, int result) {
         ArrayDeque<Integer> cache = pairedOtherTags.get(tagName);
         if (cache == null) {
-            cache = new ArrayDeque<Integer>();
+            cache = new ArrayDeque<>();
             pairedOtherTags.put(tagName, cache);
         }
         cache.addFirst(result);

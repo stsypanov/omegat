@@ -149,7 +149,7 @@ public class ScriptingWindow extends JFrame {
     }
 
     private List<String> getAvailableScriptExtensions() {
-        ArrayList<String> extensions = new ArrayList<String>();
+        ArrayList<String> extensions = new ArrayList<>();
         for (ScriptEngineFactory engine : manager.getEngineFactories()) {
             for (String ext : engine.getExtensions()) {
                 extensions.add(ext);

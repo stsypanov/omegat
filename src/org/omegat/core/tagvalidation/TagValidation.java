@@ -50,8 +50,8 @@ public class TagValidation {
 
         Pattern pattern = PatternConsts.SIMPLE_JAVA_MESSAGEFORMAT_PATTERN_VARS;
 
-        List<String> srcTags = new ArrayList<String>();
-        List<String> locTags = new ArrayList<String>();
+        List<String> srcTags = new ArrayList<>();
+        List<String> locTags = new ArrayList<>();
         Matcher javaMessageFormatMatcher = pattern.matcher(report.source);
         while (javaMessageFormatMatcher.find()) {
             srcTags.add(javaMessageFormatMatcher.group(0));
@@ -93,7 +93,7 @@ public class TagValidation {
 
     public static Map<String, String> extractPrintfVars(Pattern printfPattern, String translation) {
         Matcher printfMatcher = printfPattern.matcher(translation);
-        Map<String, String> nameMapping = new HashMap<String, String>();
+        Map<String, String> nameMapping = new HashMap<>();
         int index = 1;
         while (printfMatcher.find()) {
             String printfVariable = printfMatcher.group(0);
@@ -127,8 +127,8 @@ public class TagValidation {
     }
 
     public static void inspectOmegaTTags(SourceTextEntry ste, ErrorReport report) {
-        List<String> srcTags = new ArrayList<String>();
-        List<String> locTags = new ArrayList<String>();
+        List<String> srcTags = new ArrayList<>();
+        List<String> locTags = new ArrayList<>();
         // extract tags from src and loc string
         StaticUtils.buildTagList(report.source, ste.getProtectedParts(), srcTags);
         StaticUtils.buildTagList(report.translation, ste.getProtectedParts(), locTags);
@@ -152,8 +152,8 @@ public class TagValidation {
         if (customTagPattern == null) {
             return;
         }
-        List<String> srcTags = new ArrayList<String>();
-        List<String> locTags = new ArrayList<String>();
+        List<String> srcTags = new ArrayList<>();
+        List<String> locTags = new ArrayList<>();
         
         Matcher customTagPatternMatcher = customTagPattern.matcher(report.source);
         while (customTagPatternMatcher.find()) {
@@ -199,9 +199,9 @@ public class TagValidation {
         // If we're doing strict validation, pre-fill the report with warnings
         // about out-of-order tags.
         if (!looseOrdering) {
-            List<String> commonTagsSrc = new ArrayList<String>(srcTags);
+            List<String> commonTagsSrc = new ArrayList<>(srcTags);
             commonTagsSrc.retainAll(locTags);
-            List<String> commonTagsLoc = new ArrayList<String>(locTags);
+            List<String> commonTagsLoc = new ArrayList<>(locTags);
             commonTagsLoc.retainAll(srcTags);
 
             for (int i = 0; i < commonTagsSrc.size(); i++) {
@@ -223,8 +223,8 @@ public class TagValidation {
         }
 
         // Check translation tags.
-        Stack<TagInfo> tagStack = new Stack<TagInfo>();
-        HashSet<String> cache = new HashSet<String>();
+        Stack<TagInfo> tagStack = new Stack<>();
+        HashSet<String> cache = new HashSet<>();
         for (String tag : locTags) {
             // Make sure tag exists in source.
             if (!srcTags.contains(tag)) {

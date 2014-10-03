@@ -81,7 +81,7 @@ public class DictionaryManager {
      * returns a list of full names of dictionaries from a dictionary code list
      */
     public List<String> getDictionaryNameList(List<String> aList) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         for (String dic : aList) {
             String parts[] = dic.split("_");
@@ -107,7 +107,7 @@ public class DictionaryManager {
      * returns a list of available dictionaries in the xx_YY form
      */
     public List<String> getLocalDictionaryCodeList() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         String[] affixFiles;
         String[] dictionaryFiles;
@@ -191,7 +191,7 @@ public class DictionaryManager {
 
         List<String> remoteDicList = getRemoteDictionaryCodeList();
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         // compare the two lists
         for (String dicCode : remoteDicList) {
@@ -206,7 +206,7 @@ public class DictionaryManager {
      * downloads the list of available dictionaries from the net
      */
     private List<String> getRemoteDictionaryCodeList() throws IOException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         // download the file
         String htmlfile = StaticUtils.downloadFileToString
@@ -254,7 +254,7 @@ public class DictionaryManager {
             langCode = langCode.substring(0, pos);
         }
 
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = new ArrayList<>();
 
         filenames.add(langCode + OConsts.SC_AFFIX_EXTENSION);
         filenames.add(langCode + OConsts.SC_DICTIONARY_EXTENSION);

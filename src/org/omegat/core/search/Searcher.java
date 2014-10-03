@@ -150,19 +150,19 @@ public class Searcher {
         String text = expression.text;
         String author = expression.author;
 
-        m_searchResults = new ArrayList<SearchResultEntry>();
+        m_searchResults = new ArrayList<>();
         m_numFinds = 0;
         // ensures that results will be preprocessed only one time
         m_preprocessResults = true;
 
         m_entryMap = null; // HP
 
-        m_entryMap = new HashMap<String, Integer>(); // HP
+        m_entryMap = new HashMap<>(); // HP
         
-        m_tmxMap = new HashMap<String, Integer>();
+        m_tmxMap = new HashMap<>();
 
         // create a list of matchers
-        m_matchers = new ArrayList<Matcher>();
+        m_matchers = new ArrayList<>();
 
         // determine pattern matching flags
         int flags = expression.caseSensitive ? 0 : Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE;
@@ -523,7 +523,7 @@ public class Searcher {
     }
 
     private void searchFiles() throws IOException, TranslationException {
-        List<String> fileList = new ArrayList<String>(256);
+        List<String> fileList = new ArrayList<>(256);
         if (!expression.rootDir.endsWith(File.separator))
             expression.rootDir += File.separator;
         StaticUtils.buildFileList(fileList, new File(expression.rootDir), expression.recursive);
@@ -709,7 +709,7 @@ public class Searcher {
     private SearchExpression m_searchExpression;
     private final SearchExpression expression;
     private LongProcessThread checkStop;
-    private final List<SearchMatch> foundMatches = new ArrayList<SearchMatch>();
+    private final List<SearchMatch> foundMatches = new ArrayList<>();
     
     // PM entries 0+
     // Only PM and TM are counted (separately) for '+X more' statistics

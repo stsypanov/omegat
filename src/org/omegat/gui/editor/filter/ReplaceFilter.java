@@ -49,7 +49,7 @@ import org.omegat.gui.editor.IEditorFilter;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class ReplaceFilter implements IEditorFilter {
-    private final Map<Integer, SourceTextEntry> entries = new HashMap<Integer, SourceTextEntry>();
+    private final Map<Integer, SourceTextEntry> entries = new HashMap<>();
     private FilterBarReplace controlComponent;
     private Searcher searcher;
     private String replacement;
@@ -61,7 +61,7 @@ public class ReplaceFilter implements IEditorFilter {
 
         minEntryNum = Integer.MAX_VALUE;
         maxEntryNum = Integer.MIN_VALUE;
-        Set<Integer> display = new HashSet<Integer>(entriesList);
+        Set<Integer> display = new HashSet<>(entriesList);
         for (SourceTextEntry ste : Core.getProject().getAllEntries()) {
             minEntryNum = Math.min(minEntryNum, ste.entryNum());
             maxEntryNum = Math.max(maxEntryNum, ste.entryNum());

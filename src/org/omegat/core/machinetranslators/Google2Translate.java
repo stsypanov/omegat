@@ -78,14 +78,14 @@ public class Google2Translate extends BaseTranslate {
             return OStrings.getString("GOOGLE_API_KEY_NOTFOUND");
         }
 
-        Map<String, String> params = new TreeMap<String, String>();
+        Map<String, String> params = new TreeMap<>();
 
         params.put("key", googleKey);
         params.put("source", sLang.getLanguageCode());
         params.put("target", targetLang);
         params.put("q", trText);
 
-        Map<String, String> headers = new TreeMap<String, String>();
+        Map<String, String> headers = new TreeMap<>();
         headers.put("X-HTTP-Method-Override", "GET");
 
         String v; 

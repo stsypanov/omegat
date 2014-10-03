@@ -78,7 +78,7 @@ public class HelpFrame extends JFrame {
 
     /** Creates the Help Frame */
     private HelpFrame() {
-        m_historyList = new ArrayList<URL>();
+        m_historyList = new ArrayList<>();
 
         // set window size & position
         initWindowLayout();

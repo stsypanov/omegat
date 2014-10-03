@@ -96,11 +96,11 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     private static final AttributeSet ATTRIBUTES_INSERTED_ACTIVE = Styles.createAttributeSet(Color.blue, null, true, null, null, true);
     private static final AttributeSet ATTRIBUTES_INSERTED_INACTIVE = Styles.createAttributeSet(Color.gray, null, null, null, null, true);
     
-    private final List<NearString> matches = new ArrayList<NearString>();
+    private final List<NearString> matches = new ArrayList<>();
 
-    private final List<Integer> delimiters = new ArrayList<Integer>();
-    private final List<Integer> sourcePos = new ArrayList<Integer>();
-    private final List<Map<Integer, List<TextRun>>> diffInfos = new ArrayList<Map<Integer, List<TextRun>>>();
+    private final List<Integer> delimiters = new ArrayList<>();
+    private final List<Integer> sourcePos = new ArrayList<>();
+    private final List<Map<Integer, List<TextRun>>> diffInfos = new ArrayList<>();
     private int activeMatch;
 
     private final MainWindow mw;
@@ -230,8 +230,8 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             return targetMatch; 
         }
 
-        List<Integer> matchingNumbers = new ArrayList<Integer>();
-        List<Integer> foundLocation = new ArrayList<Integer>();
+        List<Integer> matchingNumbers = new ArrayList<>();
+        List<Integer> foundLocation = new ArrayList<>();
 
         // Compute the location of numbers in the target match
         for (String oneNumber : sourceMatchNumbers) {
@@ -276,7 +276,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
      * @return A list of strings of tokens which can be considered being numerals
      */
     private List<String> getNumberList(Token[] strTokenAll, String text) {
-        List<String> numberList = new ArrayList<String>();
+        List<String> numberList = new ArrayList<>();
         for (Token oneToken : strTokenAll) {
             try {
                 Integer.parseInt(oneToken.getTextFromString(text));

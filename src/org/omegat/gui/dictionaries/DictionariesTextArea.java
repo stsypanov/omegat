@@ -81,7 +81,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
     protected final DictionariesManager manager = new DictionariesManager(this);
 
-    protected final List<String> displayedWords = new ArrayList<String>();
+    protected final List<String> displayedWords = new ArrayList<>();
 
     protected ITokenizer tokenizer;
 

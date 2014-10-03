@@ -59,7 +59,7 @@ public class TransTipsMarker implements IMarker {
             return null;
         }
 
-        final List<Mark> marks = new ArrayList<Mark>();
+        final List<Mark> marks = new ArrayList<>();
         // Get the index of the current segment in the whole document
         //sourceText = sourceText.toLowerCase();
 

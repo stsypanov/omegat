@@ -60,7 +60,7 @@ public class EditOptionsDialog extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
 
-        options = new HTMLOptions(new TreeMap<String, String>(config));
+        options = new HTMLOptions(new TreeMap<>(config));
 
         switch (options.getRewriteEncoding()) {
         case ALWAYS:

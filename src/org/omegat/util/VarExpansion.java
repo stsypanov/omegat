@@ -100,7 +100,7 @@ public abstract class VarExpansion<Param> {
             String translation = OStrings.getString(matcher.group(1));
             if ((matcher.group(2) != null) && (matcher.group(2).length() > 0)) {
                 String vars = matcher.group(2); 
-                List<String> values = new ArrayList<String>();
+                List<String> values = new ArrayList<>();
                 matcher = Pattern.compile("\\[(.+?)\\]").matcher(vars);
                 while (matcher.find()) values.add(matcher.group(1));
                 translation = MessageFormat.format(translation, values.toArray());

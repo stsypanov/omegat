@@ -63,7 +63,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
 
     private static final String EXPLANATION = OStrings.getString("GUI_MULTIPLETRANSLATIONSWINDOW_explanation");
 
-    private List<DisplayedEntry> entries = new ArrayList<DisplayedEntry>();
+    private List<DisplayedEntry> entries = new ArrayList<>();
 
     public MultipleTransPane() {
         super(true);

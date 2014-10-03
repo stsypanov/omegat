@@ -143,7 +143,7 @@ public class MappingRulesModel extends AbstractTableModel {
     //
 
     /** List of listeners */
-    protected List<ExceptionListener> listeners = new ArrayList<ExceptionListener>();
+    protected List<ExceptionListener> listeners = new ArrayList<>();
 
     public void addExceptionListener(ExceptionListener l) {
         listeners.add(l);
