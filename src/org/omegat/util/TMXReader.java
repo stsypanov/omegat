@@ -501,7 +501,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         Log.logWarningRB(
                 "TMXR_WARNING_WHILE_PARSING",
                 new Object[] { String.valueOf(exception.getLineNumber()),
-                        String.valueOf(exception.getColumnNumber()) });
+                String.valueOf(exception.getColumnNumber()) });
         Log.log(exception);
     }
 
@@ -513,7 +513,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         Log.logErrorRB(
                 "TMXR_RECOVERABLE_ERROR_WHILE_PARSING",
                 new Object[] { String.valueOf(exception.getLineNumber()),
-                        String.valueOf(exception.getColumnNumber()) });
+                String.valueOf(exception.getColumnNumber()) });
         Log.log(exception);
     }
 
@@ -524,7 +524,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         Log.logErrorRB(
                 "TMXR_FATAL_ERROR_WHILE_PARSING",
                 new Object[] { String.valueOf(exception.getLineNumber()),
-                        String.valueOf(exception.getColumnNumber()) });
+                       String.valueOf(exception.getColumnNumber()) });
         Log.log(exception);
     }
 
@@ -724,7 +724,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
 
         // give a warning if the TMX source language is
         // different from the project source language
-        if (!tmxSourceLanguage.equalsIgnoreCase(sourceLanguage)) {
+    if (!tmxSourceLanguage.equalsIgnoreCase(sourceLanguage)) {
             Log.logWarningRB("TMXR_WARNING_INCORRECT_SOURCE_LANG", new Object[] { tmxSourceLanguage,
                     sourceLanguage });
         }

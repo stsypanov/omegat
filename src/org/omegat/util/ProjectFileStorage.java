@@ -76,8 +76,8 @@ public class ProjectFileStorage {
 
         if (!OConsts.PROJ_CUR_VERSION.equals(om.getProject().getVersion())) {
             throw new TranslationException(StaticUtils.format(OStrings
-                    .getString("PFR_ERROR_UNSUPPORTED_PROJECT_VERSION"), new Object[] { om.getProject()
-                    .getVersion() }));
+                    .getString("PFR_ERROR_UNSUPPORTED_PROJECT_VERSION"), om.getProject()
+                    .getVersion()));
         }
 
         // if folder is in default locations, name stored as __DEFAULT__

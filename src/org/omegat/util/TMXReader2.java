@@ -184,7 +184,7 @@ public class TMXReader2 {
         // log some details
         Log.logRB("TMXR_INFO_CREATION_TOOL", new Object[] { getAttributeValue(element, "creationtool") });
         Log.logRB("TMXR_INFO_CREATION_TOOL_VERSION",
-                new Object[] { getAttributeValue(element, "creationtoolversion") });
+        new Object[] { getAttributeValue(element, "creationtoolversion") });
         Log.logRB("TMXR_INFO_SEG_TYPE", new Object[] { getAttributeValue(element, "segtype") });
         Log.logRB("TMXR_INFO_SOURCE_LANG", new Object[] { getAttributeValue(element, "srclang") });
 

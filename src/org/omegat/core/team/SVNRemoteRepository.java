@@ -216,7 +216,7 @@ public class SVNRemoteRepository implements IRemoteRepository {
             // not tested. Can anyone confirm this code?
             Log.logDebug(LOGGER, "SVN revert all files in {0}", baseDirectory);
             ourClientManager.getWCClient().doRevert(new File[] { baseDirectory }, SVNDepth.INFINITY,
-                    (Collection<String>) null);
+                    null);
             Log.logInfoRB("SVN_FINISH", "reset");
         } catch (Exception ex) {
             Log.logErrorRB("SVN_ERROR", "reset", ex.getMessage());

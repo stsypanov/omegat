@@ -303,7 +303,7 @@ public final class PluginUtils {
 
         Map<String, Attributes> entries = m.getEntries();
         for (String key : entries.keySet()) {
-            Attributes attrs = (Attributes) entries.get(key);
+            Attributes attrs = entries.get(key);
             String sType = attrs.getValue("OmegaT-Plugin");
             if ("true".equals(attrs.getValue("OmegaT-Tokenizer"))) {
                 // TODO remove after release new tokenizers

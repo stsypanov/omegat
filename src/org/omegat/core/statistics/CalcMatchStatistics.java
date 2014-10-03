@@ -136,8 +136,8 @@ public class CalcMatchStatistics extends LongProcessThread {
 
             String[][] table = perFile.calcTable(rowsPerFile);
             String outText = TextUtil.showTextTable(header, table, align);
-            show(StaticUtils.format(OStrings.getString("CT_STATSMATCH_File"), 
-                    new Object[] { fileNumber, fi.filePath  } )
+            show(StaticUtils.format(OStrings.getString("CT_STATSMATCH_File"),
+                    fileNumber, fi.filePath)
                     + "\n", true);
             show(outText + "\n", true);
         }

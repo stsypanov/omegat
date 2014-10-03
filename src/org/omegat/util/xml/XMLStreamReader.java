@@ -696,7 +696,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
+                     StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
                                     "" + c, "" + state }));
                 }
                 break;
@@ -748,7 +748,7 @@ public class XMLStreamReader {
                     // space after close flag - ignore and continue
                     break;
 
-                default:
+             default:
                     throwErrorInGetNextTag(
                             blk,
                             StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
@@ -824,7 +824,7 @@ public class XMLStreamReader {
                     attr += c;
                     break;
 
-                case type_equals:
+             case type_equals:
                     // attr done - begin move to value
                     state = state_transitionFromAttr;
                     break;

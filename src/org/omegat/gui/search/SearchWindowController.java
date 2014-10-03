@@ -232,7 +232,7 @@ public class SearchWindowController {
             }
         });
         
-        ((MFindField) form.m_authorField).enterActionListener = new ActionListener() {
+        form.m_authorField.enterActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 doSearch();

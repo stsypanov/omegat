@@ -47,11 +47,11 @@ public class TokenizerBehaviorComboBoxRenderer extends DelegatingComboBoxRendere
     @Override
     protected Object getDisplayText(Object value) {
     	if (value instanceof Version) {
-            String name = names.get((Version) value);
+            String name = names.get(value);
             if (name == null) {
                 name = value.toString();
             }
-            return (Version)value == recommended ? "* " + name : name;
+            return value == recommended ? "* " + name : name;
         }
     	if (value instanceof String) {
             return value;

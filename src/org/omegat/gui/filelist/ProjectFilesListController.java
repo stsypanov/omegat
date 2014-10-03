@@ -645,7 +645,7 @@ public class ProjectFilesListController {
 
         protected void setValue(Object value) {
             if (pattern != null && value instanceof Number) {
-                super.setValue(pattern.format((Number) value));
+                super.setValue(pattern.format(value));
             } else {
                 super.setValue(value);
             }

@@ -1110,13 +1110,13 @@ public class ProjectPropertiesDialog extends JDialog {
         if (m_sourceTokenizerBehaviorField.isEnabled()) {
             Class<?> srcTok = (Class<?>)m_sourceTokenizerField.getSelectedItem();
             Preferences.setPreference(Preferences.TOK_BEHAVIOR_PREFIX + srcTok.getName(),
-                    ((Version)m_sourceTokenizerBehaviorField.getSelectedItem()).toString());
+                    m_sourceTokenizerBehaviorField.getSelectedItem().toString());
         }
 
         if (m_targetTokenizerBehaviorField.isEnabled()) {
             Class<?> trgTok = (Class<?>)m_targetTokenizerField.getSelectedItem();
             Preferences.setPreference(Preferences.TOK_BEHAVIOR_PREFIX + trgTok.getName(),
-                    ((Version)m_targetTokenizerBehaviorField.getSelectedItem()).toString());
+                    m_targetTokenizerBehaviorField.getSelectedItem().toString());
         }
 
         projectProperties.setSentenceSegmentingEnabled(m_sentenceSegmentingCheckBox.isSelected());

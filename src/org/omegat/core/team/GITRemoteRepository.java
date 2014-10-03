@@ -134,7 +134,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             }
             Throwable cause = e.getCause();
             if (cause != null && cause instanceof org.eclipse.jgit.errors.NoRemoteRepositoryException) {
-                BadRepositoryException bre = new BadRepositoryException(((org.eclipse.jgit.errors.NoRemoteRepositoryException)cause).getLocalizedMessage());
+                BadRepositoryException bre = new BadRepositoryException(cause.getLocalizedMessage());
                 bre.initCause(e);
                 throw bre;
             }
@@ -241,7 +241,7 @@ public class GITRemoteRepository implements IRemoteRepository {
 
     public void restoreBase(File[] files) throws Exception {
         String baseRevisionId = getBaseRevisionId(files[0]);
-        Log.logDebug(LOGGER, "GIT restore base {0} for {1}", baseRevisionId, (Object) files);
+        Log.logDebug(LOGGER, "GIT restore base {0} for {1}", baseRevisionId, files);
         //undo local changes of specific file.
         CheckoutCommand checkoutCommand = new Git(repository).checkout();
         for (File f: files) {

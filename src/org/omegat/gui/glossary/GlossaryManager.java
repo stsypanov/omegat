@@ -140,7 +140,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
             Log.logRB("CT_LOADING_GLOSSARY", new Object[] { file.getName() });
             return GlossaryReaderTSV.read(file, isPriority);
         } else if (fname_lower.endsWith(OConsts.EXT_CSV_UTF8)) {
-            Log.logRB("CT_LOADING_GLOSSARY", new Object[] { file.getName() });
+        Log.logRB("CT_LOADING_GLOSSARY", new Object[] { file.getName() });
             return GlossaryReaderCSV.read(file, isPriority);
         } else if (fname_lower.endsWith(OConsts.EXT_TBX)) {
             Log.logRB("CT_LOADING_GLOSSARY", new Object[] { file.getName() });
