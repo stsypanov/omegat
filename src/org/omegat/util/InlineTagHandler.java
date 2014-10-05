@@ -89,7 +89,7 @@ public class InlineTagHandler {
      */
     public char getTagShortcutLetter() {
         Character c = shortcutLetters.get(currentI);
-        return c != null ? c.charValue() : 0;
+        return c != null ? c : 0;
     }
 
     /**

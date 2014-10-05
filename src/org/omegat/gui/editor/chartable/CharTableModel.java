@@ -103,7 +103,7 @@ public class CharTableModel extends AbstractTableModel {
      * @param checkUnique check for being unique or not
      */
     public void appendChar(Character c, boolean checkUnique) {
-        char cv = c.charValue();
+        char cv = c;
         if (checkUnique)
             for (int i = 0; i < data.length(); i++) {
                 if (data.charAt(i) == cv)

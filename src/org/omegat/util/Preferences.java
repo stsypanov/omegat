@@ -576,7 +576,7 @@ public class Preferences {
                 m_nameList.add(name);
             } else {
                 // mapping exists - reset defaultValue to new
-                m_valList.set(i.intValue(), value);
+                m_valList.set(i, value);
             }
         }
     }
@@ -603,7 +603,7 @@ public class Preferences {
                 m_nameList.add(name);
             } else {
                 // mapping exists - reset defaultValue to new
-                m_valList.set(i.intValue(), value.name());
+                m_valList.set(i, value.name());
             }
         }
     }

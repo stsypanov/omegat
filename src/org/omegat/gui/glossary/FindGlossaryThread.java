@@ -253,12 +253,8 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
             ArrayList<Boolean> prios = new ArrayList<>();
 
             for (GlossaryEntry e : sortList) {
-                for (String s : e.getLocTerms(false)) {
-                    locTxts.add(s);
-                }
-                for (String s : e.getComments()) {
-                    comTxts.add(s);
-                }
+                Collections.addAll(locTxts, e.getLocTerms(false));
+                Collections.addAll(comTxts, e.getComments());
                 for (boolean s : e.getPriorities()) {
                     prios.add(s);
                 }
