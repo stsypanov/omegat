@@ -81,7 +81,6 @@ public class FuzzyMatcher {
             return 0;
         }
         int ld = distanceCalculator.compute(str, cand);
-        int similarity = (100 * (Math.max(str.length, cand.length) - ld)) / Math.max(str.length, cand.length);
-        return similarity;
+        return (100 * (Math.max(str.length, cand.length) - ld)) / Math.max(str.length, cand.length);
     }
 }

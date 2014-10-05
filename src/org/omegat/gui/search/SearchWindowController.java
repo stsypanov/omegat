@@ -125,12 +125,11 @@ public class SearchWindowController {
         Date initDate = calendar.getTime();
         calendar.add(Calendar.YEAR, -100);
         Date earliestDate = calendar.getTime();
-        Date latestDate = initDate;
 
-        m_dateFromModel = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR);
+        m_dateFromModel = new SpinnerDateModel(initDate, earliestDate, initDate, Calendar.YEAR);
         form.m_dateFromSpinner.setModel(m_dateFromModel);
 
-        m_dateToModel = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR);
+        m_dateToModel = new SpinnerDateModel(initDate, earliestDate, initDate, Calendar.YEAR);
         form.m_dateToSpinner.setModel(m_dateToModel);
 
         // Box Number of results

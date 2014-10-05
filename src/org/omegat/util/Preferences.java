@@ -527,8 +527,7 @@ public class Preferences {
      * @return preference value as a string
      */
     public static String getPreferenceDefaultAllowEmptyString(String key) {
-        String val = getPreference(key);
-        return val;
+        return getPreference(key);
     }
 
     /**

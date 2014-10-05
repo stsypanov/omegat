@@ -134,8 +134,7 @@ public class ProjectProperties {
     /** Returns The Glossary File Directory */
     public String getWriteableGlossaryDir() {
         File fDir = new File(writeableGlossaryFile);
-        String sDir = fDir.getParent();
-        return sDir;
+        return fDir.getParent();
     }
 
     /** Sets The Writeable Glossary File Location */

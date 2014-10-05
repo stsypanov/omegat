@@ -178,9 +178,8 @@ public class HelpFrame extends PeroFrame {
         } else {
             path = filename;
         }
-        URL r = HelpFrame.class.getResource('/' + OConsts.HELP_DIR + '/' + path);
 
-        return r;
+        return HelpFrame.class.getResource('/' + OConsts.HELP_DIR + '/' + path);
     }
 
     public final void displayHome() {

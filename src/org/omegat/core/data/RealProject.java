@@ -1074,14 +1074,13 @@ public class RealProject implements IProject {
         for (String filename : srcFileList) {
             // strip leading path information;
             // feed file name to project window
-            String filepath = filename;
 
-            Core.getMainWindow().showStatusMessageRB("CT_LOAD_FILE_MX", filepath);
+            Core.getMainWindow().showStatusMessageRB("CT_LOAD_FILE_MX", filename);
 
             LoadFilesCallback loadFilesCallback = new LoadFilesCallback(existSource, existKeys);
 
             FileInfo fi = new FileInfo();
-            fi.filePath = filepath;
+            fi.filePath = filename;
 
             loadFilesCallback.setCurrentFile(fi);
 

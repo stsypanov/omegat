@@ -139,7 +139,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
      * @return 
      */
     private Icon getViewMenuMarkTextIcon(final Color color) {
-        Icon i = new Icon() {
+        return new Icon() {
             public void paintIcon(java.awt.Component cmpnt, java.awt.Graphics grphcs, int x, int y) {
                 if (color!=null && grphcs != null) { //Mac fix: test on grphcs != null needed. Weird...
                     grphcs.setColor(color);
@@ -154,7 +154,6 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 return ICON_SIZE;
             }
         };
-        return i;
     }
 
     /**

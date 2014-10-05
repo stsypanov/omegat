@@ -135,14 +135,12 @@ public class XMLStreamReader {
             c = getNextChar();
             pushChar(c);
             if (c != ' ') {
-                XMLBlock b = getNextTag();
-                return b;
+                return getNextTag();
             }
         } else if (c == ']' && end_cdata_flag) {
             // very, very special case -- the end of CDATA block
             // is handled completely separately
-            XMLBlock b = getNextTagCDATAEnd();
-            return b;
+            return getNextTagCDATAEnd();
         }
 
         pushChar(c);

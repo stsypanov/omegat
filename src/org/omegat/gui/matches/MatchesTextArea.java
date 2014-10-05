@@ -422,9 +422,8 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
 
         doc.setCharacterAttributes(start, end - start, ATTRIBUTES_SELECTED, false);
         setCaretPosition(end - 2); // two newlines
-        final int fstart = start;
 
-        setCaretPosition(fstart);
+        setCaretPosition(start);
     }
 
     /** Clears up the pane. */

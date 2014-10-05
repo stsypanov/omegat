@@ -110,9 +110,7 @@ class SegmentHistory {
         if (pointer > 0)
             pointer--;
 
-        int result = get(pointer);
-
-        return result;
+        return get(pointer);
     }
 
     /**

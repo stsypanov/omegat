@@ -171,12 +171,11 @@ public class TextFilter extends AbstractFilter {
                 nontrans += s + lpin.getLinebreak();
                 continue;
             }
-            String srcText = s;
 
             out.write(nontrans);
             nontrans = "";
 
-            String translation = processEntry(srcText);
+            String translation = processEntry(s);
             out.write(translation);
 
             nontrans += lpin.getLinebreak();
