@@ -198,7 +198,7 @@ public class ProjectUICommands {
                             }
                         } catch (Exception e) {
                             Log.logErrorRB(e, "TEAM_MISSING_FOLDER", f.getName());
-                        };
+                        }
                     }
                     //load project
                     ProjectFactory.loadProject(props, repository, true);

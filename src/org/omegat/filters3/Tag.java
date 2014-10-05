@@ -38,7 +38,7 @@ public abstract class Tag implements Element {
         END,
         /** Standalone tag. */
         ALONE
-    };
+    }
 
     private String tag;
 
