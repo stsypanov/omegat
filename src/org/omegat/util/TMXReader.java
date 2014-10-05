@@ -759,7 +759,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         String propVariantLanguages = getProperty(PROPERTY_VARIANT_LANGUAGES);
         if (propVariantLanguages != null) {
             int commaPos = 0;
-            StringBuffer languages = new StringBuffer();
+            StringBuilder languages = new StringBuilder();
             do {
                 // get the position of the next comma
                 commaPos = propVariantLanguages.indexOf(',');

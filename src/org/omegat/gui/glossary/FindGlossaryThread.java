@@ -268,7 +268,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
                 priorities[j] = prios.get(j);
             }
 
-            GlossaryEntry combineEntry = new GlossaryEntry(srcTxt, locTxts.toArray(new String[0]),
+            GlossaryEntry combineEntry = new GlossaryEntry(srcTxt, locTxts.toArray(new String[locTxts.size()]),
                     comTxts.toArray(new String[0]), priorities);
             returnList.add(combineEntry);
             // ==================================================================
