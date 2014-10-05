@@ -271,14 +271,15 @@ public class CalcMatchStatistics extends LongProcessThread {
 
             final Token[] strTokensStem = finder.tokenizeAll(ste.getSrcText());
             int maxSimilarity = 0;
-            CACHE: for (NearString near : nears) {
+            for (NearString near : nears) {
                 final Token[] candTokens = finder.tokenizeAll(near.source);
                 int newSimilarity = FuzzyMatcher
                         .calcSimilarity(distanceCalculator, strTokensStem, candTokens);
                 if (newSimilarity > maxSimilarity) {
                     maxSimilarity = newSimilarity;
-                    if (newSimilarity >= 95) // enough to say that we are in row 2
-                        break CACHE;
+                    if (newSimilarity >= 95) { // enough to say that we are in row 2
+                        break;
+                    }
                 }
             }
 
