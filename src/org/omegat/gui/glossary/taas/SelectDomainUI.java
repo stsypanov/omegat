@@ -38,6 +38,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.openide.awt.Mnemonics;
 
@@ -45,7 +46,7 @@ import org.openide.awt.Mnemonics;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 @SuppressWarnings("serial")
-public class SelectDomainUI extends javax.swing.JDialog {
+public class SelectDomainUI extends PeroDialog {
 
     /**
      * Creates new form SelectDomainUI

@@ -73,6 +73,7 @@ import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.filters2.FiltersCustomizer;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.util.Language;
@@ -111,7 +112,7 @@ import gen.core.project.RepositoryDefinition;
  * @author Yu Tang
  */
 @SuppressWarnings("serial")
-public class ProjectPropertiesDialog extends JDialog {
+public class ProjectPropertiesDialog extends PeroDialog {
     private ProjectProperties projectProperties;
 
     public enum Mode {

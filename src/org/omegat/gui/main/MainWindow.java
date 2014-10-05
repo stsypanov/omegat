@@ -63,7 +63,7 @@ import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
-import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
@@ -96,7 +96,7 @@ import com.vlsolutions.swing.docking.FloatingDialog;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame implements IMainWindow {
+public class MainWindow extends PeroFrame implements IMainWindow {
     public final MainWindowMenu menu;
 
     protected ProjectFilesListController m_projWin;
@@ -146,8 +146,6 @@ public class MainWindow extends JFrame implements IMainWindow {
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
         pack();
         getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
-        
-        OmegaTIcons.setIconImages(this);
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
@@ -170,7 +168,7 @@ public class MainWindow extends JFrame implements IMainWindow {
         });
 
         MainWindowUI.handlePerProjectLayouts(this);
-        
+
         updateTitle();
 
         // Set up prompt to reload if segmentation or filters settings change
@@ -355,7 +353,7 @@ public class MainWindow extends JFrame implements IMainWindow {
             }
         });
     }
-    
+
     private String getLocalizedString(String messageKey, Object... params) {
         if (messageKey == null) {
             return " ";
@@ -367,9 +365,9 @@ public class MainWindow extends JFrame implements IMainWindow {
     }
 
     /**
-     * Same as {@link #showStatusMessageRB(String, Object...)} but 
+     * Same as {@link #showStatusMessageRB(String, Object...)} but
      * this will clear the message after ten seconds.
-     * 
+     *
      * @param messageKey
      *            message key in resource bundle
      * @param params
@@ -442,7 +440,7 @@ public class MainWindow extends JFrame implements IMainWindow {
     public void displayWarningRB(String warningKey, Object... params) {
         displayWarningRB(warningKey, null, params);
     };
-    
+
     /**
      * {@inheritDoc}
      */
@@ -561,7 +559,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see JOptionPane#showConfirmDialog(java.awt.Component, Object, String,
      *      int, int)
      */

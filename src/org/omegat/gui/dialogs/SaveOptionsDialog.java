@@ -33,6 +33,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.StaticUIUtils;
@@ -44,7 +45,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class SaveOptionsDialog extends JDialog {
+public class SaveOptionsDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

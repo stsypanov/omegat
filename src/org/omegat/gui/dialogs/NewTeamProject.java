@@ -35,6 +35,7 @@ import javax.swing.event.DocumentListener;
 
 import org.omegat.core.Core;
 import org.omegat.core.team2.RemoteRepositoryFactory;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -50,7 +51,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class NewTeamProject extends javax.swing.JDialog {
+public class NewTeamProject extends PeroDialog {
 
     private RepoTypeWorker repoTypeWorker = null;
     private boolean detecting = false;
@@ -116,7 +117,7 @@ public class NewTeamProject extends javax.swing.JDialog {
         if (detecting || !isVisible()) {
             return;
         }
-        txtRepositoryOrProjectFileURL.setText(txtRepositoryOrProjectFileURL.getText().trim()); 
+        txtRepositoryOrProjectFileURL.setText(txtRepositoryOrProjectFileURL.getText().trim());
         repoType = null;
         String url = txtRepositoryOrProjectFileURL.getText();
         if (StringUtil.isEmpty(url)) {

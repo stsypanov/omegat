@@ -30,7 +30,7 @@ import java.awt.Frame;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
-import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Platform;
 import org.omegat.util.StringUtil;
@@ -43,7 +43,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  */
 @SuppressWarnings("serial")
-public class AboutDialog extends JDialog {
+public class AboutDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -63,7 +63,7 @@ public class AboutDialog extends JDialog {
                 Runtime.getRuntime().maxMemory() / 1024 / 1024 };
         String memoryUsage = StringUtil.format(OStrings.getString("MEMORY_USAGE"), args);
         memoryusage.setText(memoryUsage);
-        
+
         String javaVersion = StringUtil.format(OStrings.getString("JAVA_VERSION"),
                 System.getProperty("java.version"), Platform.is64Bit() ? 64 : 32);
         javaversion.setText(javaVersion);

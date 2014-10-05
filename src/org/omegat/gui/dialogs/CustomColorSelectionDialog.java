@@ -47,6 +47,7 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.StaticUIUtils;
@@ -60,7 +61,7 @@ import org.omegat.util.gui.Styles.EditorColor;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class CustomColorSelectionDialog extends javax.swing.JDialog {
+public class CustomColorSelectionDialog extends PeroDialog {
 
     private final Map<EditorColor, Color> temporaryPreferences = new EnumMap<>(EditorColor.class);
     private final ChangeListener colorChangeListener = new ChangeListener() {
@@ -69,8 +70,8 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
             recordTemporaryPreference();
         }
     };
-    
-    
+
+
     /**
      * Creates new form CustomColorSelectionDialog
      */
@@ -105,7 +106,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         }
         colorChooser.getSelectionModel().addChangeListener(colorChangeListener);
     }
-    
+
     private void recordTemporaryPreference() {
         EditorColor selectedStyle = (EditorColor) colorStylesList.getSelectedValue();
         if (selectedStyle == null) {
@@ -119,7 +120,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         colorChooser.setColor(color == null ? Color.BLACK : color);
         colorChooser.getSelectionModel().addChangeListener(colorChangeListener);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -238,7 +239,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         }
         colorChooser.setEnabled(true);
         resetCurrentColorButton.setEnabled(true);
-        Color color = temporaryPreferences.containsKey(selectedStyle) ? 
+        Color color = temporaryPreferences.containsKey(selectedStyle) ?
                 temporaryPreferences.get(selectedStyle) : selectedStyle.getColor();
         setColorChooserWithoutNotifying(color);
     }//GEN-LAST:event_colorStylesListValueChanged

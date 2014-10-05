@@ -62,7 +62,7 @@ import org.omegat.core.data.TMXEntry;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.core.tagvalidation.ErrorReport.TagError;
-import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
 import org.omegat.util.PatternConsts;
@@ -82,11 +82,9 @@ import org.openide.awt.Mnemonics;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class TagValidationFrame extends JFrame {
+public class TagValidationFrame extends PeroFrame {
     public TagValidationFrame(final MainWindow parent) {
         setTitle(OStrings.getString("TF_NOTICE_BAD_TAGS"));
-
-        OmegaTIcons.setIconImages(this);
 
         // set window size & position
         initWindowLayout();
@@ -237,7 +235,7 @@ public class TagValidationFrame extends JFrame {
      * color="color"&gt;&lt;b&gt;&lt;tag&gt;&lt;/b&gt;&lt;/font&gt;
      */
     private String colorTags(String str, Map<Tag, TagError> errors) {
-        
+
         StringBuilder html = new StringBuilder(str);
         List<Tag> tags = new ArrayList<Tag>(errors.keySet());
         // Sort in reverse order so that tag offsets remain correct as we replace things.
@@ -249,7 +247,7 @@ public class TagValidationFrame extends JFrame {
                     : 0;
             }
         });
-        
+
         int lastIndex = html.length();
         for (Tag tag : tags) {
             // HTML-escape everything after this tag (up to end, or previous tag)
@@ -262,7 +260,7 @@ public class TagValidationFrame extends JFrame {
         // Don't forget to escape everything before the first tag.
         String head = html.substring(0, lastIndex);
         html.replace(0, lastIndex, htmlize(head));
-        
+
         // show linefeed as symbol
         Matcher lfMatch = PatternConsts.HTML_BR.matcher(html);
         // /simulate unicode symbol for linefeed "\u240A", which is not
