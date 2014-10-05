@@ -37,13 +37,13 @@ import javax.swing.table.AbstractTableModel;
  */
 @SuppressWarnings("serial")
 public class CharTableModel extends AbstractTableModel {
-    Font font;
+//    Font font;
     
-    int columnCount = 16; 
+    private int columnCount = 16;
     
-    int glyphCount = 65535-32;
+    private int glyphCount = 65535-32;
     
-    StringBuilder data = null;
+    private StringBuilder data;
     
     public CharTableModel(String data) {
         setData(data);
@@ -59,7 +59,7 @@ public class CharTableModel extends AbstractTableModel {
             return false;
         
         if (data != null) {
-            if (this.data == null || !this.data.equals(data)) {
+            if (this.data == null || !this.data.toString().equals(data)) {
                 glyphCount = data.length();
                 this.data = new StringBuilder(data);
                 fireTableDataChanged();
@@ -102,15 +102,14 @@ public class CharTableModel extends AbstractTableModel {
      * @param c the character
      * @param checkUnique check for being unique or not
      */
-    public void appendChar(Character c, boolean checkUnique) {
-        char cv = c;
-        if (checkUnique)
+    public void appendChar(char c, boolean checkUnique) {
+        if (checkUnique) {
             for (int i = 0; i < data.length(); i++) {
-                if (data.charAt(i) == cv)
+                if (data.charAt(i) == c)
                     return;
             }
-        
-        this.data.append(cv);
+        }
+        data.append(c);
         glyphCount++;
         fireTableDataChanged();
     }
