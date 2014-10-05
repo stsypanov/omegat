@@ -49,6 +49,7 @@ import org.htmlparser.Text;
 import org.htmlparser.nodes.TextNode;
 import org.htmlparser.visitors.NodeVisitor;
 import org.omegat.core.Core;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.PatternConsts;
 import org.omegat.util.StaticUtils;
@@ -399,7 +400,7 @@ public class FilterVisitor extends NodeVisitor {
         try {
             writer.write(something);
         } catch (IOException ioe) {
-            System.out.println(ioe);
+            Log.log(ioe);
         }
     }
 
