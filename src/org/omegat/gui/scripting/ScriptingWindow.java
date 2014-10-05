@@ -79,7 +79,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
-import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.shortcuts.PropertiesShortcuts;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -97,8 +97,7 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-@SuppressWarnings("serial")
-public class ScriptingWindow extends JFrame {
+public class ScriptingWindow extends PeroFrame {
 
     static ScriptingWindow window;
 
@@ -130,8 +129,6 @@ public class ScriptingWindow extends JFrame {
     
     public ScriptingWindow() {
         setTitle(OStrings.getString("SCW_TITLE"));
-
-        OmegaTIcons.setIconImages(this);
 
         StaticUIUtils.setEscapeClosable(this);
 
@@ -198,7 +195,7 @@ public class ScriptingWindow extends JFrame {
             m_quickMenus[i] = menuItem;
 
             unsetQuickScriptMenu(i);
-            
+
             // Since the script is run while editing a segment, the shortcut should not interfere
             // with the segment content, so we set it to a Function key.
             m_quickMenus[i].setAccelerator(KeyStroke.getKeyStroke("shift ctrl F" + (i + 1)));
@@ -251,7 +248,7 @@ public class ScriptingWindow extends JFrame {
             }
         }
     }
-    
+
     private class QuickScriptActionListener implements ActionListener {
 
         private final int index;
@@ -589,9 +586,9 @@ public class ScriptingWindow extends JFrame {
         }
         setScriptsDirectory(dir);
     }
-    
+
     private void setScriptsDirectory(File scriptsDir) {
-        
+
         if (!scriptsDir.isDirectory()) {
             updateQuickScripts();
             return;
@@ -603,19 +600,19 @@ public class ScriptingWindow extends JFrame {
         if (m_txtScriptsDir != null) {
             m_txtScriptsDir.setText(scriptsDir.getPath());
         }
-        
+
         if (monitor != null) {
             monitor.stop();
             monitor.start(m_scriptsDirectory);
         }
     }
-    
+
     private void updateQuickScripts() {
         for (int i = 0; i < NUMBERS_OF_QUICK_SCRIPTS; i++) {
             int key = scriptKey(i);
             String scriptName = Preferences.getPreferenceDefault(
                     Preferences.SCRIPTS_QUICK_PREFIX + key, null);
-    
+
             if (m_scriptsDirectory != null && !StringUtil.isEmpty(scriptName)) {
                 setQuickScriptMenu(new ScriptItem(new File(m_scriptsDirectory, scriptName)), i);
                 m_quickScriptButtons[i].setToolTipText(scriptName);

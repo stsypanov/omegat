@@ -41,6 +41,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.omegat.core.Core;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.autotext.Autotext;
 import org.omegat.gui.editor.autotext.Autotext.AutotextItem;
 import org.omegat.gui.editor.autotext.AutotextTableModel;
@@ -53,7 +55,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author bartkoz
  */
 @SuppressWarnings("serial")
-public class AutotextAutoCompleterOptionsDialog extends javax.swing.JDialog {
+public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
 
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
@@ -79,19 +81,19 @@ public class AutotextAutoCompleterOptionsDialog extends javax.swing.JDialog {
         sortFullTextCheckBox.setSelected(Preferences.isPreference(Preferences.AC_AUTOTEXT_SORT_FULL_TEXT));
         sortFullTextCheckBox.setEnabled(sortAlphabeticallyCheckBox.isSelected());
         enabledCheckBox.setSelected(Preferences.isPreferenceDefault(Preferences.AC_AUTOTEXT_ENABLED, true));
-        
+
         enabledCheckBoxActionPerformed(null);
-        
+
         fc.setDialogType(JFileChooser.FILES_ONLY);
         FileFilter filter = new FileNameExtensionFilter(OStrings.getString("AC_AUTOTEXT_FILE"), "autotext");
         fc.addChoosableFileFilter(filter);
         
         //entryTextArea.setFont(this.getFont());
         entryTable.setModel(new AutotextTableModel(Autotext.getItems()));
-        
+
         setPreferredSize(new Dimension(500, 500));
         pack();
-        
+
         setLocationRelativeTo(parent);
     }
     
@@ -350,7 +352,7 @@ public class AutotextAutoCompleterOptionsDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, OStrings.getString("AC_AUTOTEXT_UNABLE_TO_SAVE"));
             }
         }
-    }                                          
+    }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         doClose(RET_CANCEL);
@@ -363,7 +365,7 @@ public class AutotextAutoCompleterOptionsDialog extends javax.swing.JDialog {
         }
         
         Autotext.setList(((AutotextTableModel) entryTable.getModel()).getData());
-        
+
         try {
             Autotext.save();
         } catch (IOException ex) {

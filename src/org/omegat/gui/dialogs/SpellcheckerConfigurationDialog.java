@@ -41,6 +41,7 @@ import javax.swing.event.DocumentListener;
 
 import org.omegat.core.spellchecker.DictionaryManager;
 import org.omegat.core.spellchecker.SpellChecker;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.Language;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -55,10 +56,10 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
+public class SpellcheckerConfigurationDialog extends PeroDialog {
 
     private static final String OLD_DICT_URL = "http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/";
-    
+
     private final JFileChooser fileChooser = new JFileChooser();
 
     /** A return status code - returned if Cancel button has been pressed */
@@ -165,19 +166,19 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
         updateDirectory();
         languageListValueChanged(null);
     }
-    
+
     private File getDictDir() {
         String dirName = directoryTextField.getText();
-        
+
         if (StringUtil.isEmpty(dirName)) {
             return null;
         }
-        
+
         File dir = new File(dirName);
         if (dir.isFile() || (dir.exists() && !dir.canRead())) {
             return null;
         }
-        
+
         return dir;
     }
 
@@ -192,9 +193,9 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
     public final void updateLanguageList() {
         // initialize the language list model
         languageListModel.clear();
-        
+
         File dir = getDictDir();
-        
+
         if (dir == null) {
             return;
         }
@@ -232,7 +233,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
                 && dictDir != null && dictDir.canWrite()
                 && !dictionaryUrlTextField.getText().isEmpty());
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -434,7 +435,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
                 return;
             }
         }
-        
+
         Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, dictionaryUrlTextField.getText());
 
         DictionaryInstallerDialog installerDialog;

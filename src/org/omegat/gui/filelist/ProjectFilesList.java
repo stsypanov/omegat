@@ -28,21 +28,19 @@ package org.omegat.gui.filelist;
 
 import javax.swing.JLabel;
 
-import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
-@SuppressWarnings("serial")
-public class ProjectFilesList extends javax.swing.JFrame {
+public class ProjectFilesList extends PeroFrame {
 
     /**
      * Creates new form ProjectFilesList
      */
     public ProjectFilesList() {
-        OmegaTIcons.setIconImages(this);
         initComponents();
     }
 

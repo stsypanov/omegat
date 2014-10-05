@@ -28,6 +28,7 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.StaticUIUtils;
@@ -37,7 +38,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author bartkoz
  */
 @SuppressWarnings("serial")
-public class GlossaryAutoCompleterOptionsDialog extends javax.swing.JDialog {
+public class GlossaryAutoCompleterOptionsDialog extends PeroDialog {
     
     /**
      * Creates new form GlossaryAutoCompleterOptionsDialog

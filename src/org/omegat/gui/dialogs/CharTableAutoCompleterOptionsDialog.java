@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTable;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.chartable.CharTableModel;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -54,10 +55,10 @@ public class CharTableAutoCompleterOptionsDialog extends javax.swing.JDialog {
     public CharTableAutoCompleterOptionsDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
-        
+
         StaticUIUtils.setEscapeClosable(this);
         getRootPane().setDefaultButton(okButton);
-        
+
         allCharTable.setModel(allCharModel);
         selCharTable.setModel(selCharModel);
         

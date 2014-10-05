@@ -31,7 +31,7 @@
  */
 package org.omegat.gui.search;
 
-import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 
 /**
@@ -42,13 +42,13 @@ import org.omegat.util.OStrings;
  * @author Hiroshi Miura
  */
 @SuppressWarnings("serial")
-public class SearchWindowForm extends javax.swing.JFrame {
+public class SearchWindowForm extends PeroFrame {
 
     /**
      * Creates new form SearchWindowForm
      */
     public SearchWindowForm() {
-        OmegaTIcons.setIconImages(this);
+        super();
         initComponents();
     }
 

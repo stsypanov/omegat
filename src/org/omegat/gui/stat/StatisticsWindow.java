@@ -32,13 +32,13 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.omegat.core.Core;
 import org.omegat.core.statistics.CalcMatchStatistics;
 import org.omegat.core.statistics.CalcStandardStatistics;
 import org.omegat.core.threads.LongProcessThread;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -50,14 +50,12 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class StatisticsWindow extends javax.swing.JDialog {
+public class StatisticsWindow extends PeroFrame {
 
-    private String textData;
-    
     public static enum STAT_TYPE {
         STANDARD, MATCHES, MATCHES_PER_FILE
     };
-    
+
     private LongProcessThread thread;
 
     /**
@@ -67,7 +65,7 @@ public class StatisticsWindow extends javax.swing.JDialog {
         super(Core.getMainWindow().getApplicationFrame(), true);
         initComponents();
         copyDataButton.setVisible(false);
-        
+
         JComponent output = null;
 
         switch (statType) {
@@ -185,7 +183,7 @@ public class StatisticsWindow extends javax.swing.JDialog {
             }
         });
     }
-    
+
     public void showProgress(final int percent) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -207,7 +205,7 @@ public class StatisticsWindow extends javax.swing.JDialog {
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
     private javax.swing.JButton copyDataButton;

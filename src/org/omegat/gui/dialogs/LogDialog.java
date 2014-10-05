@@ -37,6 +37,8 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.omegat.gui.common.PeroDialog;
+import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -51,28 +53,28 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class LogDialog extends javax.swing.JDialog {
+public class LogDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
 
     private int returnStatus = RET_CANCEL;
-    
+
     /**
      * Creates new form LogDialog
      */
     public LogDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
-        
+
         setTitle(OStrings.getString("LOGDIALOG_TITLE") + " " + Log.getLogFileName());
-        
+
         StaticUIUtils.setEscapeClosable(this);
-        
+
         setSize(600, 400);
         setLocationRelativeTo(parent);
-        
+
         final File logLocation = new File(Log.getLogFilePath());
         new SwingWorker<String, Object>() {
             @Override

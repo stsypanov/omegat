@@ -50,6 +50,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.FiltersTableModel;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.TableColumnSizer;
@@ -68,7 +69,7 @@ import gen.core.filters.Filters;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class FiltersCustomizer extends JDialog implements ListSelectionListener {
+public class FiltersCustomizer extends PeroDialog implements ListSelectionListener {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

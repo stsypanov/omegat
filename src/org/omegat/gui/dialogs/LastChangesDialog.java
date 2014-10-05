@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.JDialog;
 
 import org.apache.commons.io.IOUtils;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.help.Help;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -46,7 +47,7 @@ import org.openide.awt.Mnemonics;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class LastChangesDialog extends JDialog {
+public class LastChangesDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
