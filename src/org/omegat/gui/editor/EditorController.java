@@ -2027,7 +2027,7 @@ public class EditorController implements IEditor {
                 wait();
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.log(e);
         } finally {
             timer.cancel();
         }
@@ -2063,7 +2063,7 @@ public class EditorController implements IEditor {
                 try {
                     sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.log(e);
                 }
             }
         }

@@ -294,7 +294,7 @@ public class OpenXMLFilter extends AbstractFilter {
                     createXMLFilter().processFile(tmpin, tmpout, fc);
                 } catch (Exception e) {
                     zipfile.close();
-                    e.printStackTrace();
+                    Log.log(e);
                     throw new TranslationException(e.getLocalizedMessage() + "\n"
                             + OStrings.getString("OpenXML_ERROR_IN_FILE") + inFile, e);
                 }

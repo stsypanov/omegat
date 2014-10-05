@@ -37,6 +37,7 @@ import org.apache.pdfbox.util.PDFTextStripper;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
 /**
@@ -109,7 +110,7 @@ public class PdfFilter  extends AbstractFilter {
 		out.write("\n");				
 	    }
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    Log.log(e);
 	}
     }
 }

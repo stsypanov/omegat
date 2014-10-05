@@ -195,7 +195,7 @@ public class FilterMaster {
 
             filterObject.parseFile(inFile, lookup.config, fc, parseCallback);
         } catch (Exception ioe) {
-            ioe.printStackTrace();
+            Log.log(ioe);
             throw new IOException(filename + "\n" + ioe);
         }
         return filterObject;

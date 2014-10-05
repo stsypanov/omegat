@@ -1,5 +1,7 @@
 package org.omegat.gui.clipboard;
 
+import org.omegat.util.Log;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -48,7 +50,7 @@ public class ClipboardUtils {
                 document.insertString(component.getCaretPosition(), selected,null);
                 dialog.hideDialog();
             } catch (BadLocationException e){
-                e.printStackTrace();
+                Log.log(e);
             }
         }
     }

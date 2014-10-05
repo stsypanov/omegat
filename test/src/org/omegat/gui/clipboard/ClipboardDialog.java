@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.omegat.gui.common.PeroDialog;
+import org.omegat.util.Log;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -97,7 +98,7 @@ public class ClipboardDialog extends PeroDialog implements Clibboard {
                 try {
                     updateStoredList();
                 } catch (BadLocationException | UnsupportedFlavorException | IOException ex) {
-                    ex.printStackTrace();
+                    Log.log(ex);
                 }
             }
 

@@ -116,7 +116,7 @@ public class TextUtils {
                 component.setCaretPosition(Utilities.getNextWord(component, position));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.log(e);
         }
     }
 
