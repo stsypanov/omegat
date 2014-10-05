@@ -166,7 +166,7 @@ public class MozillaDTDFilter extends AbstractFilter {
         } else if (entryTranslateCallback != null) {
             // replace translation
             String trans = entryTranslateCallback.getTranslation(id, text, null);
-            if (trans != null || removeStringsUntranslated == false) {
+            if (trans != null || !removeStringsUntranslated) {
                 out.write(block.substring(0, m.start(2)));
                 out.write(trans != null ? trans : text);
                 out.write(block.substring(m.end(2)));

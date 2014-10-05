@@ -456,7 +456,7 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
 
     private void doClose(int retStatus) {
         returnStatus = retStatus;
-        if (isProjectSpecific && projectSpecificCB.isSelected() == false) {
+        if (isProjectSpecific && !projectSpecificCB.isSelected()) {
             result = null;
         } else {
             result = editableFilters;

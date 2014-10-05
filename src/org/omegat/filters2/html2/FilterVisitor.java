@@ -164,7 +164,7 @@ public class FilterVisitor extends NodeVisitor {
             // configuration
             Vector<Attribute> tagAttributes = tag.getAttributesEx();
             Iterator<Attribute> i = tagAttributes.iterator();
-            while (i.hasNext() && intactTag == false) {
+            while (i.hasNext() && !intactTag) {
                 Attribute attribute = i.next();
                 String name = attribute.getName();
                 String value = attribute.getValue();

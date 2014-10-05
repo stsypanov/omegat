@@ -388,7 +388,7 @@ public class ResourceBundleFilter extends AbstractFilter {
                     if (trans.length() > 0 && trans.charAt(0) == ' ')
                         trans = '\\' + trans;
                     // Non-translated segments are written based on the filter options 
-                    if (translatedSegment == true || removeStringsUntranslated == false) {
+                    if (translatedSegment || !removeStringsUntranslated) {
                         outfile.write(toAscii(key, true));
                         outfile.write(equals);
                         outfile.write(trans);

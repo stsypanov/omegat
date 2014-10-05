@@ -1098,7 +1098,7 @@ public class EditorController implements IEditor {
         UIThreadsUtil.mustBeSwingThread();
 
         // check if a document is loaded
-        if (Core.getProject().isProjectLoaded() == false)
+        if (!Core.getProject().isProjectLoaded())
             return;
 
         Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
@@ -1179,7 +1179,7 @@ public class EditorController implements IEditor {
         UIThreadsUtil.mustBeSwingThread();
 
         // Check if a document is loaded.
-        if (Core.getProject().isProjectLoaded() == false)
+        if (!Core.getProject().isProjectLoaded())
             return;
 
         Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);

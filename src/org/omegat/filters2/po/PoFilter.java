@@ -454,7 +454,7 @@ public class PoFilter extends AbstractFilter {
                     // Hack to be able to translate empty segments
                     // If the source segment is empty and there is a reference then
                     // it copies the reference of the segment and the localization note into the source segment
-                    if (allowEditingBlankSegment == true && text.length() == 0 && references.length() > 0)
+                    if (allowEditingBlankSegment && text.length() == 0 && references.length() > 0)
                     { 
                         String aux = references.toString() + extractedComments.toString();
                         sources[0].append(aux);
