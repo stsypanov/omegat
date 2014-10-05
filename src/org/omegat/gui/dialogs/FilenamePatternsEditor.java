@@ -25,13 +25,14 @@
 
 package org.omegat.gui.dialogs;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class FilenamePatternsEditor extends javax.swing.JDialog {
+public class FilenamePatternsEditor extends PeroDialog {
 
     /**
      * Creates new form PatternsEditor

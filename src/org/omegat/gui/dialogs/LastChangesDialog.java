@@ -29,6 +29,7 @@ package org.omegat.gui.dialogs;
 import java.awt.Frame;
 import javax.swing.JDialog;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -42,7 +43,7 @@ import org.openide.awt.Mnemonics;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class LastChangesDialog extends JDialog {
+public class LastChangesDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -97,8 +98,7 @@ public class LastChangesDialog extends JDialog {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         lastChangesTextPane.setEditable(false);
-        lastChangesTextPane
-                .setText(FileUtil.loadTextFileFromDoc(OConsts.LAST_CHANGES_FILE));
+        lastChangesTextPane.setText(FileUtil.loadTextFileFromDoc(OConsts.LAST_CHANGES_FILE));
         scroll.setViewportView(lastChangesTextPane);
 
         getContentPane().add(scroll, java.awt.BorderLayout.CENTER);

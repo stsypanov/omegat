@@ -41,6 +41,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.omegat.core.Core;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.autotext.Autotext;
 import org.omegat.gui.editor.autotext.AutotextPair;
 import org.omegat.gui.editor.autotext.AutotextTableModel;
@@ -53,7 +54,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author bartkoz
  */
 @SuppressWarnings("serial")
-public class AutotextAutoCompleterOptionsDialog extends javax.swing.JDialog {
+public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
 
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;

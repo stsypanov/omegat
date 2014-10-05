@@ -39,6 +39,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.UnderlineFactory;
 import org.omegat.gui.editor.UnderlineFactory.WaveUnderline;
 import org.omegat.util.OStrings;
@@ -52,7 +53,7 @@ import org.omegat.util.gui.Styles.EditorColor;
  * @author Briac Pilpre
  */
 @SuppressWarnings("serial")
-public class CustomColorSelectionDialog extends javax.swing.JDialog {
+public class CustomColorSelectionDialog extends PeroDialog {
 
     /**
      * Creates new form CustomColorSelectionDialog

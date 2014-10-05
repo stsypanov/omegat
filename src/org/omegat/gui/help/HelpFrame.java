@@ -48,6 +48,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -65,7 +67,7 @@ import org.openide.awt.Mnemonics;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 @SuppressWarnings("serial")
-public class HelpFrame extends JFrame {
+public class HelpFrame extends PeroFrame {
     /*
      * The Singleton design pattern allows us to have just one instance of the
      * help frame at all times. In order to use this pattern, we need to prevent

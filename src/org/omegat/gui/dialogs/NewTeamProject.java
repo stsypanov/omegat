@@ -39,6 +39,7 @@ import org.omegat.core.team.IRemoteRepository;
 import org.omegat.core.team.IRemoteRepository.Credentials;
 import org.omegat.core.team.RepositoryUtils.RepoTypeDetector;
 import org.omegat.core.team.SVNRemoteRepository;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -52,7 +53,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class NewTeamProject extends javax.swing.JDialog {
+public class NewTeamProject extends PeroDialog {
 
     
     public Class<? extends IRemoteRepository> repoType = null;

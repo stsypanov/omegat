@@ -31,6 +31,7 @@ import java.awt.Frame;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -40,7 +41,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 @SuppressWarnings("serial")
-public class UserPassDialog extends JDialog {
+public class UserPassDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

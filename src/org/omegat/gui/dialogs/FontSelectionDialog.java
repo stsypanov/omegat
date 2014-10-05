@@ -29,6 +29,7 @@ package org.omegat.gui.dialogs;
 import java.awt.Font;
 import java.awt.Frame;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
@@ -41,7 +42,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class FontSelectionDialog extends javax.swing.JDialog {
+public class FontSelectionDialog extends PeroDialog {
     /**
      * A return status code - returned if Cancel button has been pressed or User
      * haven't changed the font

@@ -32,6 +32,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -41,7 +42,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class CreateGlossaryEntry extends JDialog {
+public class CreateGlossaryEntry extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

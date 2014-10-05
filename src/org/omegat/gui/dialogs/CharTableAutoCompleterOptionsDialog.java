@@ -27,6 +27,8 @@ package org.omegat.gui.dialogs;
 
 import java.awt.event.KeyEvent;
 import javax.swing.JTable;
+
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.chartable.CharTableModel;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -37,7 +39,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author bartkoz
  * @author Aaron Madlon-Kay
  */
-public class CharTableAutoCompleterOptionsDialog extends javax.swing.JDialog {
+public class CharTableAutoCompleterOptionsDialog extends PeroDialog {
 
     CharTableModel allCharModel = new CharTableModel(null);
     

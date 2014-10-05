@@ -45,6 +45,7 @@ import javax.swing.table.TableColumn;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.OneFilterTableModel;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -57,7 +58,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Maxym Mykhalchuk
  */
 @SuppressWarnings("serial")
-public class FilterEditor extends JDialog implements ListSelectionListener {
+public class FilterEditor extends PeroDialog implements ListSelectionListener {
 
     private Filter filter;
 
