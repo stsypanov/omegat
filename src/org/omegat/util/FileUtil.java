@@ -123,7 +123,7 @@ public class FileUtil {
                 if (bw != null)
                     bw.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Log.log(ex);
             }
         }
         outFileTemp.renameTo(outFile);
@@ -142,7 +142,7 @@ public class FileUtil {
                 rd.close();
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.log(ex);
             return null;
         }
     }

@@ -351,7 +351,7 @@ public class SRX implements Serializable, Cloneable {
             // set rules only if no errors
             getMappingRules().addAll(newMap);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.log(ex);
         }
     }
 

@@ -40,6 +40,7 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.StaticUtils;
 
@@ -128,7 +129,7 @@ public class OmegaTFileHandler extends StreamHandler {
             lockFile.delete();
         } catch (Exception ex) {
             // shouldn't happen
-            ex.printStackTrace();
+            Log.log(ex);
         }
     }
 

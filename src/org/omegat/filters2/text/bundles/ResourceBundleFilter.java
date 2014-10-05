@@ -129,7 +129,7 @@ public class ResourceBundleFilter extends AbstractFilter {
      * "Bundle_ru.properties"
      */
     @Override
-    public BufferedWriter createWriter(File outfile, String encoding) throws UnsupportedEncodingException,
+    public BufferedWriter createWriter(File outfile, String encoding) throws
             IOException {
         if (encoding == null) { // Automatic target is considered as being ASCII
             encoding = OConsts.ASCII;

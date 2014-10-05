@@ -1,6 +1,7 @@
 package org.omegat.gui.clipboard;
 
 import org.omegat.gui.common.PeroFrame;
+import org.omegat.util.Log;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -55,8 +56,8 @@ public class ClipboardTest extends PeroFrame {
                     try {
                         document.insertString(component.getCaretPosition(), selected, null);
                         dialog.hideDialog();
-                    } catch (BadLocationException e1) {
-                        e1.printStackTrace();
+                    } catch (BadLocationException ex) {
+                        Log.log(ex);
                     }
                 }
             }

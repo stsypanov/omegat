@@ -59,13 +59,13 @@ public class XMLStreamReader {
         m_headBlock = null;
     }
 
-    public void setStream(File name) throws FileNotFoundException, UnsupportedEncodingException, IOException,
+    public void setStream(File name) throws IOException,
             TranslationException {
         setStream(name, "UTF-8");
     }
 
-    public void setStream(String name, String encoding) throws FileNotFoundException,
-            UnsupportedEncodingException, IOException, TranslationException {
+    public void setStream(String name, String encoding) throws
+            IOException, TranslationException {
         setStream(new File(name), encoding);
     }
 
@@ -74,8 +74,8 @@ public class XMLStreamReader {
      * pass <code>null</code> as encoding, then we'll try to auto-sense the
      * encoding.
      */
-    private void setStream(File file, String encoding) throws FileNotFoundException,
-            UnsupportedEncodingException, IOException, TranslationException {
+    private void setStream(File file, String encoding) throws
+            IOException, TranslationException {
         XMLReader ear = new XMLReader(file.getAbsolutePath(), encoding);
         m_bufferedReader = new BufferedReader(ear);
         _setStream();

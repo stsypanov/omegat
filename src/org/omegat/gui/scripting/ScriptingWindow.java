@@ -615,8 +615,8 @@ public class ScriptingWindow extends PeroFrame {
         Document doc = e.getDocument();
         try {
             doc.insertString(doc.getLength(), s, null);
-        } catch (BadLocationException e1) {
-            /* empty */
+        } catch (BadLocationException ex) {
+            Log.log(ex);
         }
     }
 

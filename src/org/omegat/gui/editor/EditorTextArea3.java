@@ -64,6 +64,7 @@ import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
+import org.omegat.util.Log;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
@@ -126,7 +127,7 @@ public class EditorTextArea3 extends JEditorPane {
                         CoreEvents.fireEditorNewWord(newWord);
                     }
                 } catch (BadLocationException ex) {
-                    ex.printStackTrace();
+                    Log.log(ex);
                 }
             }
         });

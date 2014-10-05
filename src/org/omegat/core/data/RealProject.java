@@ -1058,7 +1058,7 @@ public class RealProject implements IProject {
      * @param projectRoot
      *            project root dir
      */
-    private void loadSourceFiles() throws IOException, InterruptedIOException, TranslationException {
+    private void loadSourceFiles() throws IOException, TranslationException {
         long st = System.currentTimeMillis();
         FilterMaster fm = Core.getFilterMaster();
 

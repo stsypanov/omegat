@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 
 import org.omegat.core.spellchecker.DictionaryManager;
 import org.omegat.gui.common.PeroDialog;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -203,7 +204,7 @@ public class DictionaryInstallerDialog extends PeroDialog {
                         JOptionPane.ERROR_MESSAGE);
                 setCursor(hourglassCursor);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Log.log(ex);
             }
         }
         setCursor(oldCursor);

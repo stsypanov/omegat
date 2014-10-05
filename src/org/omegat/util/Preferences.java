@@ -643,7 +643,7 @@ public class Preferences {
         try {
             SRX.saveTo(srx, srxFile);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Log.log(ex);
         }
     }
 

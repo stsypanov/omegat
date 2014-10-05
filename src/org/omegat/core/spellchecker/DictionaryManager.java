@@ -234,7 +234,7 @@ public class DictionaryManager {
      * @param langCode
      *            : the language code (xx_YY)
      */
-    public void installRemoteDictionary(String langCode) throws MalformedURLException, IOException {
+    public void installRemoteDictionary(String langCode) throws IOException {
         // download the package in question to the disk to a temporary location
         String from = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL) +
                       "/" + langCode + ".zip";

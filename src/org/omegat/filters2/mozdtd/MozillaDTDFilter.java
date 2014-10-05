@@ -102,13 +102,13 @@ public class MozillaDTDFilter extends AbstractFilter {
 
     @Override
     protected BufferedReader createReader(File inFile, String inEncoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(inFile), OConsts.UTF8));
     }
 
     @Override
     protected BufferedWriter createWriter(File outFile, String outEncoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), OConsts.UTF8));
     }
 

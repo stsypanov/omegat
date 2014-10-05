@@ -264,7 +264,7 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    public void updateFullProject() throws NetworkException, Exception {
+    public void updateFullProject() throws  Exception {
         Log.logInfoRB("GIT_START", "pull");
         try {
             new Git(repository).fetch().call();
@@ -280,7 +280,7 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    public void download(File[] files) throws NetworkException, Exception {
+    public void download(File[] files) throws  Exception {
         Log.logInfoRB("GIT_START", "download");
         try {
             new Git(repository).fetch().call();
@@ -295,7 +295,7 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    public void upload(File file, String commitMessage) throws NetworkException, Exception {
+    public void upload(File file, String commitMessage) throws  Exception {
         if (readOnly) {
             // read-only - upload disabled
             Log.logInfoRB("GIT_READONLY");
@@ -416,7 +416,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             } catch (FileNotFoundException ex) {
                 credentials = new Credentials();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Log.log(ex);
             }
         }
         
