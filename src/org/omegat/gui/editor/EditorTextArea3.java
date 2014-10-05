@@ -66,6 +66,7 @@ import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
@@ -123,6 +124,8 @@ public class EditorTextArea3 extends JEditorPane {
         });
 
         addMouseListener(mouseListener);
+
+        ClipboardUtils.bind(this, Core.getMainWindow().getApplicationFrame());
 
         addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent e) {
