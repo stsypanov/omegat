@@ -188,7 +188,6 @@ public class LastSegmentManager {
     private static void gotoEntry(int num, IEditor editor) {
         editor.gotoEntry(num);
         Core.getMainWindow().showStatusMessageRB(null);
-        return;
     }
 
 }

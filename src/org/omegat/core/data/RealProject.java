@@ -1518,7 +1518,6 @@ public class RealProject implements IProject {
          if (vString != null && vString.length() > 0) {
              try {
                  tokenizer.setBehavior(Version.valueOf(vString));
-                 return;
              }  catch (Throwable e) {
                  throw new RuntimeException(e);
              }
