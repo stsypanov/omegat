@@ -43,7 +43,7 @@ public class FilenamePatternsEditorController {
 
     public static List<String> show(List<String> excludes) {
         result = null;
-        data = new ArrayList<String>(excludes);
+        data = new ArrayList<>(excludes);
         final FilenamePatternsEditor dialog = new FilenamePatternsEditor(Core.getMainWindow()
                 .getApplicationFrame(), true);
 

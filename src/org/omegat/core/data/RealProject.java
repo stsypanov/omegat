@@ -1683,7 +1683,7 @@ public class RealProject implements IProject {
             this.config = props;
         }
 
-        Map<String, TMXEntry> data = new HashMap<String, TMXEntry>();
+        Map<String, TMXEntry> data = new HashMap<>();
         private ProjectProperties config;
 
         @Override

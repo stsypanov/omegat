@@ -129,7 +129,7 @@ public class ItemGrp {
      */
     public List<Object> getAdminOrAdminGrpOrTransacGrp() {
         if (adminOrAdminGrpOrTransacGrp == null) {
-            adminOrAdminGrpOrTransacGrp = new ArrayList<Object>();
+            adminOrAdminGrpOrTransacGrp = new ArrayList<>();
         }
         return this.adminOrAdminGrpOrTransacGrp;
     }

@@ -81,7 +81,7 @@ public class EncodingDesc {
      */
     public List<P> getP() {
         if (p == null) {
-            p = new ArrayList<P>();
+            p = new ArrayList<>();
         }
         return this.p;
     }

@@ -281,7 +281,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                 return null;
             }
             Token[] tokenList = tok.tokenizeWords(src, ITokenizer.StemmingMode.NONE);
-            Set<String> words = new TreeSet<String>();
+            Set<String> words = new TreeSet<>();
             for (Token tok : tokenList) {
                 checkEntryChanged();
                 String w = src.substring(tok.getOffset(), tok.getOffset() + tok.getLength());

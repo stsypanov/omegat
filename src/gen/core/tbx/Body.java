@@ -81,7 +81,7 @@ public class Body {
      */
     public List<TermEntry> getTermEntry() {
         if (termEntry == null) {
-            termEntry = new ArrayList<TermEntry>();
+            termEntry = new ArrayList<>();
         }
         return this.termEntry;
     }

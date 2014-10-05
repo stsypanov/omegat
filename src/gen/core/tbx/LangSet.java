@@ -122,7 +122,7 @@ public class LangSet {
      */
     public List<Object> getDescripOrDescripGrpOrAdmin() {
         if (descripOrDescripGrpOrAdmin == null) {
-            descripOrDescripGrpOrAdmin = new ArrayList<Object>();
+            descripOrDescripGrpOrAdmin = new ArrayList<>();
         }
         return this.descripOrDescripGrpOrAdmin;
     }
@@ -152,7 +152,7 @@ public class LangSet {
      */
     public List<Object> getTigOrNtig() {
         if (tigOrNtig == null) {
-            tigOrNtig = new ArrayList<Object>();
+            tigOrNtig = new ArrayList<>();
         }
         return this.tigOrNtig;
     }

@@ -28,7 +28,6 @@ package org.omegat.gui.filters2;
 import java.awt.Dialog;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 

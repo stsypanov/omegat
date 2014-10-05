@@ -29,8 +29,6 @@ package org.omegat.gui.dialogs;
 import java.awt.Frame;
 import java.io.File;
 
-import javax.swing.JDialog;
-
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.FileUtil;
 import org.omegat.util.Log;

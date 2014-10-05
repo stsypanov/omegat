@@ -28,7 +28,6 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.ModificationInfoManager;

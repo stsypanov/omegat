@@ -83,7 +83,7 @@ public class Filters {
      */
     public List<Filter> getFilters() {
         if (filters == null) {
-            filters = new ArrayList<Filter>();
+            filters = new ArrayList<>();
         }
         return this.filters;
     }

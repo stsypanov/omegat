@@ -158,7 +158,7 @@ public class CalcMatchStatistics extends LongProcessThread {
         MatchStatCounts result = new MatchStatCounts(true);
         alreadyProcessedInProject.clear();
 
-        final List<SourceTextEntry> untranslatedEntries = new ArrayList<SourceTextEntry>();
+        final List<SourceTextEntry> untranslatedEntries = new ArrayList<>();
 
         // We should iterate all segments from all files in project.
         for (SourceTextEntry ste : Core.getProject().getAllEntries()) {
@@ -203,7 +203,7 @@ public class CalcMatchStatistics extends LongProcessThread {
         MatchStatCounts result = new MatchStatCounts(false);
         alreadyProcessedInFile.clear();
 
-        final List<SourceTextEntry> untranslatedEntries = new ArrayList<SourceTextEntry>();
+        final List<SourceTextEntry> untranslatedEntries = new ArrayList<>();
 
         // We should iterate all segments from file.
         for (SourceTextEntry ste : fi.entries) {

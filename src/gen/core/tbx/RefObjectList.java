@@ -85,7 +85,7 @@ public class RefObjectList {
      */
     public List<RefObject> getRefObject() {
         if (refObject == null) {
-            refObject = new ArrayList<RefObject>();
+            refObject = new ArrayList<>();
         }
         return this.refObject;
     }

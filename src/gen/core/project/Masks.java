@@ -66,7 +66,7 @@ public class Masks {
      */
     public List<String> getMask() {
         if (mask == null) {
-            mask = new ArrayList<String>();
+            mask = new ArrayList<>();
         }
         return this.mask;
     }

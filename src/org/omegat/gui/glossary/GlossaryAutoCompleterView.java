@@ -53,7 +53,7 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
     public List<AutoCompleterItem> computeListData(String prevText) {
         String wordChunk = getLastToken(prevText);
         
-        List<AutoCompleterItem> result = new ArrayList<AutoCompleterItem>();
+        List<AutoCompleterItem> result = new ArrayList<>();
         boolean capitalize = (wordChunk.length() > 0) ?
                 (Preferences.isPreference(Preferences.AC_GLOSSARY_CAPITALIZE))
                     && Character.isUpperCase(wordChunk.charAt(0)) 

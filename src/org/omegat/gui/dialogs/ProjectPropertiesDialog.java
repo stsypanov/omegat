@@ -64,7 +64,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.lucene.util.Version;
 import org.omegat.core.Core;
 import org.omegat.core.data.CommandVarExpansion;
 import org.omegat.core.data.ProjectProperties;
@@ -152,7 +151,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
     /** Project filters. */
     private Filters filters;
 
-    private List<String> srcExcludes = new ArrayList<String>();
+    private List<String> srcExcludes = new ArrayList<>();
 
     /**
      * Creates a dialog to create a new project / edit folders of existing one.

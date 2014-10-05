@@ -273,7 +273,7 @@ public class TaasCollection {
          */
         public List<TaasDomain> getDomain() {
             if (domain == null) {
-                domain = new ArrayList<TaasDomain>();
+                domain = new ArrayList<>();
             }
             return this.domain;
         }
@@ -332,7 +332,7 @@ public class TaasCollection {
          */
         public List<TaasLanguage> getLanguage() {
             if (language == null) {
-                language = new ArrayList<TaasLanguage>();
+                language = new ArrayList<>();
             }
             return this.language;
         }

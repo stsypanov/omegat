@@ -135,7 +135,7 @@ public class FileDesc {
      */
     public List<SourceDesc> getSourceDesc() {
         if (sourceDesc == null) {
-            sourceDesc = new ArrayList<SourceDesc>();
+            sourceDesc = new ArrayList<>();
         }
         return this.sourceDesc;
     }

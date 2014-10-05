@@ -111,7 +111,7 @@ public class TitleStmt {
      */
     public List<Note> getNote() {
         if (note == null) {
-            note = new ArrayList<Note>();
+            note = new ArrayList<>();
         }
         return this.note;
     }

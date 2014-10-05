@@ -647,7 +647,7 @@ public class FilterVisitor extends NodeVisitor {
      * Creates and stores a shortcut for the tag.
      */
     private void shortcut(Tag tag, StringBuffer paragraph) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append('<');
         int n = -1;
         if (tag.isEndTag()) {
@@ -965,7 +965,7 @@ public class FilterVisitor extends NodeVisitor {
     /** Converts HTML entities to normal characters */
     protected String entitiesToChars(String str) {
         int strlen = str.length();
-        StringBuffer res = new StringBuffer(strlen);
+        StringBuilder res = new StringBuilder(strlen);
         for (int i = 0; i < strlen; i++) {
             char ch = str.charAt(i);
             switch (ch) {
@@ -1097,7 +1097,7 @@ public class FilterVisitor extends NodeVisitor {
      */
     protected String charsToEntities(String str) {
         int strlen = str.length();
-        StringBuffer res = new StringBuffer(strlen * 5);
+        StringBuilder res = new StringBuilder(strlen * 5);
         for (int i = 0; i < strlen; i++) {
             char ch = str.charAt(i);
             switch (ch) {

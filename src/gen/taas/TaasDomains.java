@@ -68,7 +68,7 @@ public class TaasDomains {
      */
     public List<TaasDomain> getDomain() {
         if (domain == null) {
-            domain = new ArrayList<TaasDomain>();
+            domain = new ArrayList<>();
         }
         return this.domain;
     }

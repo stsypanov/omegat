@@ -66,7 +66,7 @@ public final class PluginUtils {
     }
 
     protected static URLClassLoader pluginsClassLoader;
-    protected static List<Class<?>> loadedPlugins = new ArrayList<Class<?>>();
+    protected static List<Class<?>> loadedPlugins = new ArrayList<>();
 
     /** Private constructor to disallow creation */
     private PluginUtils() {
@@ -235,17 +235,17 @@ public final class PluginUtils {
         return glossaryClasses;
     }
 
-    protected static List<Class<?>> filterClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> filterClasses = new ArrayList<>();
 
-    protected static List<Class<?>> tokenizerClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> tokenizerClasses = new ArrayList<>();
 
-    protected static List<Class<?>> markerClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> markerClasses = new ArrayList<>();
 
-    protected static List<Class<?>> machineTranslationClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> machineTranslationClasses = new ArrayList<>();
 
-    protected static List<Class<?>> glossaryClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> glossaryClasses = new ArrayList<>();
 
-    protected static List<Class<?>> basePluginClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> basePluginClasses = new ArrayList<>();
 
     /**
      * Parse one manifest file.

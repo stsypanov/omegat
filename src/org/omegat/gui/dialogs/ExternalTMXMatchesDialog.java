@@ -29,7 +29,6 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 import org.omegat.core.matching.NearString.SORT_KEY;

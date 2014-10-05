@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.beans.ExceptionListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;

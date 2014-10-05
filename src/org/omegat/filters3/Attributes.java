@@ -34,7 +34,7 @@ import java.util.List;
  * @author Maxym Mykhalchuk
  */
 public class Attributes {
-    List<Attribute> list = new ArrayList<Attribute>();
+    List<Attribute> list = new ArrayList<>();
 
     /** Number of attributes. */
     public int size() {

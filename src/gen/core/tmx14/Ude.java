@@ -80,7 +80,7 @@ public class Ude {
      */
     public List<Map> getMap() {
         if (map == null) {
-            map = new ArrayList<Map>();
+            map = new ArrayList<>();
         }
         return this.map;
     }

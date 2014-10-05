@@ -113,7 +113,7 @@ public class Core {
 
     private static List<String> pluginsLoadingErrors = Collections.synchronizedList(new ArrayList<String>());
 
-    private static final List<IMarker> markers = new ArrayList<IMarker>();
+    private static final List<IMarker> markers = new ArrayList<>();
 
     private static Autotext autoText = new Autotext(StaticUtils.getConfigDir() + Preferences.AC_AUTOTEXT_FILE_NAME);
 

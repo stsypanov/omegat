@@ -26,7 +26,6 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
-import java.io.ObjectInputStream.GetField;
 import java.util.Collections;
 import java.util.Map;
 

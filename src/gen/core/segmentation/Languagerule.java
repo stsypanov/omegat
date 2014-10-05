@@ -74,7 +74,7 @@ public class Languagerule {
      */
     public List<Rule> getRule() {
         if (rule == null) {
-            rule = new ArrayList<Rule>();
+            rule = new ArrayList<>();
         }
         return this.rule;
     }

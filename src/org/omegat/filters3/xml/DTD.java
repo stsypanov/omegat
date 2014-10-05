@@ -61,7 +61,7 @@ public class DTD extends XMLPseudoTag {
         this.name = name;
         this.publicId = publicId;
         this.systemId = systemId;
-        entities = new ArrayList<Entity>();
+        entities = new ArrayList<>();
     }
 
     public void addEntity(Entity entity) {

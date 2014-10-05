@@ -274,7 +274,7 @@ public class XMLStreamReader {
 
     private XMLBlock getNextText() throws TranslationException {
         XMLBlock blk = new XMLBlock();
-        StringBuffer strBuf = new StringBuffer();
+        StringBuilder strBuf = new StringBuilder();
         char c;
         int wsCnt = 0;
         int wsBreak = 0;
@@ -1027,7 +1027,7 @@ public class XMLStreamReader {
      */
     public String makeValidXML(String plaintext) {
         char c;
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         for (int i = 0; i < plaintext.length(); i++) {
             c = plaintext.charAt(i);
             out.append(makeValidXML(c));

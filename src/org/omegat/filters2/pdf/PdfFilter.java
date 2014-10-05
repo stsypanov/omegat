@@ -84,7 +84,7 @@ public class PdfFilter  extends AbstractFilter {
     
     @Override
     public void processFile(BufferedReader in, BufferedWriter out, FilterContext fc) {
-	StringBuffer sb = new StringBuffer();
+	StringBuilder sb = new StringBuilder();
 	String find = ("^\\s*?$");
 	Pattern p = Pattern.compile(find);
 		

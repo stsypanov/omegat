@@ -37,7 +37,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.util.Map;
 
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;

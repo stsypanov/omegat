@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
 
-import org.omegat.core.Core;
-
 /**
  * Interface for any remote repository implementation.
  * 

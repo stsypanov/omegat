@@ -40,7 +40,6 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +80,6 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.main.DockablePanel;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.gui.tagvalidation.ITagValidation;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -505,7 +503,7 @@ public class EditorController implements IEditor {
 
         Document3 doc = new Document3(this);
 
-        ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<SegmentBuilder>(file.entries.size());
+        ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<>(file.entries.size());
         for (int i = 0; i < file.entries.size(); i++) {
             SourceTextEntry ste = file.entries.get(i);
             if (entriesFilter == null || entriesFilter.allowed(ste)) {

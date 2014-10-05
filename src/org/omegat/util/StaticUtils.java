@@ -116,7 +116,7 @@ public class StaticUtils {
      * 'protected parts' and OmegaT style tags: &lt;xx02&gt; or &lt;/yy01&gt;.
      */
     public static void buildTagList(String str, ProtectedPart[] protectedParts, List<String> tagList) {
-        List<TagOrder> tags = new ArrayList<TagOrder>();
+        List<TagOrder> tags = new ArrayList<>();
         if (protectedParts != null) {
             for (ProtectedPart pp : protectedParts) {
                 int pos = -1;
@@ -144,7 +144,7 @@ public class StaticUtils {
      * Builds a list of all occurrences of all protected parts.
      */
     public static List<TagOrder> buildAllTagList(String str, ProtectedPart[] protectedParts) {
-        List<TagOrder> tags = new ArrayList<TagOrder>();
+        List<TagOrder> tags = new ArrayList<>();
         if (protectedParts != null) {
             for (ProtectedPart pp : protectedParts) {
                 int pos = -1;
@@ -821,7 +821,7 @@ public class StaticUtils {
             }
             result = protectedParts;
         } else {
-            result = new ArrayList<ProtectedPart>();
+            result = new ArrayList<>();
         }
 
         Matcher placeholderMatcher = protectedPartsPatterns.matcher(source);
@@ -1191,7 +1191,7 @@ public class StaticUtils {
         if (cmd.length() == 0) return new String[] { "" };
         
         StringBuilder arg = new StringBuilder();
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         
         final char noQuote = '\0';
         char currentQuote = noQuote;

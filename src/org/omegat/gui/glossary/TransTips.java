@@ -59,7 +59,7 @@ public class TransTips {
     // List containing the characters that may be found at the beginning of a
     // word, that
     // might result in the word not being underlined
-    private static List<Character> beforeExcludeCases = new ArrayList<Character>();
+    private static List<Character> beforeExcludeCases = new ArrayList<>();
     static {
         beforeExcludeCases.add('>');
         beforeExcludeCases.add('(');

@@ -157,7 +157,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
      * @param src
      */
     public List<GlossaryEntry> getGlossaryEntries(String src) {
-        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
+        List<GlossaryEntry> result = new ArrayList<>();
         synchronized (this) {
             for (List<GlossaryEntry> en : glossaries.values()) {
                 result.addAll(en);
@@ -178,7 +178,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
      * @param src
      */
     public List<GlossaryEntry> search(String src) {
-        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
+        List<GlossaryEntry> result = new ArrayList<>();
         synchronized (this) {
             for (List<GlossaryEntry> en : glossaries.values()) {
                 result.addAll(en);

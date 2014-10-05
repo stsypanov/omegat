@@ -38,7 +38,6 @@ import org.omegat.filters2.TranslationException;
 import org.omegat.filters3.xml.Handler;
 import org.omegat.filters3.xml.XMLContentBasedTag;
 import org.omegat.filters3.xml.XMLDialect;
-import org.omegat.util.PatternConsts;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 
@@ -476,7 +475,7 @@ public class Entry {
      *       text&lt;ept i="0"&gt;&amp;lt;/b0&amp;gt;&lt;/ept&gt;</code>.
      */
     public String sourceToTMX() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < size(); i++)
             buf.append(get(i).toTMX());
         return buf.toString();
@@ -489,7 +488,7 @@ public class Entry {
      * <code>Here's &lt;b&gt;bold text&lt;/b&gt;</code>.
      */
     public String sourceToOriginal() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < size(); i++)
             buf.append(get(i).toOriginal());
         return buf.toString();
@@ -597,7 +596,7 @@ public class Entry {
         if (translatedEntry == null)
             return sourceToTMX();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         for (int i = 0; i < getFirstGood(); i++)
             buf.append(get(i).toTMX());
@@ -618,7 +617,7 @@ public class Entry {
         if (translatedEntry == null)
             return sourceToOriginal();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         for (int i = 0; i < getFirstGood(); i++)
             buf.append(get(i).toOriginal());
@@ -636,7 +635,7 @@ public class Entry {
     // /////////////////////////////////////////////////////////////////////////
 
     /** Elements (tags and text) of this entry. */
-    private List<Element> elements = new ArrayList<Element>();
+    private List<Element> elements = new ArrayList<>();
 
     /**
      * Adds an element to this entry. Can be either a {@link Text} or a

@@ -29,8 +29,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 import javax.swing.JTextArea;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.colorchooser.ColorSelectionModel;

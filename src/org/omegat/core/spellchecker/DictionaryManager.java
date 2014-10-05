@@ -129,9 +129,9 @@ public class DictionaryManager {
                     continue;
 
                 // cycle through the dictionary names
-                for (int j = 0; j < dictionaryFiles.length; j++) {
+                for (String dictionaryFile : dictionaryFiles) {
                     // get the dic file name
-                    String dicName = getFileNameOnly(dictionaryFiles[j]);
+                    String dicName = getFileNameOnly(dictionaryFile);
                     if (dicName == null || dicName.equals(""))
                         continue;
 

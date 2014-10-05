@@ -88,7 +88,7 @@ public class Filter {
      */
     public List<Files> getFiles() {
         if (files == null) {
-            files = new ArrayList<Files>();
+            files = new ArrayList<>();
         }
         return this.files;
     }
@@ -117,7 +117,7 @@ public class Filter {
      */
     public List<Filter.Option> getOption() {
         if (option == null) {
-            option = new ArrayList<Filter.Option>();
+            option = new ArrayList<>();
         }
         return this.option;
     }

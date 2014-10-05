@@ -36,10 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
-import javax.swing.table.DefaultTableModel;
 
 import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
