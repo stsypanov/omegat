@@ -340,8 +340,7 @@ public class PoFilter extends AbstractFilter {
         }
 
         inEncodingLastParsedFile = fc.getInEncoding();
-        BufferedReader reader = createReader(inFile, inEncodingLastParsedFile);
-        try {
+        try (BufferedReader reader = createReader(inFile, inEncodingLastParsedFile)) {
             BufferedWriter writer;
 
             if (outFile != null) {
@@ -357,8 +356,6 @@ public class PoFilter extends AbstractFilter {
                     writer.close();
                 }
             }
-        } finally {
-            reader.close();
         }
     }
 

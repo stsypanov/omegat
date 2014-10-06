@@ -129,15 +129,10 @@ public class LicenseDialog extends PeroDialog {
             return HelpFrame.errorHaiku();
         }
 
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8));
-            try {
-                StringWriter out = new StringWriter();
-                LFileCopy.copy(rd, out);
-                return out.toString();
-            } finally {
-                rd.close();
-            }
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8));
+             StringWriter out = new StringWriter()) {
+            LFileCopy.copy(rd, out);
+            return out.toString();
         } catch (IOException ex) {
             return HelpFrame.errorHaiku();
         }

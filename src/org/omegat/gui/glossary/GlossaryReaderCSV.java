@@ -50,8 +50,7 @@ public class GlossaryReaderCSV {
         InputStreamReader reader = new InputStreamReader(new FileInputStream(file), OConsts.UTF8);
 
         List<GlossaryEntry> result = new ArrayList<>();
-        BufferedReader in = new BufferedReader(reader);
-        try {
+        try (BufferedReader in = new BufferedReader(reader)) {
             // BOM (byte order mark) bugfix
             in.mark(1);
             int ch = in.read();
@@ -76,8 +75,6 @@ public class GlossaryReaderCSV {
                     comment = tokens[2];
                 result.add(new GlossaryEntry(tokens[0], tokens[1], comment, priorityGlossary));
             }
-        } finally {
-            in.close();
         }
 
         return result;

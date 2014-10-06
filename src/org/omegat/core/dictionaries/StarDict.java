@@ -201,8 +201,7 @@ public class StarDict implements IDictionary {
      * Read header.
      */
     private Map<String, String> readIFO(File ifoFile) throws Exception {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(ifoFile), UTF8));
-        try {
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(ifoFile), UTF8))) {
             String line = null;
             String first = rd.readLine();
             if (!"StarDict's dict ifo file".equals(first)) {
@@ -220,8 +219,6 @@ public class StarDict implements IDictionary {
                 result.put(line.substring(0, pos), line.substring(pos + 1));
             }
             return result;
-        } finally {
-            rd.close();
         }
     }
 }

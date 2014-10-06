@@ -106,18 +106,12 @@ public class MainWindowMenuShortcuts {
 
         File userShortcuts = new File(StaticUtils.getConfigDir(), "MainMenuShortcuts.properties");
         try {
-            InputStream in = MainWindowMenuShortcuts.class.getClassLoader().getResourceAsStream(name);
-            try {
+            try (InputStream in = MainWindowMenuShortcuts.class.getClassLoader().getResourceAsStream(name)) {
                 shortcuts.load(in);
-            } finally {
-                in.close();
             }
             if (userShortcuts.exists()) {
-                InputStream us = new FileInputStream(userShortcuts);
-                try {
+                try (InputStream us = new FileInputStream(userShortcuts)) {
                     shortcuts.load(us);
-                } finally {
-                    us.close();
                 }
             }
         } catch (IOException ex) {

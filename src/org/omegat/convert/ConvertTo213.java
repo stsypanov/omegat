@@ -44,11 +44,8 @@ public class ConvertTo213 {
             String xml = new String(bytes, "UTF-8");
             xml = xml.replace("GOOGLE_TRANSLATE", "MACHINE_TRANSLATE");
 
-            FileOutputStream o = new FileOutputStream(out);
-            try {
+            try (FileOutputStream o = new FileOutputStream(out)) {
                 o.write(xml.getBytes("UTF-8"));
-            } finally {
-                o.close();
             }
         }
         Preferences.setPreference(Preferences.MAINWINDOW_LAYOUT, "");
