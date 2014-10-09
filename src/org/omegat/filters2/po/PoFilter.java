@@ -61,6 +61,8 @@ import org.omegat.util.StaticUtils;
  * 
  * Filter is not thread-safe !
  * 
+ * Filter uses msgctx field as path, and plural index as suffix of path.
+ * 
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
  * @author Thomas Huriaux
@@ -561,15 +563,16 @@ public class PoFilter extends AbstractFilter {
     }
 
     protected void align(int pair) {
-        String id=null;
+        String pathSuffix;
         String s;
         String c = "";
-        if (pair > 1) {
+        if (pair > 0) {
             s = unescape(sources[1].toString());
-            id = "["+pair+"]"+s;
+            pathSuffix = "[" + pair + "]";
             c += StaticUtils.format(OStrings.getString("POFILTER_PLURAL_FORM_COMMENT"), pair) + "\n";
         } else {
             s = unescape(sources[pair].toString());
+            pathSuffix = "";
         }
         String t = unescape(targets[pair].toString());
 
@@ -585,7 +588,7 @@ public class PoFilter extends AbstractFilter {
         if (c.length()==0) {
             c = null;
         }
-        align(s, t, c, id);
+        align(s, t, c, pathSuffix);
     }
 
     /**
@@ -595,7 +598,7 @@ public class PoFilter extends AbstractFilter {
      * @param comments
      * @param id some id to distinguish plural forms. null otherwise.
      */
-    protected void align(String source, String translation, String comments, String id) {
+    protected void align(String source, String translation, String comments, String pathSuffix) {
         if (translation.length() == 0) {
             translation = null;
         }
@@ -603,16 +606,16 @@ public class PoFilter extends AbstractFilter {
             if (formatMonolingual) {
                 List<ProtectedPart> protectedParts = StaticUtils.applyCustomProtectedParts(translation,
                         PatternConsts.PRINTF_VARS, null);
-                entryParseCallback.addEntry(source, translation, null, fuzzy, comments, path, this,
-                        protectedParts);
+                entryParseCallback.addEntry(source, translation, null, fuzzy, comments, path + pathSuffix,
+                        this, protectedParts);
             } else {
                 List<ProtectedPart> protectedParts = StaticUtils.applyCustomProtectedParts(source,
                         PatternConsts.PRINTF_VARS, null);
-                entryParseCallback.addEntry(id, source, translation, fuzzy, comments, path, this,
-                        protectedParts);
+                entryParseCallback.addEntry(null, source, translation, fuzzy, comments, path + pathSuffix,
+                        this, protectedParts);
             }
         } else if (entryAlignCallback != null) {
-            entryAlignCallback.addTranslation(id, source, translation, fuzzy, null, this);
+            entryAlignCallback.addTranslation(null, source, translation, fuzzy, path + pathSuffix, this);
         }
     }
 
@@ -639,7 +642,7 @@ public class PoFilter extends AbstractFilter {
                 Pattern pluralPattern = Pattern.compile("Plural-Forms: *nplurals= *([0-9]+) *; *plural", Pattern.CASE_INSENSITIVE);
                 Matcher pluralMatcher = pluralPattern.matcher(header);
                 if (pluralMatcher.find()) {
-                    String nrOfPluralsString = header.substring(pluralMatcher.start(1),pluralMatcher.end(1));
+                    String nrOfPluralsString = header.substring(pluralMatcher.start(1), pluralMatcher.end(1));
                     plurals = Integer.parseInt(nrOfPluralsString);
                 } else {
                     //else use predefined number of plurals, if it exists
