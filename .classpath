@@ -44,5 +44,6 @@
 	<classpathentry kind="lib" path="lib/svnkit-1.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/trilead-ssh2-1.0.0-build217.jar"/>
 	<classpathentry kind="lib" path="lib/forms_rt.jar"/>
+	<classpathentry kind="lib" path="lib/annotations.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
