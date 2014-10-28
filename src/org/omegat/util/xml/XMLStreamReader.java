@@ -50,8 +50,8 @@ public class XMLStreamReader {
     public XMLStreamReader() {
         m_pos = -1;
         m_stringStream = "";
-        m_charStack = new Stack<Character>();
-        m_charCache = new ArrayList<Character>();
+        m_charStack = new Stack<>();
+        m_charCache = new ArrayList<>();
         m_killEmptyBlocks = false;
         m_ignoreWhiteSpace = false;
         m_breakWhitespace = false;
@@ -59,13 +59,13 @@ public class XMLStreamReader {
         m_headBlock = null;
     }
 
-    public void setStream(File name) throws FileNotFoundException, UnsupportedEncodingException, IOException,
+    public void setStream(File name) throws IOException,
             TranslationException {
         setStream(name, "UTF-8");
     }
 
-    public void setStream(String name, String encoding) throws FileNotFoundException,
-            UnsupportedEncodingException, IOException, TranslationException {
+    public void setStream(String name, String encoding) throws
+            IOException, TranslationException {
         setStream(new File(name), encoding);
     }
 
@@ -74,8 +74,8 @@ public class XMLStreamReader {
      * pass <code>null</code> as encoding, then we'll try to auto-sense the
      * encoding.
      */
-    private void setStream(File file, String encoding) throws FileNotFoundException,
-            UnsupportedEncodingException, IOException, TranslationException {
+    private void setStream(File file, String encoding) throws
+            IOException, TranslationException {
         XMLReader ear = new XMLReader(file.getAbsolutePath(), encoding);
         m_bufferedReader = new BufferedReader(ear);
         _setStream();
@@ -107,7 +107,7 @@ public class XMLStreamReader {
                 throw new IOException(OStrings.getString("XSR_ERROR_NONVALID_XML")
                         + "\n"
                         + StaticUtils.format(OStrings.getString("XSR_ERROR_UNSUPPORTED_XML_VERSION"),
-                                new Object[] { ver }));
+                        ver));
             }
             m_headBlock = blk;
         } else {
@@ -135,14 +135,12 @@ public class XMLStreamReader {
             c = getNextChar();
             pushChar(c);
             if (c != ' ') {
-                XMLBlock b = getNextTag();
-                return b;
+                return getNextTag();
             }
         } else if (c == ']' && end_cdata_flag) {
             // very, very special case -- the end of CDATA block
             // is handled completely separately
-            XMLBlock b = getNextTagCDATAEnd();
-            return b;
+            return getNextTagCDATAEnd();
         }
 
         pushChar(c);
@@ -182,7 +180,7 @@ public class XMLStreamReader {
      * back up to correct for incorrectly formatted document
      */
     private void pushChar(char c) {
-        m_charStack.push(new Character(c));
+        m_charStack.push(c);
     }
 
     /**
@@ -190,7 +188,7 @@ public class XMLStreamReader {
      */
     private char getNextCharCache() {
         char c = getNextChar();
-        m_charCache.add(new Character(c));
+        m_charCache.add(c);
         return c;
     }
 
@@ -274,7 +272,7 @@ public class XMLStreamReader {
 
     private XMLBlock getNextText() throws TranslationException {
         XMLBlock blk = new XMLBlock();
-        StringBuffer strBuf = new StringBuffer();
+        StringBuilder strBuf = new StringBuilder();
         char c;
         int wsCnt = 0;
         int wsBreak = 0;
@@ -451,8 +449,7 @@ public class XMLStreamReader {
 
                 default:
                     err = true;
-                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                            "" + c, "" + state });
+                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state);
                 }
                 break;
 
@@ -531,8 +528,7 @@ public class XMLStreamReader {
 
                 default:
                     err = true;
-                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                            "" + c, "" + state });
+                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state);
                 }
                 break;
 
@@ -696,8 +692,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                     StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -731,8 +726,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -748,11 +742,10 @@ public class XMLStreamReader {
                     // space after close flag - ignore and continue
                     break;
 
-                default:
+             default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -770,8 +763,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -802,8 +794,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -824,7 +815,7 @@ public class XMLStreamReader {
                     attr += c;
                     break;
 
-                case type_equals:
+             case type_equals:
                     // attr done - begin move to value
                     state = state_transitionFromAttr;
                     break;
@@ -832,8 +823,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -849,8 +839,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -912,8 +901,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), new Object[] {
-                                    "" + c, "" + state }));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
                 }
                 break;
 
@@ -1027,7 +1015,7 @@ public class XMLStreamReader {
      */
     public String makeValidXML(String plaintext) {
         char c;
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         for (int i = 0; i < plaintext.length(); i++) {
             c = plaintext.charAt(i);
             out.append(makeValidXML(c));
@@ -1046,7 +1034,7 @@ public class XMLStreamReader {
      */
     public List<XMLBlock> closeBlock(XMLBlock block, boolean includeTerminationBlock)
             throws TranslationException {
-        List<XMLBlock> lst = new ArrayList<XMLBlock>();
+        List<XMLBlock> lst = new ArrayList<>();
 
         // sanity check
         if (block == null)
@@ -1178,7 +1166,7 @@ public class XMLStreamReader {
                     c += b - 'a';
                 } else {
                     throw new TranslationException(StaticUtils.format(
-                            OStrings.getString("XSR_ERROR_BAD_BINARY_CHAR"), new Object[] { val }));
+                            OStrings.getString("XSR_ERROR_BAD_BINARY_CHAR"), val));
                 }
             } else {
                 c *= 10;
@@ -1186,7 +1174,7 @@ public class XMLStreamReader {
                     c += b - '0';
                 else {
                     throw new TranslationException(StaticUtils.format(
-                            OStrings.getString("XSR_ERROR_BAD_DECIMAL_CHAR"), new Object[] { val }));
+                            OStrings.getString("XSR_ERROR_BAD_DECIMAL_CHAR"), val));
                 }
             }
         }

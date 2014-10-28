@@ -97,10 +97,10 @@ public class TaaSClient {
     /**
      * Request specified URL and check response code.
      */
-    HttpURLConnection requestGet(String url) throws IOException, Unauthorized, FormatError {
+    private HttpURLConnection requestGet(String url) throws IOException, Unauthorized, FormatError {
         Log.logInfoRB("TAAS_REQUEST", url);
-        HttpURLConnection conn;
-        conn = (HttpURLConnection) new URL(url).openConnection();
+        
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
         conn.setRequestProperty("Authorization", basicAuth);
         if (taasUserKey != null && !taasUserKey.isEmpty()) {
@@ -121,10 +121,10 @@ public class TaaSClient {
     /**
      * Request specified URL and check response code.
      */
-    HttpURLConnection requestPost(String url, String body) throws IOException, Unauthorized, FormatError {
+    private HttpURLConnection requestPost(String url, String body) throws IOException, Unauthorized, FormatError {
         Log.logInfoRB("TAAS_REQUEST", url);
-        HttpURLConnection conn;
-        conn = (HttpURLConnection) new URL(url).openConnection();
+
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
         conn.setRequestProperty("Authorization", basicAuth);
         if (taasUserKey != null) {
@@ -135,11 +135,8 @@ public class TaaSClient {
 
         conn.setRequestProperty("Content-Type", "text/plain");// ; charset=UTF-8
         conn.setDoOutput(true);
-        OutputStream out = conn.getOutputStream();
-        try {
+        try (OutputStream out = conn.getOutputStream()) {
             out.write(body.getBytes(UTF8));
-        } finally {
-            out.close();
         }
 
         if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -155,7 +152,7 @@ public class TaaSClient {
     /**
      * Check content type of response.
      */
-    void checkXMLContentType(HttpURLConnection conn) throws FormatError {
+    private void checkXMLContentType(HttpURLConnection conn) throws FormatError {
         String contentType = conn.getHeaderField("Content-Type");
         if (contentType == null) {
             throw new FormatError("Empty Content-Type header");
@@ -169,7 +166,7 @@ public class TaaSClient {
     /**
      * Check content type of response.
      */
-    void checkXMLUTF8ContentType(HttpURLConnection conn) throws FormatError {
+    private void checkXMLUTF8ContentType(HttpURLConnection conn) throws FormatError {
         String contentType = conn.getHeaderField("Content-Type");
         if (contentType == null) {
             throw new FormatError("Empty Content-Type header");
@@ -183,14 +180,11 @@ public class TaaSClient {
     /**
      * Read content as UTF-8 string.
      */
-    String readUTF8(HttpURLConnection conn) throws IOException {
-        InputStream in = conn.getInputStream();
-        try {
-            ByteArrayOutputStream o = new ByteArrayOutputStream();
+    private String readUTF8(HttpURLConnection conn) throws IOException {
+        try (InputStream in = conn.getInputStream();
+             ByteArrayOutputStream o = new ByteArrayOutputStream()) {
             LFileCopy.copy(in, o);
             return new String(o.toByteArray(), UTF8);
-        } finally {
-            in.close();
         }
     }
 
@@ -237,16 +231,9 @@ public class TaaSClient {
         HttpURLConnection conn = requestGet(WS_URL + "/collections/" + collectionId);
         checkXMLContentType(conn);
 
-        InputStream in = conn.getInputStream();
-        try {
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
-            try {
-                TaaSPlugin.filterTaasResult(in, out);
-            } finally {
-                out.close();
-            }
-        } finally {
-            in.close();
+        try (InputStream in = conn.getInputStream();
+             OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
+            TaaSPlugin.filterTaasResult(in, out);
         }
         Log.logDebug(LOGGER, "Collection {0} downloaded", collectionId);
     }
