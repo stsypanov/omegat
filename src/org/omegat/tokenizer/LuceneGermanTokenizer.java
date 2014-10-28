@@ -26,7 +26,7 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
-import java.util.LinkedHashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.lucene.analysis.TokenStream;
@@ -48,7 +48,7 @@ public class LuceneGermanTokenizer extends BaseTokenizer {
     
     @Override
     public Map<Version, String> getSupportedBehaviors() {
-        Map<Version, String> result = new LinkedHashMap<>();
+        Map<Version, String> result = new EnumMap<>(Version.class);
         result.putAll(super.getSupportedBehaviors());
         result.put(Version.LUCENE_36, result.get(Version.LUCENE_36) + " (UniNE)");
         result.put(Version.LUCENE_31, result.get(Version.LUCENE_31) + " (Snowball)");

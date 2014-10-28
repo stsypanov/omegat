@@ -25,10 +25,7 @@
 
 package org.omegat.core.tagvalidation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.omegat.core.data.SourceTextEntry;
@@ -70,7 +67,7 @@ public class ErrorReport {
      * @return A map between errors and tags
      */
     public Map<TagError, List<String>> inverseReport() {
-        Map<TagError, List<String>> result = new HashMap<>();
+        Map<TagError, List<String>> result = new EnumMap<>(TagError.class);
         fillInverseReport(srcErrors, result);
         fillInverseReport(transErrors, result);
         return result;
