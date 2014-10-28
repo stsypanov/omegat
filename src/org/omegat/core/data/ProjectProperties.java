@@ -153,7 +153,7 @@ public class ProjectProperties {
         // Default glossary file name depends on where glossaryDir is:
         //  - Inside project folder: glossary.txt
         //  - Outside project folder: ${projectName}-glossary.txt
-        String glossaryDir = getGlossaryRoot();
+        String glossaryDir = glossaryRoot;
         if (glossaryDir.startsWith(projectRoot)) {
             return glossaryDir + OConsts.DEFAULT_W_GLOSSARY;
         } else {
@@ -378,19 +378,19 @@ public class ProjectProperties {
         //
         // Now check whether these directories are where they're suposed to be.
         //
-        String srcDir = getSourceRoot();
+        String srcDir = sourceRoot;
         File src = new File(srcDir);
         if (!src.exists()) {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_SOURCE_FOLDER"), srcDir));
         }
         //
-        String tgtDir = getTargetRoot();
+        String tgtDir = targetRoot;
         File tgt = new File(tgtDir);
         if (!tgt.exists()) {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_TARGET_FOLDER"), tgtDir));
         }
         //
-        String glsDir = getGlossaryRoot();
+        String glsDir = glossaryRoot;
         File gls = new File(glsDir);
         if (!gls.exists()) {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_GLOSSARY_FOLDER"), glsDir));
@@ -399,12 +399,12 @@ public class ProjectProperties {
         if (!wGlsDir.endsWith(File.separator)) {
             wGlsDir += File.separator;
         }
-        if (!wGlsDir.contains(getGlossaryRoot())) {
+        if (!wGlsDir.contains(glossaryRoot)) {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_W_GLOSSARY"), glsDir));
         }
 
         //
-        String tmxDir = getTMRoot();
+        String tmxDir = tmRoot;
         File tmx = new File(tmxDir);
         if (!tmx.exists()) {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_TM_FOLDER"), tmxDir));
@@ -414,9 +414,9 @@ public class ProjectProperties {
         // compatibility reasons.
         // There is no exception handling when a failure occurs during folder creation.
         //
-        File dict = new File(getDictRoot());
+        File dict = new File(dictRoot);
         if (!dict.exists()) {
-            if (getDictRoot().equals(projectRoot + OConsts.DEFAULT_DICT + File.separator)) {
+            if (dictRoot.equals(projectRoot + OConsts.DEFAULT_DICT + File.separator)) {
                 dict.mkdirs();
             }
         }

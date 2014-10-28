@@ -109,7 +109,7 @@ public abstract class OutOfTurnTag extends Tag {
         buf.append(getAttributes().toString());
         buf.append("&amp;gt;");
 
-        buf.append(StaticUtils.makeValidXML(getEntry().translationToOriginal()));
+        buf.append(StaticUtils.makeValidXML(entry.translationToOriginal()));
 
         buf.append("&amp;lt;/");
         buf.append(getTag());

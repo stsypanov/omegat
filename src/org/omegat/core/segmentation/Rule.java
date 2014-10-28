@@ -194,13 +194,13 @@ public class Rule implements Serializable {
 
     /** Returns a hash code value for the object. */
     public int hashCode() {
-        return (this.isBreakRule() ? 1 : -1) + this.getBeforebreak().hashCode()
+        return (this.breakRule ? 1 : -1) + this.getBeforebreak().hashCode()
                 - this.getAfterbreak().hashCode();
     }
 
     /** Returns a string representation of the Rule for debugging purposes. */
     public String toString() {
-        return (isBreakRule() ? "Break " : "Exception ") + "Before: " + getBeforebreak() + "After: "
+        return (this.breakRule ? "Break " : "Exception ") + "Before: " + getBeforebreak() + "After: "
                 + getAfterbreak();
     }
 }

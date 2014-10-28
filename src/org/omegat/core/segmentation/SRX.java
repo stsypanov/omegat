@@ -161,7 +161,7 @@ public class SRX implements Serializable, Cloneable {
             }
 
             // checking the version
-            if (CURRENT_VERSION.compareTo(res.getVersion()) > 0) {
+            if (CURRENT_VERSION.compareTo(res.version) > 0) {
                 // yeap, the segmentation config file is of the older version
 
                 // initing defaults
@@ -194,16 +194,16 @@ public class SRX implements Serializable, Cloneable {
     private static SRX merge(SRX current, SRX defaults) {
         current = upgrade(current, defaults);
 
-        int defaultMapRulesN = defaults.getMappingRules().size();
+        int defaultMapRulesN = defaults.mappingRules.size();
         for (int i = 0; i < defaultMapRulesN; i++) {
-            MapRule dmaprule = defaults.getMappingRules().get(i);
+            MapRule dmaprule = defaults.mappingRules.get(i);
             String dcode = dmaprule.getLanguageCode();
             // trying to find
             boolean found = false;
-            int currentMapRulesN = current.getMappingRules().size();
+            int currentMapRulesN = current.mappingRules.size();
             MapRule cmaprule = null;
             for (int j = 0; j < currentMapRulesN; j++) {
-                cmaprule = current.getMappingRules().get(j);
+                cmaprule = current.mappingRules.get(j);
                 String ccode = cmaprule.getLanguageCode();
                 if (dcode.equals(ccode)) {
                     found = true;
@@ -239,14 +239,14 @@ public class SRX implements Serializable, Cloneable {
                 // just adding before the default rules
                 int englishN = currentMapRulesN;
                 for (int j = 0; j < currentMapRulesN; j++) {
-                    cmaprule = current.getMappingRules().get(j);
+                    cmaprule = current.mappingRules.get(j);
                     String cpattern = cmaprule.getPattern();
                     if (DEFAULT_RULES_PATTERN.equals(cpattern)) {
                         englishN = j;
                         break;
                     }
                 }
-                current.getMappingRules().add(englishN, dmaprule);
+                current.mappingRules.add(englishN, dmaprule);
             }
         }
         return current;
@@ -258,8 +258,8 @@ public class SRX implements Serializable, Cloneable {
         // and removing English/Text/HTML-specific rules from there
         if (OT160RC9_VERSION.equals(CURRENT_VERSION)) {
             String DEF = "Default (English)";
-            for (int i = 0; i < current.getMappingRules().size(); i++) {
-                MapRule maprule = current.getMappingRules().get(i);
+            for (int i = 0; i < current.mappingRules.size(); i++) {
+                MapRule maprule = current.mappingRules.get(i);
                 if (DEF.equals(maprule.getLanguageCode())) {
                     maprule.setLanguage(LanguageCodes.DEFAULT_CODE);
                     maprule.getRules().removeAll(getRulesForLanguage(defaults, LanguageCodes.ENGLISH_CODE));
@@ -281,7 +281,7 @@ public class SRX implements Serializable, Cloneable {
      * @return list of rules
      */
     private static List<Rule> getRulesForLanguage(final SRX source, String langName) {
-        for (MapRule mr : source.getMappingRules()) {
+        for (MapRule mr : source.mappingRules) {
             if (langName.equals(mr.getLanguageCode())) {
                 return mr.getRules();
             }
@@ -349,9 +349,9 @@ public class SRX implements Serializable, Cloneable {
                 newMap.add(new MapRule(lang, pattern, rulesList));
             }
             // set rules only if no errors
-            getMappingRules().addAll(newMap);
+            ().addAll(newMap);
         } catch (Exception ex) {
-            ex.printStackTrace();
+     resultackTrace();
         }
     }
 

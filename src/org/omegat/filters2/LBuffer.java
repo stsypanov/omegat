@@ -42,7 +42,7 @@ public class LBuffer {
     public void append(LBuffer buf) {
         if (buf.length() + m_size > m_buf.length)
             setSize(buf.length() + m_size);
-        char[] b = buf.getBuf();
+        char[] b = buf.m_buf;
         System.arraycopy(b, 0, m_buf, m_size, buf.length());
         m_size += buf.length();
     }

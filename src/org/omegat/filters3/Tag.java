@@ -54,7 +54,7 @@ public abstract class Tag implements Element {
         if (shortcut != null)
             return shortcut;
         else
-            return Character.toString(getTag().charAt(0));
+            return Character.toString(tag.charAt(0));
     }
 
     private Type type;
@@ -135,7 +135,7 @@ public abstract class Tag implements Element {
      */
     public String toTMX() {
         String tmxtag;
-        switch (getType()) {
+        switch (type) {
         case BEGIN:
             tmxtag = "bpt";
             break;
@@ -154,7 +154,7 @@ public abstract class Tag implements Element {
         buf.append("<");
         buf.append(tmxtag);
         buf.append(" i=\"");
-        buf.append(getIndex());
+        buf.append(index);
         buf.append("\">");
 
         buf.append(toPartialTMX());
@@ -176,11 +176,11 @@ public abstract class Tag implements Element {
         StringBuffer buf = new StringBuffer();
 
         buf.append("&amp;lt;");
-        if (Type.END == getType())
+        if (Type.END == type)
             buf.append("/");
-        buf.append(getTag());
-        buf.append(getAttributes().toString());
-        if (Type.ALONE == getType())
+        buf.append(tag);
+        buf.append(attributes.toString());
+        if (Type.ALONE == type)
             buf.append("/");
         buf.append("&amp;gt;");
 
@@ -195,11 +195,11 @@ public abstract class Tag implements Element {
         StringBuffer buf = new StringBuffer();
 
         buf.append("<");
-        if (Type.END == getType())
+        if (Type.END == type)
             buf.append("/");
         buf.append(getShortcut());
-        buf.append(getIndex());
-        if (Type.ALONE == getType())
+        buf.append(index);
+        if (Type.ALONE == type)
             buf.append("/");
         buf.append(">");
 

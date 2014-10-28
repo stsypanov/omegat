@@ -198,7 +198,7 @@ public class XMLBlock {
                 tag += '>';
             }
             return tag;
-        } else if (isTag()) {
+        } else if (m_isTag) {
             // write < + [/ +] tagname + attributes + [/ +] >
             String tag = "<";
             if (m_isClose) {
@@ -223,7 +223,7 @@ public class XMLBlock {
     }
 
     public String getTagName() {
-        if (isTag())
+        if (m_isTag)
             return m_text;
         else
             return "";
@@ -237,14 +237,14 @@ public class XMLBlock {
     }
 
     public XMLAttribute getAttribute(int n) {
-        if (n < 0 || !isTag() || m_attrList == null || n > m_attrList.size()) {
+        if (n < 0 || !m_isTag || m_attrList == null || n > m_attrList.size()) {
             return null;
         } else
             return m_attrList.get(n);
     }
 
     public String getAttribute(String name) {
-        if (!isTag() || m_attrList == null)
+        if (!m_isTag || m_attrList == null)
             return null;
         XMLAttribute attr = null;
 

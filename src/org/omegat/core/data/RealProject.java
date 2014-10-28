@@ -666,7 +666,7 @@ public class RealProject implements IProject {
                 try {
                     saveProjectProperties();
 
-                    projectTMX.save(m_config, s, isProjectModified());
+                    projectTMX.save(m_config, s, m_modifiedFlag);
 
                     if (repository != null && doTeamSync) {
                         Core.getMainWindow().showStatusMessageRB("TEAM_SYNCHRONIZE");
@@ -774,7 +774,7 @@ public class RealProject implements IProject {
             modifiedFiles = new File[]{projectTMXFile};
             updateGlossary = false;
         }
-        if (isProjectModified() || repository.isChanged(glossaryFile) || repository.isChanged(projectTMXFile)) {
+        if (m_modifiedFlag || repository.isChanged(glossaryFile) || repository.isChanged(projectTMXFile)) {
             needUpload = true;
         }
 

@@ -129,17 +129,17 @@ public class MapRule implements Serializable {
             MapRule that = (MapRule) obj;
             return this.getPattern().equals(that.getPattern())
                     && this.getLanguage().equals(that.getLanguage())
-                    && this.getRules().equals(that.getRules());
+                    && rules.equals(that.rules);
         }
     }
 
     /** Returns a hash code value for the object. */
     public int hashCode() {
-        return this.getPattern().hashCode() + this.getLanguage().hashCode() + this.getRules().hashCode();
+        return this.getPattern().hashCode() + this.getLanguage().hashCode() + rules.hashCode();
     }
 
     /** Returns a string representation of the MapRule for debugging purposes. */
     public String toString() {
-        return getLanguage() + " (" + getPattern() + ") " + getRules().toString();
+        return getLanguage() + " (" + getPattern() + ") " + rules.toString();
     }
 }

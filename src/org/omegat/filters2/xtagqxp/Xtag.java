@@ -81,7 +81,7 @@ public class Xtag implements Element {
         if (shortcut != null)
             return shortcut;
         else
-            return Character.toString(getTag().charAt(0));
+            return Character.toString(tag.charAt(0));
     }
 
     private int index;
@@ -106,7 +106,7 @@ public class Xtag implements Element {
         else
             buf.append("<");
         buf.append(getShortcut());
-        buf.append(getIndex());
+        buf.append(index);
         // All Xtags are single tags
         buf.append("/");
         buf.append(">");
@@ -119,7 +119,7 @@ public class Xtag implements Element {
      * E.g. for &lt;strong&gt; tag should return &lt;strong&gt;.
      */
     public String toOriginal() {
-        return "<" + getTag() + ">";
+        return "<" + tag + ">";
     }
 
     /**

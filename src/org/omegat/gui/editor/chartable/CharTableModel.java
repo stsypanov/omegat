@@ -125,10 +125,10 @@ public class CharTableModel extends AbstractTableModel {
     public void removeSelection(int row1, int col1, int row2, int col2) {
         if (data.length() == 0)
             return;
-        
-        int pos1 = row1 * getColumnCount() + col1;
+
+        int pos1 = row1 * columnCount + col1;
         pos1 = pos1 >= data.length() ? data.length() - 1 : pos1;
-        int pos2 = row2 * getColumnCount() + col2;
+        int pos2 = row2 * columnCount + col2;
         pos2 = (pos2 >= data.length()) ? data.length() - 1 : pos2;
         pos2 = (pos2 == pos1) ? pos1+1 : pos2;
         data.delete(pos1, pos2);

@@ -118,8 +118,8 @@ public class AutoCompleter {
      * @return true if a key has been processed, false if otherwise.
      */
     public boolean processKeys(KeyEvent e) {
-        
-        if (!isVisible() && ((!onMac && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
+
+        if (!visible && ((!onMac && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
                 || (onMac && StaticUtils.isKey(e, KeyEvent.VK_ESCAPE, 0)))) {
 
             if (!editor.isInActiveTranslation(editor.getCaretPosition())) {
@@ -133,8 +133,8 @@ public class AutoCompleter {
             }
             return true;
         }
-        
-        if (isVisible()) {
+
+        if (visible) {
             if (views.get(currentView).processKeys(e, popup.isVisible()))
                 return true;
             
@@ -200,8 +200,8 @@ public class AutoCompleter {
     /**
      * Show the popup list.
      */
-    public void updatePopup() { 
-        if (!isVisible())
+    public void updatePopup() {
+        if (!visible)
             return;
         
         if (editor.isEnabled() && updateViewData() && views.get(currentView).getRowCount()!=0) { 

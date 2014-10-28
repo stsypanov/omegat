@@ -403,29 +403,29 @@ public class EditorSettings {
             }
         } else {
             if (isSource) {
-                if (isMarkNotedSegments() && hasNote && !translationExists) {
+                if (markNoted && hasNote && !translationExists) {
                     bg = Styles.EditorColor.COLOR_NOTED.getColor();
                 } else if (markUntranslated && !translationExists) {
                     bg = Styles.EditorColor.COLOR_UNTRANSLATED.getColor();
-                } else if (isDisplaySegmentSources()) {
+                } else if (displaySegmentSources) {
                     bg = Styles.EditorColor.COLOR_SOURCE.getColor();
                 }
             } else {
-                if (isMarkNotedSegments() && hasNote) {
+                if (markNoted && hasNote) {
                     bg = Styles.EditorColor.COLOR_NOTED.getColor();
                 } else if (markTranslated) {
                     bg = Styles.EditorColor.COLOR_TRANSLATED.getColor();
                 }
             }
         }
-        if (isNBSP && isMarkNBSP()) { //overwrite others, because space is smallest.
+        if (isNBSP && markNBSP) { //overwrite others, because space is smallest.
             bg = Styles.EditorColor.COLOR_NBSP.getColor();
         }
 
         //determine bold
         Boolean bold = false;
         if (isSource) {
-            if (active || viewSourceBold && isDisplaySegmentSources()) {
+            if (active || viewSourceBold && displaySegmentSources) {
                 bold = true;
             }
         }
