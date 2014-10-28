@@ -26,6 +26,7 @@
 package org.omegat.core.tagvalidation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -204,9 +205,7 @@ public class TagValidationTest extends TestCase {
     
     protected static <T> List<T> getList(T[] array) {
         List<T> list = new ArrayList<T>();
-        for (T item : array) {
-            list.add(item);
-        }
+        Collections.addAll(list, array);
         return list;
     }
     

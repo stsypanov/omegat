@@ -29,6 +29,7 @@
 package org.omegat.core.matching;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -79,12 +80,8 @@ public class NearString {
         
         List<String> projs = new ArrayList<String>();
         List<Scores> scores = new ArrayList<Scores>();
-        for (String p : ns.projs) {
-            projs.add(p);
-        }
-        for (Scores s : ns.scores) {
-            scores.add(s);
-        }
+        Collections.addAll(projs, ns.projs);
+        Collections.addAll(scores, ns.scores);
         
         if (nearScore > ns.scores[0].score) {
             projs.add(0, projName);
