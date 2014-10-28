@@ -36,6 +36,7 @@ import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
 import org.omegat.filters2.html2.HTMLFilter2;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
 /**
@@ -74,7 +75,7 @@ public class HHCFilter2 extends HTMLFilter2 {
             parser.setInputHTML(all.toString());
             parser.visitAllNodesWith(new HHCFilterVisitor(this, outfile));
         } catch (ParserException pe) {
-            System.out.println(pe);
+            Log.log(pe);
         }
     }
 
