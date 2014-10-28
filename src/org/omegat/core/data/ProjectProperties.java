@@ -68,8 +68,8 @@ public class ProjectProperties {
 
     /** Default constructor to initialize fields (to get no NPEs). */
     public ProjectProperties(File projectDir) throws Exception {
-        setProjectName(projectDir.getCanonicalFile().getName());
-        setProjectRoot(projectDir.getAbsolutePath() + File.separator);
+        projectName = projectDir.getCanonicalFile().getName();
+        projectRoot = projectDir.getAbsolutePath() + File.separator;
         setSourceRoot(projectRoot + OConsts.DEFAULT_SOURCE + File.separator);
         sourceRootExcludes.addAll(Arrays.asList(DEFAULT_EXCLUDES));
         setTargetRoot(projectRoot + OConsts.DEFAULT_TARGET + File.separator);
@@ -78,9 +78,9 @@ public class ProjectProperties {
         setTMRoot(projectRoot + OConsts.DEFAULT_TM + File.separator);
         setDictRoot(projectRoot + OConsts.DEFAULT_DICT + File.separator);
 
-        setSentenceSegmentingEnabled(true);
-        setSupportDefaultTranslations(true);
-        setRemoveTags(false);
+        sentenceSegmentingOn = true;
+        supportDefaultTranslations = true;
+        removeTags = false;
 
         String sourceLocale = Preferences.getPreference(Preferences.SOURCE_LOCALE);
         if (!StringUtil.isEmpty(sourceLocale)) {
@@ -98,8 +98,8 @@ public class ProjectProperties {
 
         projectSRX = SRX.loadSRX(new File(getProjectInternal(), SRX.CONF_SENTSEG));
 
-        setSourceTokenizer(PluginUtils.getTokenizerClassForLanguage(getSourceLanguage()));
-        setTargetTokenizer(PluginUtils.getTokenizerClassForLanguage(getTargetLanguage()));
+        sourceTokenizer = PluginUtils.getTokenizerClassForLanguage(sourceLanguage);
+        targetTokenizer = PluginUtils.getTokenizerClassForLanguage(targetLanguage);
     }
 
 	/** Returns The Target (Compiled) Files Directory */
@@ -134,8 +134,7 @@ public class ProjectProperties {
     /** Returns The Glossary File Directory */
     public String getWriteableGlossaryDir() {
         File fDir = new File(writeableGlossaryFile);
-        String sDir = fDir.getParent();
-        return sDir;
+        return fDir.getParent();
     }
 
     /** Sets The Writeable Glossary File Location */
@@ -281,7 +280,7 @@ public class ProjectProperties {
     public Class<?> getSourceTokenizer() {
         if (sourceTokenizer == null) {
             Class<?> cls = PluginUtils.getTokenizerClassForLanguage(getSourceLanguage());
-            setSourceTokenizer(cls);
+            sourceTokenizer = cls;
         }
         return sourceTokenizer;
     }

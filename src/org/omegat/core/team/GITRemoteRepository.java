@@ -211,7 +211,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             return;
         }
         myCredentialsProvider.setCredentials(credentials);
-        setReadOnly(credentials.readOnly);
+        readOnly = credentials.readOnly;
     }
 
     public void setReadOnly(boolean value) {

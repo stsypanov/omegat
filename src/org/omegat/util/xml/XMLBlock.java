@@ -71,7 +71,7 @@ public class XMLBlock {
     }
 
     public void setText(String text) {
-        setTag(false);
+        m_isTag = false;
         m_text = text;
 
         // block considered text if it has length=1 and includes non ws
@@ -116,14 +116,14 @@ public class XMLBlock {
 
     public void setComment() {
         m_isTag = true;
-        setTypeChar('!');
+        m_typeChar = '!';
         m_isComment = true;
         m_isClose = false;
         m_isStandalone = false;
     }
 
     public void setTagName(String name) {
-        setTag(true);
+        m_isTag = true;
         m_text = name;
     }
 

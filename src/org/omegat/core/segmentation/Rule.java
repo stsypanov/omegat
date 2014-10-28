@@ -42,7 +42,7 @@ public class Rule implements Serializable {
 
     /** Creates an initialized instance of segmentation rule */
     public Rule(boolean breakRule, String beforebreak, String afterbreak) {
-        setBreakRule(breakRule);
+        this.breakRule = breakRule;
         setBeforebreak(beforebreak);
         setAfterbreak(afterbreak);
     }

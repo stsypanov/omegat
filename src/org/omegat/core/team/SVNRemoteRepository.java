@@ -134,7 +134,7 @@ public class SVNRemoteRepository implements IRemoteRepository {
         }
         ISVNOptions options = SVNWCUtil.createDefaultOptions(true);
         ourClientManager = SVNClientManager.newInstance(options, authManager);
-        setReadOnly(credentials.readOnly);
+        readOnly = credentials.readOnly;
     }
 
     public void setReadOnly(boolean value) {

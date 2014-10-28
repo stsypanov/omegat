@@ -113,10 +113,10 @@ public class Instance {
 
     private void init(String sourceFilenameMask, String sourceEncoding, String targetEncoding,
             String targetFilenamePattern) {
-        setSourceFilenameMask(sourceFilenameMask);
+        this.sourceFilenameMask = sourceFilenameMask;
         setSourceEncoding(sourceEncoding);
         setTargetEncoding(targetEncoding);
-        setTargetFilenamePattern(targetFilenamePattern);
+        this.targetFilenamePattern = targetFilenamePattern;
     }
 
     /**

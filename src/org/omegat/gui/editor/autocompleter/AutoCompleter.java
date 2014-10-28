@@ -126,8 +126,8 @@ public class AutoCompleter {
                 return false;
             }
 
-            setVisible(true);
-            
+            visible = true;
+
             if (!popup.isVisible()) {
                 updatePopup();
             }
@@ -177,16 +177,16 @@ public class AutoCompleter {
     
     public void doSelection() {
     	popup.setVisible(false); 
-        acceptedListItem(getSelectedValue()); 
-        setVisible(false);
+        acceptedListItem(getSelectedValue());
+        visible = false;
     }
 
     /**
      * hide the popup
      */
     public void hidePopup() {
-        setVisible(false);
-        popup.setVisible(false); 
+        visible = false;
+        popup.setVisible(false);
     }
     
     /**
