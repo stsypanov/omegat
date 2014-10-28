@@ -56,6 +56,7 @@ import org.omegat.filters2.IFilter;
 import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.ITranslateCallback;
 import org.omegat.filters2.master.FilterMaster;
+import org.omegat.tokenizer.DefaultTokenizer;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.omegat.util.TMXReader2;
@@ -78,6 +79,7 @@ public abstract class TestFilterBase extends TestCore {
 
         Core.initializeConsole(new TreeMap<String, String>());
         Core.setFilterMaster(new FilterMaster(FilterMaster.createDefaultFiltersConfig()));
+        Core.setProject(new TestProject(new ProjectPropertiesTest()));
 
         outFile = new File("build/testdata/OmegaT_test-" + getClass().getName() + "-" + getName());
         outFile.getParentFile().mkdirs();
@@ -341,7 +343,10 @@ public abstract class TestFilterBase extends TestCore {
      * ProjectProperties successor for create project without directory.
      */
     protected static class ProjectPropertiesTest extends ProjectProperties {
-
+        ProjectPropertiesTest() {
+            super();
+            setTargetTokenizer(DefaultTokenizer.class);
+        }
     }
 
     /**

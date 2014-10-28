@@ -6,7 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2007-2010 Didier Briel
                2010 Antonio Vilei
-               2011-2013 Didier Briel
+               2011-2014 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -64,6 +64,7 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
         translateEndnotesCB.setSelected(options.getTranslateEndnotes());
         translateHeadersCB.setSelected(options.getTranslateHeaders());
         translateFootersCB.setSelected(options.getTranslateFooters());
+        translateFallbackTextCB.setSelected(options.getTranslateFallbackText());
         translateDiagramsCB.setSelected(options.getTranslateDiagrams());
         translateExcelCommentsCB.setSelected(options.getTranslateExcelComments());
         translateSheetNamesCB.setSelected(options.getTranslateSheetNames());
@@ -121,6 +122,7 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
         translateEndnotesCB = new javax.swing.JCheckBox();
         translateHeadersCB = new javax.swing.JCheckBox();
         translateFootersCB = new javax.swing.JCheckBox();
+        translateFallbackTextCB = new javax.swing.JCheckBox();
         jLabel4 = new javax.swing.JLabel();
         translateExcelCommentsCB = new javax.swing.JCheckBox();
         translateSheetNamesCB = new javax.swing.JCheckBox();
@@ -233,6 +235,14 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
             }
         });
         jPanel1.add(translateFootersCB);
+
+        org.openide.awt.Mnemonics.setLocalizedText(translateFallbackTextCB, OStrings.getString("OpenXML_TRANSLATE_FALLBACK_TEXT")); // NOI18N
+        translateFallbackTextCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                translateFallbackTextCBradiosActionPerformed(evt);
+            }
+        });
+        jPanel1.add(translateFallbackTextCB);
 
         jLabel4.setFont(new java.awt.Font("MS Sans Serif", 1, 11)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -348,6 +358,10 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_translateWordArtCBradiosActionPerformed
 
+    private void translateFallbackTextCBradiosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_translateFallbackTextCBradiosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_translateFallbackTextCBradiosActionPerformed
+
     private void translateExcelCommentsCBradiosActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_translateExcelCommentsCBradiosActionPerformed
     // TODO add your handling code here:
     }// GEN-LAST:event_translateExcelCommentsCBradiosActionPerformed
@@ -387,6 +401,7 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
         options.setTranslateEndnotes(translateEndnotesCB.isSelected());
         options.setTranslateHeaders(translateHeadersCB.isSelected());
         options.setTranslateFooters(translateFootersCB.isSelected());
+        options.setTranslateFallbackText(translateFallbackTextCB.isSelected());
         options.setTranslateDiagrams(translateDiagramsCB.isSelected());
         options.setTranslateExcelComments(translateExcelCommentsCB.isSelected());
         options.setTranslateSheetNames(translateSheetNamesCB.isSelected());
@@ -457,6 +472,7 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
     private javax.swing.JCheckBox translateDrawingsCB;
     private javax.swing.JCheckBox translateEndnotesCB;
     private javax.swing.JCheckBox translateExcelCommentsCB;
+    private javax.swing.JCheckBox translateFallbackTextCB;
     private javax.swing.JCheckBox translateFootersCB;
     private javax.swing.JCheckBox translateFootnotesCB;
     private javax.swing.JCheckBox translateHeadersCB;

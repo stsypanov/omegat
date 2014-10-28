@@ -596,7 +596,9 @@ public class PoFilter extends AbstractFilter {
      * @param source
      * @param translation
      * @param comments
-     * @param id some id to distinguish plural forms. null otherwise.
+     * @param pathSuffix
+     *            suffix for path to distinguish plural forms. It will be empty for first one, and [1],[2],...
+     *            for next
      */
     protected void align(String source, String translation, String comments, String pathSuffix) {
         if (translation.length() == 0) {
@@ -742,8 +744,11 @@ public class PoFilter extends AbstractFilter {
     private String getTranslation(String id, StringBuilder en, boolean allowNull, boolean isHeader, FilterContext fc, int plural) {
         String entry = unescape(en.toString());
 
-        if (plural > 1) {
-            id = "["+plural+"]"+entry;
+        String pathSuffix;
+        if (plural > 0) {
+            pathSuffix = "["+plural+"]";
+        } else {
+            pathSuffix = "";
         }
 
         // Do real translation
@@ -754,7 +759,7 @@ public class PoFilter extends AbstractFilter {
         if (isHeader && PoFilter.skipHeader) {
             translation = entry;
         } else {
-            translation = entryTranslateCallback.getTranslation(id, entry, path);
+            translation = entryTranslateCallback.getTranslation(id, entry, path + pathSuffix );
         }
 
         if (translation == null && !allowNull) { // We write the source in translation

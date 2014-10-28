@@ -59,13 +59,12 @@ import org.omegat.gui.help.HelpFrame;
  * @author Aaron Madlon-Kay
  */
 public class FileUtil {
-    private static final int MAX_BACKUPS = 11;
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /**
      * Removes old backups so that only 10 last are there.
      */
-    public static void removeOldBackups(final File originalFile) {
+    public static void removeOldBackups(final File originalFile, int maxBackups) {
         try {
             File[] bakFiles = originalFile.getParentFile().listFiles(new FileFilter() {
                 public boolean accept(File f) {
@@ -74,13 +73,19 @@ public class FileUtil {
                 }
             });
 
-            if (bakFiles != null && bakFiles.length > MAX_BACKUPS) {
+            if (bakFiles != null && bakFiles.length > maxBackups) {
                 Arrays.sort(bakFiles, new Comparator<File>() {
                     public int compare(File f1, File f2) {
-                        return f2.getName().compareTo(f1.getName());
+                        if (f2.lastModified() < f1.lastModified()) {
+                            return -1;
+                        } else if (f2.lastModified() > f1.lastModified()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
                     }
                 });
-                for (int i = MAX_BACKUPS; i < bakFiles.length; i++) {
+                for (int i = maxBackups; i < bakFiles.length; i++) {
                     bakFiles[i].delete();
                 }
             }

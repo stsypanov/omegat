@@ -325,6 +325,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         gotoMenu.add(gotoSegmentMenuItem = createMenuItem("TF_MENU_EDIT_GOTO"));
         gotoMenu.add(gotoNextNoteMenuItem = createMenuItem("TF_MENU_EDIT_NEXT_NOTE"));
         gotoMenu.add(gotoPreviousNoteMenuItem = createMenuItem("TF_MENU_EDIT_PREV_NOTE"));
+        gotoMenu.add(gotoNextUniqueMenuItem = createMenuItem("TF_MENU_GOTO_NEXT_UNIQUE"));
         gotoMenu.add(gotoMatchSourceSegment = createMenuItem("TF_MENU_GOTO_SELECTED_MATCH_SOURCE"));
         gotoMenu.add(new JSeparator());
         gotoMenu.add(gotoHistoryForwardMenuItem = createMenuItem("TF_MENU_GOTO_FORWARD_IN_HISTORY"));
@@ -396,6 +397,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         optionsMenu.add(new JSeparator());
         optionsMenu.add(optionsFontSelectionMenuItem = createMenuItem("TF_MENU_DISPLAY_FONT"));
+        optionsMenu.add(optionsColorsSelectionMenuItem = createMenuItem("TF_MENU_COLORS"));
         optionsMenu.add(optionsSetupFileFiltersMenuItem = createMenuItem("TF_MENU_DISPLAY_FILTERS"));
         optionsMenu.add(optionsSentsegMenuItem = createMenuItem("MW_OPTIONSMENU_SENTSEG"));
         optionsMenu.add(optionsSpellCheckMenuItem = createMenuItem("MW_OPTIONSMENU_SPELLCHECK"));
@@ -685,6 +687,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem gotoNextNoteMenuItem;
     JMenuItem gotoPreviousNoteMenuItem;
     JMenuItem gotoMatchSourceSegment;
+    JMenuItem gotoNextUniqueMenuItem;
     JMenuItem helpAboutMenuItem;
     JMenuItem helpContentsMenuItem;
     JMenuItem helpLastChangesMenuItem;
@@ -694,6 +697,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuBar mainMenu;
     JCheckBoxMenuItem optionsAlwaysConfirmQuitCheckBoxMenuItem;
     JMenuItem optionsFontSelectionMenuItem;
+    JMenuItem optionsColorsSelectionMenuItem;
     JMenu optionsMenu;
     JMenuItem optionsRestoreGUIMenuItem;
     JMenuItem optionsSentsegMenuItem;
@@ -727,7 +731,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem projectNewMenuItem;
     JMenuItem projectTeamNewMenuItem;
     JMenuItem projectOpenMenuItem;
-    JMenuItem projectOpenRecentMenuItem;
+    JMenu projectOpenRecentMenuItem;
     JMenuItem projectReloadMenuItem;
     JMenuItem projectSaveMenuItem;
     JMenuItem projectWikiImportMenuItem;
