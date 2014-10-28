@@ -253,7 +253,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         });
     }
     
-    private class CustomColorPreview extends JTextArea
+    private static class CustomColorPreview extends JTextArea
     {
         EditorColor editorColor;
 		Color curColor;

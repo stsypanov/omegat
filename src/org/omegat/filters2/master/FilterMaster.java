@@ -295,7 +295,7 @@ public class FilterMaster {
         }
     }
 
-    class LookupInformation {
+    protected static class LookupInformation {
         public final Files outFilesInfo;
         public final IFilter filterObject;
         public final Map<String, String> config;

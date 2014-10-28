@@ -167,7 +167,7 @@ public class DirectoryMonitor extends Thread {
     /**
      * Information about exist file.
      */
-    protected class FileInfo {
+    protected static class FileInfo {
         public long lastModified, length;
 
         public FileInfo(final File file) {
