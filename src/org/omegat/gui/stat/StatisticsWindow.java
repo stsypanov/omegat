@@ -32,19 +32,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.omegat.core.Core;
 import org.omegat.core.statistics.CalcMatchStatistics;
 import org.omegat.core.statistics.CalcStandardStatistics;
 import org.omegat.core.threads.LongProcessThread;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
@@ -56,7 +50,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Thomas Cordonnier
  */
 @SuppressWarnings("serial")
-public class StatisticsWindow extends JDialog {
+public class StatisticsWindow extends PeroFrame {
 
     public static enum STAT_TYPE {
         STANDARD, MATCHES, MATCHES_PER_FILE
@@ -65,9 +59,13 @@ public class StatisticsWindow extends JDialog {
     private JProgressBar progressBar;
     private JTextArea output;
     private LongProcessThread thread;
+    private JFrame mainWindow;
+    private JFrame statisticsWindow;
 
     public StatisticsWindow(STAT_TYPE statType) {
-        super(Core.getMainWindow().getApplicationFrame(), true);
+        super();
+        mainWindow = Core.getMainWindow().getApplicationFrame();
+        statisticsWindow = this;
 
         progressBar = new JProgressBar();
         output = new JTextArea();
@@ -121,6 +119,15 @@ public class StatisticsWindow extends JDialog {
 
         setSize(800, 400);
         DockingUI.displayCentered(this);
+
+        mainWindow.setEnabled(false);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+                statisticsWindow.dispose();
+                mainWindow.setEnabled(true);
+            }
+        });
     }
 
     public void showProgress(final int percent) {

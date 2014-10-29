@@ -301,8 +301,8 @@ public class DefaultEntityFilter {
     }
 
     private static void addMapEntry(char val, String name) {
-        m_escMap.put(name, new Character(val));
-        m_charMap.put(new Character(val), name);
+        m_escMap.put(name, val);
+        m_charMap.put(val, name);
     }
 
     /**

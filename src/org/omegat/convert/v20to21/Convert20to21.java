@@ -63,11 +63,8 @@ public class Convert20to21 {
         }
         String c = read(fromFile);
         org.omegat.convert.v20to21.data.Filters filters;
-        XMLDecoder xmldec = new XMLDecoder(new ByteArrayInputStream(c.getBytes("UTF-8")));
-        try {
+        try (XMLDecoder xmldec = new XMLDecoder(new ByteArrayInputStream(c.getBytes("UTF-8")))) {
             filters = (org.omegat.convert.v20to21.data.Filters) xmldec.readObject();
-        } finally {
-            xmldec.close();
         }
 
         Filters res = new Filters();
@@ -121,14 +118,10 @@ public class Convert20to21 {
         StringBuilder r = new StringBuilder();
         char[] c = new char[8192];
         int len;
-        InputStreamReader rd = new InputStreamReader(new FileInputStream(f));
-        try {
+        try (InputStreamReader rd = new InputStreamReader(new FileInputStream(f))) {
             while ((len = rd.read(c)) >= 0) {
                 r.append(c, 0, len);
             }
-
-        } finally {
-            rd.close();
         }
         String res = r.toString();
         res = res.replace("org.omegat.filters2.master.Filters", "org.omegat.convert.v20to21.data.Filters");

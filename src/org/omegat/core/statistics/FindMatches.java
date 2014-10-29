@@ -262,9 +262,7 @@ public class FindMatches {
             // fill similarity data only for result
             for (NearString near : result) {
                 // fix for bug 1586397
-                byte[] similarityData = FuzzyMatcher.buildSimilarityData(strTokensAll,
-                        tokenizeAll(near.source));
-                near.attr = similarityData;
+                near.attr = FuzzyMatcher.buildSimilarityData(strTokensAll, tokenizeAll(near.source));
             }
         }
 

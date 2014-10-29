@@ -77,7 +77,7 @@ class EntryListPane extends JTextPane {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2 && m_entryList.size() > 0) {
                     final Cursor oldCursor = getCursor();
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     // user double clicked on viewer pane - send message
@@ -151,7 +151,7 @@ class EntryListPane extends JTextPane {
 
             if (entries.size() >= numberOfResults) {
                 addMessage(m_stringBuf, StaticUtils.format(OStrings.getString("SW_MAX_FINDS_REACHED"),
-                        new Object[] { new Integer(numberOfResults) }));
+                        new Object[] {numberOfResults}));
             }
 
             for (SearchResultEntry e : entries) {

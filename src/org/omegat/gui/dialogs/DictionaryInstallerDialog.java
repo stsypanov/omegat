@@ -36,6 +36,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.omegat.core.spellchecker.DictionaryManager;
+import org.omegat.gui.common.PeroDialog;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -46,7 +48,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class DictionaryInstallerDialog extends JDialog {
+public class DictionaryInstallerDialog extends PeroDialog {
 
     /**
      * The dictionary manager in use
@@ -202,7 +204,7 @@ public class DictionaryInstallerDialog extends JDialog {
                         JOptionPane.ERROR_MESSAGE);
                 setCursor(hourglassCursor);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Log.log(ex);
             }
         }
         setCursor(oldCursor);

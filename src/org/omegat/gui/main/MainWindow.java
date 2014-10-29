@@ -59,6 +59,7 @@ import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.util.LFileCopy;
@@ -94,7 +95,7 @@ import com.vlsolutions.swing.docking.FloatingDialog;
  * @author Piotr Kulik
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame implements IMainWindow {
+public class MainWindow extends PeroFrame implements IMainWindow {
     public final MainWindowMenu menu;
 
     protected ProjectFilesListController m_projWin;

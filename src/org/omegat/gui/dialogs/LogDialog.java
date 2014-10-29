@@ -29,8 +29,7 @@ package org.omegat.gui.dialogs;
 import java.awt.Frame;
 import java.io.File;
 
-import javax.swing.JDialog;
-
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -44,7 +43,7 @@ import org.openide.awt.Mnemonics;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class LogDialog extends JDialog {
+public class LogDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

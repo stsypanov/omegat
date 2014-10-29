@@ -50,7 +50,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -76,6 +75,7 @@ import javax.swing.text.Highlighter.HighlightPainter;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.editor.mark.Mark;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -92,7 +92,7 @@ import org.openide.awt.Mnemonics;
  * @author Alex Buloichik
  * @author Yu Tang
  */
-public class ScriptingWindow extends JFrame {
+public class ScriptingWindow extends PeroFrame {
 
     private static final long serialVersionUID = 1L;
 
@@ -615,8 +615,8 @@ public class ScriptingWindow extends JFrame {
         Document doc = e.getDocument();
         try {
             doc.insertString(doc.getLength(), s, null);
-        } catch (BadLocationException e1) {
-            /* empty */
+        } catch (BadLocationException ex) {
+            Log.log(ex);
         }
     }
 

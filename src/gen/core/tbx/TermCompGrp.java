@@ -135,7 +135,7 @@ public class TermCompGrp {
      */
     public List<Object> getTermNoteOrTermNoteGrp() {
         if (termNoteOrTermNoteGrp == null) {
-            termNoteOrTermNoteGrp = new ArrayList<Object>();
+            termNoteOrTermNoteGrp = new ArrayList<>();
         }
         return this.termNoteOrTermNoteGrp;
     }
@@ -169,7 +169,7 @@ public class TermCompGrp {
      */
     public List<Object> getAdminOrAdminGrpOrTransacGrp() {
         if (adminOrAdminGrpOrTransacGrp == null) {
-            adminOrAdminGrpOrTransacGrp = new ArrayList<Object>();
+            adminOrAdminGrpOrTransacGrp = new ArrayList<>();
         }
         return this.adminOrAdminGrpOrTransacGrp;
     }

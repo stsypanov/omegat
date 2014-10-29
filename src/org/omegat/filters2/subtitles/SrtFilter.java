@@ -143,8 +143,8 @@ public class SrtFilter extends AbstractFilter {
 
     @Override
     protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<String, String>();
-        Map<String, String> translated = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<>();
+        Map<String, String> translated = new HashMap<>();
 
         align = source;
         processFile(sourceFile, new NullBufferedWriter(), fc);

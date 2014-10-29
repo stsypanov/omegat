@@ -177,7 +177,7 @@ public class ProjectUICommands {
                     mainWindow.setCursor(oldCursor);
                     return null;
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.log(ex);
                     Core.getMainWindow().displayErrorRB(ex, "TEAM_CHECKOUT_ERROR");
                     mainWindow.setCursor(oldCursor);
                     return null;
@@ -198,7 +198,7 @@ public class ProjectUICommands {
                             }
                         } catch (Exception e) {
                             Log.logErrorRB(e, "TEAM_MISSING_FOLDER", f.getName());
-                        };
+                        }
                     }
                     //load project
                     ProjectFactory.loadProject(props, repository, true);

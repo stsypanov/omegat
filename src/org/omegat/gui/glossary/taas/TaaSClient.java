@@ -135,11 +135,8 @@ public class TaaSClient {
 
         conn.setRequestProperty("Content-Type", "text/plain");// ; charset=UTF-8
         conn.setDoOutput(true);
-        OutputStream out = conn.getOutputStream();
-        try {
+        try (OutputStream out = conn.getOutputStream()) {
             out.write(body.getBytes(UTF8));
-        } finally {
-            out.close();
         }
 
         if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -183,14 +180,11 @@ public class TaaSClient {
     /**
      * Read content as UTF-8 string.
      */
-    String readUTF8(HttpURLConnection conn) throws IOException {
-        InputStream in = conn.getInputStream();
-        try {
+    private String readUTF8(HttpURLConnection conn) throws IOException {
+        try (InputStream in = conn.getInputStream()) {
             ByteArrayOutputStream o = new ByteArrayOutputStream();
             LFileCopy.copy(in, o);
             return new String(o.toByteArray(), UTF8);
-        } finally {
-            in.close();
         }
     }
 
@@ -237,16 +231,9 @@ public class TaaSClient {
         HttpURLConnection conn = requestGet(WS_URL + "/collections/" + collectionId);
         checkXMLContentType(conn);
 
-        InputStream in = conn.getInputStream();
-        try {
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
-            try {
-                TaaSPlugin.filterTaasResult(in, out);
-            } finally {
-                out.close();
-            }
-        } finally {
-            in.close();
+        try (InputStream in = conn.getInputStream();
+             OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
+            TaaSPlugin.filterTaasResult(in, out);
         }
         Log.logDebug(LOGGER, "Collection {0} downloaded", collectionId);
     }

@@ -45,8 +45,10 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -556,6 +558,8 @@ public class RealProject implements IProject {
 
         TranslateFilesCallback translateFilesCallback = new TranslateFilesCallback();
 
+        int numberOfCompiled = 0;
+
         for (String midName : fileList) {
             // shorten filename to that which is relative to src root
             Matcher fileMatch = FILE_PATTERN.matcher(midName);
@@ -572,9 +576,14 @@ public class RealProject implements IProject {
                 fm.translateFile(srcRoot, midName, locRoot, new FilterContext(m_config),
                         translateFilesCallback);
                 translateFilesCallback.fileFinished();
+                numberOfCompiled++;
             }
         }
-        Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
+        if (numberOfCompiled == 1) {
+            Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX_SINGULAR");
+        } else {
+            Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
+        }
 
         CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
         
@@ -748,6 +757,8 @@ public class RealProject implements IProject {
         List<GlossaryEntry> headGlossaryEntries = null;
         final boolean updateGlossary;
 
+        Log.logInfoRB("TEAM_REBASE_START");
+
         final String projectTMXFilename = m_config.getProjectInternal() + OConsts.STATUS_EXTENSION;
         final File projectTMXFile = new File(projectTMXFilename);
 
@@ -795,6 +806,12 @@ public class RealProject implements IProject {
             filenameTMXwithLocalChangesOnBase = new File(projectTMXFilename + "-based_on_" + baseRevTMX + OConsts.NEWFILE_EXTENSION);
             filenameGlossarywithLocalChangesOnBase = null;
             projectTMX.exportTMX(m_config, filenameTMXwithLocalChangesOnBase, false, false, true); //overwrites file if it exists
+            if (System.getProperty("team.supersafe") != null) {
+                // save supersafe backup
+                File bak = new File(projectTMXFilename + "-based_on_" + baseRevTMX + "_at_"
+                        + new SimpleDateFormat("MMdd-HHmmss").format(new Date()) + OConsts.BACKUP_EXTENSION);
+                projectTMX.exportTMX(m_config, bak, false, false, true);
+            }
             if (updateGlossary) {
                 filenameGlossarywithLocalChangesOnBase = new File(glossaryFilename + "-based_on_" + baseRevGlossary + OConsts.NEWFILE_EXTENSION);
                 if (filenameGlossarywithLocalChangesOnBase.exists()) {
@@ -857,12 +874,14 @@ public class RealProject implements IProject {
             Log.logDebug(LOGGER, "rebaseProject: TMX head revision: {0}", headRevTMX);
     
             if (headRevTMX.equals(baseRevTMX)) {
+                Log.logDebug(LOGGER, "rebaseProject: head equals base");
                 // don't need rebase
                 filenameTMXwithLocalChangesOnHead = filenameTMXwithLocalChangesOnBase;
                 filenameTMXwithLocalChangesOnBase = null;
                 //free up some memory
                 baseTMX = null;
             } else {
+                Log.logDebug(LOGGER, "rebaseProject: real rebase");
                 // need rebase
                 again = true;
                 headTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(), m_config.isSentenceSegmentingEnabled(), projectTMXFile, null);
@@ -910,6 +929,13 @@ public class RealProject implements IProject {
                 
                 filenameTMXwithLocalChangesOnHead = new File(projectTMXFilename + "-based_on_" + headRevTMX + OConsts.NEWFILE_EXTENSION);
                 projectTMX.exportTMX(m_config, filenameTMXwithLocalChangesOnHead, false, false, true);
+                if (System.getProperty("team.supersafe") != null) {
+                    // save supersafe backup
+                    File bak = new File(projectTMXFilename + "-merged_on_" + headRevTMX + "_at_"
+                            + new SimpleDateFormat("MMdd-HHmmss").format(new Date())
+                            + OConsts.BACKUP_EXTENSION);
+                    projectTMX.exportTMX(m_config, bak, false, false, true);
+                }
                 //free memory
                 headTMX = null;
             }
@@ -1001,7 +1027,7 @@ public class RealProject implements IProject {
                 throw new KnownException(ex, "TEAM_SYNCHRONIZATION_ERROR");
             }
         }
-
+        Log.logInfoRB("TEAM_REBASE_END");
     }
 
     /**
@@ -1040,7 +1066,8 @@ public class RealProject implements IProject {
             if (tmxFile.exists()) {
                 // RFE 1001918 - backing up project's TMX upon successful read
                 FileUtil.backupFile(tmxFile);
-                FileUtil.removeOldBackups(tmxFile);
+                FileUtil.removeOldBackups(tmxFile, System.getProperty("team.supersafe") != null ? 300
+                        : OConsts.MAX_BACKUPS);
             }
         } catch (SAXParseException ex) {
             Log.logErrorRB(ex, "TMXR_FATAL_ERROR_WHILE_PARSING", ex.getLineNumber(), ex.getColumnNumber());
@@ -1058,7 +1085,7 @@ public class RealProject implements IProject {
      * @param projectRoot
      *            project root dir
      */
-    private void loadSourceFiles() throws IOException, InterruptedIOException, TranslationException {
+    private void loadSourceFiles() throws IOException, TranslationException {
         long st = System.currentTimeMillis();
         FilterMaster fm = Core.getFilterMaster();
 
@@ -1074,14 +1101,13 @@ public class RealProject implements IProject {
         for (String filename : srcFileList) {
             // strip leading path information;
             // feed file name to project window
-            String filepath = filename;
 
-            Core.getMainWindow().showStatusMessageRB("CT_LOAD_FILE_MX", filepath);
+            Core.getMainWindow().showStatusMessageRB("CT_LOAD_FILE_MX", filename);
 
             LoadFilesCallback loadFilesCallback = new LoadFilesCallback(existSource, existKeys);
 
             FileInfo fi = new FileInfo();
-            fi.filePath = filepath;
+            fi.filePath = filename;
 
             loadFilesCallback.setCurrentFile(fi);
 
@@ -1518,7 +1544,6 @@ public class RealProject implements IProject {
          if (vString != null && vString.length() > 0) {
              try {
                  tokenizer.setBehavior(Version.valueOf(vString));
-                 return;
              }  catch (Throwable e) {
                  throw new RuntimeException(e);
              }
@@ -1683,7 +1708,7 @@ public class RealProject implements IProject {
             this.config = props;
         }
 
-        Map<String, TMXEntry> data = new HashMap<String, TMXEntry>();
+        Map<String, TMXEntry> data = new HashMap<>();
         private ProjectProperties config;
 
         @Override

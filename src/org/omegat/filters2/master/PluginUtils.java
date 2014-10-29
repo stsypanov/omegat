@@ -66,7 +66,7 @@ public final class PluginUtils {
     }
 
     protected static URLClassLoader pluginsClassLoader;
-    protected static List<Class<?>> loadedPlugins = new ArrayList<Class<?>>();
+    protected static List<Class<?>> loadedPlugins = new ArrayList<>();
 
     /** Private constructor to disallow creation */
     private PluginUtils() {
@@ -104,12 +104,9 @@ public final class PluginUtils {
             for (Enumeration<URL> mlist = pluginsClassLoader.getResources("META-INF/MANIFEST.MF"); mlist
                     .hasMoreElements();) {
                 URL mu = mlist.nextElement();
-                InputStream in = mu.openStream();
                 Manifest m;
-                try {
+                try (InputStream in = mu.openStream()) {
                     m = new Manifest(in);
-                } finally {
-                    in.close();
                 }
                 if ("org.omegat.Main".equals(m.getMainAttributes().getValue("Main-Class"))) {
                     // found main manifest - not in development mode
@@ -125,11 +122,8 @@ public final class PluginUtils {
                 }
                 for (String mf : manifests.split(File.pathSeparator)) {
                     Manifest m;
-                    InputStream in = new FileInputStream(mf);
-                    try {
+                    try (InputStream in = new FileInputStream(mf)) {
                         m = new Manifest(in);
-                    } finally {
-                        in.close();
                     }
                     loadFromManifest(m, pluginsClassLoader);
                 }
@@ -235,17 +229,17 @@ public final class PluginUtils {
         return glossaryClasses;
     }
 
-    protected static List<Class<?>> filterClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> filterClasses = new ArrayList<>();
 
-    protected static List<Class<?>> tokenizerClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> tokenizerClasses = new ArrayList<>();
 
-    protected static List<Class<?>> markerClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> markerClasses = new ArrayList<>();
 
-    protected static List<Class<?>> machineTranslationClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> machineTranslationClasses = new ArrayList<>();
 
-    protected static List<Class<?>> glossaryClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> glossaryClasses = new ArrayList<>();
 
-    protected static List<Class<?>> basePluginClasses = new ArrayList<Class<?>>();
+    protected static List<Class<?>> basePluginClasses = new ArrayList<>();
 
     /**
      * Parse one manifest file.

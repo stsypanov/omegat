@@ -34,7 +34,7 @@ import java.util.List;
  * @author Maxym Mykhalchuk
  */
 public class Attributes {
-    List<Attribute> list = new ArrayList<Attribute>();
+    List<Attribute> list = new ArrayList<>();
 
     /** Number of attributes. */
     public int size() {
@@ -72,7 +72,7 @@ public class Attributes {
      * name1="value1" name2="value2" ...'
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Attribute attr : list) {
             buf.append(' ');
             buf.append(attr.toString());

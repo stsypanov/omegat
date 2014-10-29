@@ -37,6 +37,7 @@ import org.apache.pdfbox.util.PDFTextStripper;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
 /**
@@ -84,7 +85,7 @@ public class PdfFilter  extends AbstractFilter {
     
     @Override
     public void processFile(BufferedReader in, BufferedWriter out, FilterContext fc) {
-	StringBuffer sb = new StringBuffer();
+	StringBuilder sb = new StringBuilder();
 	String find = ("^\\s*?$");
 	Pattern p = Pattern.compile(find);
 		
@@ -109,7 +110,7 @@ public class PdfFilter  extends AbstractFilter {
 		out.write("\n");				
 	    }
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    Log.log(e);
 	}
     }
 }

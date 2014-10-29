@@ -123,7 +123,7 @@ public class AdminGrp {
      */
     public List<Object> getAdminNoteOrNoteOrRef() {
         if (adminNoteOrNoteOrRef == null) {
-            adminNoteOrNoteOrRef = new ArrayList<Object>();
+            adminNoteOrNoteOrRef = new ArrayList<>();
         }
         return this.adminNoteOrNoteOrRef;
     }

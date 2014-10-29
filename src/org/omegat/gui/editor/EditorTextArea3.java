@@ -58,10 +58,13 @@ import javax.swing.text.Utilities;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
+import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
+import org.omegat.util.Log;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
@@ -107,6 +110,8 @@ public class EditorTextArea3 extends JEditorPane {
 
         addMouseListener(mouseListener);
 
+        ClipboardUtils.bind(this, Core.getMainWindow().getApplicationFrame());
+
         addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent e) {
                 try {
@@ -122,7 +127,7 @@ public class EditorTextArea3 extends JEditorPane {
                         CoreEvents.fireEditorNewWord(newWord);
                     }
                 } catch (BadLocationException ex) {
-                    ex.printStackTrace();
+                    Log.log(ex);
                 }
             }
         });

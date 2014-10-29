@@ -45,7 +45,6 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import org.omegat.core.Core;
@@ -58,6 +57,7 @@ import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.core.tagvalidation.ErrorReport.TagError;
 import org.omegat.gui.HListener;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
 import org.omegat.util.PatternConsts;
@@ -76,7 +76,7 @@ import org.openide.awt.Mnemonics;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class TagValidationFrame extends JFrame {
+public class TagValidationFrame extends PeroFrame {
     public TagValidationFrame(MainWindow parent) {
         setTitle(OStrings.getString("TF_NOTICE_BAD_TAGS"));
 

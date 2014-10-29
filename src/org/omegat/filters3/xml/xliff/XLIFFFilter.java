@@ -69,7 +69,7 @@ public class XLIFFFilter extends XMLFilter {
    /**
      * Sets whether alternative translations are identified by previous and next paragraphs or by &lt;trans-unit&gt; ID
     */
-     private ID_TYPE altTransIDType;
+     private ID_TYPE altTransIDType = ID_TYPE.CONTEXT;
 
     /**
      * Register plugin into OmegaT.
@@ -223,7 +223,7 @@ public class XLIFFFilter extends XMLFilter {
             notes.add(text.toString());
         } else if (path.endsWith("trans-unit")) {
             if (entryParseCallback != null) {
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 for (int i = 0; i < groupLevel; i++) {
                     String temp = groupResname.get(i);
                     if (temp != null) {

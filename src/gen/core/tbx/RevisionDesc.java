@@ -84,7 +84,7 @@ public class RevisionDesc {
      */
     public List<Change> getChange() {
         if (change == null) {
-            change = new ArrayList<Change>();
+            change = new ArrayList<>();
         }
         return this.change;
     }

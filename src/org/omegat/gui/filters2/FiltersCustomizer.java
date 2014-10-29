@@ -37,7 +37,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.util.Map;
 
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -46,6 +45,7 @@ import javax.swing.event.ListSelectionListener;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.FiltersTableModel;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -60,7 +60,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class FiltersCustomizer extends JDialog implements ListSelectionListener {
+public class FiltersCustomizer extends PeroDialog implements ListSelectionListener {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -456,7 +456,7 @@ public class FiltersCustomizer extends JDialog implements ListSelectionListener 
 
     private void doClose(int retStatus) {
         returnStatus = retStatus;
-        if (isProjectSpecific && projectSpecificCB.isSelected() == false) {
+        if (isProjectSpecific && !projectSpecificCB.isSelected()) {
             result = null;
         } else {
             result = editableFilters;

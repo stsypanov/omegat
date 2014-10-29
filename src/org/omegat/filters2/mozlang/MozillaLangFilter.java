@@ -90,7 +90,7 @@ public class MozillaLangFilter extends AbstractFilter {
      * NOTE: Mozilla lang files use always UTF-8 encoding without BOM.
      */
     @Override
-    public BufferedReader createReader(File infile, String encoding) throws UnsupportedEncodingException,
+    public BufferedReader createReader(File infile, String encoding) throws
             IOException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(infile), OConsts.UTF8));
     }
@@ -102,7 +102,7 @@ public class MozillaLangFilter extends AbstractFilter {
      * <p>
      */
     @Override
-    public BufferedWriter createWriter(File outfile, String encoding) throws UnsupportedEncodingException,
+    public BufferedWriter createWriter(File outfile, String encoding) throws
             IOException {
         // lang file use UTF8 encoding
         return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outfile), OConsts.UTF8));
@@ -129,8 +129,7 @@ public class MozillaLangFilter extends AbstractFilter {
             TranslationException {
 
         inEncodingLastParsedFile = fc.getInEncoding();
-        BufferedReader reader = createReader(inFile, inEncodingLastParsedFile);
-        try {
+        try (BufferedReader reader = createReader(inFile, inEncodingLastParsedFile)) {
             BufferedWriter writer;
 
             if (outFile != null) {
@@ -146,8 +145,6 @@ public class MozillaLangFilter extends AbstractFilter {
                     writer.close();
                 }
             }
-        } finally {
-            reader.close();
         }
     }
     

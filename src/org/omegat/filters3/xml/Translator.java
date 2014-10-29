@@ -65,7 +65,7 @@ interface Translator {
      * @throws IOException
      *             If any I/O Error occurs upon reader creation.
      */
-    BufferedReader createReader(File inFile, String inEncoding) throws UnsupportedEncodingException,
+    BufferedReader createReader(File inFile, String inEncoding) throws
             IOException;
 
     /**
@@ -83,7 +83,7 @@ interface Translator {
      * @throws IOException
      *             If any I/O Error occurs upon writer creation
      */
-    BufferedWriter createWriter(File outFile, String outEncoding) throws UnsupportedEncodingException,
+    BufferedWriter createWriter(File outFile, String outEncoding) throws
             IOException;
 
     /**

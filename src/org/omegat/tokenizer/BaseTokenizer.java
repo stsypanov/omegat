@@ -39,7 +39,6 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.util.Version;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IProjectEventListener;
-import org.omegat.util.Preferences;
 import org.omegat.util.Token;
 
 /**

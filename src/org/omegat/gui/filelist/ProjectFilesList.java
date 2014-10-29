@@ -36,17 +36,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
-import javax.swing.table.DefaultTableModel;
+
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 import org.openide.awt.Mnemonics;
 
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class ProjectFilesList extends javax.swing.JFrame {
+public class ProjectFilesList extends PeroFrame {
 
     /**
      * Creates new form ProjectFilesList

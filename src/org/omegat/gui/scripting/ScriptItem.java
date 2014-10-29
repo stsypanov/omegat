@@ -132,7 +132,7 @@ public class ScriptItem extends File {
         return "".equals(description) ? name : name + " - " + description;
     }
 
-    public String getText() throws FileNotFoundException, IOException {
+    public String getText() throws IOException {
         String ret = "";
         LinebreakPreservingReader lpin = null;
         try {
@@ -172,7 +172,7 @@ public class ScriptItem extends File {
         return new LinebreakPreservingReader(in);
     }
 
-    public void setText(String text) throws UnsupportedEncodingException, IOException {
+    public void setText(String text) throws IOException {
         text = text.replaceAll("\n", lineBreak);
         if (startsWithBOM) {
             text = BOM + text;

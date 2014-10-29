@@ -301,7 +301,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
             return segment;
 
         try {
-            StringBuffer buf = new StringBuffer(segment);
+            StringBuilder buf = new StringBuilder(segment);
             Matcher matcher = PatternConsts.OMEGAT_TAG_DECOMPILE.matcher(segment);
 
             int tagstart = matcher.start();
@@ -361,7 +361,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
                 buf.replace(tagstart, tagend, tag.toString());
             }
 
-            StringBuffer res = new StringBuffer();
+            StringBuilder res = new StringBuilder();
             for (int i = unopenedTags.size() - 1; i > 0; i--) {
                 tag = unopenedTags.get(i);
                 res.append(tag.toStringPaired());
@@ -539,9 +539,9 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         inTU = false;
         inTUV = false;
         inSegment = false;
-        tuvs = new ArrayList<TUV>();
-        currentElement = new Stack<String>();
-        currentSub = new Stack<StringBuffer>();
+        tuvs = new ArrayList<>();
+        currentElement = new Stack<>();
+        currentSub = new Stack<>();
         currentElement.push(TMX_TAG_NONE);
     }
 
@@ -759,7 +759,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         String propVariantLanguages = getProperty(PROPERTY_VARIANT_LANGUAGES);
         if (propVariantLanguages != null) {
             int commaPos = 0;
-            StringBuffer languages = new StringBuffer();
+            StringBuilder languages = new StringBuilder();
             do {
                 // get the position of the next comma
                 commaPos = propVariantLanguages.indexOf(',');
@@ -1234,7 +1234,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         public TUV() {
             super();
             text = new StringBuffer();
-            subSegments = new ArrayList<StringBuffer>();
+            subSegments = new ArrayList<>();
         }
     }
 

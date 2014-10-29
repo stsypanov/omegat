@@ -135,7 +135,7 @@ public class Tuv {
      */
     public List<Object> getNoteOrProp() {
         if (noteOrProp == null) {
-            noteOrProp = new ArrayList<Object>();
+            noteOrProp = new ArrayList<>();
         }
         return this.noteOrProp;
     }

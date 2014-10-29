@@ -89,7 +89,7 @@ public class Header {
      */
     public List<Formathandle> getFormathandle() {
         if (formathandle == null) {
-            formathandle = new ArrayList<Formathandle>();
+            formathandle = new ArrayList<>();
         }
         return this.formathandle;
     }

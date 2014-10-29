@@ -706,12 +706,12 @@ public class ProjectFilesListController {
         public Sorter(final List<IProject.FileInfo> files) {
             this.files = files;
             modelToView = new Integer[files.size()];
-            viewToModel = new ArrayList<Integer>(files.size());
+            viewToModel = new ArrayList<>(files.size());
             for (int i = 0; i < modelToView.length; i++) {
                 viewToModel.add(i);
             }
 
-            final List<String> filenames = new ArrayList<String>();
+            final List<String> filenames = new ArrayList<>();
             for (IProject.FileInfo fi : files) {
                 filenames.add(fi.filePath);
             }
@@ -778,7 +778,7 @@ public class ProjectFilesListController {
 
         @Override
         public List<? extends SortKey> getSortKeys() {
-            List<SortKey> r = new ArrayList<RowSorter.SortKey>();
+            List<SortKey> r = new ArrayList<>();
             r.add(sortKey);
             return r;
         }
@@ -838,12 +838,12 @@ public class ProjectFilesListController {
                         c = f1.fileEncoding.compareToIgnoreCase(f2.fileEncoding);
                         break;
                     case 3:
-                        c = new Integer(f1.entries.size()).compareTo(new Integer(f2.entries.size()));
+                        c = new Integer(f1.entries.size()).compareTo(f2.entries.size());
                         break;
                     case 4:
                         int n1 = stat.uniqueCountsByFile.get(f1.filePath);
                         int n2 = stat.uniqueCountsByFile.get(f2.filePath);
-                        c = new Integer(n1).compareTo(new Integer(n2));
+                        c = new Integer(n1).compareTo(n2);
                         break;
                     }
                     if (sortKey.getSortOrder() == SortOrder.DESCENDING) {
@@ -883,7 +883,7 @@ public class ProjectFilesListController {
         }
 
         private void save() {
-            List<String> filenames = new ArrayList<String>();
+            List<String> filenames = new ArrayList<>();
             for (Integer aViewToModel : viewToModel) {
                 String fn = files.get(aViewToModel).filePath;
                 filenames.add(fn);

@@ -40,7 +40,6 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +67,7 @@ import org.omegat.core.data.LastSegmentManager;
 import org.omegat.core.data.PrepareTMXEntry;
 import org.omegat.core.data.ProjectTMX;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.data.SourceTextEntry.DUPLICATE;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
@@ -81,7 +81,6 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.main.DockablePanel;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.gui.tagvalidation.ITagValidation;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -505,7 +504,7 @@ public class EditorController implements IEditor {
 
         Document3 doc = new Document3(this);
 
-        ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<SegmentBuilder>(file.entries.size());
+        ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<>(file.entries.size());
         for (int i = 0; i < file.entries.size(); i++) {
             SourceTextEntry ste = file.entries.get(i);
             if (entriesFilter == null || entriesFilter.allowed(ste)) {
@@ -1100,7 +1099,7 @@ public class EditorController implements IEditor {
         UIThreadsUtil.mustBeSwingThread();
 
         // check if a document is loaded
-        if (Core.getProject().isProjectLoaded() == false)
+        if (!Core.getProject().isProjectLoaded())
             return;
 
         Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
@@ -1181,7 +1180,7 @@ public class EditorController implements IEditor {
         UIThreadsUtil.mustBeSwingThread();
 
         // Check if a document is loaded.
-        if (Core.getProject().isProjectLoaded() == false)
+        if (!Core.getProject().isProjectLoaded())
             return;
 
         Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
@@ -1273,6 +1272,59 @@ public class EditorController implements IEditor {
                 // Non-translated.
                 break;
             }
+        } while (true);
+
+        activateEntry();
+
+        this.editor.setCursor(oldCursor);
+    }
+
+    /**
+     * Find the next unique entry.
+     * @param findTranslated should the next entry be translated or not.
+     */
+    public void nextUniqueEntry() {
+        UIThreadsUtil.mustBeSwingThread();
+
+        // check if a document is loaded
+        if (Core.getProject().isProjectLoaded() == false)
+            return;
+
+        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = this.editor.getCursor();
+        this.editor.setCursor(hourglassCursor);
+
+        // save the current entry
+        commitAndDeactivate();
+
+        List<FileInfo> files = Core.getProject().getProjectFiles();
+        SourceTextEntry ste;
+        int startFileIndex = displayedFileIndex;
+        int startEntryIndex = displayedEntryIndex;
+        do {
+            displayedEntryIndex++;
+            if (displayedEntryIndex >= m_docSegList.length) {
+                // file finished - need new
+                displayedFileIndex++;
+                displayedEntryIndex = 0;
+                if (displayedFileIndex >= files.size()) {
+                    displayedFileIndex = 0;
+                }
+                loadDocument(); // to get proper EntryIndex when filter active
+            }
+            ste = getCurrentEntry();
+
+            if (ste == null) {
+                break;// filtered file has no entries
+            }
+            if (displayedFileIndex == startFileIndex && displayedEntryIndex == startEntryIndex) {
+                break; // not found
+            }
+            
+            if (ste.getDuplicate() != DUPLICATE.NEXT){
+                break;
+            }
+
         } while (true);
 
         activateEntry();
@@ -2029,7 +2081,7 @@ public class EditorController implements IEditor {
                 wait();
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.log(e);
         } finally {
             timer.cancel();
         }
@@ -2065,7 +2117,7 @@ public class EditorController implements IEditor {
                 try {
                     sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.log(e);
                 }
             }
         }

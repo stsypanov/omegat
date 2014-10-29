@@ -324,7 +324,7 @@ public abstract class AbstractFilter implements IFilter {
      *             If any I/O Error occurs upon reader creation
      */
     protected BufferedReader createReader(File inFile, String inEncoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         InputStreamReader isr;
         if (inEncoding == null)
             isr = new InputStreamReader(new FileInputStream(inFile));
@@ -347,7 +347,7 @@ public abstract class AbstractFilter implements IFilter {
      *             If any I/O Error occurs upon writer creation
      */
     protected BufferedWriter createWriter(File outFile, String outEncoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         OutputStreamWriter osw;
         if (outEncoding == null)
             osw = new OutputStreamWriter(new FileOutputStream(outFile));
@@ -417,11 +417,10 @@ public abstract class AbstractFilter implements IFilter {
     protected void processFile(File inFile, File outFile, FilterContext fc) throws IOException,
             TranslationException {
         inEncodingLastParsedFile = fc.getInEncoding();
-        BufferedReader reader = createReader(inFile, inEncodingLastParsedFile);
         if (inEncodingLastParsedFile == null) {
             inEncodingLastParsedFile = Charset.defaultCharset().name();
         }
-        try {
+        try (BufferedReader reader = createReader(inFile, inEncodingLastParsedFile)) {
             BufferedWriter writer;
 
             if (outFile != null) {
@@ -435,8 +434,6 @@ public abstract class AbstractFilter implements IFilter {
             } finally {
                 writer.close();
             }
-        } finally {
-            reader.close();
         }
     }
 
@@ -466,14 +463,9 @@ public abstract class AbstractFilter implements IFilter {
         entryAlignCallback = callback;
         processOptions = config;
 
-        BufferedReader readerIn = createReader(inFile, fc.getInEncoding());
-        BufferedReader readerOut = createReader(outFile, fc.getOutEncoding());
-
-        try {
+        try (BufferedReader readerIn = createReader(inFile, fc.getInEncoding());
+             BufferedReader readerOut = createReader(outFile, fc.getOutEncoding())) {
             alignFile(readerIn, readerOut, fc);
-        } finally {
-            readerIn.close();
-            readerOut.close();
         }
     }
 

@@ -128,7 +128,7 @@ public abstract class EntryInfoSearchThread<T> extends Thread {
      * 
      * @return result of search
      */
-    protected abstract T search() throws EntryChangedException, Exception;
+    protected abstract T search() throws Exception;
 
     /**
      * Any search can generate this exception for stop searching if entry changed. All callers must catch it

@@ -110,7 +110,7 @@ public class FilterMaster {
     static {
         try {
             CONFIG_CTX = JAXBContext.newInstance(Filters.class);
-            filtersClasses = new ArrayList<Class<IFilter>>();
+            filtersClasses = new ArrayList<>();
             filtersClasses.addAll((List)PluginUtils.getFilterClasses());
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
@@ -195,7 +195,7 @@ public class FilterMaster {
 
             filterObject.parseFile(inFile, lookup.config, fc, parseCallback);
         } catch (Exception ioe) {
-            ioe.printStackTrace();
+            Log.log(ioe);
             throw new IOException(filename + "\n" + ioe);
         }
         return filterObject;
@@ -369,7 +369,7 @@ public class FilterMaster {
      */
     public static List<String> getSupportedEncodings() {
         if (supportedEncodings == null) {
-            supportedEncodings = new ArrayList<String>();
+            supportedEncodings = new ArrayList<>();
             supportedEncodings.add(AbstractFilter.ENCODING_AUTO_HUMAN);
             supportedEncodings.addAll(Charset.availableCharsets().keySet());
         }
@@ -718,7 +718,7 @@ public class FilterMaster {
      * @return options for filter usage
      */
     public static Map<String, String> forFilter(List<Option> options) {
-        final Map<String, String> result = new TreeMap<String, String>();
+        final Map<String, String> result = new TreeMap<>();
         for (Option opt : options) {
             result.put(opt.getName(), opt.getValue());
         }

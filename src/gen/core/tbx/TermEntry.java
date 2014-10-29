@@ -114,7 +114,7 @@ public class TermEntry {
      */
     public List<Object> getDescripOrDescripGrpOrAdmin() {
         if (descripOrDescripGrpOrAdmin == null) {
-            descripOrDescripGrpOrAdmin = new ArrayList<Object>();
+            descripOrDescripGrpOrAdmin = new ArrayList<>();
         }
         return this.descripOrDescripGrpOrAdmin;
     }
@@ -143,7 +143,7 @@ public class TermEntry {
      */
     public List<LangSet> getLangSet() {
         if (langSet == null) {
-            langSet = new ArrayList<LangSet>();
+            langSet = new ArrayList<>();
         }
         return this.langSet;
     }

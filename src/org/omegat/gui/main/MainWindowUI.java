@@ -211,16 +211,12 @@ public class MainWindowUI {
 
         File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
         if (uiLayoutFile.exists()) {
-            try {
-                FileInputStream in = new FileInputStream(uiLayoutFile);
-                try {
-                    mainWindow.desktop.readXML(in);
-                } finally {
-                    in.close();
-                }
+            try (FileInputStream in = new FileInputStream(uiLayoutFile)) {
+                mainWindow.desktop.readXML(in);
             } catch (Exception e) {
-                Log.log(e);                     // In case something wrong happened, it's better to have a default
-                resetDesktopLayout(mainWindow); // screen than a blank one
+                Log.log(e);
+                // In case something wrong happened, it's better to have a default screen than a blank one
+                resetDesktopLayout(mainWindow);
             }
         }
     }
@@ -235,13 +231,8 @@ public class MainWindowUI {
         Preferences.setPreference(Preferences.MAINWINDOW_HEIGHT, mainWindow.getHeight());
 
         File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
-        try {
-            FileOutputStream out = new FileOutputStream(uiLayoutFile);
-            try {
-                mainWindow.desktop.writeXML(out);
-            } finally {
-                out.close();
-            }
+        try (FileOutputStream out = new FileOutputStream(uiLayoutFile)) {
+            mainWindow.desktop.writeXML(out);
         } catch (Exception ex) {
             Log.log(ex);
         }
@@ -257,13 +248,8 @@ public class MainWindowUI {
      * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static void resetDesktopLayout(final MainWindow mainWindow) {
-        try {
-            InputStream in = MainWindowUI.class.getResourceAsStream("DockingDefaults.xml");
-            try {
-                mainWindow.desktop.readXML(in);
-            } finally {
-                in.close();
-            }
+        try (InputStream in = MainWindowUI.class.getResourceAsStream("DockingDefaults.xml")) {
+            mainWindow.desktop.readXML(in);
         } catch (Exception exception) {
             Log.log(exception);
         }

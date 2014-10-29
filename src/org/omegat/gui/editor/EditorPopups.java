@@ -41,9 +41,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
-import org.omegat.core.data.PrepareTMXEntry;
-import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.TMXEntry;
 import org.omegat.core.spellchecker.SpellCheckerMarker;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;

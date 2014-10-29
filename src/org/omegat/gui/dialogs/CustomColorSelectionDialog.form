@@ -19,7 +19,9 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="OmegaT Custom Color"/>
+    <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+      <ResourceString bundle="org/omegat/Bundle.properties" key="GUI_COLORS_TITLE" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
+    </Property>
     <Property name="iconImage" type="java.awt.Image" editor="org.netbeans.modules.form.ComponentChooserEditor">
       <ComponentRef name="null"/>
     </Property>
@@ -49,22 +51,21 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="colorStylesLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="setColorButton" max="32767" attributes="0"/>
-                          <Component id="defaultColorButton" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jScrollPane1" min="-2" pref="231" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
+                      <Component id="jScrollPane1" pref="267" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="colorChooser" min="-2" pref="639" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="applyColorChangesButton" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="applyColorChangesButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="defaultColorButton" alignment="1" pref="281" max="32767" attributes="0"/>
+                          <Component id="setColorButton" alignment="1" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -76,13 +77,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="jScrollPane1" min="-2" pref="169" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="setColorButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="defaultColorButton" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="jScrollPane1" min="-2" pref="169" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="colorStylesLabel" min="-2" max="-2" attributes="0"/>
@@ -91,7 +86,11 @@
                       <Component id="colorChooser" min="-2" pref="336" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="setColorButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="defaultColorButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="18" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="applyColorChangesButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -104,10 +103,13 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="colorStylesLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="OStrings.getString(&quot;GUI_COLORS_COLOR&quot;)" type="code"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/omegat/Bundle.properties" key="GUI_COLORS_COLOR" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -124,59 +126,70 @@
             <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="colorStylesListValueChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList&lt;Styles.EditorColor&gt;(Styles.EditorColor.values())"/>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Styles.EditorColor&gt;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList(Styles.EditorColor.values())"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
           </AuxValues>
         </Component>
       </SubComponents>
     </Container>
     <Component class="javax.swing.JColorChooser" name="colorChooser">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="&#xd;&#xa;//final JComponent samplePanel = sampleEditorPane;&#xd;&#xa;final CustomColorPreview samplePanel = new CustomColorPreview(colorChooser);&#xd;&#xa;&#xd;&#xa;colorChooser.setPreviewPanel(samplePanel);&#xd;&#xa;ColorSelectionModel model = colorChooser.getSelectionModel();&#xd;&#xa;    model.addChangeListener(new ChangeListener() {&#xd;&#xa;      public void stateChanged(ChangeEvent evt) {&#xd;&#xa;        ColorSelectionModel model = (ColorSelectionModel) evt.getSource();&#xd;&#xa;        samplePanel.curColor = model.getSelectedColor();&#xd;&#xa;      }&#xd;&#xa;    });&#xd;&#xa;&#xd;&#xa;&#xd;&#xa;// Remove sample Swatches&#xd;&#xa;javax.swing.colorchooser.AbstractColorChooserPanel[] oldPanels = colorChooser.getChooserPanels();&#xd;&#xa;for (int i = 0; i &lt; oldPanels.length; i++) {&#xd;&#xa;    String clsName = oldPanels[i].getClass().getName();&#xd;&#xa;    if (clsName.equals(&quot;javax.swing.colorchooser.DefaultSwatchChooserPanel&quot;)) {&#xd;&#xa;        colorChooser.removeChooserPanel(oldPanels[i]);&#xd;&#xa;    }&#xd;&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="/*&#xd;&#xa;final CustomColorPreview samplePanel = new CustomColorPreview(colorChooser, colorStylesList.getSelectedValue());&#xd;&#xa;&#xd;&#xa;colorChooser.setPreviewPanel(samplePanel);&#xd;&#xa;ColorSelectionModel model = colorChooser.getSelectionModel();&#xd;&#xa;    model.addChangeListener(new ChangeListener() {&#xd;&#xa;      public void stateChanged(ChangeEvent evt) {&#xd;&#xa;        ColorSelectionModel model = (ColorSelectionModel) evt.getSource();&#xd;&#xa;        samplePanel.curColor = model.getSelectedColor();&#xd;&#xa;      }&#xd;&#xa;    });&#xd;&#xa;*/&#xd;&#xa;&#xd;&#xa;&#xd;&#xa;try {&#xd;&#xa;    removeTransparencySlider(colorChooser);&#xd;&#xa;}&#xd;&#xa;catch (Exception e) {&#xd;&#xa;    /* empty */&#xd;&#xa;}&#xd;&#xa;&#xd;&#xa;// Remove sample Swatches&#xd;&#xa;javax.swing.colorchooser.AbstractColorChooserPanel[] oldPanels = colorChooser.getChooserPanels();&#xd;&#xa;for (int i = 0; i &lt; oldPanels.length; i++) {&#xd;&#xa;    String clsName = oldPanels[i].getClass().getName();&#xd;&#xa;    if (clsName.equals(&quot;javax.swing.colorchooser.DefaultSwatchChooserPanel&quot;)) {&#xd;&#xa;        colorChooser.removeChooserPanel(oldPanels[i]);&#xd;&#xa;    }&#xd;&#xa;}&#xd;&#xa;"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="applyColorChangesButton">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="OStrings.getString(&quot;GUI_COLORS_APPLY&quot;)" type="code"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/omegat/Bundle.properties" key="GUI_COLORS_APPLY" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyColorChangesButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="defaultColorButton">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="OStrings.getString(&quot;GUI_COLORS_DEFAULT_COLOR&quot;)" type="code"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/omegat/Bundle.properties" key="GUI_COLORS_DEFAULT_COLOR" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="verticalAlignment" type="int" value="1"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="defaultColorButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="setColorButton">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="OStrings.getString(&quot;GUI_COLORS_SET_COLOR&quot;)" type="code"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/omegat/Bundle.properties" key="GUI_COLORS_SET_COLOR" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value=""/>
+        <Property name="verticalAlignment" type="int" value="1"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setColorButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="cancelButton">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="OStrings.getString(&quot;BUTTON_CANCEL&quot;)" type="code"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/omegat/Bundle.properties" key="BUTTON_CANCEL" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="org.openide.awt.Mnemonics.setLocalizedText(cancelButton, OStrings.getString(&quot;BUTTON_CANCEL&quot;));"/>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
       </AuxValues>
     </Component>
   </SubComponents>

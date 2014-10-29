@@ -47,9 +47,8 @@ public class LuceneEnglishTokenizer extends BaseTokenizer {
     static {
         // Load stopwords
         try {
-            InputStream in = LuceneEnglishTokenizer.class
-                    .getResourceAsStream("StopList_en.txt");
-            try {
+            try (InputStream in = LuceneEnglishTokenizer.class
+                    .getResourceAsStream("StopList_en.txt")) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(
                         in, "UTF-8"));
                 String s;
@@ -60,8 +59,6 @@ public class LuceneEnglishTokenizer extends BaseTokenizer {
                     }
                     STOP_WORDS.add(s);
                 }
-            } finally {
-                in.close();
             }
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(

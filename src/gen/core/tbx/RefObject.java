@@ -92,7 +92,7 @@ public class RefObject {
      */
     public List<Object> getItemSetOrItemGrpOrItem() {
         if (itemSetOrItemGrpOrItem == null) {
-            itemSetOrItemGrpOrItem = new ArrayList<Object>();
+            itemSetOrItemGrpOrItem = new ArrayList<>();
         }
         return this.itemSetOrItemGrpOrItem;
     }

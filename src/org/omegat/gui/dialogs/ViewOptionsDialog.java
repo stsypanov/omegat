@@ -28,8 +28,8 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.ModificationInfoManager;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -41,7 +41,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class ViewOptionsDialog extends JDialog {
+public class ViewOptionsDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

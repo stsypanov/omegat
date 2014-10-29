@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.beans.ExceptionListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -44,6 +43,7 @@ import org.omegat.core.segmentation.MapRule;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.core.segmentation.datamodels.MappingRulesModel;
 import org.omegat.core.segmentation.datamodels.SegmentationRulesModel;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.StaticUIUtils;
@@ -55,7 +55,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Maxym Mykhalchuk
  */
 @SuppressWarnings("serial")
-public class SegmentationCustomizer extends JDialog implements ListSelectionListener {
+public class SegmentationCustomizer extends PeroDialog implements ListSelectionListener {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

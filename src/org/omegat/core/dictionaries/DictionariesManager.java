@@ -122,8 +122,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
      * Load ignored words from 'ignore.txt' file.
      */
     protected void loadIgnoreWords(final File f) throws IOException {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), OConsts.UTF8));
-        try {
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), OConsts.UTF8))) {
             synchronized (ignoreWords) {
                 ignoreWords.clear();
                 String line;
@@ -131,8 +130,6 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
                     ignoreWords.add(line.trim());
                 }
             }
-        } finally {
-            rd.close();
         }
     }
 
@@ -143,9 +140,8 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         try {
             File outFile = new File(monitor.getDir(), "ignore.txt");
             File outFileTmp = new File(monitor.getDir(), "ignore.txt.new");
-            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp),
-                    OConsts.UTF8));
-            try {
+            try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp),
+                    OConsts.UTF8))) {
                 synchronized (ignoreWords) {
                     ignoreWords.add(word);
                     for (String w : ignoreWords) {
@@ -153,8 +149,6 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
                     }
                 }
                 wr.flush();
-            } finally {
-                wr.close();
             }
             outFile.delete();
             outFileTmp.renameTo(outFile);

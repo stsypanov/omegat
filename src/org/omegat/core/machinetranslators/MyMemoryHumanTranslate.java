@@ -109,9 +109,8 @@ public class MyMemoryHumanTranslate extends AbstractMyMemoryTranslate {
     protected String buildMyMemoryUrl(Language sLang, Language tLang, String text, String format) throws UnsupportedEncodingException {
     	String sourceLang = mymemoryCode(sLang);
     	String targetLang = mymemoryCode(tLang);
-    	String url2 = GT_URL2.replace("#sourceLang#", sourceLang).replace("#targetLang#", targetLang).replace("#format#", format);
-    	String url = GT_URL + URLEncoder.encode(text, "UTF-8") + url2;
-    	
-    	return url;
+    	String url = GT_URL2.replace("#sourceLang#", sourceLang).replace("#targetLang#", targetLang).replace("#format#", format);
+
+        return GT_URL + URLEncoder.encode(text, "UTF-8") + url;
     }   
 }

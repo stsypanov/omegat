@@ -33,6 +33,7 @@ import java.io.StringWriter;
 import java.net.URL;
 
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.help.HelpFrame;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -49,7 +50,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class LicenseDialog extends javax.swing.JDialog {
+public class LicenseDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -128,15 +129,10 @@ public class LicenseDialog extends javax.swing.JDialog {
             return HelpFrame.errorHaiku();
         }
 
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8));
-            try {
-                StringWriter out = new StringWriter();
-                LFileCopy.copy(rd, out);
-                return out.toString();
-            } finally {
-                rd.close();
-            }
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8));
+             StringWriter out = new StringWriter()) {
+            LFileCopy.copy(rd, out);
+            return out.toString();
         } catch (IOException ex) {
             return HelpFrame.errorHaiku();
         }

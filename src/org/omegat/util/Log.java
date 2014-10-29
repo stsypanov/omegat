@@ -127,7 +127,7 @@ public class Log {
                     rootLogger.addHandler(h);
                 } catch (Exception ex) {
                     System.err.println("Error in logger init: " + ex);
-                    ex.printStackTrace();
+                    Log.log(ex);
                 }
             }
         }

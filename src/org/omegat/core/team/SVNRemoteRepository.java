@@ -29,7 +29,6 @@ import java.io.File;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -262,7 +261,7 @@ public class SVNRemoteRepository implements IRemoteRepository {
     }
 
     List<Long> toList(long[] arr) {
-        List<Long> result = new ArrayList<Long>(arr.length);
+        List<Long> result = new ArrayList<>(arr.length);
         for (long v : arr) {
             result.add(v);
         }

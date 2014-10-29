@@ -179,6 +179,7 @@ public class HTMLFilter2 extends AbstractFilter {
         } catch (ParserException pe) {
             Log.log(pe);
         } catch (StringIndexOutOfBoundsException se) {
+            Log.log(se);
             throw new StringIndexOutOfBoundsException(OStrings.getString("HTML__INVALID_HTML"));
         }
     }

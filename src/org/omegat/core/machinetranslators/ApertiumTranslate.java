@@ -88,13 +88,11 @@ public class ApertiumTranslate extends BaseTranslate {
     @Override
     protected String translate(Language sLang, Language tLang, String text) throws Exception {
 
-        String trText = text;
-
         String sourceLang = apertiumCode(sLang);
         String targetLang = apertiumCode(tLang);
 
         String url2 = GT_URL2.replace("#sourceLang#", sourceLang).replace("#targetLang#", targetLang);
-        String url = GT_URL + URLEncoder.encode(trText, "UTF-8") + url2;
+        String url = GT_URL + URLEncoder.encode(text, "UTF-8") + url2;
         String v;
         try {
             v = WikiGet.getURL(url);
@@ -141,7 +139,6 @@ public class ApertiumTranslate extends BaseTranslate {
             }
             return StaticUtils.format(OStrings.getString("APERTIUM_ERROR"), code, details);
         }
-        String tr = v.substring(beg, end - 2); // Remove \n
-        return tr;
+        return v.substring(beg, end - 2);
     }
 }

@@ -30,6 +30,7 @@
  */
 package org.omegat.gui.search;
 
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 
 /**
@@ -38,7 +39,7 @@ import org.omegat.util.OStrings;
  * @author Aaron Madlon-Kay
  * @author Piotr Kulik
  */
-public class SearchWindowForm extends javax.swing.JFrame {
+public class SearchWindowForm extends PeroFrame {
 
     /**
      * Creates new form SearchWindowForm

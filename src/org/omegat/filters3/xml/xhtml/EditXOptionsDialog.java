@@ -38,6 +38,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -49,7 +50,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Martin Fleurke
  */
 @SuppressWarnings("serial")
-public class EditXOptionsDialog extends javax.swing.JDialog {
+public class EditXOptionsDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

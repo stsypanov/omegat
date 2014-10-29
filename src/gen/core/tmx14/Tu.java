@@ -151,7 +151,7 @@ public class Tu {
      */
     public List<Object> getNoteOrProp() {
         if (noteOrProp == null) {
-            noteOrProp = new ArrayList<Object>();
+            noteOrProp = new ArrayList<>();
         }
         return this.noteOrProp;
     }
@@ -180,7 +180,7 @@ public class Tu {
      */
     public List<Tuv> getTuv() {
         if (tuv == null) {
-            tuv = new ArrayList<Tuv>();
+            tuv = new ArrayList<>();
         }
         return this.tuv;
     }

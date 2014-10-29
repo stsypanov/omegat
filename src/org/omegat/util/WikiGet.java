@@ -109,7 +109,7 @@ public class WikiGet {
             String page = getURL(joined);
             saveUTF8(projectdir, name + ".UTF8", page);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.log(e);
         }
 
     }
@@ -127,7 +127,7 @@ public class WikiGet {
 
             out.flush();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.log(e);
         }
     }
 
@@ -163,7 +163,7 @@ public class WikiGet {
             out.write(output);
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.log(e);
         }
     }
 

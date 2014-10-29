@@ -591,16 +591,16 @@ public class TMXReader2 {
         public String creationid;
         public long creationdate;
         public String note;
-        public List<TMXProp> props = new ArrayList<TMXProp>();
-        public List<ParsedTuv> tuvs = new ArrayList<ParsedTuv>();
+        public List<TMXProp> props = new ArrayList<>();
+        public List<ParsedTuv> tuvs = new ArrayList<>();
 
         void clear() {
             changeid = null;
             changedate = 0;
             creationid = null;
             creationdate = 0;
-            props = new ArrayList<TMXProp>(); // do not CLEAR, because it may be shared
-            tuvs = new ArrayList<ParsedTuv>();
+            props = new ArrayList<>(); // do not CLEAR, because it may be shared
+            tuvs = new ArrayList<>();
             note = null;
         }
     }

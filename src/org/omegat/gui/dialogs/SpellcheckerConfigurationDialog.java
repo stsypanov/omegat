@@ -39,6 +39,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.omegat.core.spellchecker.DictionaryManager;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.Language;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -51,7 +52,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Martin Fleurke
  */
 @SuppressWarnings("serial")
-public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
+public class SpellcheckerConfigurationDialog extends PeroDialog {
 
     private final JFileChooser fileChooser = new JFileChooser();
 

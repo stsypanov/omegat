@@ -133,7 +133,7 @@ public class Tig {
      */
     public List<TermNote> getTermNote() {
         if (termNote == null) {
-            termNote = new ArrayList<TermNote>();
+            termNote = new ArrayList<>();
         }
         return this.termNote;
     }
@@ -169,7 +169,7 @@ public class Tig {
      */
     public List<Object> getDescripOrDescripGrpOrAdmin() {
         if (descripOrDescripGrpOrAdmin == null) {
-            descripOrDescripGrpOrAdmin = new ArrayList<Object>();
+            descripOrDescripGrpOrAdmin = new ArrayList<>();
         }
         return this.descripOrDescripGrpOrAdmin;
     }

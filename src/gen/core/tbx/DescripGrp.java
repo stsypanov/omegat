@@ -132,7 +132,7 @@ public class DescripGrp {
      */
     public List<Object> getDescripNoteOrAdminOrAdminGrp() {
         if (descripNoteOrAdminOrAdminGrp == null) {
-            descripNoteOrAdminOrAdminGrp = new ArrayList<Object>();
+            descripNoteOrAdminOrAdminGrp = new ArrayList<>();
         }
         return this.descripNoteOrAdminOrAdminGrp;
     }

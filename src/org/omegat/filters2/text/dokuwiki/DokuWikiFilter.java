@@ -36,6 +36,7 @@ import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.util.LinebreakPreservingReader;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
 /**
@@ -86,7 +87,7 @@ public class DokuWikiFilter extends AbstractFilter {
             }
             lbpr.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log(e);
         }
         return false;
     }

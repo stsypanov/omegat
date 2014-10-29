@@ -44,7 +44,7 @@ public class SetSvnProperties {
     protected static String filename;
 
     public static void main(String[] args) {
-        List<String> files = new ArrayList<String>();
+        List<String> files = new ArrayList<>();
         list(new File("."), files);
         for (String f : files) {
             filename = f.replace('\\', '/');

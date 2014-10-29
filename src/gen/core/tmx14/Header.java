@@ -140,7 +140,7 @@ public class Header {
      */
     public List<Object> getNoteOrPropOrUde() {
         if (noteOrPropOrUde == null) {
-            noteOrPropOrUde = new ArrayList<Object>();
+            noteOrPropOrUde = new ArrayList<>();
         }
         return this.noteOrPropOrUde;
     }

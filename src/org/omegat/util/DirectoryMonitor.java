@@ -85,10 +85,10 @@ public class DirectoryMonitor extends Thread {
 
     @Override
     public void run() {
-        if (LOOKUP_PERIOD == 0) {
+//        if (LOOKUP_PERIOD == 0) {
             // don't check
-            return;
-        }
+//            return;
+//        }
         setName(this.getClass().getSimpleName());
         setPriority(MIN_PRIORITY);
 
@@ -176,9 +176,13 @@ public class DirectoryMonitor extends Thread {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            FileInfo o = (FileInfo) obj;
-            return lastModified == o.lastModified && length == o.length;
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            FileInfo fileInfo = (FileInfo) o;
+
+            return lastModified == fileInfo.lastModified && length == fileInfo.length;
         }
     }
 

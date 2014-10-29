@@ -70,7 +70,7 @@ public class Maprules {
      */
     public List<Languagemap> getLanguagemap() {
         if (languagemap == null) {
-            languagemap = new ArrayList<Languagemap>();
+            languagemap = new ArrayList<>();
         }
         return this.languagemap;
     }

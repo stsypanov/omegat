@@ -38,13 +38,14 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.openide.awt.Mnemonics;
 
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class BrowseTaasCollectionsUI extends javax.swing.JDialog {
+public class BrowseTaasCollectionsUI extends PeroDialog {
 
     /**
      * Creates new form BrowseTaasCollections

@@ -28,12 +28,12 @@ package org.omegat.gui.filters2;
 import java.awt.Dialog;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.master.FilterMaster;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
@@ -45,7 +45,7 @@ import org.openide.awt.Mnemonics;
  * @author Maxym Mykhalchuk
  */
 @SuppressWarnings("serial")
-public class InstanceEditor extends JDialog {
+public class InstanceEditor extends PeroDialog {
 
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;

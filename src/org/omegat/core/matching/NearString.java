@@ -78,10 +78,10 @@ public class NearString {
             final int adjustedScore, final byte[] nearData, final String projName, final String creator,
             final long creationDate, final String changer, final long changedDate, final List<TMXProp> props) {
         
-        List<String> projs = new ArrayList<String>();
-        List<Scores> scores = new ArrayList<Scores>();
-        Collections.addAll(projs, ns.projs);
-        Collections.addAll(scores, ns.scores);
+        List<String> projs = new ArrayList<>();
+        List<Scores> scores = new ArrayList<>();
+        Collections.addAll(projs,ns.projs);
+        Collections.addAll(scores,ns.scores);
         
         if (nearScore > ns.scores[0].score) {
             projs.add(0, projName);

@@ -59,13 +59,13 @@ public class XMLStreamReader {
         m_headBlock = null;
     }
 
-    public void setStream(File name) throws FileNotFoundException, UnsupportedEncodingException, IOException,
+    public void setStream(File name) throws IOException,
             TranslationException {
         setStream(name, "UTF-8");
     }
 
-    public void setStream(String name, String encoding) throws FileNotFoundException,
-            UnsupportedEncodingException, IOException, TranslationException {
+    public void setStream(String name, String encoding) throws
+            IOException, TranslationException {
         setStream(new File(name), encoding);
     }
 
@@ -74,8 +74,8 @@ public class XMLStreamReader {
      * pass <code>null</code> as encoding, then we'll try to auto-sense the
      * encoding.
      */
-    private void setStream(File file, String encoding) throws FileNotFoundException,
-            UnsupportedEncodingException, IOException, TranslationException {
+    private void setStream(File file, String encoding) throws
+            IOException, TranslationException {
         XMLReader ear = new XMLReader(file.getAbsolutePath(), encoding);
         m_bufferedReader = new BufferedReader(ear);
         _setStream();
@@ -135,14 +135,12 @@ public class XMLStreamReader {
             c = getNextChar();
             pushChar(c);
             if (c != ' ') {
-                XMLBlock b = getNextTag();
-                return b;
+                return getNextTag();
             }
         } else if (c == ']' && end_cdata_flag) {
             // very, very special case -- the end of CDATA block
             // is handled completely separately
-            XMLBlock b = getNextTagCDATAEnd();
-            return b;
+            return getNextTagCDATAEnd();
         }
 
         pushChar(c);
@@ -182,7 +180,7 @@ public class XMLStreamReader {
      * back up to correct for incorrectly formatted document
      */
     private void pushChar(char c) {
-        m_charStack.push(new Character(c));
+        m_charStack.push(c);
     }
 
     /**
@@ -190,7 +188,7 @@ public class XMLStreamReader {
      */
     private char getNextCharCache() {
         char c = getNextChar();
-        m_charCache.add(new Character(c));
+        m_charCache.add(c);
         return c;
     }
 
@@ -274,7 +272,7 @@ public class XMLStreamReader {
 
     private XMLBlock getNextText() throws TranslationException {
         XMLBlock blk = new XMLBlock();
-        StringBuffer strBuf = new StringBuffer();
+        StringBuilder strBuf = new StringBuilder();
         char c;
         int wsCnt = 0;
         int wsBreak = 0;
@@ -1027,7 +1025,7 @@ public class XMLStreamReader {
      */
     public String makeValidXML(String plaintext) {
         char c;
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         for (int i = 0; i < plaintext.length(); i++) {
             c = plaintext.charAt(i);
             out.append(makeValidXML(c));

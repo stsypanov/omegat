@@ -93,7 +93,7 @@ public class ItemSet {
      */
     public List<Object> getItemOrItemGrp() {
         if (itemOrItemGrp == null) {
-            itemOrItemGrp = new ArrayList<Object>();
+            itemOrItemGrp = new ArrayList<>();
         }
         return this.itemOrItemGrp;
     }

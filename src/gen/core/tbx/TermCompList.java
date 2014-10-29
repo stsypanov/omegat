@@ -123,7 +123,7 @@ public class TermCompList {
      */
     public List<Object> getDescripOrDescripGrpOrAdmin() {
         if (descripOrDescripGrpOrAdmin == null) {
-            descripOrDescripGrpOrAdmin = new ArrayList<Object>();
+            descripOrDescripGrpOrAdmin = new ArrayList<>();
         }
         return this.descripOrDescripGrpOrAdmin;
     }
@@ -153,7 +153,7 @@ public class TermCompList {
      */
     public List<Object> getTermCompOrTermCompGrp() {
         if (termCompOrTermCompGrp == null) {
-            termCompOrTermCompGrp = new ArrayList<Object>();
+            termCompOrTermCompGrp = new ArrayList<>();
         }
         return this.termCompOrTermCompGrp;
     }

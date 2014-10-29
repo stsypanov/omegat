@@ -240,7 +240,7 @@ public class SpellChecker implements ISpellChecker {
                 if (bw != null)
                     bw.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Log.log(ex);
             }
         }
     }

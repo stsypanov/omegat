@@ -70,8 +70,9 @@ public class MozillaDTDFilter extends AbstractFilter {
 
     public static final String OPTION_REMOVE_STRINGS_UNTRANSLATED = "unremoveStringsUntranslated";
 
-    protected static Pattern RE_ENTITY = Pattern.compile("<\\!ENTITY\\s+(\\S+)\\s+[\"'](.+)[\"']\\s*>");
-                                                           
+    protected static Pattern RE_ENTITY =  Pattern.compile("<\\!ENTITY\\s+(\\S+)\\s+([\"'])(.+)\\2\\s*>", Pattern.DOTALL);
+    
+    
     protected Map<String, String> align;
 
     /**
@@ -102,13 +103,13 @@ public class MozillaDTDFilter extends AbstractFilter {
 
     @Override
     protected BufferedReader createReader(File inFile, String inEncoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(inFile), OConsts.UTF8));
     }
 
     @Override
     protected BufferedWriter createWriter(File outFile, String outEncoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), OConsts.UTF8));
     }
 
@@ -126,6 +127,8 @@ public class MozillaDTDFilter extends AbstractFilter {
 
         StringBuilder block = new StringBuilder();
         boolean isInBlock = false;
+        boolean foundQuotes = false;
+        int quotes = '"';
         int previousChar = 0;
         int c;
         while ((c = inFile.read()) != -1) {
@@ -137,8 +140,14 @@ public class MozillaDTDFilter extends AbstractFilter {
             } else {
                 outFile.write(c);
             }
-            if (c == '>' && isInBlock && (previousChar == '"' || previousChar == 39)) { // 39 is single quote
+            // Find out the character used as begin and end of the segment
+            if (!foundQuotes && (c == '"' || c == 39)) { // 39 is single quote
+                foundQuotes = true;
+                quotes = c;
+            }
+            if (c == '>' && isInBlock && previousChar == quotes) {
                 isInBlock = false;
+                foundQuotes = false;
                 processBlock(block.toString(), outFile);
                 block.setLength(0);
             } else if ((c == '>' && isInBlock && previousChar == '-')) { // This was a comment
@@ -160,7 +169,7 @@ public class MozillaDTDFilter extends AbstractFilter {
             return;
         }
         String id = m.group(1);
-        String text = m.group(2);
+        String text = m.group(3);
         if (entryParseCallback != null) {
             entryParseCallback.addEntry(id, text, null, false, null, null, this, null);
         } else if (entryTranslateCallback != null) {
@@ -169,7 +178,7 @@ public class MozillaDTDFilter extends AbstractFilter {
             if (trans != null || removeStringsUntranslated == false) {
                 out.write(block.substring(0, m.start(2)));
                 out.write(trans != null ? trans : text);
-                out.write(block.substring(m.end(2)));
+                out.write(block.substring(m.end(3)));
             }    
         } else if (entryAlignCallback != null && id != null) {
             align.put(id, text);

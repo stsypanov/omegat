@@ -156,8 +156,8 @@ public class RcFilter extends AbstractFilter {
 
     @Override
     protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<String, String>();
-        Map<String, String> translated = new HashMap<String, String>();
+        Map<String, String> source = new HashMap<>();
+        Map<String, String> translated = new HashMap<>();
 
         align = source;
         processFile(sourceFile, new NullBufferedWriter(), fc);

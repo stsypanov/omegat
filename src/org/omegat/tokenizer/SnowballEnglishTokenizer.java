@@ -47,11 +47,9 @@ public class SnowballEnglishTokenizer extends BaseTokenizer {
     static {
         // Load stopwords
         try {
-            InputStream in = SnowballEnglishTokenizer.class
-                    .getResourceAsStream("StopList_en.txt");
-            try {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(
-                        in, "UTF-8"));
+            try (InputStream in = SnowballEnglishTokenizer.class.getResourceAsStream("StopList_en.txt");
+                 BufferedReader rd = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
+
                 String s;
                 List<String> words = new ArrayList<>();
                 while ((s = rd.readLine()) != null) {
@@ -62,8 +60,6 @@ public class SnowballEnglishTokenizer extends BaseTokenizer {
                     words.add(s);
                 }
                 STOP_WORDS = words.toArray(new String[words.size()]);
-            } finally {
-                in.close();
             }
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(

@@ -68,7 +68,7 @@ public class Body {
      */
     public List<Tu> getTu() {
         if (tu == null) {
-            tu = new ArrayList<Tu>();
+            tu = new ArrayList<>();
         }
         return this.tu;
     }

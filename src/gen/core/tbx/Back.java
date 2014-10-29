@@ -81,7 +81,7 @@ public class Back {
      */
     public List<RefObjectList> getRefObjectList() {
         if (refObjectList == null) {
-            refObjectList = new ArrayList<RefObjectList>();
+            refObjectList = new ArrayList<>();
         }
         return this.refObjectList;
     }

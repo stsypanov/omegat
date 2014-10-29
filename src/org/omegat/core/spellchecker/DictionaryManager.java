@@ -129,9 +129,9 @@ public class DictionaryManager {
                     continue;
 
                 // cycle through the dictionary names
-                for (int j = 0; j < dictionaryFiles.length; j++) {
+                for (String dictionaryFile : dictionaryFiles) {
                     // get the dic file name
-                    String dicName = getFileNameOnly(dictionaryFiles[j]);
+                    String dicName = getFileNameOnly(dictionaryFile);
                     if (dicName == null || dicName.equals(""))
                         continue;
 
@@ -234,7 +234,7 @@ public class DictionaryManager {
      * @param langCode
      *            : the language code (xx_YY)
      */
-    public void installRemoteDictionary(String langCode) throws MalformedURLException, IOException {
+    public void installRemoteDictionary(String langCode) throws IOException {
         // download the package in question to the disk to a temporary location
         String from = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL) +
                       "/" + langCode + ".zip";

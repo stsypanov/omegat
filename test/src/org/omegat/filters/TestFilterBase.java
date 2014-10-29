@@ -56,6 +56,7 @@ import org.omegat.filters2.IFilter;
 import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.ITranslateCallback;
 import org.omegat.filters2.master.FilterMaster;
+import org.omegat.tokenizer.DefaultTokenizer;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.omegat.util.TMXReader2;
@@ -78,6 +79,7 @@ public abstract class TestFilterBase extends TestCore {
 
         Core.initializeConsole(new TreeMap<String, String>());
         Core.setFilterMaster(new FilterMaster(FilterMaster.createDefaultFiltersConfig()));
+        Core.setProject(new TestProject(new ProjectPropertiesTest()));
 
         outFile = new File("build/testdata/OmegaT_test-" + getClass().getName() + "-" + getName());
         outFile.getParentFile().mkdirs();
@@ -288,10 +290,15 @@ public abstract class TestFilterBase extends TestCore {
         String path;
     }
 
-    protected IProject.FileInfo loadSourceFiles(IFilter filter, String file) throws Exception {
+    protected IProject.FileInfo loadSourceFiles(IFilter filter, String file, Map<String, String> filterOptions)
+            throws Exception {
         ProjectPropertiesTest props = new ProjectPropertiesTest();
         TestProject p = new TestProject(props);
-        return p.loadSourceFiles(filter, file);
+        return p.loadSourceFiles(filter, file, filterOptions);
+    }
+
+    protected IProject.FileInfo loadSourceFiles(IFilter filter, String file) throws Exception {
+        return loadSourceFiles(filter, file, new TreeMap<String, String>());
     }
 
     protected IProject.FileInfo fi;
@@ -336,7 +343,10 @@ public abstract class TestFilterBase extends TestCore {
      * ProjectProperties successor for create project without directory.
      */
     protected static class ProjectPropertiesTest extends ProjectProperties {
-
+        ProjectPropertiesTest() {
+            super();
+            setTargetTokenizer(DefaultTokenizer.class);
+        }
     }
 
     /**
@@ -349,7 +359,7 @@ public abstract class TestFilterBase extends TestCore {
             super(props);
         }
 
-        public FileInfo loadSourceFiles(IFilter filter, String file) throws Exception {
+        public FileInfo loadSourceFiles(IFilter filter, String file, Map<String, String> filterOptions) throws Exception {
             Core.setProject(this);
 
             Set<String> existSource = new HashSet<String>();
@@ -362,7 +372,7 @@ public abstract class TestFilterBase extends TestCore {
 
             loadFilesCallback.setCurrentFile(fi);
 
-            filter.parseFile(new File(file), new TreeMap<String, String>(), context, loadFilesCallback);
+            filter.parseFile(new File(file), filterOptions, context, loadFilesCallback);
 
             loadFilesCallback.fileFinished();
 

@@ -122,7 +122,7 @@ public class Main {
     protected static File projectLocation = null;
 
     /** Execution command line parameters. */
-    protected static final Map<String, String> params = new TreeMap<String, String>();
+    protected static final Map<String, String> params = new TreeMap<>();
 
     /** Execution mode. */
     protected static RUN_MODE runMode = RUN_MODE.GUI;
@@ -395,7 +395,7 @@ public class Main {
         }
 
         // prepare tmx
-        Map<String, PrepareTMXEntry> data = new HashMap<String, PrepareTMXEntry>();
+        Map<String, PrepareTMXEntry> data = new HashMap<>();
         for (SourceTextEntry ste : entries) {
             PrepareTMXEntry entry = new PrepareTMXEntry();
             entry.source = ste.getSrcText();
@@ -440,14 +440,14 @@ public class Main {
 
         System.out.println(OStrings.getString("CONSOLE_INITIALIZING"));
         Core.initializeConsole(params);
-        RealProject p = selectProjectConsoleMode(false);
+        RealProject p = selectProjectConsoleMode(true);
 
         validateTagsConsoleMode();
 
         System.out.println(StaticUtils.format(OStrings.getString("CONSOLE_ALIGN_AGAINST"), dir));
 
         Map<String, TMXEntry> data = p.align(p.getProjectProperties(), new File(dir));
-        Map<String, PrepareTMXEntry> result = new TreeMap<String, PrepareTMXEntry>();
+        Map<String, PrepareTMXEntry> result = new TreeMap<>();
         for (Map.Entry<String, TMXEntry> en : data.entrySet()) {
             result.put(en.getKey(), new PrepareTMXEntry(en.getValue()));
         }
@@ -456,6 +456,7 @@ public class Main {
 
         TMXWriter.buildTMXFile(tmxFile, false, false, p.getProjectProperties(), result);
 
+        p.closeProject();
         System.out.println(OStrings.getString("CONSOLE_FINISHED"));
         return 0;
     }
@@ -510,7 +511,7 @@ public class Main {
 
     		if (script.exists())
     		{
-    			HashMap<String, Object> binding = new HashMap<String, Object>();
+    			HashMap<String, Object> binding = new HashMap<>();
     			binding.put("eventType", eventType);
     			ScriptingWindow.executeScriptFileHeadless(new ScriptItem(script), true, binding);
     		}

@@ -126,7 +126,7 @@ public class TransacGrp {
      */
     public List<Object> getTransacNoteOrDateOrNote() {
         if (transacNoteOrDateOrNote == null) {
-            transacNoteOrDateOrNote = new ArrayList<Object>();
+            transacNoteOrDateOrNote = new ArrayList<>();
         }
         return this.transacNoteOrDateOrNote;
     }
