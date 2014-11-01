@@ -160,6 +160,10 @@ public class SegmentationCustomizer extends PeroDialog implements ListSelectionL
         return editableSRX;
     }
 
+    public boolean isProjectSpecific() {
+        return projectSpecificCB.isSelected();
+    }
+
     protected void setEditableSRX(SRX srx) {
         editableSRX = srx.clone();
         MappingRulesModel model = new MappingRulesModel(editableSRX);
