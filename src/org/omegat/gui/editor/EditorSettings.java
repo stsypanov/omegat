@@ -170,6 +170,11 @@ public class EditorSettings {
         return markNonUniqueSegments;
     }
 
+    public boolean isHideDuplicateSegments()
+    {
+        return true;
+    }
+
     public boolean isMarkNotedSegments() {
         return markNoted;
     }
@@ -376,6 +381,29 @@ public class EditorSettings {
     public AttributeSet getAttributeSet(boolean isSource, boolean isPlaceholder, boolean isRemoveText, DUPLICATE duplicate, boolean active, boolean translationExists, boolean hasNote, boolean isNBSP) {
         //determine foreground color
         Color fg = null;
+        
+        // Custom foreground colors
+        if (active) {
+            if (isSource) {
+                fg = Styles.EditorColor.COLOR_SOURCE_FG.getColor();
+            }
+        } else {
+            if (isSource) {
+                if (isMarkNotedSegments() && hasNote && !translationExists) {
+                    fg = Styles.EditorColor.COLOR_NOTED_FG.getColor();
+                } else if (markUntranslated && !translationExists) {
+                    fg = Styles.EditorColor.COLOR_UNTRANSLATED_FG.getColor();
+                } else if (isDisplaySegmentSources()) {
+                    fg = Styles.EditorColor.COLOR_SOURCE_FG.getColor();
+                }
+            } else {
+                if (isMarkNotedSegments() && hasNote) {
+                    fg = Styles.EditorColor.COLOR_NOTED_FG.getColor();
+                } else if (markTranslated) {
+                    fg = Styles.EditorColor.COLOR_TRANSLATED_FG.getColor();
+                }
+            }
+        }
         if (markNonUniqueSegments) {
             switch (duplicate) {
             case NONE:
@@ -418,7 +446,23 @@ public class EditorSettings {
                 }
             }
         }
-        if (isNBSP && markNBSP) { //overwrite others, because space is smallest.
+
+        Color nonUniqueBg = Styles.EditorColor.COLOR_NON_UNIQUE_BG.getColor();
+        if (markNonUniqueSegments && nonUniqueBg != null) {
+            switch (duplicate) {
+            case NONE:
+                break;
+            case FIRST:
+                if (markFirstNonUnique) {
+                    bg = nonUniqueBg;
+                }
+                break;
+            case NEXT:
+                bg = nonUniqueBg;
+                break;
+            }
+        }
+        if (isNBSP && isMarkNBSP()) { //overwrite others, because space is smallest.
             bg = Styles.EditorColor.COLOR_NBSP.getColor();
         }
 
@@ -457,6 +501,6 @@ public class EditorSettings {
      * @return
      */
     public AttributeSet getOtherLanguageTranslationAttributeSet() {
-        return Styles.createAttributeSet(null, Styles.EditorColor.COLOR_SOURCE.getColor(), false, true);
+        return Styles.createAttributeSet(Styles.EditorColor.COLOR_SOURCE_FG.getColor(), Styles.EditorColor.COLOR_SOURCE.getColor(), false, true);
     }
 }
