@@ -1,11 +1,11 @@
 ----------------------------------------------------------------------
- OmegaT 3.1.7 update 1
+ OmegaT 3.1.8 
 ----------------------------------------------------------------------
    5 Enhancements
-   4 Bug fixes
-   2 Localisation updates
+   7 Bug fixes
+   4 Localisation updates
 ----------------------------------------------------------------------
-3.1.7 update 1 vs. 3.1.7
+3.1.8 vs. 3.1.7
 
   Implemented requests:
   
@@ -32,10 +32,21 @@ instead of the standard Java ones
 Search window before the first searching execution, the cursor (i.e., 
 mouse pointer) changed to the Wait icon and could not be restored
 
+  - Strange glossary behavior - removing of newly added terms
+  https://sourceforge.net/p/omegat/bugs/696/
+
+  - OmegaT keeps temporary files project_save.tmx-based_on_revision_number.new
+  https://sourceforge.net/p/omegat/bugs/683/
+
+  - Git team project saving failure with 3.1.6 
+  https://sourceforge.net/p/omegat/bugs/714/
+
   Localisation updates:
 
   - Dutch localisation updated to 3.1.7 (UI)
   - Interlingua localisation updated to 3.1.7 (UI, documentation)
+  - Italian localisation updated to 3.1.7 (UI)
+  - Japanese localisation updated to 3.1.8 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.7 (2014-10-20)
@@ -62,6 +73,9 @@ mouse pointer) changed to the Wait icon and could not be restored
 
   - Editable colours 
   https://sourceforge.net/p/omegat/feature-requests/549/
+
+  - Go to next unique segment
+  https://sourceforge.net/p/omegat/feature-requests/198
 
   Other enhancements:
 

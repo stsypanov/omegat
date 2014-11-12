@@ -777,7 +777,6 @@ public class RealProject implements IProject {
         if (repository.isUnderVersionControl(glossaryFile)) {
             Log.logDebug(LOGGER, "rebaseProject: glossary file {0} is under version control", glossaryFile);
             //glossary is under version control
-            glossaryEntries = GlossaryReaderTSV.read(glossaryFile, true);
             modifiedFiles = new File[]{projectTMXFile, glossaryFile};
             updateGlossary = true;
         } else {
@@ -791,7 +790,12 @@ public class RealProject implements IProject {
 
         while (true) {
             boolean again = false;
-            
+
+            if (updateGlossary) {
+                // Load glossary entries inside loop to make sure changes are synced properly.
+                glossaryEntries = GlossaryReaderTSV.read(glossaryFile, true);
+            }
+
             //get revisions of files
             String baseRevTMX = repository.getBaseRevisionId(projectTMXFile);
             Log.logDebug(LOGGER, "rebaseProject: TMX base revision: {0}", baseRevTMX);
@@ -972,38 +976,39 @@ public class RealProject implements IProject {
                 filenameGlossarywithLocalChangesOnHead = null;
             }
             
+            /* project_save.tmx / writableGlossary are now the head version (or still the base version, if offline)
+             * the old situation is in based_on_<base>.new files
+             * the new situation is in based_on_<head>.new files
+             */
+
+            projectTMXFile.delete(); //delete head version (or base version, if offline)
+            // Rename new file into TMX file
+            if (!filenameTMXwithLocalChangesOnHead.renameTo(projectTMXFile)) {
+                throw new IOException("Error rename new file to tmx");
+            }
+            if (filenameTMXwithLocalChangesOnBase != null) {
+                // Remove temp backup file
+                if (!filenameTMXwithLocalChangesOnBase.delete()) {
+                    throw new IOException("Error remove old file");
+                }
+            }
+            if (updateGlossary) {
+                glossaryFile.delete();
+                if (!filenameGlossarywithLocalChangesOnHead.renameTo(glossaryFile)) {
+                    throw new IOException("Error rename new file to glossary");
+                }
+                if (filenameGlossarywithLocalChangesOnBase != null) {
+                    // Remove temp backup file
+                    if (!filenameGlossarywithLocalChangesOnBase.delete()) {
+                        throw new IOException("Error remove old glossary file");
+                    }
+                }
+            }
+            
             if (!again) {
                 // free memory
                 glossaryEntries = null;
                 break;
-            }
-        }
-        /* project_save.tmx / writableGlossary are now the head version (or still the base version, if offline)
-         * the old situation is in based_on_<base>.new files
-         * the new situation is in based_on_<head>.new files
-         */
-
-        projectTMXFile.delete(); //delete head version (or base version, if offline)
-        // Rename new file into TMX file
-        if (!filenameTMXwithLocalChangesOnHead.renameTo(projectTMXFile)) {
-            throw new IOException("Error rename new file to tmx");
-        }
-        if (filenameTMXwithLocalChangesOnBase != null) {
-            // Remove temp backup file
-            if (!filenameTMXwithLocalChangesOnBase.delete()) {
-                throw new IOException("Error remove old file");
-            }
-        }
-        if (updateGlossary) {
-            glossaryFile.delete();
-            if (!filenameGlossarywithLocalChangesOnHead.renameTo(glossaryFile)) {
-                throw new IOException("Error rename new file to glossary");
-            }
-            if (filenameGlossarywithLocalChangesOnBase != null) {
-                // Remove temp backup file
-                if (!filenameGlossarywithLocalChangesOnBase.delete()) {
-                    throw new IOException("Error remove old glossary file");
-                }
             }
         }
 
