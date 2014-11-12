@@ -47,7 +47,7 @@
     </pathconvert>
 
     <target name="-pre-init">
-        <property name="iscc.exe" value="iscc.exe"/>
+        <property name="iscc.exe" value="c:\Inno Setup 5\iscc.exe"/>
         <property file="src/org/omegat/Version.properties"/>
         <filter filtersfile="src/org/omegat/Version.properties"/>
         <filter token="all-jars-path" value="${all-jars-path}"/>

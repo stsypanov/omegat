@@ -613,7 +613,7 @@ LANG=en_US.UTF-8
 <para>Refer to the <ulink url="http://www.mozilla.org/">Mozilla</ulink> web site for guidance on how to get <application>Firefox</application> in your language.  The <ulink url="http://www.openoffice.org/">OpenOffice.org</ulink> web site has information on localization of your <application>OpenOffice.org</application> suite.</para>
 </sect2>
 <sect2 id="sect_07_05_06"><title>Country-specific Information</title>
-<para>The <ulink url="http://www.tldp.org/HOWTO/HOWTO-INDEX/howtos.html">list of HOWTOs</ulink> contains references to Bangla, Belarusian, Chinese, Esperanto, Finnish, Francophone, Hebrew, Hellenic, Latvian, Polish, Portugese, Serbian, Slovak, Slovenian, Spanish, Thai and Turkish localization instructions.</para> 
+<para>The <ulink url="http://www.tldp.org/HOWTO/HOWTO-INDEX/howtos.html">list of HOWTOs</ulink> contains references to Bangla, Belarusian, Chinese, Esperanto, Finnish, Francophone, Hebrew, Hellenic, Latvian, Polish, Portuguese, Serbian, Slovak, Slovenian, Spanish, Thai and Turkish localization instructions.</para>
 </sect2>
 
 </sect1>
