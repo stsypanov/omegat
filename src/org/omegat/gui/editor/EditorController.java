@@ -1531,7 +1531,7 @@ public class EditorController implements IEditor {
             Token[] tokenList = Core.getProject().getTargetTokenizer()
                     .tokenizeWordsForSpelling(selectionText);
 
-            StringBuffer buffer = new StringBuffer(selectionText);
+            StringBuilder buffer = new StringBuilder(selectionText);
 
             if (toWhat == CHANGE_CASE_TO.CYCLE) {
                 int lower = 0;

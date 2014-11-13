@@ -195,7 +195,7 @@ public class XtagFilter extends AbstractFilter {
         int num = 0;
         listTags.clear();
 
-        StringBuffer tag = new StringBuffer(s.length());
+        StringBuilder tag = new StringBuilder(s.length());
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             // Start of a tag
