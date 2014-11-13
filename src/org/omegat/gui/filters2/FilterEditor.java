@@ -322,7 +322,7 @@ public class FilterEditor extends PeroDialog implements ListSelectionListener {
         Files instance = filter.getFiles().get(row);
         if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, StaticUtils.format(
                 OStrings.getString("FILTEREDITOR_really_delete_filter_instance"),
-                new Object[] { instance.getSourceFilenameMask() }), OStrings
+                        instance.getSourceFilenameMask()), OStrings
                 .getString("FILTEREDITOR_Confirm_deletion_TITLE"), JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE)) {
             filter.getFiles().remove(row);

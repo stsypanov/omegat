@@ -453,7 +453,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         // parse the TMX file
         try {
             // log the parsing attempt
-            Log.logRB("TMXR_INFO_READING_FILE", new Object[] { displayFilename });
+            Log.logRB("TMXR_INFO_READING_FILE", displayFilename);
 
             // create a new SAX parser factory
             javax.xml.parsers.SAXParserFactory parserFactory = javax.xml.parsers.SAXParserFactory
@@ -500,8 +500,8 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     public void warning(SAXParseException exception) throws SAXException {
         Log.logWarningRB(
                 "TMXR_WARNING_WHILE_PARSING",
-                new Object[] { String.valueOf(exception.getLineNumber()),
-                String.valueOf(exception.getColumnNumber()) });
+                String.valueOf(exception.getLineNumber()),
+                String.valueOf(exception.getColumnNumber()));
         Log.log(exception);
     }
 
@@ -512,8 +512,8 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     public void error(SAXParseException exception) throws SAXException {
         Log.logErrorRB(
                 "TMXR_RECOVERABLE_ERROR_WHILE_PARSING",
-                new Object[] { String.valueOf(exception.getLineNumber()),
-                String.valueOf(exception.getColumnNumber()) });
+                String.valueOf(exception.getLineNumber()),
+                String.valueOf(exception.getColumnNumber()));
         Log.log(exception);
     }
 
@@ -523,8 +523,8 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     public void fatalError(SAXParseException exception) throws SAXException {
         Log.logErrorRB(
                 "TMXR_FATAL_ERROR_WHILE_PARSING",
-                new Object[] { String.valueOf(exception.getLineNumber()),
-                       String.valueOf(exception.getColumnNumber()) });
+                String.valueOf(exception.getLineNumber()),
+                String.valueOf(exception.getColumnNumber()));
         Log.log(exception);
     }
 
@@ -717,16 +717,16 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         tmxSourceLanguage = attributes.getValue(TMX_ATTR_SRCLANG);
 
         // log some details
-        Log.logRB("TMXR_INFO_CREATION_TOOL", new Object[] { creationtool });
-        Log.logRB("TMXR_INFO_CREATION_TOOL_VERSION", new Object[] { creationtoolversion });
-        Log.logRB("TMXR_INFO_SEG_TYPE", new Object[] { segtype });
-        Log.logRB("TMXR_INFO_SOURCE_LANG", new Object[] { tmxSourceLanguage });
+        Log.logRB("TMXR_INFO_CREATION_TOOL", creationtool);
+        Log.logRB("TMXR_INFO_CREATION_TOOL_VERSION", creationtoolversion);
+        Log.logRB("TMXR_INFO_SEG_TYPE", segtype);
+        Log.logRB("TMXR_INFO_SOURCE_LANG", tmxSourceLanguage);
 
         // give a warning if the TMX source language is
         // different from the project source language
     if (!tmxSourceLanguage.equalsIgnoreCase(sourceLanguage)) {
-            Log.logWarningRB("TMXR_WARNING_INCORRECT_SOURCE_LANG", new Object[] { tmxSourceLanguage,
-                    sourceLanguage });
+            Log.logWarningRB("TMXR_WARNING_INCORRECT_SOURCE_LANG", tmxSourceLanguage,
+                    sourceLanguage);
         }
 
         // give a warning that TMX file will be upgraded from 1.4.x
@@ -783,7 +783,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
             } while (commaPos > 0);
 
             // Log presence of preferred variant languages
-            Log.logRB("TMXR_INFO_VARIANT_LANGUAGES_DISPLAYED", new Object[] { languages.toString() });
+            Log.logRB("TMXR_INFO_VARIANT_LANGUAGES_DISPLAYED", languages.toString());
         }
     }
 
