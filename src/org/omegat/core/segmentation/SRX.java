@@ -116,7 +116,7 @@ public class SRX implements Serializable, Cloneable {
             return;
         }
         try {
-            srx.setVersion(CURRENT_VERSION);
+            srx.version = CURRENT_VERSION;
             XMLEncoder xmlenc = new XMLEncoder(new FileOutputStream(outFile));
             xmlenc.writeObject(srx);
             xmlenc.close();

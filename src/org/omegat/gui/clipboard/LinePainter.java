@@ -44,7 +44,7 @@ public class LinePainter extends MouseAdapter implements HighlightPainter, Caret
      */
     public LinePainter(JTextComponent component, Color color) {
         this.component = component;
-        setColor(color);
+        this.color = color;
 
         //  Add listeners so we know when to change highlighting
 
@@ -79,7 +79,7 @@ public class LinePainter extends MouseAdapter implements HighlightPainter, Caret
         int red = Math.min(255, (int) (color.getRed() * 1.2));
         int green = Math.min(255, (int) (color.getGreen() * 1.2));
         int blue = Math.min(255, (int) (color.getBlue() * 1.2));
-        setColor(new Color(red, green, blue));
+        this.color = new Color(red, green, blue);
     }
 
     //  Paint the background highlight

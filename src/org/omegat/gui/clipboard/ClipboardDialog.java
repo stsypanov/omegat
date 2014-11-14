@@ -124,8 +124,8 @@ public class ClipboardDialog extends PeroDialog implements Clibboard {
 
         String[] lines = textArea.getText().split("\r?\n");
 
-        setSelected(lines[currentLine - 1]);
-//        System.out.println(lines[currentLine - 1]);
+        this.selected = lines[currentLine - 1];
+        //        System.out.println(lines[currentLine - 1]);
         dispose();
     }
 
