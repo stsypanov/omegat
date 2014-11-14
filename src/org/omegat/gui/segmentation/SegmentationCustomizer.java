@@ -623,7 +623,7 @@ public class SegmentationCustomizer extends PeroDialog implements ListSelectionL
         String set = model.getValueAt(mapTable.getSelectedRow(), 0).toString();
         String title = OStrings.getString("CONFIRM_DIALOG_TITLE");
         String message = StaticUtils.format(OStrings.getString("SEG_CONFIRM_REMOVE_SENTSEG_SET"),
-                new Object[] { set });
+                set);
         if (JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
             model.removeRow(mapTable.getSelectedRow());
     }// GEN-LAST:event_mapDeleteButtonActionPerformed

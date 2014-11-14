@@ -105,8 +105,8 @@ public class TMXReader2 {
                     throws XMLStreamException {
                 Log.logWarningRB(
                         "TMXR_WARNING_WHILE_PARSING",
-                        new Object[] { String.valueOf(location.getLineNumber()),
-                                String.valueOf(location.getColumnNumber()) });
+                        String.valueOf(location.getLineNumber()),
+                        String.valueOf(location.getColumnNumber()));
                 Log.log(message + ": " + info);
                 warningsCount++;
             }
@@ -135,7 +135,7 @@ public class TMXReader2 {
         this.isSegmentingEnabled = isSegmentingEnabled;
 
         // log the parsing attempt
-        Log.logRB("TMXR_INFO_READING_FILE", new Object[] { file.getAbsolutePath() });
+        Log.logRB("TMXR_INFO_READING_FILE", file.getAbsolutePath());
 
         boolean allFound = true;
 
@@ -182,18 +182,18 @@ public class TMXReader2 {
         isOmegaT = CT_OMEGAT.equals(getAttributeValue(element, "creationtool"));
         
         // log some details
-        Log.logRB("TMXR_INFO_CREATION_TOOL", new Object[] { getAttributeValue(element, "creationtool") });
+        Log.logRB("TMXR_INFO_CREATION_TOOL", getAttributeValue(element, "creationtool"));
         Log.logRB("TMXR_INFO_CREATION_TOOL_VERSION",
-        new Object[] { getAttributeValue(element, "creationtoolversion") });
-        Log.logRB("TMXR_INFO_SEG_TYPE", new Object[] { getAttributeValue(element, "segtype") });
-        Log.logRB("TMXR_INFO_SOURCE_LANG", new Object[] { getAttributeValue(element, "srclang") });
+                getAttributeValue(element, "creationtoolversion"));
+        Log.logRB("TMXR_INFO_SEG_TYPE", getAttributeValue(element, "segtype"));
+        Log.logRB("TMXR_INFO_SOURCE_LANG", getAttributeValue(element, "srclang"));
 
         // give a warning if the TMX source language is
         // different from the project source language
         String tmxSourceLanguage = getAttributeValue(element, "srclang");
         if (!tmxSourceLanguage.equalsIgnoreCase(sourceLanguage.getLanguage())) {
-            Log.logWarningRB("TMXR_WARNING_INCORRECT_SOURCE_LANG", new Object[] { tmxSourceLanguage,
-                    sourceLanguage });
+            Log.logWarningRB("TMXR_WARNING_INCORRECT_SOURCE_LANG", tmxSourceLanguage,
+                    sourceLanguage);
         }
 
         // give a warning that TMX file will be upgraded to sentence segmentation

@@ -105,8 +105,8 @@ public class OStrings {
      */
     public static String getDisplayVersion() {
         return ((UPDATE != null) && !UPDATE.equals("0")) ? StaticUtils.format(
-                getString("version-update-template"), new Object[] { VERSION, UPDATE }) : StaticUtils.format(
-                getString("version-template"), new Object[] { VERSION, UPDATE });
+                getString("version-update-template"), VERSION, UPDATE) : StaticUtils.format(
+                getString("version-template"), VERSION, UPDATE);
     }
 
     /**
