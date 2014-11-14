@@ -49,12 +49,12 @@ public interface IEditor {
     enum CHANGE_CASE_TO {
         /** lower case */
         LOWER,
-        /** title case */
+        /** Title Case */
         TITLE,
-        /** upper case */
+        /** UPPER CASE */
         UPPER,
         /** cycle between cases */
-        CYCLE,
+        CYCLE
     }
 
     /**
