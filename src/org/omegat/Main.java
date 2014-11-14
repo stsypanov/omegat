@@ -253,6 +253,7 @@ public class Main {
             UIManager.getInstalledLookAndFeels();
 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            setNimbusLaF();
             
             // Override LAF with custom colors, if any (they default to the LAF attributes)
             Styles.setupLAF();
@@ -295,6 +296,20 @@ public class Main {
         });
         return 0;
     }
+
+    protected static void setNimbusLaF(){
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            Log.log(e);
+        }
+    }
+
 
     /**
      * Execute in console mode for translate.
