@@ -161,7 +161,7 @@ public class SRX implements Serializable, Cloneable {
             }
 
             // checking the version
-            if (CURRENT_VERSION.compareTo(res.getVersion()) > 0) {
+            if (CURRENT_VERSION.compareTo(res.version) > 0) {
                 // yeap, the segmentation config file is of the older version
 
                 // initing defaults
@@ -349,7 +349,7 @@ public class SRX implements Serializable, Cloneable {
                 newMap.add(new MapRule(lang, pattern, rulesList));
             }
             // set rules only if no errors
-            getMappingRules().addAll(newMap);
+            mappingRules.addAll(newMap);
         } catch (Exception ex) {
             Log.log(ex);
         }
@@ -373,8 +373,8 @@ public class SRX implements Serializable, Cloneable {
      */
     public List<Rule> lookupRulesForLanguage(Language srclang) {
         List<Rule> rules = new ArrayList<>();
-        for (int i = 0; i < getMappingRules().size(); i++) {
-            MapRule maprule = getMappingRules().get(i);
+        for (int i = 0; i < mappingRules.size(); i++) {
+            MapRule maprule = mappingRules.get(i);
             if (maprule.getCompiledPattern().matcher(srclang.getLanguage()).matches())
                 rules.addAll(maprule.getRules());
         }

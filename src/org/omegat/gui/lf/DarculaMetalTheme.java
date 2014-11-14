@@ -107,7 +107,7 @@ public class DarculaMetalTheme extends DefaultMetalTheme {
 
     @Override
     public ColorUIResource getSeparatorBackground() {
-        return getControl();
+        return myControlColor;
     }
 
     @Override

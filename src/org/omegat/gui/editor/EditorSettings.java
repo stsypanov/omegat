@@ -389,15 +389,15 @@ public class EditorSettings {
             }
         } else {
             if (isSource) {
-                if (isMarkNotedSegments() && hasNote && !translationExists) {
+                if (markNoted && hasNote && !translationExists) {
                     fg = Styles.EditorColor.COLOR_NOTED_FG.getColor();
                 } else if (markUntranslated && !translationExists) {
                     fg = Styles.EditorColor.COLOR_UNTRANSLATED_FG.getColor();
-                } else if (isDisplaySegmentSources()) {
+                } else if (displaySegmentSources) {
                     fg = Styles.EditorColor.COLOR_SOURCE_FG.getColor();
                 }
             } else {
-                if (isMarkNotedSegments() && hasNote) {
+                if (markNoted && hasNote) {
                     fg = Styles.EditorColor.COLOR_NOTED_FG.getColor();
                 } else if (markTranslated) {
                     fg = Styles.EditorColor.COLOR_TRANSLATED_FG.getColor();
@@ -462,7 +462,7 @@ public class EditorSettings {
                 break;
             }
         }
-        if (isNBSP && isMarkNBSP()) { //overwrite others, because space is smallest.
+        if (isNBSP && markNBSP) { //overwrite others, because space is smallest.
             bg = Styles.EditorColor.COLOR_NBSP.getColor();
         }
 

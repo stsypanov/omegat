@@ -212,12 +212,12 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
      */
     private void checkForUpgrades() {
         if (!upgradeCheckComplete) {
-            if (getCreationTool() == null || getCreationToolVersion() == null)
+            if (creationtool == null || creationtoolversion == null)
                 return; // we can't check
 
-            if (CT_OMEGAT.equals(getCreationTool())) {
-                upgrade14X = getCreationToolVersion().compareTo(CTV_OMEGAT_1) <= 0;
-                upgradeSentSeg = SEG_PARAGRAPH.equals(getSegType()) && isSegmentingEnabled;
+            if (CT_OMEGAT.equals(creationtool)) {
+                upgrade14X = creationtoolversion.compareTo(CTV_OMEGAT_1) <= 0;
+                upgradeSentSeg = SEG_PARAGRAPH.equals(segtype) && isSegmentingEnabled;
             }
             upgradeCheckComplete = true;
         }
