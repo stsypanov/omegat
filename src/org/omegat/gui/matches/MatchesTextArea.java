@@ -326,8 +326,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                 if (!te.isTranslated()) {
                     String prefix = "";
 
-                    if (!Preferences.getPreferenceDefaultAllowEmptyString(Preferences.BEST_MATCH_EXPLANATORY_TEXT)
-                            .equals("")) {
+                    if (!Preferences.getPreferenceDefaultAllowEmptyString(Preferences.BEST_MATCH_EXPLANATORY_TEXT).isEmpty()) {
                         prefix = Preferences.getPreferenceDefault(Preferences.BEST_MATCH_EXPLANATORY_TEXT,
                                 OStrings.getString("WF_DEFAULT_PREFIX"));
                     }
@@ -488,7 +487,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             for (int i = 0; i < m.projs.length; i++) {
                 String proj = m.projs[i];
                 StringBuilder b = new StringBuilder();
-                if (proj.equals("")) {
+                if (proj.isEmpty()) {
                     b.append(OStrings.getString("MATCHES_THIS_PROJECT"));
                 } else {
                     b.append(proj);

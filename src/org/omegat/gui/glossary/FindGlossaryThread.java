@@ -154,13 +154,13 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
         for (int i = 0; i < result.size(); i++) {
             GlossaryEntry nowEntry = result.get(i);
 
-            if (nowEntry.getSrcText().equals(""))
+            if (nowEntry.getSrcText().isEmpty())
                 continue;
 
             for (int j = i + 1; j < result.size(); j++) {
                 GlossaryEntry thenEntry = result.get(j);
 
-                if (thenEntry.getSrcText().equals(""))
+                if (thenEntry.getSrcText().isEmpty())
                     continue;
 
                 // If the Entries are exactely the same, insert a blank entry.
@@ -182,7 +182,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
 
             while (myIter.hasNext()) {
                 GlossaryEntry checkEntry = myIter.next();
-                if (checkEntry.getSrcText().equals("") || checkEntry.getLocText().equals(""))
+                if (checkEntry.getSrcText().isEmpty() || checkEntry.getLocText().isEmpty())
                     myIter.remove();
                 else
                     newList.add(checkEntry);
@@ -198,7 +198,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
             List<GlossaryEntry> srcList = new LinkedList<>();
             GlossaryEntry nowEntry = result.get(i);
 
-            if (nowEntry.getSrcText().equals(""))
+            if (nowEntry.getSrcText().isEmpty())
                 continue;
 
             srcList.add(nowEntry);
@@ -207,7 +207,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
                 GlossaryEntry thenEntry = result.get(j);
 
                 // Double check, needed?
-                if (thenEntry.getSrcText().equals(""))
+                if (thenEntry.getSrcText().isEmpty())
                     continue;
 
                 if (nowEntry.getSrcText().equals(thenEntry.getSrcText())) {
@@ -223,7 +223,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
                 for (int k = 0; k < srcList.size(); k++) {
                     GlossaryEntry srcNow = srcList.get(k);
 
-                    if (srcNow.getSrcText().equals(""))
+                    if (srcNow.getSrcText().isEmpty())
                         continue;
 
                     sortList.add(srcNow);
@@ -231,7 +231,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
                     for (int l = k + 1; l < srcList.size(); l++) {
                         GlossaryEntry srcThen = srcList.get(l);
 
-                        if (srcThen.getSrcText().equals(""))
+                        if (srcThen.getSrcText().isEmpty())
                             continue;
 
                         if (srcNow.getLocText().equals(srcThen.getLocText())) {

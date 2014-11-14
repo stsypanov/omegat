@@ -207,7 +207,7 @@ public class ScriptingWindow extends PeroFrame {
 
             File scriptDir = new File(Preferences.getPreferenceDefault("scripts_dir", new File(".", DEFAULT_SCRIPTS_DIR).getAbsolutePath()));
 
-            if (scriptName != null || "".equals(scriptName)) {
+            if (scriptName != null || scriptName != null && scriptName.isEmpty()) {
                 setQuickScriptMenu(new ScriptItem(new File(scriptDir, scriptName)), i);
             } else {
                 unsetQuickScriptMenu(i);
@@ -243,7 +243,7 @@ public class ScriptingWindow extends PeroFrame {
         // with the segment content, so we set it to a Function key.
         m_quickMenus[index].setAccelerator(KeyStroke.getKeyStroke("shift ctrl F" + (index + 1)));
         m_quickMenus[index].setEnabled(true);
-        if ("".equals(scriptItem.getDescription())) {
+        if (scriptItem.getDescription() != null && scriptItem.getDescription().isEmpty()) {
             m_quickMenus[index].setToolTipText(scriptItem.getDescription());
         }
 
@@ -421,7 +421,7 @@ public class ScriptingWindow extends PeroFrame {
 
             String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey, null);
 
-            if (scriptName != null || "".equals(scriptName)) {
+            if (scriptName != null || scriptName != null && scriptName.isEmpty()) {
                 m_quickScriptButtons[i].setToolTipText(scriptName);
                 m_quickScriptButtons[i].setText("<" + scriptKey + ">");
             } else {
@@ -584,7 +584,7 @@ public class ScriptingWindow extends PeroFrame {
             String scriptString;
             if (forceFromFile) {
                 scriptString = scriptItem.getText();
-            } else if ("".equals(m_txtScriptEditor.getText().trim())) {
+            } else if (m_txtScriptEditor.getText().trim() != null && m_txtScriptEditor.getText().trim().isEmpty()) {
                 scriptString = scriptItem.getText();
                 m_txtScriptEditor.setText(scriptString);
             } else {

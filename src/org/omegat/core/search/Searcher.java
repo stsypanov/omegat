@@ -648,11 +648,11 @@ public class Searcher {
         
         if (author == null) {
             // Handle search for null author.
-            if (te.translation != null && m_author.pattern().pattern().equals("")) {
+            if (te.translation != null && m_author.pattern().pattern().isEmpty()) {
                 return true;
             }
             return false;
-        } else if (m_author.pattern().pattern().equals("")) {
+        } else if (m_author.pattern().pattern().isEmpty()) {
             // Don't match non-null authors when searching for null author.
             return false;
         }

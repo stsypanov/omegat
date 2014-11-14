@@ -129,7 +129,7 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
         String dirName = directoryTextField.getText();
 
         // should we do anything?
-        if (dirName == null || dirName.equals(""))
+        if (dirName == null || dirName.isEmpty())
             return;
 
         dicMan = new DictionaryManager(dirName);

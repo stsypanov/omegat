@@ -129,7 +129,7 @@ public abstract class VarExpansion<Param> {
         String filePath = filePaths[0];
         String numHint;
         if (filePaths.length > 1) {
-            numHint = filePath.equals("") ? OStrings.getString("MATCHES_THIS_PROJECT") : "";
+            numHint = filePath.isEmpty() ? OStrings.getString("MATCHES_THIS_PROJECT") : "";
             numHint += " " + StaticUtils.format(OStrings.getString("MATCHES_MULTI_FILE_HINT"), filePaths.length - 1);
         } else {
             numHint = "";

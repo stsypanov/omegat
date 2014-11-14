@@ -83,7 +83,7 @@ public class TransTips {
 
         String word = glossaryEntry.getSrcText();
         // Test for invalid word.
-        if (word == null || word.equals("")) {
+        if (word == null || word.isEmpty()) {
             return;
         }
 

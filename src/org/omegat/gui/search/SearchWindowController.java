@@ -691,7 +691,7 @@ public class SearchWindowController {
         browser.setFileSelectionMode(OmegaTFileChooser.DIRECTORIES_ONLY);
         String curDir = form.m_dirField.getText();
 
-        if (!curDir.equals("")) {
+        if (!curDir.isEmpty()) {
             File dir = new File(curDir);
             if (dir.exists() && dir.isDirectory()) {
                 browser.setCurrentDirectory(dir);

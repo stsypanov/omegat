@@ -72,7 +72,7 @@ public class ToggleButtonUI extends BasicToggleButtonUI {
         }
 
         // Draw the Text
-        if(text != null && !text.equals("")) {
+        if(text != null && !text.isEmpty()) {
             View v = (View) c.getClientProperty(BasicHTML.propertyKey);
             if (v != null) {
                 v.paint(g, textRect);

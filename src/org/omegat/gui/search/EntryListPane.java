@@ -182,9 +182,9 @@ class EntryListPane extends JTextPane {
             if (m_stringBuf.length() > 0)
                 m_stringBuf.append("---------\n");
 
-            if (preamble != null && !preamble.equals(""))
+            if (preamble != null && !preamble.isEmpty())
                 m_stringBuf.append(preamble + "\n");
-            if (src != null && !src.equals("")) {
+            if (src != null && !src.isEmpty()) {
                 m_stringBuf.append("-- ");
                 if (srcPrefix != null) {
                     m_stringBuf.append(srcPrefix);
@@ -198,7 +198,7 @@ class EntryListPane extends JTextPane {
                 m_stringBuf.append(src);
                 m_stringBuf.append('\n');
             }
-            if (loc != null && !loc.equals("")) {
+            if (loc != null && !loc.isEmpty()) {
                 m_stringBuf.append("-- ");
                 if (targetMatches != null) {
                     for (SearchMatch m : targetMatches) {
@@ -210,7 +210,7 @@ class EntryListPane extends JTextPane {
                 m_stringBuf.append('\n');
             }
 
-            if (note != null && !note.equals("")) {
+            if (note != null && !note.isEmpty()) {
                 m_stringBuf.append("= ");
                 if (noteMatches != null) {
                     for (SearchMatch m : noteMatches) {
@@ -266,7 +266,7 @@ class EntryListPane extends JTextPane {
 
     public void setFont() {
         String srcFont = Preferences.getPreference(OConsts.TF_SRC_FONT_NAME);
-        if (!srcFont.equals("")) {
+        if (!srcFont.isEmpty()) {
             int fontsize;
             try {
                 fontsize = Integer.valueOf(Preferences.getPreference(OConsts.TF_SRC_FONT_SIZE)).intValue();

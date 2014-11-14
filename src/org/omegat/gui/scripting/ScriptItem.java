@@ -129,7 +129,7 @@ public class ScriptItem extends File {
     public String getToolTip() {
         String name = getScriptName();
         String description = getDescription();
-        return "".equals(description) ? name : name + " - " + description;
+        return description != null && description.isEmpty() ? name : name + " - " + description;
     }
 
     public String getText() throws IOException {

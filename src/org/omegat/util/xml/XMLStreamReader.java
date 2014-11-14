@@ -101,7 +101,7 @@ public class XMLStreamReader {
         if (blk.getTagName().equals("xml")) {
             String ver = blk.getAttribute("version");
             // String enc = blk.getAttribute("encoding");
-            if (ver == null || ver.equals("")) {
+            if (ver == null || ver.isEmpty()) {
                 // no version declared - assume it's readable
             } else if (!ver.equals("1.0")) {
                 throw new IOException(OStrings.getString("XSR_ERROR_NONVALID_XML")

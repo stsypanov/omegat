@@ -176,7 +176,7 @@ public class TMXWriter2 {
         }
         
         // add note
-        if (entry.note != null && !entry.note.equals("")) {
+        if (entry.note != null && !entry.note.isEmpty()) {
             String note = StaticUtils.fixChars(entry.note);
             if (forceValidTMX) {
                 note = StaticUtils.stripXmlTags(note);

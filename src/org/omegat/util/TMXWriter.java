@@ -127,7 +127,7 @@ public class TMXWriter {
                 source = makeLevelTwo(source);
                 target = makeLevelTwo(target);
             }
-            String changeIdPropertyString = (transEntry.changer != null && !"".equals(transEntry.changer) ? " changeid=\""
+            String changeIdPropertyString = (transEntry.changer != null && !transEntry.changer.isEmpty() ? " changeid=\""
                     + transEntry.changer + "\""
                     : "");
             String changeDatePropertyString = (transEntry.changeDate != 0 ? " changedate=\""

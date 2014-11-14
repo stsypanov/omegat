@@ -895,7 +895,7 @@ public class EditorController implements IEditor {
             }
         } else { // translation from editor
             if (newTrans.isEmpty()) {// empty translation
-                if (oldTE.isTranslated() && "".equals(oldTE.translation)) {
+                if (oldTE.isTranslated() && oldTE.translation != null && oldTE.translation.isEmpty()) {
                     // It's an empty translation which should remain empty
                     newen.translation = "";
                 } else {

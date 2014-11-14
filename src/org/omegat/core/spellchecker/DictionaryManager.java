@@ -125,14 +125,14 @@ public class DictionaryManager {
 
                 // get the affix file name
                 String affixName = getFileNameOnly(affixFile);
-                if (affixName == null || affixName.equals(""))
+                if (affixName == null || affixName.isEmpty())
                     continue;
 
                 // cycle through the dictionary names
                 for (String dictionaryFile : dictionaryFiles) {
                     // get the dic file name
                     String dicName = getFileNameOnly(dictionaryFile);
-                    if (dicName == null || dicName.equals(""))
+                    if (dicName == null || dicName.isEmpty())
                         continue;
 
                     if (affixName.equals(dicName)) {
@@ -157,7 +157,7 @@ public class DictionaryManager {
      * @returns true upon success, otherwise false
      */
     public boolean uninstallDictionary(String lang) {
-        if (lang == null || lang.equals(""))
+        if (lang == null || lang.isEmpty())
             return false;
 
         String base = getDirectory() + File.separator + lang;

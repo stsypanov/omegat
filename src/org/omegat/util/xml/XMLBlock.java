@@ -93,7 +93,7 @@ public class XMLBlock {
     }
 
     public String getShortcut() {
-        if (m_shortcut != null && !m_shortcut.equals("")) {
+        if (m_shortcut != null && !m_shortcut.isEmpty()) {
             if (m_isClose)
                 return "/" + m_shortcut;
             else if (m_isComment)

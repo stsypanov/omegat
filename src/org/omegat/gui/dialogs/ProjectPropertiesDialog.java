@@ -982,10 +982,10 @@ public class ProjectPropertiesDialog extends PeroDialog {
             curDir = dirFile.getParent();
         }
 
-        if (curDir.equals(""))
+        if (curDir.isEmpty())
             curDir = Preferences.getPreference(Preferences.CURRENT_FOLDER);
 
-        if (!curDir.equals("")) {
+        if (!curDir.isEmpty()) {
             File dir = new File(curDir);
             if (dir.exists() && dir.isDirectory()) {
                 browser.setCurrentDirectory(dir);

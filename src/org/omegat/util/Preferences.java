@@ -400,7 +400,7 @@ public class Preferences {
      * @return preference defaultValue as a string
      */
     public static String getPreference(String key) {
-        if (key == null || key.equals(""))
+        if (key == null || key.isEmpty())
             return "";
         if (!m_loaded)
             doLoad();
@@ -487,7 +487,7 @@ public class Preferences {
      */
     public static String getPreferenceDefault(String key, String defaultValue) {
         String val = getPreference(key);
-        if (val.equals("")) {
+        if (val.isEmpty()) {
             val = defaultValue;
             setPreference(key, defaultValue);
         }
