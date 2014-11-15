@@ -265,7 +265,7 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
             }
 
             GlossaryEntry combineEntry = new GlossaryEntry(srcTxt, locTxts.toArray(new String[locTxts.size()]),
-                    comTxts.toArray(new String[0]), priorities);
+                    comTxts.toArray(new String[comTxts.size()]), priorities);
             returnList.add(combineEntry);
             // ==================================================================
         }

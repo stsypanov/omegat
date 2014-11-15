@@ -94,7 +94,7 @@ public class NearString {
             projs.add(projName);
             scores.add(new Scores(nearScore, nearScoreNoStem, adjustedScore));
             ns.projs = projs.toArray(new String[projs.size()]);
-            ns.scores = scores.toArray(new Scores[0]);
+            ns.scores = scores.toArray(new Scores[scores.size()]);
             return ns;
         }
     }
