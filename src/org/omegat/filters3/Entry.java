@@ -578,7 +578,7 @@ public class Entry {
         // TODO: implement checking
     }
 
-    class ShortTag {
+    static class ShortTag {
         String tag;
         int pos;
 

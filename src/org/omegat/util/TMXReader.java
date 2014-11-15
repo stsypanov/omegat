@@ -255,7 +255,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     }
 
     /** Internal class for OmegaT tag */
-    class Tag {
+    protected static class Tag {
         /** is this an ending tag, e.g. &lt;/b4&gt; */
         public boolean end;
         /** name of the tag, e.g. "b" for &lt;/b4&gt; */
@@ -1194,7 +1194,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     /**
      * Internal class to represent translation unit variants
      */
-    private class TUV {
+    private static class TUV {
         /**
          * Language and (optional) country code: LL(C-CC)
          */
