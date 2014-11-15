@@ -59,35 +59,27 @@ public class StatisticsWindow extends PeroFrame {
     private JProgressBar progressBar;
     private JTextArea output;
     private LongProcessThread thread;
-    private JFrame mainWindow;
-    private JFrame statisticsWindow;
 
     public StatisticsWindow(STAT_TYPE statType) {
         super();
-        mainWindow = Core.getMainWindow().getApplicationFrame();
-        statisticsWindow = this;
+        resolveStatTypeAndStartCalculation(statType);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setSize(800, 400);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+                Core.getMainWindow().getApplicationFrame().setEnabled(true);
+                Core.getMainWindow().getApplicationFrame().requestFocus();
+                Core.getEditor().requestFocus();
+            }
 
-        progressBar = new JProgressBar();
-        output = new JTextArea();
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                thread.fin();
+            }
+        });
 
-        switch (statType) {
-        case STANDARD:
-            setTitle(OStrings.getString("CT_STATSSTANDARD_WindowHeader"));
-            thread = new CalcStandardStatistics(this);
-            break;
-        case MATCHES:
-            setTitle(OStrings.getString("CT_STATSMATCH_WindowHeader"));
-            thread = new CalcMatchStatistics(this, false);
-            break;
-        case MATCHES_PER_FILE:
-            setTitle(OStrings.getString("CT_STATSMATCH_PER_FILE_WindowHeader"));
-            thread = new CalcMatchStatistics(this, true);
-            break;
-        }
-
-        // Run calculation
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
+        Core.getMainWindow().getApplicationFrame().setEnabled(false);
 
         // Prepare UI
         setLayout(new BorderLayout());
@@ -95,9 +87,11 @@ public class StatisticsWindow extends PeroFrame {
         p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         add(p);
 
+        progressBar = new JProgressBar();
         progressBar.setStringPainted(true);
         p.add(progressBar, BorderLayout.SOUTH);
 
+        output = new JTextArea();
         output.setEditable(false);
         output.setFont(new Font("Monospaced", Font.PLAIN, Core.getMainWindow().getApplicationFont().getSize()));
         p.add(new JScrollPane(output), BorderLayout.CENTER);
@@ -109,25 +103,28 @@ public class StatisticsWindow extends PeroFrame {
                 dispose();
             }
         });
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                thread.fin();
-            }
-        });
-
-        setSize(800, 400);
         DockingUI.displayCentered(this);
+    }
 
-        mainWindow.setEnabled(false);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent windowEvent) {
-                statisticsWindow.dispose();
-                mainWindow.setEnabled(true);
-            }
-        });
+    private void resolveStatTypeAndStartCalculation(STAT_TYPE statType) {
+        switch (statType) {
+            case STANDARD:
+                setTitle(OStrings.getString("CT_STATSSTANDARD_WindowHeader"));
+                thread = new CalcStandardStatistics(this);
+                break;
+            case MATCHES:
+                setTitle(OStrings.getString("CT_STATSMATCH_WindowHeader"));
+                thread = new CalcMatchStatistics(this, false);
+                break;
+            case MATCHES_PER_FILE:
+                setTitle(OStrings.getString("CT_STATSMATCH_PER_FILE_WindowHeader"));
+                thread = new CalcMatchStatistics(this, true);
+                break;
+        }
+
+        // Run calculation
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     public void showProgress(final int percent) {
