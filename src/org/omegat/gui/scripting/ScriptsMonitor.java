@@ -26,10 +26,7 @@ package org.omegat.gui.scripting;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.JList;
 
@@ -296,5 +293,5 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 	private IEditorEventListener m_editorEventListener;
 	
 	// Map holding the script fired for the different event listeners.
-	private HashMap<EventType, ArrayList<ScriptItem>> m_eventsScript = new HashMap<>();
+	private Map<EventType, ArrayList<ScriptItem>> m_eventsScript = new EnumMap<>(EventType.class);
 }
