@@ -27,11 +27,7 @@ package org.omegat.tokenizer;
 
 import java.io.IOException;
 import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -65,8 +61,7 @@ public abstract class BaseTokenizer implements ITokenizer {
      * <p>
      * See {@link LuceneGermanTokenizer} for an example class that modifies this map.
      */
-    protected static final Map<Version, String> supportedBehaviors = new LinkedHashMap<>(
-            Version.values().length);
+    protected static final Map<Version, String> supportedBehaviors = new EnumMap<>(Version.class);
 
     protected static final String[] EMPTY_STOP_WORDS_LIST = new String[0];
     protected static final Token[] EMPTY_TOKENS_LIST = new Token[0];
@@ -215,8 +210,7 @@ public abstract class BaseTokenizer implements ITokenizer {
 
         List<Token> result = new ArrayList<>(64);
 
-        final TokenStream in = getTokenStream(strOrig, stemsAllowed,
-                stopWordsAllowed);
+        final TokenStream in = getTokenStream(strOrig, stemsAllowed, stopWordsAllowed);
         in.addAttribute(CharTermAttribute.class);
         in.addAttribute(OffsetAttribute.class);
         
