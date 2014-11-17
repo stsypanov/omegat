@@ -75,6 +75,7 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
+import org.omegat.util.gui.GuiUtils;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -440,21 +441,7 @@ public class SearchWindowController {
      */
     private void loadPreferences() {
         // window size and position
-        try {
-            String dx = Preferences.getPreference(Preferences.SEARCHWINDOW_X);
-            String dy = Preferences.getPreference(Preferences.SEARCHWINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            form.setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.SEARCHWINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.SEARCHWINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            form.setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            form.setSize(800, 700);
-        }
+        GuiUtils.loadLayoutPreferences(form, Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y, Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT);
 
         // search dir options
         if (Preferences.isPreferenceDefault(Preferences.SEARCHWINDOW_SEARCH_FILES, false)) {

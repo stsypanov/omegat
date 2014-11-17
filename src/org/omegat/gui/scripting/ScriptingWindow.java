@@ -292,7 +292,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private void initWindowLayout() {
-        loadPreferences();
+        loadLayoutPreferences(Preferences.SCRIPTWINDOW_X, Preferences.SCRIPTWINDOW_Y, Preferences.SCRIPTWINDOW_WIDTH, Preferences.SCRIPTWINDOW_HEIGHT);
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         JPanel panelNorth = new JPanel();
@@ -648,28 +648,6 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     /**
-     * Loads the position and size of the script window
-     */
-    private void loadPreferences() {
-        // window size and position
-        try {
-            String dx = Preferences.getPreference(Preferences.SCRIPTWINDOW_X);
-            String dy = Preferences.getPreference(Preferences.SCRIPTWINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.SCRIPTWINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.SCRIPTWINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            setBounds(50, 80, 1150, 650);
-        }
-    }
-
-    /**
      * Saves the size and position of the script window
      */
     private void savePreferences() {
@@ -684,10 +662,8 @@ public class ScriptingWindow extends PeroFrame {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive)
-            throws Exception {
-        return Collections.EMPTY_LIST;
+    public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive) throws Exception {
+        return Collections.emptyList();
     }
 
     private void onListSelectionChanged() {

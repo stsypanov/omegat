@@ -82,7 +82,7 @@ public class HelpFrame extends PeroFrame {
         m_historyList = new ArrayList<>();
 
         // set window size & position
-        initWindowLayout();
+        loadLayoutPreferences(Preferences.HELPWINDOW_X, Preferences.HELPWINDOW_Y, Preferences.HELPWINDOW_WIDTH, Preferences.HELPWINDOW_HEIGHT);
 
         Container cp = getContentPane();
         m_helpPane = new JEditorPane();
@@ -206,8 +206,7 @@ public class HelpFrame extends PeroFrame {
      * directory.&lt;/p&gt;
      * </pre>
      * 
-     * @param file
-     *            the file to display
+     * @param link the file to display
      */
     private void gotoLink(String link) {
         if (link.startsWith("http://")) {
@@ -335,28 +334,6 @@ public class HelpFrame extends PeroFrame {
         // Get the doc version and return it
         // (null if the version entry is not present)
         return prop.getProperty("version");
-    }
-
-    /**
-     * Loads/sets the position and size of the help window.
-     */
-    private void initWindowLayout() {
-        // main window
-        try {
-            String dx = Preferences.getPreference(Preferences.HELPWINDOW_X);
-            String dy = Preferences.getPreference(Preferences.HELPWINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.HELPWINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.HELPWINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            setSize(600, 500);
-        }
     }
 
     /**

@@ -33,11 +33,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
@@ -81,7 +77,7 @@ public class TagValidationFrame extends PeroFrame {
         setTitle(OStrings.getString("TF_NOTICE_BAD_TAGS"));
 
         // set window size & position
-        initWindowLayout();
+        loadLayoutPreferences(Preferences.TAGVWINDOW_X, Preferences.TAGVWINDOW_Y, Preferences.TAGVWINDOW_WIDTH, Preferences.TAGVWINDOW_HEIGHT);
         
         Action escapeAction = new AbstractAction() {
             @Override
@@ -143,28 +139,6 @@ public class TagValidationFrame extends PeroFrame {
         super.setFont(f);
         if (isVisible())
             update();
-    }
-
-    /**
-     * Loads/sets the position and size of the tag validation window.
-     */
-    private void initWindowLayout() {
-        // main window
-        try {
-            String dx = Preferences.getPreference(Preferences.TAGVWINDOW_X);
-            String dy = Preferences.getPreference(Preferences.TAGVWINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.TAGVWINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.TAGVWINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            setSize(650, 700);
-        }
     }
 
     /**

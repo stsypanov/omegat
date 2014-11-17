@@ -32,12 +32,10 @@ package org.omegat.gui.filelist;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -91,6 +89,7 @@ import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.gui.GuiUtils;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -135,7 +134,7 @@ public class ProjectFilesListController {
         createTableTotal();
 
         // set the position and size
-        initWindowLayout();
+        GuiUtils.loadLayoutPreferences(list, Preferences.PROJECT_FILES_WINDOW_X, Preferences.PROJECT_FILES_WINDOW_Y, Preferences.PROJECT_FILES_WINDOW_WIDTH, Preferences.PROJECT_FILES_WINDOW_HEIGHT);
 
         list.m_addNewFileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -308,29 +307,6 @@ public class ProjectFilesListController {
                 list.tableFiles.scrollRectToVisible(list.tableFiles.getCellRect(pos, 0, true));
                 break;
             }
-        }
-    }
-
-    /**
-     * Loads/sets the position and size of the project files window.
-     */
-    private void initWindowLayout() {
-        // main window
-        try {
-            String dx = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_X);
-            String dy = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            list.setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            list.setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            list.setBounds((screenSize.width - 640) / 2, (screenSize.height - 400) / 2, 640, 400);
         }
     }
 
