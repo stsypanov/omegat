@@ -1,5 +1,6 @@
 package org.omegat.gui.lf.components;
 
+import org.omegat.gui.lf.ui.laf.ColorUtil;
 import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
