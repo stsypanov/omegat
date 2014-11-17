@@ -122,12 +122,7 @@ public class GlossaryEntry {
         int commentIndex = 0;
         for (int i = 0; i < m_loc.length; i++) {
             if (i > 0 && m_loc[i].equals(m_loc[i - 1])) {
-                if (!m_com[i].isEmpty()) {
-                    comments.append("\n");
-                    comments.append(commentIndex);
-                    comments.append(". ");
-                    comments.append(m_com[i]);
-                }
+                checkIfEmpty(comments, commentIndex, i);
                 continue;
             }
             if (i > 0) result.text.append(", ");
@@ -139,19 +134,25 @@ public class GlossaryEntry {
                 result.markBoldEnd();
             }
             commentIndex++;
-            if (!m_com[i].isEmpty()) {
-                comments.append("\n");
-                comments.append(commentIndex);
-                comments.append(". ");
-                comments.append(m_com[i]);
-            }
+            checkIfEmpty(comments, commentIndex, i);
         }
         
         result.text.append(comments);
         
         return result;
     }
-    
+
+    /**
+     *
+     */
+    private void checkIfEmpty(StringBuilder comments, int commentIndex, int i) {
+        if (!m_com[i].equals("")) {
+            comments.append("\n");
+            comments.append(commentIndex);
+            comments.append(". ");
+            comments.append(m_com[i]);
+        }
+    }
     /**
      * If a combined glossary entry contains ',', it needs to be bracketed by
      * quotes, to prevent confusion when entries are combined. However, if the

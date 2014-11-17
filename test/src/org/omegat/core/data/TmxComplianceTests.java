@@ -195,22 +195,7 @@ public class TmxComplianceTests extends TmxComplianceBase {
 
         ProjectProperties props = new TestProjectProperties("EN-US", "FR-CA");
 
-        FilterContext fc = new FilterContext(props);
-        fc.setInEncoding("windows-1252");
-
-        Map<String, String> config = new TreeMap<String, String>();
-        new HTMLOptions(config).setSkipMeta("content=en-us,content=fr-ca");
-
-        List<String> sources = loadTexts(new HTMLFilter2(), sourceFile, null, fc, config);
-        List<String> translations = loadTexts(new HTMLFilter2(), translatedFile, null, fc, config);
-
-        assertEquals(sources.size(), translations.size());
-
-        ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), outFile, orphanedCallback);
-
-        for (int i = 0; i < sources.size(); i++) {
-            tmx.defaults.put(sources.get(i), createTMXEntry(sources.get(i), translations.get(i), true));
-        }
+        ProjectTMX tmx = getProjectTMX(sourceFile, translatedFile, props);
 
         tmx.exportTMX(props, outFile, false, false, true);
 
@@ -328,6 +313,21 @@ public class TmxComplianceTests extends TmxComplianceBase {
         ProjectProperties props = new TestProjectProperties("EN-US", "FR-CA");
         props.setSentenceSegmentingEnabled(true);
 
+        ProjectTMX tmx = getProjectTMX(sourceFile, translatedFile, props);
+
+        tmx.exportTMX(props, outFile, false, true, true);
+
+        compareTMX(tmxFile, outFile, 12);
+    }
+
+    TMXEntry createTMXEntry(String source, String translation, boolean def) {
+        PrepareTMXEntry tr = new PrepareTMXEntry();
+        tr.source = source;
+        tr.translation = translation;
+        return new TMXEntry(tr, def, null);
+    }
+
+    private ProjectTMX getProjectTMX(File sourceFile, File translatedFile, ProjectProperties props) throws Exception {
         FilterContext fc = new FilterContext(props);
         fc.setInEncoding("windows-1252");
 
@@ -344,16 +344,6 @@ public class TmxComplianceTests extends TmxComplianceBase {
         for (int i = 0; i < sources.size(); i++) {
             tmx.defaults.put(sources.get(i), createTMXEntry(sources.get(i), translations.get(i), true));
         }
-
-        tmx.exportTMX(props, outFile, false, true, true);
-
-        compareTMX(tmxFile, outFile, 12);
-    }
-
-    TMXEntry createTMXEntry(String source, String translation, boolean def) {
-        PrepareTMXEntry tr = new PrepareTMXEntry();
-        tr.source = source;
-        tr.translation = translation;
-        return new TMXEntry(tr, def, null);
+        return tmx;
     }
 }

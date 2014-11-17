@@ -74,21 +74,33 @@
 
     <itemizedlist>
       <listitem>
-        <para>Remove leading and trailing tags: xxxx</para>
+        <para>Remove leading and trailing tags: uncheck this option to display
+        all the tags including the leading and trailing ones. Warning: in
+        Microsoft Open XML formats (docx, xlsx, etc.), if all tags are
+        displayed, DO NOT write text before the first tag (it is a technical
+        tag that must always begin the segment).</para>
       </listitem>
 
       <listitem>
         <para>Remove leading and trailing whitespace in non-segmented
-        projects; xxxx</para>
+        projects: by default, OmegaT removes leading and trailing whitespace. 
+        In non-segmented projects, it is possible to keep it by unchecking this option.</para>
       </listitem>
 
       <listitem>
-        <para>Preserve spaces for all tags: xxxx</para>
+        <para>Preserve spaces for all tags: check this option if the source
+        documents contain significant spaces (for layout matters) that must
+        not be ignored.</para>
       </listitem>
 
       <listitem>
         <para>Ignore file context when identifying segments with alternate
-        translations: xxxx</para>
+        translations: by default, OmegaT uses the source file name as part of the 
+        identification of an alternate translation.
+        if the option is checked, the source file name will not be used, and
+        alternative translations will take effect in any file as long 
+        as the other context (previous/next
+        segments, or some sort of ID depending on the file format) matches.</para>
       </listitem>
     </itemizedlist>
   </section>

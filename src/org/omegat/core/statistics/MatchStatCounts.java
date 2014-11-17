@@ -65,9 +65,8 @@ public class MatchStatCounts {
 
     /**
      * Get row index by match percent.
-     * 
-     * @param percent
-     *            match percent
+     *
+     * @param percent match percent
      * @return row index
      */
     private int getRowByPercent(int percent) {
@@ -89,9 +88,8 @@ public class MatchStatCounts {
 
     /**
      * Extract first two rows result to text table.
-     * 
-     * @param result
-     *            result
+     *
+     * @param rows row names
      * @return text table
      */
     public String[][] calcTableWithoutPercentage(String[] rows) {
@@ -99,20 +97,15 @@ public class MatchStatCounts {
 
         // dump result - will be changed for UI
         for (int i = 0; i <= baseForPercents; i++) {
-            table[i][0] = rows[i];
-            table[i][1] = Integer.toString(counts[i].segments);
-            table[i][2] = Integer.toString(counts[i].words);
-            table[i][3] = Integer.toString(counts[i].charsWithoutSpaces);
-            table[i][4] = Integer.toString(counts[i].charsWithSpaces);
+            populateTableRow(rows, table, i);
         }
         return table;
     }
 
     /**
      * Extract result to text table.
-     * 
-     * @param result
-     *            result
+     *
+     * @param rows row names
      * @return text table
      */
     public String[][] calcTable(String[] rows) {
@@ -126,12 +119,22 @@ public class MatchStatCounts {
 
         // dump result - will be changed for UI
         for (int i = 0; i < counts.length; i++) {
-            table[i][0] = rows[i];
-            table[i][1] = Integer.toString(counts[i].segments);
-            table[i][2] = Integer.toString(counts[i].words);
-            table[i][3] = Integer.toString(counts[i].charsWithoutSpaces);
-            table[i][4] = Integer.toString(counts[i].charsWithSpaces);
+            populateTableRow(rows, table, i);
         }
         return table;
+    }
+
+    /**
+     * Populates table values
+     * @param rows row names
+     * @param tableValues table values to be populated
+     * @param i index
+     */
+    private void populateTableRow(String[] rows, String[][] tableValues, int i) {
+        tableValues[i][0] = rows[i];
+        tableValues[i][1] = Integer.toString(counts[i].segments);
+        tableValues[i][2] = Integer.toString(counts[i].words);
+        tableValues[i][3] = Integer.toString(counts[i].charsWithoutSpaces);
+        tableValues[i][4] = Integer.toString(counts[i].charsWithSpaces);
     }
 }

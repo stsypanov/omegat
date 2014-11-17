@@ -1194,7 +1194,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     /**
      * Internal class to represent translation unit variants
      */
-    private class TUV {
+    private static class TUV {
         /**
          * Language and (optional) country code: LL(C-CC)
          */

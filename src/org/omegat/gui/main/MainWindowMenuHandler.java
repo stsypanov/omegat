@@ -344,19 +344,14 @@ public class MainWindowMenuHandler {
     }
 
     public void editFindInProjectMenuItemActionPerformed() {
-        if (!Core.getProject().isProjectLoaded())
-            return;
-
-        String selection = Core.getEditor().getSelectedText();
-        if (selection != null) {
-            selection = selection.trim();
-        }
-
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.SEARCH);
-        mainWindow.addSearchWindow(search);
+        searchReplace(SearchMode.SEARCH);
     }
 
     public void editReplaceInProjectMenuItemActionPerformed() {
+        searchReplace(SearchMode.REPLACE);
+    }
+
+    private void searchReplace(SearchMode mode) {
         if (!Core.getProject().isProjectLoaded())
             return;
 
@@ -365,7 +360,7 @@ public class MainWindowMenuHandler {
             selection = selection.trim();
         }
 
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.REPLACE);
+        SearchWindowController search = new SearchWindowController(mainWindow, selection, mode);
         mainWindow.addSearchWindow(search);
     }
 

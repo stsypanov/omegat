@@ -88,21 +88,7 @@ public abstract class TestFilterBase extends TestCore {
     protected List<String> parse(AbstractFilter filter, String filename) throws Exception {
         final List<String> result = new ArrayList<String>();
 
-        filter.parseFile(new File(filename), new TreeMap<String, String>(), context, new IParseCallback() {
-            public void addEntry(String id, String source, String translation, boolean isFuzzy,
-                    String comment, IFilter filter) {
-                addEntry(id, source, translation, isFuzzy, comment, null, filter, null);
-            }
-
-            public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
-                    String path, IFilter filter, List<ProtectedPart> protectedParts) {
-                if (source.length() > 0)
-                    result.add(source);
-            }
-
-            public void linkPrevNextSegments() {
-            }
-        });
+        filter.parseFile(new File(filename), new TreeMap<String, String>(), context, getCallback(result));
 
         return result;
     }
@@ -111,25 +97,28 @@ public abstract class TestFilterBase extends TestCore {
             throws Exception {
         final List<String> result = new ArrayList<String>();
 
-        filter.parseFile(new File(filename), options, context, new IParseCallback() {
+        filter.parseFile(new File(filename), options, context, getCallback(result));
+
+        return result;
+    }
+
+    private IParseCallback getCallback(final List<String> result) {
+        return new IParseCallback() {
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
-                    String comment, IFilter filter) {
+                                 String comment, IFilter filter) {
                 addEntry(id, source, translation, isFuzzy, comment, null, filter, null);
             }
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
-                    String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                                 String path, IFilter filter, List<ProtectedPart> protectedParts) {
                 if (source.length() > 0)
                     result.add(source);
             }
 
             public void linkPrevNextSegments() {
             }
-        });
-
-        return result;
+        };
     }
-
     protected void parse2(final AbstractFilter filter, final String filename,
             final Map<String, String> result, final Map<String, String> legacyTMX) throws Exception {
 

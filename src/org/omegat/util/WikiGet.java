@@ -228,29 +228,7 @@ public class WikiGet {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         try {
             conn.setRequestMethod("GET");
-            if (additionalHeaders != null) {
-                for (Map.Entry<String, String> en : additionalHeaders.entrySet()) {
-                    conn.setRequestProperty(en.getKey(), en.getValue());
-                }
-            }
-
-            // Added to pass through authenticated proxy
-            String encodedUser = (Preferences.getPreference(Preferences.PROXY_USER_NAME));
-            if (!StringUtil.isEmpty(encodedUser)) { // There is a proxy user
-                String encodedPassword = (Preferences.getPreference(Preferences.PROXY_PASSWORD));
-                try {
-                    String pass = new String(org.omegat.util.Base64.decode(encodedUser));
-                    pass += ":" + new String(org.omegat.util.Base64.decode(encodedPassword));
-                    encodedPassword = org.omegat.util.Base64.encodeBytes(pass.getBytes());
-                    conn.setRequestProperty("Proxy-Authorization", "Basic " + encodedPassword);
-                } catch (IOException ex) {
-                    Log.logErrorRB("LOG_DECODING_ERROR");
-                    Log.log(ex);
-                }
-             }
-
-            conn.setDoOutput(true);
-
+            prepareConnection(additionalHeaders, conn);
             return getStringContent(conn);
         } finally {
             conn.disconnect();
@@ -270,7 +248,6 @@ public class WikiGet {
      */
     public static String post(String address, Map<String, String> params,
             Map<String, String> additionalHeaders) throws IOException {
-        URL url = new URL(address);
 
         ByteArrayOutputStream pout = new ByteArrayOutputStream();
         for (Map.Entry<String, String> p : params.entrySet()) {
@@ -282,34 +259,15 @@ public class WikiGet {
             pout.write(URLEncoder.encode(p.getValue(), OConsts.UTF8).getBytes(OConsts.UTF8));
         }
 
+        URL url = new URL(address);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         try {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Content-Length", Integer.toString(pout.size()));
-            if (additionalHeaders != null) {
-                for (Map.Entry<String, String> en : additionalHeaders.entrySet()) {
-                    conn.setRequestProperty(en.getKey(), en.getValue());
-                }
-            }
-
-            // Added to pass through authenticated proxy
-            String encodedUser = (Preferences.getPreference(Preferences.PROXY_USER_NAME));
-            if (!StringUtil.isEmpty(encodedUser)) { // There is a proxy user
-                String encodedPassword = (Preferences.getPreference(Preferences.PROXY_PASSWORD));
-                try {
-                    String pass = new String(org.omegat.util.Base64.decode(encodedUser));
-                    pass += ":" + new String(org.omegat.util.Base64.decode(encodedPassword));
-                    encodedPassword = org.omegat.util.Base64.encodeBytes(pass.getBytes());
-                    conn.setRequestProperty("Proxy-Authorization", "Basic " + encodedPassword);
-                } catch (IOException ex) {
-                    Log.logErrorRB("LOG_DECODING_ERROR");
-                    Log.log(ex);
-                }
-             }
+            prepareConnection(additionalHeaders, conn);
 
             conn.setDoInput(true);
-            conn.setDoOutput(true);
 
             OutputStream cout = conn.getOutputStream();
             cout.write(pout.toByteArray());
@@ -353,5 +311,35 @@ public class WikiGet {
             code = conn.getResponseCode();
             message = conn.getResponseMessage();
         }
+    }
+
+    /**
+     * Sets request properties and proxy if necessary
+     * @param additionalHeaders additional request headers
+     * @param conn connection to be handled
+     */
+    private static void prepareConnection(Map<String, String> additionalHeaders, HttpURLConnection conn) {
+        if (additionalHeaders != null && !additionalHeaders.isEmpty()) {
+            for (Map.Entry<String, String> en : additionalHeaders.entrySet()) {
+                conn.setRequestProperty(en.getKey(), en.getValue());
+            }
+        }
+
+        // Added to pass through authenticated proxy
+        String encodedUser = (Preferences.getPreference(Preferences.PROXY_USER_NAME));
+        if (!StringUtil.isEmpty(encodedUser)) { // There is a proxy user
+            String encodedPassword = (Preferences.getPreference(Preferences.PROXY_PASSWORD));
+            try {
+                String pass = new String(Base64.decode(encodedUser));
+                pass += ":" + new String(Base64.decode(encodedPassword));
+                encodedPassword = Base64.encodeBytes(pass.getBytes());
+                conn.setRequestProperty("Proxy-Authorization", "Basic " + encodedPassword);
+            } catch (IOException ex) {
+                Log.logErrorRB("LOG_DECODING_ERROR");
+                Log.log(ex);
+            }
+        }
+
+        conn.setDoOutput(true);
     }
 }

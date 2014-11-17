@@ -125,23 +125,7 @@ public class WordIterator extends BreakIterator {
                     return next;
                 }
 
-                int next4 = breaker.next();
-                if (DONE == next4) {
-                    nextItems.add(next2);
-                    nextItems.add(next3);
-                    return next;
-                }
-                // there're at least three maybe-words after "<"
-                String str4 = text.substring(next3, next4);
-                if (str4.equals(">"))
-                    return next4; // yes, it's a standalone tag
-                else {
-                    // rewind back three times
-                    breaker.previous();
-                    breaker.previous();
-                    breaker.previous();
-                    return next;
-                }
+                return giveMeaningfulName(next, next2, next3);
             } else if (!PatternConsts.OMEGAT_TAG_ONLY.matcher(str2).matches()) {
                 // rewind back two times
                 breaker.previous();
@@ -151,23 +135,7 @@ public class WordIterator extends BreakIterator {
 
             if (str3.equals("/")) {
                 // maybe standalone tag
-                int next4 = breaker.next();
-                if (DONE == next4) {
-                    nextItems.add(next2);
-                    nextItems.add(next3);
-                    return next;
-                }
-                // there're at least three maybe-words after "<"
-                String str4 = text.substring(next3, next4);
-                if (str4.equals(">"))
-                    return next4; // yes, it's a standalone tag
-                else {
-                    // rewind back three times
-                    breaker.previous();
-                    breaker.previous();
-                    breaker.previous();
-                    return next;
-                }
+                return giveMeaningfulName(next, next2, next3);
             } else if (str3.equals(">"))
                 return next3; // yes, it's an OmegaT tag
             {
@@ -223,6 +191,27 @@ public class WordIterator extends BreakIterator {
             }
         } else
             return next;
+    }
+
+    //todo rename
+    private int giveMeaningfulName(int next, int next2, int next3) {
+        int next4 = breaker.next();
+        if (DONE == next4) {
+            nextItems.add(next2);
+            nextItems.add(next3);
+            return next;
+        }
+        // there're at least three maybe-words after "<"
+        String str4 = text.substring(next3, next4);
+        if (str4.equals(">"))
+            return next4; // yes, it's a standalone tag
+        else {
+            // rewind back three times
+            breaker.previous();
+            breaker.previous();
+            breaker.previous();
+            return next;
+        }
     }
 
     // ////////////////////////////////////////////////////////////////////////
