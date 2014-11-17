@@ -82,22 +82,24 @@ public class FiltersTableModel extends AbstractTableModel {
 
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
-        case 0:
-            return OStrings.getString("FILTERS_FILE_FORMAT");
-        case 1:
-            return OStrings.getString("FILTERS_ON");
+            case 0:
+                return OStrings.getString("FILTERS_FILE_FORMAT");
+            case 1:
+                return OStrings.getString("FILTERS_ON");
+            default:
+                return "";
         }
-        return null;
     }
 
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
-        case 0:
-            return String.class;
-        case 1:
-            return Boolean.class;
+            case 0:
+                return String.class;
+            case 1:
+                return Boolean.class;
+            default:
+                return Object.class;
         }
-        return null;
     }
 
     public int getRowCount() {
@@ -110,16 +112,16 @@ public class FiltersTableModel extends AbstractTableModel {
         case 0:
             return filterNames.get(filter.getClassName());
         case 1:
-            return new Boolean(filter.isEnabled());
+            return filter.isEnabled();
         }
         return null;
     }
 
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
         Filter filter = filters.get(rowIndex);
         switch (columnIndex) {
         case 1:
-            filter.setEnabled(((Boolean) aValue).booleanValue());
+            filter.setEnabled((Boolean) value);
             break;
         default:
             throw new IllegalArgumentException(OStrings.getString("FILTERS_ERROR_COLUMN_INDEX_NOT_1"));
@@ -128,11 +130,12 @@ public class FiltersTableModel extends AbstractTableModel {
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-        case 0:
-            return false;
-        case 1:
-            return true;
+            case 0:
+                return false;
+            case 1:
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
 }
