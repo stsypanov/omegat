@@ -28,31 +28,17 @@
 
 package org.omegat.filters2.text.bundles;
 
-import java.awt.Dialog;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import org.omegat.core.data.ProtectedPart;
+import org.omegat.filters2.AbstractAlignmentFilter;
+import org.omegat.filters2.Instance;
+import org.omegat.util.*;
+
+import java.awt.*;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.omegat.core.data.ProtectedPart;
-import org.omegat.filters2.AbstractFilter;
-import org.omegat.filters2.Instance;
-import org.omegat.util.Log;
-import org.omegat.util.LinebreakPreservingReader;
-import org.omegat.util.NullBufferedWriter;
-import org.omegat.util.OConsts;
-import org.omegat.util.OStrings;
-import org.omegat.util.PatternConsts;
-import org.omegat.util.StaticUtils;
-import org.omegat.util.StringUtil;
 
 /**
  * Filter to support Java Resource Bundles - the files that are used to I18ze
@@ -76,12 +62,10 @@ import org.omegat.util.StringUtil;
  *
  * Support for the comments into the Comments panel (localization notes).
  */
-public class ResourceBundleFilter extends AbstractFilter {
+public class ResourceBundleFilter extends AbstractAlignmentFilter {
 
     public static final String OPTION_REMOVE_STRINGS_UNTRANSLATED = "unremoveStringsUntranslated";
 
-    protected Map<String, String> align;
-    
     private String targetEncoding;
     
     /**
@@ -453,24 +437,6 @@ public class ResourceBundleFilter extends AbstractFilter {
         return value;
     }
 
-    @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<>();
-        Map<String, String> translated = new HashMap<>();
-
-        align = source;
-        processFile(sourceFile, new NullBufferedWriter(), fc);
-        align = translated;
-        processFile(translatedFile, new NullBufferedWriter(), fc);
-        for (Map.Entry<String, String> en : source.entrySet()) {
-            String tr = translated.get(en.getKey());
-            if (!StringUtil.isEmpty(tr)) {
-                entryAlignCallback.addTranslation(en.getKey(), en.getValue(), tr, false, null, this);
-            }
-        }
-    }
-
-    
     @Override
     public Map<String, String> changeOptions(Dialog parent, Map<String, String> config) {
         try {

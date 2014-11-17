@@ -27,30 +27,19 @@
 
 package org.omegat.filters2.mozdtd;
 
-import java.awt.Dialog;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.omegat.filters2.AbstractFilter;
+import org.omegat.filters2.AbstractAlignmentFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
 import org.omegat.util.Log;
-import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
-import org.omegat.util.StringUtil;
+
+import java.awt.*;
+import java.io.*;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Filter for support Mozilla DTD files.
@@ -66,15 +55,12 @@ import org.omegat.util.StringUtil;
  *
  * @author Enrique Est�vez (keko.gl@gmail.com)
  */
-public class MozillaDTDFilter extends AbstractFilter {
+public class MozillaDTDFilter extends AbstractAlignmentFilter {
 
     public static final String OPTION_REMOVE_STRINGS_UNTRANSLATED = "unremoveStringsUntranslated";
 
     protected static Pattern RE_ENTITY =  Pattern.compile("<\\!ENTITY\\s+(\\S+)\\s+([\"'])(.+)\\2\\s*>", Pattern.DOTALL);
     
-    
-    protected Map<String, String> align;
-
     /**
      * If true, will remove non-translated segments in the target files
      */
@@ -182,23 +168,6 @@ public class MozillaDTDFilter extends AbstractFilter {
             }    
         } else if (entryAlignCallback != null && id != null) {
             align.put(id, text);
-        }
-    }
-
-    @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<>();
-        Map<String, String> translated = new HashMap<>();
-
-        align = source;
-        processFile(sourceFile, new NullBufferedWriter(), fc);
-        align = translated;
-        processFile(translatedFile, new NullBufferedWriter(), fc);
-        for (Map.Entry<String, String> en : source.entrySet()) {
-            String tr = translated.get(en.getKey());
-            if (!StringUtil.isEmpty(tr)) {
-                entryAlignCallback.addTranslation(en.getKey(), en.getValue(), tr, false, null, this);
-            }
         }
     }
 

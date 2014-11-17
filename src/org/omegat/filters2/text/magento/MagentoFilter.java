@@ -26,20 +26,16 @@
 
 package org.omegat.filters2.text.magento;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import java.util.regex.Pattern;
-import org.omegat.filters2.AbstractFilter;
+import org.omegat.filters2.AbstractAlignmentFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.util.LinebreakPreservingReader;
-import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OStrings;
-import org.omegat.util.StringUtil;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Filter to support Files for Magento CE locale. The files are a kind of CSV that looks like
@@ -47,8 +43,7 @@ import org.omegat.util.StringUtil;
  * 
  * @author Michael Zakharov <trapman.hunt@gmail.com>
  */
-public class MagentoFilter extends AbstractFilter {
-    protected Map<String, String> align;
+public class MagentoFilter extends AbstractAlignmentFilter {
 
     public String getFileFormatName() {
         return OStrings.getString("MAGENTOFILTER_FILTER_NAME");
@@ -134,23 +129,6 @@ public class MagentoFilter extends AbstractFilter {
         lbpr.close();
     }
 
-    @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<>();
-        Map<String, String> translated = new HashMap<>();
-
-        align = source;
-        processFile(sourceFile, new NullBufferedWriter(), fc);
-        align = translated;
-        processFile(translatedFile, new NullBufferedWriter(), fc);
-        for (Map.Entry<String, String> en : source.entrySet()) {
-            String tr = translated.get(en.getKey());
-            if (!StringUtil.isEmpty(tr)) {
-                entryAlignCallback.addTranslation(en.getKey(), en.getValue(), tr, false, null, this);
-            }
-        }
-    }
-    
     /**
      * 
      * @param key

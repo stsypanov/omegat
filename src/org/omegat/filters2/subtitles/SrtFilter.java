@@ -25,20 +25,16 @@
 
 package org.omegat.filters2.subtitles;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.omegat.filters2.AbstractFilter;
+import org.omegat.filters2.AbstractAlignmentFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
-import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OStrings;
-import org.omegat.util.StringUtil;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Filter for subtitles files. Format described on
@@ -46,7 +42,7 @@ import org.omegat.util.StringUtil;
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class SrtFilter extends AbstractFilter {
+public class SrtFilter extends AbstractAlignmentFilter {
     protected static final Pattern PATTERN_TIME_INTERVAL = Pattern
             .compile("([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})\\s+-->\\s+([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})");
     protected static final String EOL = "\r\n";
@@ -54,8 +50,6 @@ public class SrtFilter extends AbstractFilter {
     enum READ_STATE {
         WAIT_TIME, WAIT_TEXT
     }
-
-    protected Map<String, String> align;
 
     protected String key;
     protected StringBuilder text = new StringBuilder();
@@ -141,20 +135,4 @@ public class SrtFilter extends AbstractFilter {
         text.setLength(0);
     }
 
-    @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<>();
-        Map<String, String> translated = new HashMap<>();
-
-        align = source;
-        processFile(sourceFile, new NullBufferedWriter(), fc);
-        align = translated;
-        processFile(translatedFile, new NullBufferedWriter(), fc);
-        for (Map.Entry<String, String> en : source.entrySet()) {
-            String tr = translated.get(en.getKey());
-            if (!StringUtil.isEmpty(tr)) {
-                entryAlignCallback.addTranslation(en.getKey(), en.getValue(), tr, false, null, this);
-            }
-        }
-    }
 }

@@ -25,21 +25,17 @@
 
 package org.omegat.filters2.rc;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.omegat.filters2.AbstractFilter;
+import org.omegat.filters2.AbstractAlignmentFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
-import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OStrings;
-import org.omegat.util.StringUtil;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Filter for support Windows resource files.
@@ -49,7 +45,7 @@ import org.omegat.util.StringUtil;
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class RcFilter extends AbstractFilter {
+public class RcFilter extends AbstractAlignmentFilter {
 
     protected static final Pattern RE_DIALOG = Pattern.compile("(\\S+)\\s+DIALOG(EX)?\\s+.+");
     protected static final Pattern RE_DIALOG_CAPTION = Pattern.compile("CAPTION\\s+.+");
@@ -63,8 +59,6 @@ public class RcFilter extends AbstractFilter {
 
     protected String blockId;
     protected int b, e;
-
-    protected Map<String, String> align;
 
     public String getFileFormatName() {
         return OStrings.getString("RCFILTER_FILTER_NAME");
@@ -151,23 +145,6 @@ public class RcFilter extends AbstractFilter {
             }
             outFile.write(s);
             outFile.newLine();
-        }
-    }
-
-    @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
-        Map<String, String> source = new HashMap<>();
-        Map<String, String> translated = new HashMap<>();
-
-        align = source;
-        processFile(sourceFile, new NullBufferedWriter(), fc);
-        align = translated;
-        processFile(translatedFile, new NullBufferedWriter(), fc);
-        for (Map.Entry<String, String> en : source.entrySet()) {
-            String tr = translated.get(en.getKey());
-            if (!StringUtil.isEmpty(tr)) {
-                entryAlignCallback.addTranslation(en.getKey(), en.getValue(), tr, false, null, this);
-            }
         }
     }
 
