@@ -267,11 +267,7 @@ public class GITRemoteRepository implements IRemoteRepository {
     public void updateFullProject() throws  Exception {
         Log.logInfoRB("GIT_START", "pull");
         try {
-            new Git(repository).fetch().call();
-            new Git(repository).checkout().setName(REMOTE_BRANCH).call();
-            new Git(repository).branchDelete().setBranchNames(LOCAL_BRANCH).setForce(true).call();
-            new Git(repository).checkout().setStartPoint(REMOTE_BRANCH).setCreateBranch(true)
-                    .setName(LOCAL_BRANCH).setForce(true).call();
+            prepare();
             new Git(repository).submoduleUpdate().call();
             Log.logInfoRB("GIT_FINISH", "pull");
         } catch (Exception ex) {
@@ -283,16 +279,20 @@ public class GITRemoteRepository implements IRemoteRepository {
     public void download(File[] files) throws  Exception {
         Log.logInfoRB("GIT_START", "download");
         try {
-            new Git(repository).fetch().call();
-            new Git(repository).checkout().setName(REMOTE_BRANCH).call();
-            new Git(repository).branchDelete().setBranchNames(LOCAL_BRANCH).setForce(true).call();
-            new Git(repository).checkout().setStartPoint(REMOTE_BRANCH).setCreateBranch(true)
-                    .setName(LOCAL_BRANCH).setForce(true).call();
+            prepare();
             Log.logInfoRB("GIT_FINISH", "download");
         } catch (Exception ex) {
             Log.logErrorRB("GIT_ERROR", "download", ex.getMessage());
             checkAndThrowException(ex);
         }
+    }
+
+    private void prepare() throws GitAPIException {
+        new Git(repository).fetch().call();
+        new Git(repository).checkout().setName(REMOTE_BRANCH).call();
+        new Git(repository).branchDelete().setBranchNames(LOCAL_BRANCH).setForce(true).call();
+        new Git(repository).checkout().setStartPoint(REMOTE_BRANCH).setCreateBranch(true)
+                .setName(LOCAL_BRANCH).setForce(true).call();
     }
 
     public void upload(File file, String commitMessage) throws  Exception {
