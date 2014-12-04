@@ -121,8 +121,7 @@ public class WikiGet {
      *            The UTF-8 format string to be printed.
      */
     public static void printUTF8(String output) {
-        try {
-            BufferedWriter out = UTF8WriterBuilder(System.out);
+        try (BufferedWriter out = UTF8WriterBuilder(System.out)){
             out.write(output);
 
             out.flush();

@@ -66,10 +66,7 @@ public class CommandMonitor extends Thread {
     }
         
     public void run() {
-        InputStreamReader isr = new InputStreamReader(stream);
-        BufferedReader br = new BufferedReader(isr);
-        
-        try {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))){
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (isStdErr) {

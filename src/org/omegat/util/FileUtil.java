@@ -116,20 +116,13 @@ public class FileUtil {
         File outFile = new File(StaticUtils.getScriptDir(), fileName);
         File outFileTemp = new File(StaticUtils.getScriptDir(), fileName + ".temp");
         outFile.delete();
-        BufferedWriter bw = null;
-        try {
+
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTemp), OConsts.UTF8))){
             textToWrite = textToWrite.replaceAll("\n", System.getProperty("line.separator"));
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTemp), OConsts.UTF8));
+
             bw.write(textToWrite);
         } catch (Exception ex) {
             // Eat exception silently
-        } finally {
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException ex) {
-                Log.log(ex);
-            }
         }
         outFileTemp.renameTo(outFile);
         return outFile;
@@ -171,11 +164,8 @@ public class FileUtil {
      * Write text in file using UTF-8.
      */
     public static void writeTextFile(File file, String text) throws IOException {
-        Writer wr = new OutputStreamWriter(new FileOutputStream(file), OConsts.UTF8);
-        try {
+        try (Writer wr = new OutputStreamWriter(new FileOutputStream(file), OConsts.UTF8)){
             wr.write(text);
-        } finally {
-            wr.close();
         }
     }
 

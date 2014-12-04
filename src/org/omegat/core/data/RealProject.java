@@ -1576,8 +1576,7 @@ public class RealProject implements IProject {
     @Override
     public List<String> getSourceFilesOrder() {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))){
             List<String> result = new ArrayList<>();
             String s;
             while ((s = rd.readLine()) != null) {
@@ -1593,14 +1592,11 @@ public class RealProject implements IProject {
     @Override
     public void setSourceFilesOrder(List<String> filesList) {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
-        try {
-            BufferedWriter wr = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+        try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))){
             for (String f : filesList) {
                 wr.write(f);
                 wr.write('\n');
             }
-            wr.close();
         } catch (Exception ex) {
             Log.log(ex);
         }
