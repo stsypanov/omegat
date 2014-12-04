@@ -210,16 +210,10 @@ public class HelpFrame extends PeroFrame {
      */
     private void gotoLink(String link) {
         if (link.startsWith("http://")) {
-            String txt = "<b>" + link + "</b>";
-            StringBuilder buf = new StringBuilder();
-            buf.append("<html><body><p>");
-            buf.append(StaticUtils.format(OStrings.getString("HF_ERROR_EXTLINK_TITLE"), new Object[] { txt }));
-            buf.append("<p>");
-            buf.append(StaticUtils.format(OStrings.getString("HF_ERROR_EXTLINK_MSG"),
-                    new Object[] { "<b>index.html</b>" }));
-            buf.append("</body></html>");
-
-            m_helpPane.setText(buf.toString());
+            m_helpPane.setText("<html><body><p>" +
+                    StaticUtils.format(OStrings.getString("HF_ERROR_EXTLINK_TITLE"), "<b>" + link + "</b><p>") +
+                    StaticUtils.format(OStrings.getString("HF_ERROR_EXTLINK_MSG"), "<b>index.html</b>") +
+                    "</body></html>");
         } else {
             try {
                 URL newPage = new URL(m_filename, link);
