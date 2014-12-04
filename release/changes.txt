@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------
- OmegaT 3.1.8 
+ OmegaT 3.1.8 (2014-12-04)
 ----------------------------------------------------------------------
-   5 Enhancements
-   8 Bug fixes
-   4 Localisation updates
+   6 Enhancements
+  10 Bug fixes
+   5 Localisation updates
 ----------------------------------------------------------------------
 3.1.8 vs. 3.1.7
 
@@ -12,12 +12,20 @@
   - Allow custom background/foreground colors for different elements in the editor
   https://sourceforge.net/p/omegat/feature-requests/1035/
 
+  - Show dialog for unsupported SVN errors 
+  https://sourceforge.net/p/omegat/feature-requests/1041/
+
+  - Allow configurable diff-style colours in fuzzy matching 
+  https://sourceforge.net/p/omegat/feature-requests/900/
+
   Other enhancements:
 
   - It is now possible to customise colours used in the Fuzzy Matches pane  
 
   - All OmegaT windows (Search and Scripting windows) now use the OmegaT icon 
 instead of the standard Java ones
+
+  - Revised user manual
 
   Bug fixes:
 
@@ -44,12 +52,19 @@ mouse pointer) changed to the Wait icon and could not be restored
   - Fuzzy match segment not shown entirely when Ctrl+Arrow/Num is typed
   https://sourceforge.net/p/omegat/bugs/720/
 
+  - PO comments also included as source text 
+  https://sourceforge.net/p/omegat/bugs/705/
+
+  - In team projects, OmegaT was sometimes failing to rename files (perhaps 
+blocked by antivirus or cache software). There's now a 3-second retry.
+
   Localisation updates:
 
   - Dutch localisation updated to 3.1.7 (UI)
   - Interlingua localisation updated to 3.1.7 (UI, documentation)
   - Italian localisation updated to 3.1.7 (UI)
-  - Japanese localisation updated to 3.1.8 (UI)
+  - Japanese localisation updated to 3.1.8 (UI, documentation)
+  - French localisation updated to 3.1.8 (UI, readme, documentation)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.7 (2014-10-20)
@@ -437,7 +452,7 @@ used by most users
 
   Implemented requests:
 
-  - Strip special strings before pasing text to spellchecker script
+  - Strip special strings before passing text to spellchecker script
   https://sourceforge.net/p/omegat/feature-requests/991/
 
   Bug fixes:
