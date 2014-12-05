@@ -90,20 +90,13 @@ public class BelazarTranslate extends BaseTranslate {
         conn.setUseCaches(false);
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        OutputStream out = conn.getOutputStream();
-        try {
+        try (OutputStream out = conn.getOutputStream()){
             out.write(db);
             out.flush();
-        } finally {
-            out.close();
         }
         StringWriter result = new StringWriter();
-        InputStream in = conn.getInputStream();
-        try {
-            InputStreamReader rd = new InputStreamReader(in, CHARSET);
+        try (InputStreamReader rd = new InputStreamReader(conn.getInputStream(), CHARSET)){
             LFileCopy.copy(rd, result);
-        } finally {
-            in.close();
         }
 
         return result.toString();

@@ -766,6 +766,7 @@ public class RealProject implements IProject {
         File[] modifiedFiles;
         //do we have local changes?
         boolean needUpload = false;
+        final StringBuilder commitDetails = new StringBuilder();
 
         final String glossaryFilename = m_config.getWriteableGlossary();
         final File glossaryFile = new File(glossaryFilename);
@@ -905,7 +906,7 @@ public class RealProject implements IProject {
                 // on the post-merge refresh.
                 Core.getEditor().waitForCommit(10);
 
-                mergeTMX(baseTMX, headTMX);
+                mergeTMX(baseTMX, headTMX, commitDetails);
 
                 // Refresh view immediately to make sure changes are applied properly.
                 SwingUtilities.invokeAndWait(new Runnable() {
@@ -967,9 +968,7 @@ public class RealProject implements IProject {
 
             projectTMXFile.delete(); //delete head version (or base version, if offline)
             // Rename new file into TMX file
-            if (!filenameTMXwithLocalChangesOnHead.renameTo(projectTMXFile)) {
-                throw new IOException("Error rename new file to tmx");
-            }
+            FileUtil.rename(filenameTMXwithLocalChangesOnHead, projectTMXFile);
             if (filenameTMXwithLocalChangesOnBase != null) {
                 // Remove temp backup file
                 if (!filenameTMXwithLocalChangesOnBase.delete()) {
@@ -978,9 +977,7 @@ public class RealProject implements IProject {
             }
             if (updateGlossary) {
                 glossaryFile.delete();
-                if (!filenameGlossarywithLocalChangesOnHead.renameTo(glossaryFile)) {
-                    throw new IOException("Error rename new file to glossary");
-                }
+                FileUtil.rename(filenameGlossarywithLocalChangesOnHead, glossaryFile);
                 if (filenameGlossarywithLocalChangesOnBase != null) {
                     // Remove temp backup file
                     if (!filenameGlossarywithLocalChangesOnBase.delete()) {
@@ -1003,7 +1000,8 @@ public class RealProject implements IProject {
             try {
                 new RepositoryUtils.AskCredentials() {
                     public void callRepository() throws Exception {
-                        repository.upload(projectTMXFile, "Translated by " + author);
+                        repository.upload(projectTMXFile,
+                                "Translated by " + author + commitDetails.toString());
                         if (updateGlossary) {
                             repository.upload(glossaryFile, "Added glossaryitem(s) by " + author);
                         }
@@ -1028,7 +1026,7 @@ public class RealProject implements IProject {
      * 
      * File 2: headTMX (theirs)
      */
-    protected void mergeTMX(ProjectTMX baseTMX, ProjectTMX headTMX) {
+    protected void mergeTMX(ProjectTMX baseTMX, ProjectTMX headTMX, StringBuilder commitDetails) {
         StmProperties props = new StmProperties().setBaseTmxName(OStrings.getString("TMX_MERGE_BASE"))
                 .setTmx1Name(OStrings.getString("TMX_MERGE_MINE"))
                 .setTmx2Name(OStrings.getString("TMX_MERGE_THEIRS"))
@@ -1042,6 +1040,8 @@ public class RealProject implements IProject {
             projectTMX.replaceContent(mergedTMX);
         }
         Log.logDebug(LOGGER, "Merge report: {0}", props.getReport());
+        commitDetails.append('\n');
+        commitDetails.append(props.getReport().toString());
     }
 
     /**
@@ -1576,8 +1576,7 @@ public class RealProject implements IProject {
     @Override
     public List<String> getSourceFilesOrder() {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))){
             List<String> result = new ArrayList<>();
             String s;
             while ((s = rd.readLine()) != null) {
@@ -1593,14 +1592,11 @@ public class RealProject implements IProject {
     @Override
     public void setSourceFilesOrder(List<String> filesList) {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
-        try {
-            BufferedWriter wr = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+        try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))){
             for (String f : filesList) {
                 wr.write(f);
                 wr.write('\n');
             }
-            wr.close();
         } catch (Exception ex) {
             Log.log(ex);
         }

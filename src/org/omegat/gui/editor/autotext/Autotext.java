@@ -36,6 +36,8 @@ import java.io.OutputStreamWriter;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
@@ -77,43 +79,30 @@ public class Autotext {
     public void load(String fileName) {
         list.clear();
         //separator = Core.get
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(
-                    fileName), OConsts.UTF8));
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), OConsts.UTF8))) {
 
             String thisLine;
             while ((thisLine = br.readLine()) != null) {
                 processLine(thisLine);
             }
-        } catch (FileNotFoundException ex) {
-            // there is no default, so load nothing
         } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            } catch (IOException ex) {
-                // so now what?
-            }
+            Log.log(ex);
         }
     }
 
     public void save(String filename) throws IOException {
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8));
+        try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8))) {
 
-        StringBuilder builder = new StringBuilder();
-        for (AutotextPair pair:list) {
-            builder.replace(0, builder.length(), "");
-            builder.append(pair.source).append("\t");
-            builder.append(pair.target).append("\t");
-            builder.append(pair.comment).append("\n");
-            out.write(builder.toString());
+            StringBuilder builder = new StringBuilder();
+            for (AutotextPair pair : list) {
+                builder.replace(0, builder.length(), "");
+                builder.append(pair.source).append("\t");
+                builder.append(pair.target).append("\t");
+                builder.append(pair.comment).append("\n");
+                out.write(builder.toString());
+            }
+
         }
-        
-        out.close();
     }
     
     public void save() throws IOException {

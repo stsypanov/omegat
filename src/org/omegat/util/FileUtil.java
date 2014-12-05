@@ -60,6 +60,7 @@ import org.omegat.gui.help.HelpFrame;
  */
 public class FileUtil {
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static long RENAME_RETRY_TIMEOUT = 3000;
 
     /**
      * Removes old backups so that only 10 last are there.
@@ -104,6 +105,26 @@ public class FileUtil {
     }
 
     /**
+     * Renames file, with checking errors and 3 seconds retry against external programs (like antivirus or
+     * TortoiseSVN) locking.
+     */
+    public static void rename(File from, File to) throws IOException {
+        if (!from.exists()) {
+            throw new IOException("Source file to rename (" + from + ") doesn't exist");
+        }
+        if (to.exists()) {
+            throw new IOException("Target file to rename (" + to + ") already exists");
+        }
+        long b = System.currentTimeMillis();
+        while (!from.renameTo(to)) {
+            long e = System.currentTimeMillis();
+            if (e - b > RENAME_RETRY_TIMEOUT) {
+                throw new IOException("Error renaming " + from + " to " + to);
+            }
+        }
+    }
+
+    /**
      * Writes a text into a UTF-8 text file in the script directory.
      * 
      * @param textToWrite
@@ -116,20 +137,13 @@ public class FileUtil {
         File outFile = new File(StaticUtils.getScriptDir(), fileName);
         File outFileTemp = new File(StaticUtils.getScriptDir(), fileName + ".temp");
         outFile.delete();
-        BufferedWriter bw = null;
-        try {
+
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTemp), OConsts.UTF8))){
             textToWrite = textToWrite.replaceAll("\n", System.getProperty("line.separator"));
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTemp), OConsts.UTF8));
+
             bw.write(textToWrite);
         } catch (Exception ex) {
             // Eat exception silently
-        } finally {
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException ex) {
-                Log.log(ex);
-            }
         }
         outFileTemp.renameTo(outFile);
         return outFile;
@@ -171,11 +185,8 @@ public class FileUtil {
      * Write text in file using UTF-8.
      */
     public static void writeTextFile(File file, String text) throws IOException {
-        Writer wr = new OutputStreamWriter(new FileOutputStream(file), OConsts.UTF8);
-        try {
+        try (Writer wr = new OutputStreamWriter(new FileOutputStream(file), OConsts.UTF8)){
             wr.write(text);
-        } finally {
-            wr.close();
         }
     }
 

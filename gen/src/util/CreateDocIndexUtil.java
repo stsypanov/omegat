@@ -52,12 +52,8 @@ public class CreateDocIndexUtil {
     protected static Properties langExceptionsNames = new Properties();
 
     public static void main(String[] args) throws Exception {
-        InputStream in = CreateDocIndexUtil.class
-                .getResourceAsStream("lang_exceptions.properties");
-        try {
+        try (InputStream in = CreateDocIndexUtil.class.getResourceAsStream("lang_exceptions.properties")){
             langExceptionsNames.load(in);
-        } finally {
-            in.close();
         }
 
         File[] ls = new File("docs").listFiles(new FileFilter() {
@@ -122,11 +118,10 @@ public class CreateDocIndexUtil {
     }
 
     protected static void writeOut(String text) throws IOException {
-        Writer wr = new OutputStreamWriter(new FileOutputStream(
-                "docs/index.html"), "UTF-8");
-        wr.write(text);
-        wr.flush();
-        wr.close();
+        try(Writer wr = new OutputStreamWriter(new FileOutputStream("docs/index.html"), "UTF-8")) {
+            wr.write(text);
+            wr.flush();
+        }
     }
 
     /**
