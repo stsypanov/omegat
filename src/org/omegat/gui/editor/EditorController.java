@@ -12,6 +12,7 @@
                2012 Guido Leenders, Didier Briel
                2013 Zoltan Bartko, Alex Buloichik, Aaron Madlon-Kay
                2014 Aaron Madlon-Kay, Piotr Kulik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -40,7 +41,6 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +81,8 @@ import org.omegat.gui.editor.mark.Mark;
 import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.main.DockablePanel;
 import org.omegat.gui.main.MainWindow;
+import org.omegat.gui.main.MainWindowUI;
 import org.omegat.gui.tagvalidation.ITagValidation;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -96,8 +96,6 @@ import org.omegat.util.gui.UIThreadsUtil;
 import com.vlsolutions.swing.docking.DockingDesktop;
 import com.vlsolutions.swing.docking.event.DockableSelectionEvent;
 import com.vlsolutions.swing.docking.event.DockableSelectionListener;
-
-import org.omegat.gui.main.MainWindowUI;
 
 /**
  * Class for control all editor operations.
@@ -1028,7 +1026,7 @@ public class EditorController implements IEditor {
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
         boolean looped = false;
-        do {
+        while (true) {
             displayedEntryIndex++;
             if (displayedEntryIndex >= m_docSegList.length) {
                 displayedFileIndex++;
@@ -1040,10 +1038,22 @@ public class EditorController implements IEditor {
                 loadDocument();
             }
             ste = getCurrentEntry();
-        } while (ste == null // filtered file has no entries
-                && (!looped || !(displayedFileIndex == startFileIndex && displayedEntryIndex >= startEntryIndex) 
-                // and we have not had all entries
-                ));
+            if (ste != null) {
+            	// We found an entry
+            	break;
+            }
+            if (looped && displayedFileIndex == startFileIndex) {
+                if (displayedEntryIndex >= startEntryIndex) {
+                    // We have looped back to our starting point
+                    break;
+                }
+                if (m_docSegList.length == 0) {
+                    // We have looped back to our starting point
+                    // and there were no hits in any files
+                    break;
+                }
+            }
+        }
 
         activateEntry();
         this.editor.setCursor(oldCursor);
