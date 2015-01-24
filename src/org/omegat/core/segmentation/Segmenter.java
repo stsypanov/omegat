@@ -34,6 +34,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.omegat.core.Core;
+import org.omegat.core.data.IProject;
 import org.omegat.util.Language;
 import org.omegat.util.PatternConsts;
 
@@ -293,10 +295,19 @@ public final class Segmenter {
                 Rule rule = brules.get(i - 1);
                 if (res.length() > 0) {
                     char lastChar = res.charAt(res.length() - 1);
-                    if ((lastChar != '.')
-                            && (!PatternConsts.SPACY_REGEX.matcher(rule.getBeforebreak()).matches() || !PatternConsts.SPACY_REGEX
-                                    .matcher(rule.getAfterbreak()).matches()))
+                    Matcher matcher = CJK_LINE_BREAK_OR_TAB_PATTERN.matcher(sp.toString());
+                    if (matcher.find()) {
+                        // If we found line break or tab, trim left spaces.
+                        // Right spaces are left for indentation of the next line.
+                        String leftSpaces = matcher.group(1);
+                        if (!leftSpaces.isEmpty()) {
+                            sp.replace(0, leftSpaces.length(), "");
+                        }
+                    } else if ((lastChar != '.')
+                            && (!PatternConsts.SPACY_REGEX.matcher(rule.getBeforebreak()).matches()
+                            || !PatternConsts.SPACY_REGEX.matcher(rule.getAfterbreak()).matches())) {
                         sp.setLength(0);
+                    }
                 }
             } else if (CJK_LANGUAGES.contains(sourceLang.getLanguageCode().toUpperCase(Locale.ENGLISH))
                     && sp.length() == 0)
@@ -333,7 +344,8 @@ public final class Segmenter {
     }
 
     /** CJK languages. */
-    private static final Set<String> CJK_LANGUAGES = new HashSet<>();
+    private static final Pattern CJK_LINE_BREAK_OR_TAB_PATTERN = Pattern.compile("^( *)[\\r\\n\\t]");
+    private static final Set<String> CJK_LANGUAGES = new HashSet<String>();
     static {
         CJK_LANGUAGES.add("ZH");
         CJK_LANGUAGES.add("JA");
