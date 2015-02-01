@@ -60,6 +60,9 @@ OmegaT-Plugin: filter
 Name: org.omegat.filters2.text.magento.MagentoFilter
 OmegaT-Plugin: filter
 
+Name: org.omegat.filters2.text.ilias.ILIASFilter
+OmegaT-Plugin: filter
+
 Name: org.omegat.filters2.pdf.PdfFilter
 OmegaT-Plugin: filter
 
@@ -289,4 +292,7 @@ Name: org.omegat.core.machinetranslators.MyMemoryHumanTranslate
 OmegaT-Plugin: MachineTranslator
 
 Name: org.omegat.core.machinetranslators.MyMemoryMachineTranslate
+OmegaT-Plugin: MachineTranslator
+
+Name: org.omegat.core.machinetranslators.YandexTranslate
 OmegaT-Plugin: MachineTranslator
