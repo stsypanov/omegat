@@ -17,33 +17,33 @@ import java.util.List;
 public class PeroClipboard extends PeroFrame implements Clibboard {
 
 
-    private List<String> storedStrings = new ArrayList<>();
+	private List<String> storedStrings = new ArrayList<>();
 
-    public PeroClipboard(String title) throws HeadlessException {
-        super(title);
-            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            setPreferredSize(new Dimension(600, 400));
-    }
+	public PeroClipboard(String title) throws HeadlessException {
+		super(title);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setPreferredSize(new Dimension(600, 400));
+	}
 
-    @Override
-    public void insertSelection(JTextComponent component, String string) {
-        int position = component.getCaretPosition();
+	@Override
+	public void insertSelection(JTextComponent component, String string) {
+		int position = component.getCaretPosition();
 //        if (component instanceof JTextArea){
-            ((JTextArea)component).insert(string, position);
+		((JTextArea) component).insert(string, position);
 //        }
 //        if (component instanceof JEditorPane){
 //            ((JEditorPane)component).insert(string, position);
 //        }
 
-    }
+	}
 
-    @Override
-    public List<String> getStoredStrings() {
-        return new ArrayList<>(storedStrings);
-    }
+	@Override
+	public List<String> getStoredStrings() {
+		return new ArrayList<>(storedStrings);
+	}
 
-    @Override
-    public void addString(String s) {
-        storedStrings.add(s);
-    }
+	@Override
+	public void addString(String s) {
+		storedStrings.add(s);
+	}
 }
