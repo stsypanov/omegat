@@ -183,7 +183,7 @@ public final class PluginUtils {
     private static boolean isDefault(Class<?> c) {
         if (c == null) return false;
         Tokenizer ann = c.getAnnotation(Tokenizer.class);
-        return ann == null ? false : ann.isDefault();
+        return ann != null && ann.isDefault();
     }
 
     private static Class<?> searchForTokenizer(String lang) {
@@ -296,8 +296,8 @@ public final class PluginUtils {
         }
 
         Map<String, Attributes> entries = m.getEntries();
-        for (String key : entries.keySet()) {
-            Attributes attrs = entries.get(key);
+        for (Map.Entry<String, Attributes> entry : entries.entrySet()) {
+            Attributes attrs = entry.getValue();
             String sType = attrs.getValue("OmegaT-Plugin");
             if ("true".equals(attrs.getValue("OmegaT-Tokenizer"))) {
                 // TODO remove after release new tokenizers
@@ -313,33 +313,34 @@ public final class PluginUtils {
             } catch (Exception ex) {
                 pType = PLUGIN_TYPE.UNKNOWN;
             }
+            String key = entry.getKey();
             switch (pType) {
-            case FILTER:
-                filterClasses.add(classLoader.loadClass(key));
-                Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                break;
-            case TOKENIZER:
-                tokenizerClasses.add(classLoader.loadClass(key));
-                Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                break;
-            case MARKER:
-                markerClasses.add(classLoader.loadClass(key));
-                Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                break;
-            case MACHINETRANSLATOR:
-                machineTranslationClasses.add(classLoader.loadClass(key));
-                Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                break;
-            case BASE:
-                basePluginClasses.add(classLoader.loadClass(key));
-                Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                break;
-            case GLOSSARY:
-                glossaryClasses.add(classLoader.loadClass(key));
-                Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                break;
-            default:
-                Log.logErrorRB("PLUGIN_UNKNOWN", key);
+                case FILTER:
+                    filterClasses.add(classLoader.loadClass(key));
+                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                    break;
+                case TOKENIZER:
+                    tokenizerClasses.add(classLoader.loadClass(key));
+                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                    break;
+                case MARKER:
+                    markerClasses.add(classLoader.loadClass(key));
+                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                    break;
+                case MACHINETRANSLATOR:
+                    machineTranslationClasses.add(classLoader.loadClass(key));
+                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                    break;
+                case BASE:
+                    basePluginClasses.add(classLoader.loadClass(key));
+                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                    break;
+                case GLOSSARY:
+                    glossaryClasses.add(classLoader.loadClass(key));
+                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                    break;
+                default:
+                    Log.logErrorRB("PLUGIN_UNKNOWN", key);
             }
         }
     }

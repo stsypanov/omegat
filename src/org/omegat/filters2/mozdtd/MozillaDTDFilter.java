@@ -138,6 +138,7 @@ public class MozillaDTDFilter extends AbstractAlignmentFilter {
                 block.setLength(0);
             } else if ((c == '>' && isInBlock && previousChar == '-')) { // This was a comment
                 isInBlock = false;
+                foundQuotes = false;
                 outFile.write(block.toString());
                 block.setLength(0);
             }

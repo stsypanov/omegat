@@ -87,6 +87,10 @@ public class ApertiumTranslate extends BaseTranslate {
 
     @Override
     protected String translate(Language sLang, Language tLang, String text) throws Exception {
+        String prev = getFromCache(sLang, tLang, text);
+        if (prev != null) {
+            return prev;
+        }
 
         String sourceLang = apertiumCode(sLang);
         String targetLang = apertiumCode(tLang);
@@ -139,6 +143,9 @@ public class ApertiumTranslate extends BaseTranslate {
             }
             return StaticUtils.format(OStrings.getString("APERTIUM_ERROR"), code, details);
         }
-        return v.substring(beg, end - 2);
+        String tr = v.substring(beg, end - 2); // Remove \n
+
+        putToCache(sLang, tLang, trText, tr);
+        return tr;
     }
 }

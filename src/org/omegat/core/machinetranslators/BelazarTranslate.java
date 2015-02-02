@@ -68,6 +68,11 @@ public class BelazarTranslate extends BaseTranslate {
 
     @Override
     protected String translate(Language sLang, Language tLang, String text) throws Exception {
+        String prev = getFromCache(sLang, tLang, text);
+        if (prev != null) {
+            return prev;
+        }
+
         String mode;
         if ("be".equalsIgnoreCase(sLang.getLanguageCode()) && "ru".equalsIgnoreCase(tLang.getLanguageCode())) {
             mode = "br";
@@ -99,6 +104,7 @@ public class BelazarTranslate extends BaseTranslate {
             LFileCopy.copy(rd, result);
         }
 
+        putToCache(sLang, tLang, text, result.toString());
         return result.toString();
     }
 }
