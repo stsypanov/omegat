@@ -147,7 +147,7 @@ public class ApertiumTranslate extends BaseTranslate {
         }
         String tr = v.substring(beg, end - 2); // Remove \n
 
-        putToCache(sLang, tLang, trText, tr);
+        putToCache(sLang, tLang, text, tr);
         return tr;
     }
 }
