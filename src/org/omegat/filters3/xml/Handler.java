@@ -388,13 +388,13 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
                 }
                 return entity;
             } else
-                return new InputSource(new java.io.StringReader(new String()));
+                return new InputSource(new java.io.StringReader(""));
         } else {
             InputSource source = dialect.resolveEntity(publicId, systemId);
             if (source != null)
                 return source;
             else
-                return new InputSource(new java.io.StringReader(new String()));
+                return new InputSource(new java.io.StringReader(""));
         }
     }
 
