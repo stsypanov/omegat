@@ -363,7 +363,7 @@ public class MainWindowMenuHandler {
 
         String selection = getTrimmedSelectedTextInMainWindow();
 
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, mode);
+        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.REPLACE);
         mainWindow.addSearchWindow(search);
     }
 
