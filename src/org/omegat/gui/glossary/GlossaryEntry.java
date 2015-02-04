@@ -1,12 +1,12 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool
-          with fuzzy matching, translation memory, keyword search,
-          glossaries, and translation leveraging into updated projects.
+ with fuzzy matching, translation memory, keyword search,
+ glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-               2013 Aaron Madlon-Kay, Alex Buloichik
-               Home page: http://www.omegat.org/
-               Support center: http://groups.yahoo.com/group/OmegaT/
+ 2013 Aaron Madlon-Kay, Alex Buloichik
+ Home page: http://www.omegat.org/
+ Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -34,191 +34,191 @@ import org.omegat.util.StringUtil;
 
 /**
  * An entry in the glossary.
- * 
+ *
  * @author Keith Godfrey
  * @author Aaron Madlon-Kay
  * @author Alex Buloichik
  */
 public class GlossaryEntry {
-    public GlossaryEntry(String src, String[] loc, String[] com, boolean[] fromPriorityGlossary) {
-        m_src = src;
-        m_loc = loc;
-        m_com = com;
-        m_priority = fromPriorityGlossary;
-    }
+	public GlossaryEntry(String src, String[] loc, String[] com, boolean[] fromPriorityGlossary) {
+		m_src = src;
+		m_loc = loc;
+		m_com = com;
+		m_priority = fromPriorityGlossary;
+	}
 
-    public GlossaryEntry(String src, String loc, String com, boolean fromPriorityGlossary) {
-        this(src, new String[] { loc }, new String[] { com }, new boolean[] { fromPriorityGlossary });
-    }
+	public GlossaryEntry(String src, String loc, String com, boolean fromPriorityGlossary) {
+		this(src, new String[]{loc}, new String[]{com}, new boolean[]{fromPriorityGlossary});
+	}
 
-    public String getSrcText() {
-        return m_src;
-    }
+	public String getSrcText() {
+		return m_src;
+	}
 
-    /**
-     * Return the first target-language term string.
-     * 
-     * Glossary entries can have multiple target strings
-     * if they have been combined for display purposes.
-     * Access all target strings with {@link GlossaryEntry#getLocTerms(boolean)}.
-     * 
-     * @return The first target-language term string
-     */
-    public String getLocText() {
-        return m_loc.length > 0 ? m_loc[0] : "";
-    }
+	/**
+	 * Return the first target-language term string.
+	 * <p/>
+	 * Glossary entries can have multiple target strings
+	 * if they have been combined for display purposes.
+	 * Access all target strings with {@link GlossaryEntry#getLocTerms(boolean)}.
+	 *
+	 * @return The first target-language term string
+	 */
+	public String getLocText() {
+		return m_loc.length > 0 ? m_loc[0] : "";
+	}
 
-    /**
-     * Return each individual target-language term that
-     * corresponds to the source term.
-     * 
-     * @param uniqueOnly Whether or not to filter duplicates from the list
-     * @return All target-language terms
-     */
-    public String[] getLocTerms(boolean uniqueOnly) {
-        if (!uniqueOnly || m_loc.length == 1) return m_loc;
-        
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < m_loc.length; i++) {
-            if (i > 0 && m_loc[i].equals(m_loc[i - 1])) continue;
-            list.add(m_loc[i]);
-        }
-        return list.toArray(new String[list.size()]);
-    }
+	/**
+	 * Return each individual target-language term that
+	 * corresponds to the source term.
+	 *
+	 * @param uniqueOnly Whether or not to filter duplicates from the list
+	 * @return All target-language terms
+	 */
+	public String[] getLocTerms(boolean uniqueOnly) {
+		if (!uniqueOnly || m_loc.length == 1) return m_loc;
 
-    /**
-     * Return the first comment string.
-     * 
-     * Glossary entries can have multiple comment strings
-     * if they have been combined for display purposes.
-     * Access all comment strings with {@link GlossaryEntry#getComments()}.
-     * 
-     * @return The first comment string
-     */
-    public String getCommentText() {        
-        return m_com.length > 0 ? m_com[0] : "";
-    }
+		ArrayList<String> list = new ArrayList<>();
+		for (int i = 0; i < m_loc.length; i++) {
+			if (i > 0 && m_loc[i].equals(m_loc[i - 1])) continue;
+			list.add(m_loc[i]);
+		}
+		return list.toArray(new String[list.size()]);
+	}
 
-    public String[] getComments() {
-        return m_com;
-    }
+	/**
+	 * Return the first comment string.
+	 * <p/>
+	 * Glossary entries can have multiple comment strings
+	 * if they have been combined for display purposes.
+	 * Access all comment strings with {@link GlossaryEntry#getComments()}.
+	 *
+	 * @return The first comment string
+	 */
+	public String getCommentText() {
+		return m_com.length > 0 ? m_com[0] : "";
+	}
 
-    public boolean getPriority() {
-        return m_priority.length > 0 ? m_priority[0] : false;
-    }
+	public String[] getComments() {
+		return m_com;
+	}
 
-    public boolean[] getPriorities() {
-        return m_priority;
-    }
+	public boolean getPriority() {
+		return m_priority.length > 0 ? m_priority[0] : false;
+	}
 
-    public StyledString toStyledString() {
-        StyledString result=new StyledString();
+	public boolean[] getPriorities() {
+		return m_priority;
+	}
 
-        result.text.append(m_src);
-        result.text.append(" = ");
-        
-        StringBuilder comments = new StringBuilder();
-        
-        int commentIndex = 0;
-        for (int i = 0; i < m_loc.length; i++) {
-            if (i > 0 && m_loc[i].equals(m_loc[i - 1])) {
-                checkIfEmpty(comments, commentIndex, i);
-                continue;
-            }
-            if (i > 0) result.text.append(", ");
-            if (m_priority[i]) {
-                result.markBoldStart();
-            }
-            result.text.append(bracketEntry(m_loc[i]));
-            if (m_priority[i]) {
-                result.markBoldEnd();
-            }
-            commentIndex++;
-            checkIfEmpty(comments, commentIndex, i);
-        }
-        
-        result.text.append(comments);
-        
-        return result;
-    }
+	public StyledString toStyledString() {
+		StyledString result = new StyledString();
 
-    /**
-     *
-     */
-    private void checkIfEmpty(StringBuilder comments, int commentIndex, int i) {
-        if (!m_com[i].equals("")) {
-            comments.append("\n");
-            comments.append(commentIndex);
-            comments.append(". ");
-            comments.append(m_com[i]);
-        }
-    }
-    /**
-     * If a combined glossary entry contains ',', it needs to be bracketed by
-     * quotes, to prevent confusion when entries are combined. However, if the
-     * entry contains ';' or '"', it will automatically be bracketed by quotes.
-     * 
-     * @param entry
-     *            A glossary text entry
-     * @return A glossary text entry possibly bracketed by quotes
-     */
-    private String bracketEntry(String entry) {
+		result.text.append(m_src);
+		result.text.append(" = ");
 
-        if (entry.contains(",") && !(entry.contains(";") || entry.contains("\"")))
-            entry = '"' + entry + '"';
-        return entry;
-    }
+		StringBuilder comments = new StringBuilder();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if ( o == null || o.getClass() != this.getClass() ) return false;
-        GlossaryEntry otherGlossaryEntry = (GlossaryEntry)o;
+		int commentIndex = 0;
+		for (int i = 0; i < m_loc.length; i++) {
+			if (i > 0 && m_loc[i].equals(m_loc[i - 1])) {
+				checkIfEmpty(comments, commentIndex, i);
+				continue;
+			}
+			if (i > 0) result.text.append(", ");
+			if (m_priority[i]) {
+				result.markBoldStart();
+			}
+			result.text.append(bracketEntry(m_loc[i]));
+			if (m_priority[i]) {
+				result.markBoldEnd();
+			}
+			commentIndex++;
+			checkIfEmpty(comments, commentIndex, i);
+		}
 
-        return StringUtil.equalsWithNulls(this.m_src, otherGlossaryEntry.m_src)
-                && Arrays.equals(this.m_loc, otherGlossaryEntry.m_loc)
-                && Arrays.equals(this.m_com, otherGlossaryEntry.m_com);
-    }
+		result.text.append(comments);
 
-    @Override
-    public int hashCode() {
-        int hash = 98;
-        hash = hash * 17 + (m_src == null ? 0 : m_src.hashCode());
-        hash = hash * 31 + (m_loc == null ? 0 : m_loc.hashCode());
-        hash = hash * 13 + (m_com == null ? 0 : m_com.hashCode());
-        return hash;
-    }
+		return result;
+	}
 
-    static class StyledString {
-        public StringBuilder text = new StringBuilder();
-        public List<Integer> boldStarts = new ArrayList<>();
-        public List<Integer> boldLengths = new ArrayList<>();
+	/**
+	 *
+	 */
+	private void checkIfEmpty(StringBuilder comments, int commentIndex, int i) {
+		if (StringUtil.notEmpty(m_com[i])) {
+			comments.append('\n');
+			comments.append(commentIndex);
+			comments.append(". ");
+			comments.append(m_com[i]);
+		}
+	}
 
-        void markBoldStart() {
-            boldStarts.add(text.length());
-        }
+	/**
+	 * If a combined glossary entry contains ',', it needs to be bracketed by
+	 * quotes, to prevent confusion when entries are combined. However, if the
+	 * entry contains ';' or '"', it will automatically be bracketed by quotes.
+	 *
+	 * @param entry a glossary text entry
+	 * @return A glossary text entry possibly bracketed by quotes
+	 */
+	private String bracketEntry(String entry) {
 
-        void markBoldEnd() {
-            int start = boldStarts.get(boldStarts.size() - 1);
-            boldLengths.add(text.length() - start);
-        }
+		if (entry.contains(",") && !(entry.contains(";") || entry.contains("\"")))
+			entry = '"' + entry + '"';
+		return entry;
+	}
 
-        public void append(StyledString str) {
-            int off = text.length();
-            text.append(str.text);
-            for (int s : str.boldStarts) {
-                boldStarts.add(off + s);
-            }
-            boldLengths.addAll(str.boldLengths);
-        }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || o.getClass() != this.getClass()) return false;
+		GlossaryEntry otherGlossaryEntry = (GlossaryEntry) o;
 
-        public void append(String str) {
-            text.append(str);
-        }
-    }
+		return StringUtil.equalsWithNulls(this.m_src, otherGlossaryEntry.m_src)
+				&& Arrays.equals(this.m_loc, otherGlossaryEntry.m_loc)
+				&& Arrays.equals(this.m_com, otherGlossaryEntry.m_com);
+	}
 
-    private String m_src;
-    private String[] m_loc;
-    private String[] m_com;
-    private boolean[] m_priority;
+	@Override
+	public int hashCode() {
+		int hash = 98;
+		hash = hash * 17 + (m_src == null ? 0 : m_src.hashCode());
+		hash = hash * 31 + (m_loc == null ? 0 : m_loc.hashCode());
+		hash = hash * 13 + (m_com == null ? 0 : m_com.hashCode());
+		return hash;
+	}
+
+	static class StyledString {
+		public StringBuilder text = new StringBuilder();
+		public List<Integer> boldStarts = new ArrayList<>();
+		public List<Integer> boldLengths = new ArrayList<>();
+
+		void markBoldStart() {
+			boldStarts.add(text.length());
+		}
+
+		void markBoldEnd() {
+			int start = boldStarts.get(boldStarts.size() - 1);
+			boldLengths.add(text.length() - start);
+		}
+
+		public void append(StyledString str) {
+			int off = text.length();
+			text.append(str.text);
+			for (int s : str.boldStarts) {
+				boldStarts.add(off + s);
+			}
+			boldLengths.addAll(str.boldLengths);
+		}
+
+		public void append(String str) {
+			text.append(str);
+		}
+	}
+
+	private String m_src;
+	private String[] m_loc;
+	private String[] m_com;
+	private boolean[] m_priority;
 }
