@@ -58,7 +58,7 @@ public class ConsoleWindow implements IMainWindow {
         System.err.println(msg);
         String fulltext = msg;
         if (ex != null)
-            fulltext += "\n" + ex.toString();
+            fulltext += '\n' + ex.toString();
         System.err.println(OStrings.getString("TF_ERROR"));
         System.err.println(fulltext);
 

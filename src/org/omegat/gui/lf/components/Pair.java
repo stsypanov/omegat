@@ -68,6 +68,6 @@ public class Pair<A, B> {
     }
 
     public String toString() {
-        return "<" + first + "," + second + ">";
+        return "<" + first + ',' + second + '>';
     }
 }

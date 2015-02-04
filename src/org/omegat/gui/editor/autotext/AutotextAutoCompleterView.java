@@ -85,7 +85,7 @@ public class AutotextAutoCompleterView extends AutoCompleterListView {
         if (item.extras != null && item.extras[1] != null && !item.extras[1].isEmpty()) {
             b.append(" (");
             b.append(item.extras[1]);
-            b.append(")");
+            b.append(')');
         }
         return b.toString();
     }

@@ -275,7 +275,7 @@ public class HelpFrame extends PeroFrame {
         String country = Locale.getDefault().getCountry().toUpperCase(Locale.ENGLISH);
 
         // Check if there's a translation for the full locale (lang + country)
-        String locale = language + "_" + country;
+        String locale = language + '_' + country;
         String version = getDocVersion(locale);
         if (version != null && version.equals(OStrings.VERSION))
             return locale;
