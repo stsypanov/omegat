@@ -19,6 +19,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,13 +29,15 @@ import java.util.List;
  */
 
 public class ClipboardDialog extends PeroDialog implements Clibboard {
+	private static final Pattern PATTERN = Pattern.compile("\r?\n");
+
 	private JPanel contentPane;
 	private JButton buttonOK;
 	private JButton buttonCancel;
 	private JTextPane textArea;
 
 	private String selected;
-	private List<String> storedStrings = new ArrayList<>();
+	private List<String> storedStrings;
 	private StyledDocument doc;
 	private static ClipboardDialog instance;
 
@@ -55,6 +58,8 @@ public class ClipboardDialog extends PeroDialog implements Clibboard {
 		pack();
 
 		new LinePainter(textArea);
+
+		storedStrings = new ArrayList<>(5);
 
 		doc = textArea.getStyledDocument();
 		textArea.setEditable(false);
@@ -122,7 +127,7 @@ public class ClipboardDialog extends PeroDialog implements Clibboard {
 	private void performAction() {
 		int currentLine = TextUtils.getLineAtCaret(textArea);
 
-		String[] lines = textArea.getText().split("\r?\n");
+		String[] lines = PATTERN.split(textArea.getText());
 
 		this.selected = lines[currentLine - 1];
 		//        System.out.println(lines[currentLine - 1]);
@@ -137,7 +142,7 @@ public class ClipboardDialog extends PeroDialog implements Clibboard {
 		}
 		for (int i = storedStrings.size(); i > 0; --i) {
 			if (i != 1) {
-				doc.insertString(doc.getLength(), storedStrings.get(i - 1).concat("\n"), null);
+				doc.insertString(doc.getLength(), storedStrings.get(i - 1) + '\n', null);
 			} else {
 				doc.insertString(doc.getLength(), storedStrings.get(i - 1), null);
 			}
