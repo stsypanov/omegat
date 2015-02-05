@@ -67,7 +67,7 @@ public class CommandMonitor extends Thread {
         
     public void run() {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))){
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 if (isStdErr) {
                     LOGGER.warning(line);
