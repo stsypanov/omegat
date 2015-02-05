@@ -58,7 +58,7 @@ import javax.swing.JLabel;
  * @since 3.37
  * @see <a href="http://www.netbeans.org/issues/show_bug.cgi?id=26640">Issue #26640</a>
  */
-public final class Mnemonics extends Object {
+public final class Mnemonics {
     
     /** Private constructor in order that this class is never instantiated. */
     private Mnemonics() {}
