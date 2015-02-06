@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="omegat">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="preference">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element type="xs:string" name="docking_layout"/>
+							<xs:element type="xs:string" name="sb_progress_mode"/>
+							<xs:element type="xs:string" name="source_font"/>
+							<xs:element type="xs:byte" name="source_font_size"/>
+							<xs:element type="xs:byte" name="most_recent_projects_size"/>
+							<xs:element type="xs:string" name="display_modification_info"/>
+							<xs:element type="xs:short" name="auto_save_interval"/>
+							<xs:element type="xs:string" name="scripts_dir"/>
+							<xs:element type="xs:string" name="tokenizer_behavior_org.omegat.tokenizer.LuceneEnglishTokenizer"/>
+							<xs:element type="xs:string" name="tokenizer_behavior_org.omegat.tokenizer.LuceneRussianTokenizer"/>
+							<xs:element type="xs:string" name="source_lang"/>
+							<xs:element type="xs:string" name="target_lang"/>
+							<xs:element type="xs:string" name="ext_tmx_sort_key"/>
+							<xs:element type="xs:string" name="ext_tmx_match_template"/>
+							<xs:element type="xs:short" name="help_window_width"/>
+							<xs:element type="xs:short" name="help_window_height"/>
+							<xs:element type="xs:byte" name="help_window_x"/>
+							<xs:element type="xs:byte" name="help_window_y"/>
+							<xs:element type="xs:short" name="project_files_window_width"/>
+							<xs:element type="xs:short" name="project_files_window_height"/>
+							<xs:element type="xs:short" name="project_files_window_x"/>
+							<xs:element type="xs:short" name="project_files_window_y"/>
+							<xs:element type="xs:short" name="script_window_width"/>
+							<xs:element type="xs:short" name="script_window_height"/>
+							<xs:element type="xs:byte" name="script_window_x"/>
+							<xs:element type="xs:byte" name="script_window_y"/>
+							<xs:element type="xs:byte" name="screen_x"/>
+							<xs:element type="xs:byte" name="screen_y"/>
+							<xs:element type="xs:short" name="screen_width"/>
+							<xs:element type="xs:short" name="screen_height"/>
+							<xs:element type="xs:string" name="current_folder"/>
+							<xs:element type="xs:string" name="most_recent_projects_0"/>
+						</xs:sequence>
+						<xs:attribute type="xs:float" name="version"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
