@@ -15,8 +15,8 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Created by stsypanov on 05.02.2015.
  */
-public class XmlTest {
-	private static final Logger logger = Logger.getLogger(XmlTest.class.getName());
+public class PreferencesTest {
+	private static final Logger logger = Logger.getLogger(PreferencesTest.class.getName());
 
 	@Test()
 	public void testRead() throws Exception {
