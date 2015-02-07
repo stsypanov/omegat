@@ -96,9 +96,9 @@ public class Autotext {
             StringBuilder builder = new StringBuilder();
             for (AutotextPair pair : list) {
                 builder.replace(0, builder.length(), "");
-                builder.append(pair.source).append("\t");
-                builder.append(pair.target).append("\t");
-                builder.append(pair.comment).append("\n");
+                builder.append(pair.source).append('\t');
+                builder.append(pair.target).append('\t');
+                builder.append(pair.comment).append('\n');
                 out.write(builder.toString());
             }
 

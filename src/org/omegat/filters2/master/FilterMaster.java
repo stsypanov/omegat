@@ -92,7 +92,7 @@ public class FilterMaster {
     /**
      * There was no version of file filters support (1.4.5 Beta 1 -- 1.6.0 RC12).
      */
-    public static String INITIAL_VERSION = new String();
+    public static String INITIAL_VERSION = "";
     /** File filters support of 1.6.0 RC12a: now upgrading the configuration. */
     public static String OT160RC12a_VERSION = "1.6 RC12a";
     public static String OT160FINAL_VERSION = "1.6.0";

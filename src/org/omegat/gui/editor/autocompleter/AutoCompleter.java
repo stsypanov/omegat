@@ -359,6 +359,6 @@ public class AutoCompleter {
      * @return 
      */
     public String keyText(int base, int modifier) {
-         return KeyEvent.getKeyModifiersText(modifier) + "+" + KeyEvent.getKeyText(base);
+         return KeyEvent.getKeyModifiersText(modifier) + '+' + KeyEvent.getKeyText(base);
     }
 }

@@ -1,15 +1,15 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
-          with fuzzy matching, translation memory, keyword search, 
-          glossaries, and translation leveraging into updated projects.
+ with fuzzy matching, translation memory, keyword search,
+ glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-               2007 Didier Briel and Tiago Saboga
-               2007 Zoltan Bartko - bartkozoltan@bartkozoltan.com
-               2008 Andrzej Sawula
-               2010-2013 Alex Buloichik
-               Home page: http://www.omegat.org/
-               Support center: http://groups.yahoo.com/group/OmegaT/
+ 2007 Didier Briel and Tiago Saboga
+ 2007 Zoltan Bartko - bartkozoltan@bartkozoltan.com
+ 2008 Andrzej Sawula
+ 2010-2013 Alex Buloichik
+ Home page: http://www.omegat.org/
+ Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -30,7 +30,7 @@ package org.omegat.util;
 
 /**
  * Utilities for string processing.
- * 
+ *
  * @author Maxym Mykhalchuk
  * @author Didier Briel
  * @author Tiago Saboga
@@ -40,162 +40,166 @@ package org.omegat.util;
  */
 public class StringUtil {
 
-    /**
-     * Check if string is empty, i.e. null or length==0
-     */
-    public static boolean isEmpty(final String str) {
-        return str == null || str.length() == 0;
-    }
+	/**
+	 * Check if string is empty, i.e. null or length==0
+	 */
+	public static boolean isEmpty(final String str) {
+		return str == null || str.length() == 0;
+	}
 
-    /**
-     * Returns true if the input is lowercase.
-     */
-    public static boolean isLowerCase(final String input) {
-        for (int i = 0; i < input.length(); i++) {
-            char current = input.charAt(i);
-            if (Character.isLetter(current) && !Character.isLowerCase(current))
-                return false;
-        }
-        return true;
-    }
+	public static boolean notEmpty(String str) {
+		return !isEmpty(str);
+	}
 
-    /**
-     * Returns true if the input is upper case.
-     */
-    public static boolean isUpperCase(final String input) {
-        for (int i = 0; i < input.length(); i++) {
-            char current = input.charAt(i);
-            if (Character.isLetter(current) && !Character.isUpperCase(current))
-                return false;
-        }
-        return true;
-    }
+	/**
+	 * Returns true if the input is lowercase.
+	 */
+	public static boolean isLowerCase(final String input) {
+		for (int i = 0; i < input.length(); i++) {
+			char current = input.charAt(i);
+			if (Character.isLetter(current) && !Character.isLowerCase(current))
+				return false;
+		}
+		return true;
+	}
 
-    /**
-     * Returns true if the input is title case.
-     */
-    public static boolean isTitleCase(final String input) {
-        if (input.length() > 1)
-            return Character.isTitleCase(input.charAt(0)) && isLowerCase(input.substring(1));
-        else
-            return Character.isTitleCase(input.charAt(0));
-    }
+	/**
+	 * Returns true if the input is upper case.
+	 */
+	public static boolean isUpperCase(final String input) {
+		for (int i = 0; i < input.length(); i++) {
+			char current = input.charAt(i);
+			if (Character.isLetter(current) && !Character.isUpperCase(current))
+				return false;
+		}
+		return true;
+	}
 
-    /**
-     * Returns first not null object from list, or null if all values is null.
-     */
-    public static <T> T nvl(T... values) {
-        for (T value : values) {
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
-    }
+	/**
+	 * Returns true if the input is title case.
+	 */
+	public static boolean isTitleCase(final String input) {
+		if (input.length() > 1)
+			return Character.isTitleCase(input.charAt(0)) && isLowerCase(input.substring(1));
+		else
+			return Character.isTitleCase(input.charAt(0));
+	}
 
-    /**
-     * Returns first non-zero object from list, or zero if all values is null.
-     */
-    public static long nvlLong(long... values) {
-        for (long value : values) {
-            if (value != 0) {
-                return value;
-            }
-        }
-        return 0;
-    }
+	/**
+	 * Returns first not null object from list, or null if all values is null.
+	 */
+	public static <T> T nvl(T... values) {
+		for (T value : values) {
+			if (value != null) {
+				return value;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Compare two values, which could be null.
-     */
-    public static <T> boolean equalsWithNulls(T v1, T v2) {
-        if (v1 == null && v2 == null) {
-            return true;
-        } else if (v1 != null && v2 != null) {
-            return v1.equals(v2);
-        } else {
-            return false;
-        }
-    }
+	/**
+	 * Returns first non-zero object from list, or zero if all values is null.
+	 */
+	public static long nvlLong(long... values) {
+		for (long value : values) {
+			if (value != 0) {
+				return value;
+			}
+		}
+		return 0;
+	}
 
-    /**
-     * Compare two values, which could be null.
-     */
-    public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
-        if (v1 == null && v2 == null) {
-            return 0;
-        } else if (v1 == null && v2 != null) {
-            return -1;
-        } else if (v1 != null && v2 == null) {
-            return 1;
-        } else {
-            return v1.compareTo(v2);
-        }
-    }
+	/**
+	 * Compare two values, which could be null.
+	 */
+	public static <T> boolean equalsWithNulls(T v1, T v2) {
+		if (v1 == null && v2 == null) {
+			return true;
+		} else if (v1 != null && v2 != null) {
+			return v1.equals(v2);
+		} else {
+			return false;
+		}
+	}
 
-    /**
-     * Extracts first N chars from string.
-     */
-    public static String firstN(String str, int len) {
-        if (str.length() < len) {
-            return str;
-        } else {
-            return str.substring(0, len) + "...";
-        }
-    }
+	/**
+	 * Compare two values, which could be null.
+	 */
+	public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
+		if (v1 == null && v2 == null) {
+			return 0;
+		} else if (v1 == null && v2 != null) {
+			return -1;
+		} else if (v1 != null && v2 == null) {
+			return 1;
+		} else {
+			return v1.compareTo(v2);
+		}
+	}
 
-    /**
-     * Returns first letter in lowercase. Usually used for create tag shortcuts.
-     */
-    public static char getFirstLetterLowercase(CharSequence s) {
-        if (s == null) {
-            return 0;
-        }
+	/**
+	 * Extracts first N chars from string.
+	 */
+	public static String firstN(String str, int len) {
+		if (str.length() < len) {
+			return str;
+		} else {
+			return str.substring(0, len) + "...";
+		}
+	}
 
-        char f = 0;
+	/**
+	 * Returns first letter in lowercase. Usually used for create tag shortcuts.
+	 */
+	public static char getFirstLetterLowercase(CharSequence s) {
+		if (s == null) {
+			return 0;
+		}
 
-        for (int i = 0; i < s.length(); i++) {
-            if (Character.isLetter(s.charAt(i))) {
-                f = Character.toLowerCase(s.charAt(i));
-                break;
-            }
-        }
+		char f = 0;
 
-        return f;
-    }
+		for (int i = 0; i < s.length(); i++) {
+			if (Character.isLetter(s.charAt(i))) {
+				f = Character.toLowerCase(s.charAt(i));
+				break;
+			}
+		}
 
-    /**
-     * Checks if text contains substring after specified position.
-     */
-    public static boolean isSubstringAfter(String text, int pos, String substring) {
-        if (pos + substring.length() > text.length()) {
-            return false;
-        }
-        return substring.equals(text.substring(pos, pos + substring.length()));
-    }
+		return f;
+	}
 
-    /**
-     * Checks if text contains substring before specified position.
-     */
-    public static boolean isSubstringBefore(String text, int pos, String substring) {
-        if (pos - substring.length() < 0) {
-            return false;
-        }
-        return substring.equals(text.substring(pos - substring.length(), pos));
-    }
-    
-    public static String stripFromEnd(String string, String... toStrip) {
-        if (string == null) {
-            return null;
-        }
-        if (toStrip == null) {
-            return string;
-        }
-        for (String s : toStrip) {
-            if (string.endsWith(s)) {
-                string = string.substring(0, string.length() - s.length());
-            }
-        }
-        return string;
-    }
+	/**
+	 * Checks if text contains substring after specified position.
+	 */
+	public static boolean isSubstringAfter(String text, int pos, String substring) {
+		if (pos + substring.length() > text.length()) {
+			return false;
+		}
+		return substring.equals(text.substring(pos, pos + substring.length()));
+	}
+
+	/**
+	 * Checks if text contains substring before specified position.
+	 */
+	public static boolean isSubstringBefore(String text, int pos, String substring) {
+		if (pos - substring.length() < 0) {
+			return false;
+		}
+		return substring.equals(text.substring(pos - substring.length(), pos));
+	}
+
+	public static String stripFromEnd(String string, String... toStrip) {
+		if (string == null) {
+			return null;
+		}
+		if (toStrip == null) {
+			return string;
+		}
+		for (String s : toStrip) {
+			if (string.endsWith(s)) {
+				string = string.substring(0, string.length() - s.length());
+			}
+		}
+		return string;
+	}
 }

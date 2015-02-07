@@ -376,7 +376,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
     public void showStatusMessageRB(final String messageKey, final Object... params) {
         final String msg;
         if (messageKey == null) {
-            msg = new String() + ' ';
+            msg = " ";
         } else {
             if (params != null) {
                 msg = StaticUtils.format(OStrings.getString(messageKey), params);
@@ -481,7 +481,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
                 statusLabel.setText(msg);
                 String fulltext = msg;
                 if (ex != null)
-                    fulltext += "\n" + ex.toString();
+                    fulltext += '\n' + ex.toString();
                 JOptionPane.showMessageDialog(MainWindow.this, fulltext, OStrings.getString("TF_ERROR"),
                         JOptionPane.ERROR_MESSAGE);
             }

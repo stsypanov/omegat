@@ -1,8 +1,9 @@
 classes
-.idea
+.idea/
 dist
 build
 dist2
 manifest.mf
 *.iml
 /nbproject/private/
+classes/
