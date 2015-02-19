@@ -173,7 +173,7 @@ public class Main {
             RuntimePreferences.setLocationSaveEnabled(false);
         }
 
-        Log.log("\n" + "===================================================================" + "\n"
+        Log.log('\n' + "===================================================================" + '\n'
                 + OStrings.getDisplayVersion() + " (" + new Date() + ") " + " Locale " + Locale.getDefault());
 
         Log.logRB("LOG_STARTUP_INFO", System.getProperty("java.vendor"), System.getProperty("java.version"),
@@ -253,7 +253,7 @@ public class Main {
             UIManager.getInstalledLookAndFeels();
 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            setNimbusLaF();
+//            setNimbusLaF();
             
             // Override LAF with custom colors, if any (they default to the LAF attributes)
             Styles.setupLAF();
@@ -272,12 +272,12 @@ public class Main {
         }
 
         if (!Core.getPluginsLoadingErrors().isEmpty()) {
-            String err = "";
+            StringBuilder err = new StringBuilder();
             for (int i = 0; i < Core.getPluginsLoadingErrors().size(); i++) {
-                err += "\n" + Core.getPluginsLoadingErrors().get(i);
+                err.append('\n').append(Core.getPluginsLoadingErrors().get(i));
             }
-            err = err.substring(1);
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), err,
+            String errorMessage = err.toString().substring(1);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), errorMessage,
                     OStrings.getString("STARTUP_ERRORBOX_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
 
@@ -401,7 +401,7 @@ public class Main {
         String fname;
         if (pseudoTranslateTMXFilename != null && pseudoTranslateTMXFilename.length() > 0) {
             if (!pseudoTranslateTMXFilename.endsWith(OConsts.TMX_EXTENSION)) {
-                fname = pseudoTranslateTMXFilename + "." + OConsts.TMX_EXTENSION;
+                fname = pseudoTranslateTMXFilename + '.' + OConsts.TMX_EXTENSION;
             } else {
                 fname = pseudoTranslateTMXFilename;
             }
@@ -431,7 +431,7 @@ public class Main {
         } catch (IOException e) {
             Log.logErrorRB("CT_ERROR_CREATING_TMX");
             Log.log(e);
-            throw new IOException(OStrings.getString("CT_ERROR_CREATING_TMX") + "\n" + e.getMessage());
+            throw new IOException(OStrings.getString("CT_ERROR_CREATING_TMX") + '\n' + e.getMessage());
         }
         p.closeProject();
         System.out.println(OStrings.getString("CONSOLE_FINISHED"));
