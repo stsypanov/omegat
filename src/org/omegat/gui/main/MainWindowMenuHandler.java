@@ -1,6 +1,6 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
-          with fuzzy matching, translation memory, keyword search, 
+          with fuzzy matching, translation memory, keyword search,
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, Henry Pijffers, 
@@ -99,7 +99,7 @@ import org.omegat.util.TagUtil.Tag;
 
 /**
  * Handler for main menu items.
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -567,7 +567,7 @@ public class MainWindowMenuHandler {
     public void editSelectFuzzyNextMenuItemActionPerformed() {
         Core.getMatcher().setNextActiveMatch();
     }
-    
+
     /** Set active match to the previous one */
     public void editSelectFuzzyPrevMenuItemActionPerformed() {
         Core.getMatcher().setPrevActiveMatch();
@@ -596,7 +596,7 @@ public class MainWindowMenuHandler {
     public void editMultipleDefaultActionPerformed() {
         Core.getEditor().setAlternateTranslationForCurrentEntry(false);
     }
-    
+
     public void editMultipleAlternateActionPerformed() {
         Core.getEditor().setAlternateTranslationForCurrentEntry(true);
     }
@@ -640,7 +640,7 @@ public class MainWindowMenuHandler {
     public void gotoNextUniqueMenuItemActionPerformed() {
         Core.getEditor().nextUniqueEntry();
     }
-    
+
     public void gotoNextTranslatedMenuItemActionPerformed() {
         Core.getEditor().nextTranslatedEntry();
     }
@@ -670,7 +670,7 @@ public class MainWindowMenuHandler {
         dialog.setVisible(true);
 
         int jumpTo = dialog.getResult();
-        
+
         if (jumpTo != -1) {
             Core.getEditor().gotoEntry(jumpTo);
         }
@@ -683,7 +683,7 @@ public class MainWindowMenuHandler {
     public void gotoHistoryForwardMenuItemActionPerformed() {
         Core.getEditor().gotoHistoryForward();
     }
-    
+
     public void gotoMatchSourceSegmentActionPerformed() {
         NearString ns = Core.getMatcher().getActiveMatch();
         if (ns != null && ns.comesFrom == MATCH_SOURCE.MEMORY) {
@@ -748,7 +748,7 @@ public class MainWindowMenuHandler {
         Core.getEditor().getSettings()
                 .setMarkAutoPopulated(mainWindow.menu.viewMarkAutoPopulatedCheckBoxMenuItem.isSelected());
     }
-    
+
     public void viewMarkLanguageCheckerCheckBoxMenuItemActionPerformed() {
         Core.getEditor().getSettings()
                 .setMarkLanguageChecker(mainWindow.menu.viewMarkLanguageCheckerCheckBoxMenuItem.isSelected());
@@ -868,7 +868,7 @@ public class MainWindowMenuHandler {
         Preferences.setPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY,
                 mainWindow.menu.optionsAutoCompleteShowAutomaticallyItem.isSelected());
     }
-    
+
     public void optionsAutoCompleteGlossaryMenuItemActionPerformed() {
         new GlossaryAutoCompleterOptionsDialog(mainWindow).setVisible(true);
     }
@@ -886,12 +886,12 @@ public class MainWindowMenuHandler {
         Preferences.setPreference(Preferences.MT_AUTO_FETCH, enabled);
         mainWindow.menu.optionsMTOnlyUntranslatedCheckboxMenuItem.setEnabled(enabled);
     }
-    
+
     public void optionsMTOnlyUntranslatedCheckboxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.MT_ONLY_UNTRANSLATED,
                 mainWindow.menu.optionsMTOnlyUntranslatedCheckboxMenuItem.isSelected());
     }
-    
+
     public void optionsGlossaryTBXDisplayContextCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_TBX_DISPLAY_CONTEXT,
                 mainWindow.menu.optionsGlossaryTBXDisplayContextCheckBoxMenuItem.isSelected());
@@ -899,7 +899,7 @@ public class MainWindowMenuHandler {
 
         Core.getGlossaryManager().forceReloadTBX();
     }
-    
+
     public void optionsGlossaryExactMatchCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_NOT_EXACT_MATCH,
                 mainWindow.menu.optionsGlossaryExactMatchCheckBoxMenuItem.isSelected());
@@ -907,7 +907,7 @@ public class MainWindowMenuHandler {
         Core.getGlossaryManager().forceUpdateGlossary();
 
     }
-    
+
     public void optionsGlossaryStemmingCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_STEMMING,
                 mainWindow.menu.optionsGlossaryStemmingCheckBoxMenuItem.isSelected());
@@ -920,7 +920,7 @@ public class MainWindowMenuHandler {
         Preferences.setPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT,
                 mainWindow.menu.optionsGlossaryReplacementCheckBoxMenuItem.isSelected());
     }
-    
+
     public void optionsDictionaryFuzzyMatchingCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.DICTIONARY_FUZZY_MATCHING,
                 mainWindow.menu.optionsDictionaryFuzzyMatchingCheckBoxMenuItem.isSelected());
@@ -949,7 +949,7 @@ public class MainWindowMenuHandler {
         dlg.setVisible(true);
     }
 
-    
+
     /**
      * Displays the filters setup dialog to allow customizing file filters in detail.
      */
@@ -1024,7 +1024,7 @@ public class MainWindowMenuHandler {
     public void optionsTagValidationMenuItemActionPerformed() {
         TagProcessingOptionsDialog tagProcessingOptionsDialog = new TagProcessingOptionsDialog(mainWindow);
         tagProcessingOptionsDialog.setVisible(true);
-        
+
         if (tagProcessingOptionsDialog.getReturnStatus() == TagProcessingOptionsDialog.RET_OK
                 && Core.getProject().isProjectLoaded()) {
             // Redisplay according to new view settings
@@ -1125,7 +1125,7 @@ public class MainWindowMenuHandler {
     public void helpLogMenuItemActionPerformed() {
         new LogDialog(mainWindow).setVisible(true);
     }
-    
+
     /**
      * Displays the dialog to set login and password for proxy.
      */
