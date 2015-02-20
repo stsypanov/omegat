@@ -196,6 +196,7 @@ public class Main {
         PluginUtils.loadPlugins(params);
         FilterMaster.setFilterClasses(PluginUtils.getFilterClasses());
         Preferences.init();
+        loadProxySettings();
 
         int result;
         try {
@@ -233,7 +234,7 @@ public class Main {
      * Load System properties from a specified .properties file. In order to
      * allow this to reliably change the display language, it must called before
      * any use of {@link Log#log}, thus it logs to {@link System#out}.
-     * 
+     *
      * @param path
      *            to config file
      */
@@ -271,8 +272,22 @@ public class Main {
             System.err.println("Error while reading config file: " + path);
         }
     }
-    
-    /**
+
+	private static void loadProxySettings() {
+		String setProxy = Preferences.getPreference(Preferences.SET_HTTP_PROXY);
+
+		if ("true".equals(setProxy)){
+			System.setProperty("http.proxySet", "true");
+			System.setProperty("http.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
+			System.setProperty("http.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+
+			System.setProperty("https.proxySet", "true");
+			System.setProperty("https.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
+			System.setProperty("https.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+		}
+	}
+
+	/**
      * Execute standard GUI.
      */
     protected static int runGUI() {
@@ -309,8 +324,11 @@ public class Main {
             UIManager.getInstalledLookAndFeels();
 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            
+//            setNimbusLaF();
+
             System.setProperty("swing.aatext", "true");
+            // Override LAF with custom colors, if any (they default to the LAF attributes)
+            Styles.setupLAF();
 
         } catch (Exception e) {
             // do nothing
