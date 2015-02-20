@@ -12,27 +12,39 @@ import java.util.logging.Logger;
  */
 public class ProxyUtilsTest {
 	private static final Logger logger = Logger.getLogger(ProxyUtilsTest.class.getName());
-	private String url = "https://www.mail.ru";
+	private String httpsURL = "https://www.mail.ru";
+	private String httpURL = "http://lenta.ru";
 
 
 	@Test
-	public void testConnection() throws Exception {
-		URL google = new URL(url);
-		List<Proxy> proxies = ProxyUtils.getProxySelector(url);
+	public void testHttpsConnection() throws Exception {
+		URL google = new URL(httpsURL);
+		List<Proxy> proxies = ProxyUtils.getProxySelector(httpsURL);
 
 		for (Proxy proxy : proxies) {
 			int responseCode = getResponseCode(google, proxy);
 
 			logger.info(proxy.toString() + ' ' + responseCode);
 		}
+	}
 
+	@Test
+	public void testHttpConnection() throws Exception {
+		URL google = new URL(httpsURL);
+		List<Proxy> proxies = ProxyUtils.getProxySelector(httpsURL);
+
+		for (Proxy proxy : proxies) {
+			int responseCode = getResponseCode(google, proxy);
+
+			logger.info(proxy.toString() + ' ' + responseCode);
+		}
 	}
 
 	@Test
 	public void testProxySelector() throws Exception {
-		Proxy proxy = ProxyUtils.getProxy(url);
+		Proxy proxy = ProxyUtils.getProxy(httpsURL);
 
-		logger.info(proxy.toString() + ' ' + getResponseCode(new URL(url), proxy));
+		logger.info(proxy.toString() + ' ' + getResponseCode(new URL(httpsURL), proxy));
 	}
 
 	private static int getResponseCode(URL google, Proxy proxy) throws IOException {

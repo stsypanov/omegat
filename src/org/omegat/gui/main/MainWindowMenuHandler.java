@@ -34,45 +34,21 @@
 
 package org.omegat.gui.main;
 
-import java.awt.Component;
-import java.io.IOException;
-import java.util.List;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-import javax.swing.text.JTextComponent;
-
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
-import org.omegat.core.search.SearchMode;
 import org.omegat.core.matching.NearString;
 import org.omegat.core.matching.NearString.MATCH_SOURCE;
+import org.omegat.core.search.SearchMode;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.core.spellchecker.ISpellChecker;
 import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
-import org.omegat.gui.dialogs.AboutDialog;
-import org.omegat.gui.dialogs.AutotextAutoCompleterOptionsDialog;
-import org.omegat.gui.dialogs.CharTableAutoCompleterOptionsDialog;
-import org.omegat.gui.dialogs.CustomColorSelectionDialog;
-import org.omegat.gui.dialogs.ExternalTMXMatchesDialog;
-import org.omegat.gui.dialogs.FontSelectionDialog;
-import org.omegat.gui.dialogs.GlossaryAutoCompleterOptionsDialog;
-import org.omegat.gui.dialogs.LastChangesDialog;
-import org.omegat.gui.dialogs.LogDialog;
-import org.omegat.gui.dialogs.SaveOptionsDialog;
-import org.omegat.gui.dialogs.SpellcheckerConfigurationDialog;
-import org.omegat.gui.dialogs.TagValidationOptionsDialog;
-import org.omegat.gui.dialogs.TeamOptionsDialog;
-import org.omegat.gui.dialogs.UserPassDialog;
-import org.omegat.gui.dialogs.ViewOptionsDialog;
-import org.omegat.gui.dialogs.WorkflowOptionsDialog;
+import org.omegat.gui.dialogs.*;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
@@ -81,14 +57,12 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
-import org.omegat.util.FileUtil;
-import org.omegat.util.Language;
-import org.omegat.util.Log;
-import org.omegat.util.OConsts;
-import org.omegat.util.OStrings;
-import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
-import org.omegat.util.StringUtil;
+import org.omegat.util.*;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.util.List;
 
 /**
  * Handler for main menu items.
@@ -971,30 +945,14 @@ public class MainWindowMenuHandler {
     }
     
     /**
-     * Displays the dialog to set login and password for proxy.
+     * Displays the dialog to configure proxy
      */
     public void optionsViewOptionsMenuLoginItemActionPerformed() {
-        UserPassDialog proxyOptions = new UserPassDialog(mainWindow);
-
-        String encodedUser = (Preferences.getPreference(Preferences.PROXY_USER_NAME));
-        String encodedPassword = (Preferences.getPreference(Preferences.PROXY_PASSWORD));
-
-        try {
-            proxyOptions.userText.setText(new String(org.omegat.util.Base64.decode(encodedUser)));
-            proxyOptions.passwordField.setText(new String(org.omegat.util.Base64.decode(encodedPassword)));
-        } catch (IOException ex) {
-            Log.logErrorRB("LOG_DECODING_ERROR");
-            Log.log(ex);
-        }
-
-        proxyOptions.setVisible(true);
-
-        if (proxyOptions.getReturnStatus() == UserPassDialog.RET_OK) {
-            encodedUser = org.omegat.util.Base64.encodeBytes(proxyOptions.userText.getText().getBytes());
-            encodedPassword = org.omegat.util.Base64.encodeBytes(new String(proxyOptions.passwordField.getPassword()).getBytes());
-
-            Preferences.setPreference(Preferences.PROXY_USER_NAME, encodedUser);
-            Preferences.setPreference(Preferences.PROXY_PASSWORD, encodedPassword);
-        }
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new ProxyDialog();
+			}
+		});
     }
 }
