@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by rad1kal on 14.11.2014.
+ * Created by stsypanov on 14.11.2014.
  */
 public abstract class AbstractAlignmentFilter extends AbstractFilter {
 	protected Map<String, String> align;
