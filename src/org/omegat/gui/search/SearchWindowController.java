@@ -552,10 +552,9 @@ public class SearchWindowController {
      */
     private void savePreferences() {
         // window size and position
-        Preferences.setPreference(Preferences.SEARCHWINDOW_WIDTH, form.getWidth());
-        Preferences.setPreference(Preferences.SEARCHWINDOW_HEIGHT, form.getHeight());
-        Preferences.setPreference(Preferences.SEARCHWINDOW_X, form.getX());
-        Preferences.setPreference(Preferences.SEARCHWINDOW_Y, form.getY());
+        GuiUtils.saveLayoutPreferences(Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT,
+				Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y,
+				form.getX(), form.getY(), form.getWidth(), form.getHeight());
 
         // search type
         if (form.m_searchExactSearchRB.isSelected()) {

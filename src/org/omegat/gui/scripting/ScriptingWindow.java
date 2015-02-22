@@ -100,7 +100,7 @@ public class ScriptingWindow extends PeroFrame {
 
     static ScriptingWindow window;
 
-    // XXX Still needed ?
+    // todo Still needed ?
     /**
      * @deprecated
      */
@@ -119,8 +119,10 @@ public class ScriptingWindow extends PeroFrame {
 
     @Override
     public void dispose() {
-        savePreferences();
-        monitor.stop();
+		monitor.stop();
+		saveLayoutPreferences(Preferences.SCRIPTWINDOW_X, Preferences.SCRIPTWINDOW_Y,
+				Preferences.SCRIPTWINDOW_WIDTH, Preferences.SCRIPTWINDOW_HEIGHT,
+				getX(), getY(), getWidth(), getHeight());
         super.dispose();
     }
 
@@ -651,17 +653,6 @@ public class ScriptingWindow extends PeroFrame {
 
         monitor.stop();
         monitor.start(m_scriptsDirectory);
-    }
-
-    /**
-     * Saves the size and position of the script window
-     */
-    private void savePreferences() {
-        // window size and position
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_WIDTH, getWidth());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_HEIGHT, getHeight());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_X, getX());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_Y, getY());
     }
 
     public HighlightPainter getPainter() {

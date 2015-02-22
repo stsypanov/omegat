@@ -55,6 +55,7 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.DockingUI;
+import org.omegat.util.gui.GuiUtils;
 import org.openide.awt.Mnemonics;
 
 import com.vlsolutions.swing.docking.DockingDesktop;
@@ -225,10 +226,9 @@ public class MainWindowUI {
      * Stores screen layout (width, height, position, etc).
      */
     public static void saveScreenLayout(final MainWindow mainWindow) {
-        Preferences.setPreference(Preferences.MAINWINDOW_X, mainWindow.getX());
-        Preferences.setPreference(Preferences.MAINWINDOW_Y, mainWindow.getY());
-        Preferences.setPreference(Preferences.MAINWINDOW_WIDTH, mainWindow.getWidth());
-        Preferences.setPreference(Preferences.MAINWINDOW_HEIGHT, mainWindow.getHeight());
+		GuiUtils.saveLayoutPreferences(Preferences.MAINWINDOW_X, Preferences.MAINWINDOW_Y,
+				Preferences.MAINWINDOW_WIDTH, Preferences.MAINWINDOW_HEIGHT,
+				mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight());
 
         File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
         try (FileOutputStream out = new FileOutputStream(uiLayoutFile)) {

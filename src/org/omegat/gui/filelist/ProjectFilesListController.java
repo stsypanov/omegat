@@ -223,7 +223,10 @@ public class ProjectFilesListController {
             }
 
             public void onApplicationShutdown() {
-                saveWindowLayout();
+				GuiUtils.saveLayoutPreferences(Preferences.PROJECT_FILES_WINDOW_X, Preferences.PROJECT_FILES_WINDOW_Y,
+						Preferences.PROJECT_FILES_WINDOW_WIDTH,
+						Preferences.PROJECT_FILES_WINDOW_HEIGHT,
+						list.getX(), list.getY(), list.getWidth(), list.getHeight());
             }
         });
 
@@ -308,16 +311,6 @@ public class ProjectFilesListController {
                 break;
             }
         }
-    }
-
-    /**
-     * Saves the size and position of the project files window
-     */
-    private void saveWindowLayout() {
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_WIDTH, list.getWidth());
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_HEIGHT, list.getHeight());
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_X, list.getX());
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_Y, list.getY());
     }
 
     private void doCancel() {
