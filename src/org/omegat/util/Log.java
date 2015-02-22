@@ -50,39 +50,29 @@ import org.omegat.util.logging.OmegaTFileHandler;
  */
 public class Log {
 
-    private static Logger LOGGER;
+    private static final Logger LOGGER = Logger.getLogger("global");
 
     static {
-        LOGGER = Logger.getLogger("global");
 
         boolean loaded = false;
         File usersLogSettings = new File(StaticUtils.getConfigDir(), "logger.properties");
         if (usersLogSettings.exists()) {
             // try to load logger settings from user home dir
-            try {
-                InputStream in = new FileInputStream(usersLogSettings);
-                try {
-                    init(in);
-                    loaded = true;
-                } finally {
-                    in.close();
-                }
-            } catch (Exception e) {
-            }
-        }
+			try (InputStream in = new FileInputStream(usersLogSettings)) {
+				init(in);
+				loaded = true;
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Can't open " + usersLogSettings.getPath(), e);
+			}
+		}
         if (!loaded) {
             // load built-in logger settings
-            try {
-                InputStream in = Log.class.getResourceAsStream("/org/omegat/logger.properties");
-                try {
-                    init(in);
-                } finally {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "Can't open file for logging", ex);
-            }
-        }
+			try (InputStream in = Log.class.getResourceAsStream("/org/omegat/logger.properties")) {
+				init(in);
+			} catch (IOException ex) {
+				LOGGER.log(Level.SEVERE, "Can't open file for logging", ex);
+			}
+		}
     }
 
     /**
