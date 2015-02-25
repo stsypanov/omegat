@@ -6,6 +6,7 @@
  Copyright (C) 2010 Alex Buloichik, Aaron Madlon-Kay
                2012 Aaron Madlon-Kay
                2014 Briac Pilpre
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -64,6 +65,8 @@ public final class Styles {
         COLOR_TRANSLATED_FG((Color) null),
         COLOR_NON_UNIQUE("#808080"),
         COLOR_NON_UNIQUE_BG((Color) null),
+        COLOR_MOD_INFO((Color) null),
+        COLOR_MOD_INFO_FG((Color) null),
         COLOR_PLACEHOLDER("#969696"),
         COLOR_REMOVETEXT_TARGET("#ff0000"),
         COLOR_NBSP("#c8c8c8"),
@@ -89,50 +92,22 @@ public final class Styles {
         private Color defaultColor;
 
         private EditorColor(Color defaultColor) {
-            if (this.defaultColor == null) {
-                this.defaultColor = defaultColor;
-            }
+            this.color = defaultColor;
+            this.defaultColor = defaultColor;
 
-            if (Preferences.existsPreference(this.name())) {
-                String prefColor = Preferences.getPreference(this.name());
-
-                if (prefColor.equals(DEFAULT_COLOR)) {
-                    color = defaultColor;
-                    return;
-                }
-
+            String prefColor = Preferences.getPreferenceDefault(name(), null);
+            if (prefColor != null && !DEFAULT_COLOR.equals(prefColor)) {
                 try {
-                    color = Color.decode(prefColor);
+                    this.color = Color.decode(prefColor);
                 } catch (NumberFormatException e) {
-                    Log.logDebug(LOGGER, "Cannot set custom color for {0}, default to {1}.", this.name(),
+                    Log.logDebug(LOGGER, "Cannot set custom color for {0}, default to {1}.", name(),
                             prefColor);
-                    color = defaultColor;
                 }
-            } else {
-                color = defaultColor;
             }
         }
 
         private EditorColor(String defaultColor) {
-            if (this.defaultColor == null) {
-                this.defaultColor = Color.decode(defaultColor);
-            }
-
-            Color color = null;
-            try {
-                if (!Preferences.existsPreference(this.name())) {
-                    this.color = this.defaultColor;
-                    return;
-                } else {
-                    color = Color.decode(Preferences.getPreference(this.name()));
-                }
-
-            } catch (NumberFormatException e) {
-                Log.logDebug(LOGGER, "Cannot set custom color for {0}, default to {1}.", this.name(),
-                        defaultColor);
-                color = Color.decode(defaultColor);
-            }
-            this.color = color;
+            this(Color.decode(defaultColor));
         }
 
         public String toHex() {
@@ -142,18 +117,21 @@ public final class Styles {
         public Color getColor() {
             return color;
         }
+        
+        public Color getDefault() {
+            return defaultColor;
+        }
 
+        @Override
         public String toString() {
-            return OStrings.getString(this.name());
+            return OStrings.getString(name());
         }
 
         public void setColor(Color newColor) {
-            if (newColor == null) {
-                color = this.defaultColor;
+            if (newColor == null || newColor.equals(defaultColor)) {
+                color = defaultColor;
                 Preferences.setPreference(name(), DEFAULT_COLOR);
-            }
-            else
-            {
+            } else {
                 color = newColor;
                 Preferences.setPreference(name(), toHex());   
             }
@@ -161,7 +139,6 @@ public final class Styles {
             if (this.equals(COLOR_BACKGROUND) || this.equals(COLOR_FOREGROUND)) {
                 setupLAF();
             }
-
         }
     }
 

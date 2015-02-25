@@ -30,6 +30,7 @@ package org.omegat.gui.dialogs;
 import javax.swing.JLabel;
 
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -56,6 +57,7 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
 
         invalidate();
         pack();
+        DockingUI.displayCentered(this);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -108,6 +110,7 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(descriptionTextArea, gridBagConstraints);
 
+        userLabel.setLabelFor(userText);
         org.openide.awt.Mnemonics.setLocalizedText(userLabel, OStrings.getString("LOGIN_USER")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -126,6 +129,7 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(userText, gridBagConstraints);
 
+        passwordLabel.setLabelFor(passwordField);
         org.openide.awt.Mnemonics.setLocalizedText(passwordLabel, OStrings.getString("LOGIN_PASSWORD")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -189,9 +193,6 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         getContentPane().add(cbForceSavePlainPassword, gridBagConstraints);
 
         pack();
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension dialogSize = getSize();
-        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
