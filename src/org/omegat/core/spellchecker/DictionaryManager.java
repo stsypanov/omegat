@@ -48,7 +48,7 @@ import org.omegat.util.StaticUtils;
 public class DictionaryManager {
 
     /** the directory string */
-    private File dir;
+    private final File dir;
 
     /**
      * Creates a new instance of DictionaryManager.
@@ -57,8 +57,8 @@ public class DictionaryManager {
      *            : the directory where the spell checking dictionary files
      *            (*.(aff|dic) are available locally
      */
-    public DictionaryManager(String dirName) {
-        dir = new File(dirName);
+    public DictionaryManager(File dir) {
+        this.dir = dir;
     }
 
     /**
@@ -81,7 +81,7 @@ public class DictionaryManager {
      * returns a list of full names of dictionaries from a dictionary code list
      */
     public List<String> getDictionaryNameList(List<String> aList) {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
 
         for (String dic : aList) {
             String parts[] = dic.split("_");
@@ -107,7 +107,7 @@ public class DictionaryManager {
      * returns a list of available dictionaries in the xx_YY form
      */
     public List<String> getLocalDictionaryCodeList() {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
 
         String[] affixFiles;
         String[] dictionaryFiles;
@@ -125,24 +125,25 @@ public class DictionaryManager {
 
                 // get the affix file name
                 String affixName = getFileNameOnly(affixFile);
-                if (affixName == null || affixName.isEmpty())
+                if (affixName == null || affixName.isEmpty()) {
                     continue;
-
+                }
                 // cycle through the dictionary names
                 for (String dictionaryFile : dictionaryFiles) {
                     // get the dic file name
                     String dicName = getFileNameOnly(dictionaryFile);
-                    if (dicName == null || dicName.isEmpty())
+                    if (dicName == null || dicName.isEmpty()) {
                         continue;
-
+                    }
                     if (affixName.equals(dicName)) {
                         match = true;
                         break;
                     }
                 }
 
-                if (match)
+                if (match) {
                     result.add(affixName);
+                }
             }
         }
 
@@ -157,8 +158,9 @@ public class DictionaryManager {
      * @returns true upon success, otherwise false
      */
     public boolean uninstallDictionary(String lang) {
-        if (lang == null || lang.isEmpty())
+        if (lang == null || lang.isEmpty()) {
             return false;
+        }
 
         String base = getDirectory() + File.separator + lang;
 
@@ -169,10 +171,7 @@ public class DictionaryManager {
 
         File dicFile = new File(base + OConsts.SC_DICTIONARY_EXTENSION);
 
-        if (!dicFile.delete())
-            return false;
-
-        return true;
+        return dicFile.delete();
     }
 
     /**
@@ -191,7 +190,7 @@ public class DictionaryManager {
 
         List<String> remoteDicList = getRemoteDictionaryCodeList();
 
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
 
         // compare the two lists
         for (String dicCode : remoteDicList) {
@@ -206,7 +205,7 @@ public class DictionaryManager {
      * downloads the list of available dictionaries from the net
      */
     private List<String> getRemoteDictionaryCodeList() throws IOException {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
 
         // download the file
         String htmlfile = StaticUtils.downloadFileToString
@@ -234,7 +233,7 @@ public class DictionaryManager {
      * @param langCode
      *            : the language code (xx_YY)
      */
-    public void installRemoteDictionary(String langCode) throws IOException {
+    public void installRemoteDictionary(String langCode) throws MalformedURLException, IOException {
         // download the package in question to the disk to a temporary location
         String from = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL) +
                       "/" + langCode + ".zip";
@@ -254,7 +253,7 @@ public class DictionaryManager {
             langCode = langCode.substring(0, pos);
         }
 
-        List<String> filenames = new ArrayList<>();
+        List<String> filenames = new ArrayList<String>();
 
         filenames.add(langCode + OConsts.SC_AFFIX_EXTENSION);
         filenames.add(langCode + OConsts.SC_DICTIONARY_EXTENSION);

@@ -8,6 +8,7 @@
                2008 Alex Buloichik, Didier Briel
                2012 Martin Fleurke
                2014 Alex Buloichik Piotr Kulik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -105,6 +106,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Didier Briel
  * @author Martin Fleurke
  * @author Piotr Kulik
+ * @author Aaron Madlon-Kay
  */
 public class ProjectFilesListController {
     private static final Color COLOR_STANDARD_FG = Color.BLACK;
@@ -176,6 +178,9 @@ public class ProjectFilesListController {
                 case LOAD:
                 case CREATE:
                     buildDisplay(Core.getProject().getProjectFiles());
+                    if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
+                        break;
+                    }
                     list.setVisible(true);
                     list.tableFiles.requestFocus();
                     buildTotalTableLayout();
@@ -315,14 +320,6 @@ public class ProjectFilesListController {
 
     private void doCancel() {
         list.setVisible(false);
-
-        RowSorter<AbstractTableModel> rs = (RowSorter<AbstractTableModel>) list.tableFiles.getRowSorter();
-        RowSorter.SortKey sk;
-        if (rs.getSortKeys().isEmpty()) {
-            sk = new RowSorter.SortKey(1, SortOrder.ASCENDING);
-        } else {
-            sk = rs.getSortKeys().get(0);
-        }
     }
 
     /**

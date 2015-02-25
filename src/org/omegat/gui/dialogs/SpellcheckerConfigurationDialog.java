@@ -6,6 +6,7 @@
  Copyright (C) 2007 Zoltan Bartko
                2008-2011 Didier Briel
                2012 Martin Fleurke, Didier Briel
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -37,22 +38,25 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.omegat.core.spellchecker.DictionaryManager;
-import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.Language;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
  * @author Zoltan Bartko
  * @author Didier Briel
  * @author Martin Fleurke
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class SpellcheckerConfigurationDialog extends PeroDialog {
+public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
 
     private final JFileChooser fileChooser = new JFileChooser();
 
@@ -97,7 +101,7 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
         StaticUIUtils.setEscapeClosable(this);
 
         initComponents();
-        this.pack();
+        getRootPane().setDefaultButton(okButton);
 
         currentLanguage = current;
 
@@ -107,39 +111,89 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
         autoSpellcheckCheckBox.setSelected(Preferences.isPreference(Preferences.ALLOW_AUTO_SPELLCHECKING));
         updateDetailPanel();
 
+        directoryTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateDirectory();
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateDirectory();
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateDirectory();
+            }
+        });
         directoryTextField.setText(Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY));
-        updateLanguageList();
 
+        dictionaryUrlTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateDictUrl();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateDictUrl();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateDictUrl();
+            }
+        });
         String dictionaryUrl = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL);
-        if ("".equalsIgnoreCase(dictionaryUrl) ||
-            //string below was default prior to 2.5.0 update 5, but is not working. Override with new default.
-            "http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/".equalsIgnoreCase(dictionaryUrl)
-           ) {
-               dictionaryUrlTextField.setText(OConsts.REMOTE_SC_DICTIONARY_LIST_LOCATION);
+        if (dictionaryUrl.isEmpty()
+                || //string below was default prior to 2.5.0 update 5, but is not working. Override with new default.
+                "http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/".equalsIgnoreCase(dictionaryUrl)) {
+            dictionaryUrlTextField.setText(OConsts.REMOTE_SC_DICTIONARY_LIST_LOCATION);
         } else {
             dictionaryUrlTextField.setText(Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL));
         }
+        DockingUI.displayCentered(this);
+        updateDirectory();
+        languageListValueChanged(null);
+    }
+    
+    private File getDictDir() {
+        String dirName = directoryTextField.getText();
+        
+        if (dirName == null || dirName.isEmpty()) {
+            return null;
+        }
+        
+        File dir = new File(dirName);
+        if (!dir.exists() || !dir.canRead()) {
+            return null;
+        }
+        
+        return dir;
+    }
 
+    private void updateDirectory() {
+        updateDictUrl();
+        updateLanguageList();
     }
 
     /**
      * Updates the language list based on the directory text field
      */
     public final void updateLanguageList() {
-        String dirName = directoryTextField.getText();
-
-        // should we do anything?
-        if (dirName == null || dirName.isEmpty())
+        // initialize the language list model
+        languageListModel.clear();
+        
+        File dir = getDictDir();
+        
+        if (dir == null) {
             return;
+        }
 
-        dicMan = new DictionaryManager(dirName);
+        dicMan = new DictionaryManager(dir);
 
         List<String> aList = dicMan.getLocalDictionaryNameList();
 
         Collections.sort(aList);
-
-        // initialize the language list model
-        languageListModel.clear();
 
         for (String str : aList) {
             languageListModel.addElement(str);
@@ -158,12 +212,19 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
         directoryChooserButton.setEnabled(enabled);
         directoryLabel.setEnabled(enabled);
         directoryTextField.setEnabled(enabled);
-        installButton.setEnabled(enabled);
-        setUninstalButtonStatus();  // Depends on whether something is selected in the dictionary list
         languageScrollPane.setEnabled(enabled);
         languageList.setEnabled(enabled);
+        updateDirectory();
     }
 
+    private void updateDictUrl() {
+        File dir = getDictDir();
+        
+        installButton.setEnabled(autoSpellcheckCheckBox.isSelected()
+                && dir != null && dir.canWrite()
+                && !dictionaryUrlTextField.getText().isEmpty());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -173,83 +234,61 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
         autoSpellcheckCheckBox = new javax.swing.JCheckBox();
         detailPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        directoryLabel = new javax.swing.JLabel();
         directoryTextField = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
+        directoryChooserButton = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        contentLabel = new javax.swing.JLabel();
         languageScrollPane = new javax.swing.JScrollPane();
         languageList = new javax.swing.JList();
-        contentLabel = new javax.swing.JLabel();
-        directoryLabel = new javax.swing.JLabel();
-        directoryChooserButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        uninstallButton = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
         dictionaryUrlLabel = new javax.swing.JLabel();
         dictionaryUrlTextField = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
         installButton = new javax.swing.JButton();
-        uninstallButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(OStrings.getString("GUI_SPELLCHECKER_TITLE")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, OStrings.getString("BUTTON_CANCEL")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(okButton, OStrings.getString("BUTTON_OK")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(420, Short.MAX_VALUE)
-                .add(okButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(cancelButton))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(cancelButton)
-                .add(okButton))
-        );
+        setPreferredSize(new java.awt.Dimension(600, 500));
 
         org.openide.awt.Mnemonics.setLocalizedText(autoSpellcheckCheckBox, OStrings.getString("GUI_SPELLCHECKER_AUTOSPELLCHECKCHECKBOX")); // NOI18N
-        autoSpellcheckCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        autoSpellcheckCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 5, 0));
         autoSpellcheckCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         autoSpellcheckCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoSpellcheckCheckBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(autoSpellcheckCheckBox, java.awt.BorderLayout.NORTH);
 
-        detailPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        detailPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 20, 5, 20), javax.swing.BorderFactory.createEtchedBorder()));
+        detailPanel.setLayout(new java.awt.BorderLayout());
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 5, 10));
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(directoryLabel, OStrings.getString("GUI_SPELLCHECKER_DICTIONARYLABEL")); // NOI18N
+        jPanel1.add(directoryLabel, java.awt.BorderLayout.NORTH);
 
         directoryTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 directoryTextFieldActionPerformed(evt);
             }
         });
+        jPanel1.add(directoryTextField, java.awt.BorderLayout.CENTER);
 
-        languageList.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                languageListMouseClicked(evt);
-            }
-        });
-        languageScrollPane.setViewportView(languageList);
-
-        org.openide.awt.Mnemonics.setLocalizedText(contentLabel, OStrings.getString("GUI_SPELLCHECKER_AVAILABLE_LABEL")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(directoryLabel, OStrings.getString("GUI_SPELLCHECKER_DICTIONARYLABEL")); // NOI18N
+        jPanel8.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        jPanel8.setLayout(new javax.swing.BoxLayout(jPanel8, javax.swing.BoxLayout.LINE_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(directoryChooserButton, OStrings.getString("GUI_SPELLCHECKER_DIRECTORYCHOOSERBUTTON")); // NOI18N
         directoryChooserButton.addActionListener(new java.awt.event.ActionListener() {
@@ -257,15 +296,29 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
                 directoryChooserButtonActionPerformed(evt);
             }
         });
+        jPanel8.add(directoryChooserButton);
 
-        org.openide.awt.Mnemonics.setLocalizedText(dictionaryUrlLabel, OStrings.getString("GUI_SPELLCHECKER_URL_LABEL")); // NOI18N
+        jPanel1.add(jPanel8, java.awt.BorderLayout.EAST);
 
-        org.openide.awt.Mnemonics.setLocalizedText(installButton, OStrings.getString("GUI_SPELLCHECKER_INSTALLBUTTON")); // NOI18N
-        installButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                installButtonActionPerformed(evt);
+        detailPanel.add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(contentLabel, OStrings.getString("GUI_SPELLCHECKER_AVAILABLE_LABEL")); // NOI18N
+        jPanel3.add(contentLabel, java.awt.BorderLayout.NORTH);
+
+        languageList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                languageListValueChanged(evt);
             }
         });
+        languageScrollPane.setViewportView(languageList);
+
+        jPanel3.add(languageScrollPane, java.awt.BorderLayout.CENTER);
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(uninstallButton, OStrings.getString("GUI_SPELLCHECKER_UNINSTALLBUTTON")); // NOI18N
         uninstallButton.addActionListener(new java.awt.event.ActionListener() {
@@ -273,106 +326,75 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
                 uninstallButtonActionPerformed(evt);
             }
         });
+        jPanel4.add(uninstallButton, java.awt.BorderLayout.NORTH);
 
-        org.jdesktop.layout.GroupLayout detailPanelLayout = new org.jdesktop.layout.GroupLayout(detailPanel);
-        detailPanel.setLayout(detailPanelLayout);
-        detailPanelLayout.setHorizontalGroup(
-            detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(detailPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(detailPanelLayout.createSequentialGroup()
-                        .add(dictionaryUrlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .add(dictionaryUrlLabel)
-                    .add(detailPanelLayout.createSequentialGroup()
-                        .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(contentLabel)
-                            .add(directoryLabel)
-                            .add(detailPanelLayout.createSequentialGroup()
-                                .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(languageScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, directoryTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(uninstallButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .add(directoryChooserButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .add(detailPanelLayout.createSequentialGroup()
-                        .add(installButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(377, 377, 377))))
-        );
-        detailPanelLayout.setVerticalGroup(
-            detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, detailPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(directoryLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(directoryChooserButton)
-                    .add(directoryTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(contentLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(detailPanelLayout.createSequentialGroup()
-                        .add(languageScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(dictionaryUrlLabel))
-                    .add(uninstallButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(dictionaryUrlTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(9, 9, 9)
-                .add(installButton))
-        );
+        jPanel3.add(jPanel4, java.awt.BorderLayout.EAST);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(autoSpellcheckCheckBox)
-                    .add(detailPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(autoSpellcheckCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(detailPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        detailPanel.add(jPanel3, java.awt.BorderLayout.CENTER);
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 10, 10));
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(dictionaryUrlLabel, OStrings.getString("GUI_SPELLCHECKER_URL_LABEL")); // NOI18N
+        jPanel5.add(dictionaryUrlLabel, java.awt.BorderLayout.NORTH);
+        jPanel5.add(dictionaryUrlTextField, java.awt.BorderLayout.CENTER);
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 0, 0, 0));
+        jPanel6.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(installButton, OStrings.getString("GUI_SPELLCHECKER_INSTALLBUTTON")); // NOI18N
+        installButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                installButtonActionPerformed(evt);
+            }
+        });
+        jPanel6.add(installButton, java.awt.BorderLayout.WEST);
+
+        jPanel5.add(jPanel6, java.awt.BorderLayout.SOUTH);
+
+        detailPanel.add(jPanel5, java.awt.BorderLayout.SOUTH);
+
+        getContentPane().add(detailPanel, java.awt.BorderLayout.CENTER);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 1, 20, 20));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jPanel7.setLayout(new javax.swing.BoxLayout(jPanel7, javax.swing.BoxLayout.LINE_AXIS));
+
+        org.openide.awt.Mnemonics.setLocalizedText(okButton, OStrings.getString("BUTTON_OK")); // NOI18N
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+        jPanel7.add(okButton);
+
+        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, OStrings.getString("BUTTON_CANCEL")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+        jPanel7.add(cancelButton);
+
+        jPanel2.add(jPanel7, java.awt.BorderLayout.EAST);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void languageListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_languageListMouseClicked
-        setUninstalButtonStatus();
-    }//GEN-LAST:event_languageListMouseClicked
-
-    /**
-     * Sets the enabled/disabled status of the Uninstall (Remove) button
-     * To be enabled, at list one dictionary must be selected, and the Spell checking box must be selected
-     */
-    private void setUninstalButtonStatus() {
+    private void languageListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_languageListValueChanged
         Object[] selection = languageList.getSelectedValues();
         uninstallButton.setEnabled(selection.length > 0 && autoSpellcheckCheckBox.isSelected());
-    }
+    }//GEN-LAST:event_languageListValueChanged
 
     private void directoryTextFieldActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_directoryTextFieldActionPerformed
         updateLanguageList();
     }// GEN-LAST:event_directoryTextFieldActionPerformed
 
     private void directoryChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_directoryChooserButtonActionPerformed
-    // open a dialog box to choose the directory
+        // open a dialog box to choose the directory
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setDialogTitle(OStrings.getString("GUI_SPELLCHECKER_FILE_CHOOSER_TITLE"));
         int result = fileChooser.showOpenDialog(SpellcheckerConfigurationDialog.this);
@@ -381,7 +403,6 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
             File file = fileChooser.getSelectedFile();
             directoryTextField.setText(file.getAbsolutePath());
         }
-        updateLanguageList();
     }// GEN-LAST:event_directoryChooserButtonActionPerformed
 
     private void installButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_installButtonActionPerformed
@@ -391,8 +412,7 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
             return;
         }
 
-        Preferences
-                .setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, dictionaryUrlTextField.getText());
+        Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, dictionaryUrlTextField.getText());
 
         Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
         Cursor oldCursor = getCursor();
@@ -405,40 +425,38 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
             installerDialog.setVisible(true);
             updateLanguageList();
         } catch (IOException ex) {
-        	setCursor(oldCursor);
+            setCursor(oldCursor);
             JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), OStrings.getString("ERROR_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
-        setUninstalButtonStatus();
     }// GEN-LAST:event_installButtonActionPerformed
 
     private void uninstallButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_uninstallButtonActionPerformed
-    // any dictionary manager available
-        if (dicMan == null)
+        // any dictionary manager available
+        if (dicMan == null) {
             return; // this should never happen - just in case it does
-
+        }
         if (currentLanguage != null) {
             Object[] selection = languageList.getSelectedValues();
-            for (Object aSelection : selection) {
-                String selectedItem = (String) aSelection;
+            for (Object item : selection) {
+                String selectedItem = (String) item;
                 String selectedLocaleName = selectedItem.substring(0, selectedItem.indexOf(" "));
 
                 if (selectedLocaleName.equals(currentLanguage.getLocaleCode())) {
                     if (JOptionPane.showConfirmDialog(this,
                             OStrings.getString("GUI_SPELLCHECKER_UNINSTALL_CURRENT"),
                             OStrings.getString("GUI_SPELLCHECKER_UNINSTALL_CURRENT_TITLE"),
-                            JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
                         return;
+                    }
                 }
-
-                if (!dicMan.uninstallDictionary(selectedLocaleName))
+                if (!dicMan.uninstallDictionary(selectedLocaleName)) {
                     JOptionPane.showMessageDialog(this,
                             OStrings.getString("GUI_SPELLCHECKER_UNINSTALL_UNABLE"),
                             OStrings.getString("GUI_SPELLCHECKER_UNINSTALL_UNABLE_TITLE"),
                             JOptionPane.ERROR_MESSAGE);
-
+                }
                 languageListModel.remove(languageList.getSelectedIndex());
             }
-            setUninstalButtonStatus();
         }
     }// GEN-LAST:event_uninstallButtonActionPerformed
 
@@ -447,14 +465,12 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
     }// GEN-LAST:event_cancelButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_okButtonActionPerformed
-    // save preferences
+        // save preferences
         Preferences.setPreference(Preferences.ALLOW_AUTO_SPELLCHECKING, autoSpellcheckCheckBox.isSelected());
 
-        Preferences
-                .setPreference(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY, directoryTextField.getText());
+        Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY, directoryTextField.getText());
 
-        Preferences
-                .setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, dictionaryUrlTextField.getText());
+        Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, dictionaryUrlTextField.getText());
 
         doClose(RET_OK);
     }// GEN-LAST:event_okButtonActionPerformed
@@ -474,7 +490,14 @@ public class SpellcheckerConfigurationDialog extends PeroDialog {
     private javax.swing.JLabel directoryLabel;
     private javax.swing.JTextField directoryTextField;
     private javax.swing.JButton installButton;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JList languageList;
     private javax.swing.JScrollPane languageScrollPane;
     private javax.swing.JButton okButton;

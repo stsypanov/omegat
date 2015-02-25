@@ -12,7 +12,7 @@
                2012 Wildrich Fourie, Guido Leenders, Didier Briel
                2013 Zoltan Bartko, Didier Briel, Yu Tang
                2014 Aaron Madlon-Kay
-               2015 Yu Tang
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -34,21 +34,45 @@
 
 package org.omegat.gui.main;
 
+import java.awt.Component;
+import java.io.IOException;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.text.JTextComponent;
+
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
+import org.omegat.core.search.SearchMode;
 import org.omegat.core.matching.NearString;
 import org.omegat.core.matching.NearString.MATCH_SOURCE;
-import org.omegat.core.search.SearchMode;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.core.spellchecker.ISpellChecker;
 import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
-import org.omegat.gui.dialogs.*;
+import org.omegat.gui.dialogs.AboutDialog;
+import org.omegat.gui.dialogs.AutotextAutoCompleterOptionsDialog;
+import org.omegat.gui.dialogs.CharTableAutoCompleterOptionsDialog;
+import org.omegat.gui.dialogs.CustomColorSelectionDialog;
+import org.omegat.gui.dialogs.ExternalTMXMatchesDialog;
+import org.omegat.gui.dialogs.FontSelectionDialog;
+import org.omegat.gui.dialogs.GlossaryAutoCompleterOptionsDialog;
+import org.omegat.gui.dialogs.GoToSegmentDialog;
+import org.omegat.gui.dialogs.LastChangesDialog;
+import org.omegat.gui.dialogs.LogDialog;
+import org.omegat.gui.dialogs.SaveOptionsDialog;
+import org.omegat.gui.dialogs.SpellcheckerConfigurationDialog;
+import org.omegat.gui.dialogs.TagValidationOptionsDialog;
+import org.omegat.gui.dialogs.TeamOptionsDialog;
+import org.omegat.gui.dialogs.UserPassDialog;
+import org.omegat.gui.dialogs.ViewOptionsDialog;
+import org.omegat.gui.dialogs.WorkflowOptionsDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
@@ -57,12 +81,14 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
-import org.omegat.util.*;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.util.List;
+import org.omegat.util.FileUtil;
+import org.omegat.util.Language;
+import org.omegat.util.Log;
+import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * Handler for main menu items.
@@ -460,96 +486,13 @@ public class MainWindowMenuHandler {
      */
     public void gotoSegmentMenuItemActionPerformed() {
         // Create a dialog for input
-        final JOptionPane input = new JOptionPane(OStrings.getString("MW_PROMPT_SEG_NR_MSG"),
-                JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION); // create
-        input.setWantsInput(true); // make it require input
-        final JDialog dialog = new JDialog(mainWindow, OStrings.getString("MW_PROMPT_SEG_NR_TITLE"), true); // create
-        // dialog
-        dialog.setContentPane(input); // add option pane to dialog
+        GoToSegmentDialog dialog = new GoToSegmentDialog(mainWindow, true);
+        dialog.setVisible(true);
 
-        // Make the dialog verify the input
-        input.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            @Override
-            public void propertyChange(java.beans.PropertyChangeEvent event) {
-                // Handle the event
-                if (dialog.isVisible() && (event.getSource() == input)) {
-                    // If user pressed Enter or OK, check the input
-                    String property = event.getPropertyName();
-                    Object value = input.getValue();
-
-                    // Don't do the checks if no option has been selected
-                    if (value == JOptionPane.UNINITIALIZED_VALUE)
-                        return;
-
-                    if (property.equals(JOptionPane.INPUT_VALUE_PROPERTY)
-                            || (property.equals(JOptionPane.VALUE_PROPERTY) && ((Integer) value) == JOptionPane.OK_OPTION)) {
-                        // Prevent the checks from being done twice
-                        input.setValue(JOptionPane.UNINITIALIZED_VALUE);
-
-                        // Get the value entered by the user
-                        String inputValue = (String) input.getInputValue();
-
-                        int maxNr = Core.getProject().getAllEntries().size();
-
-                        // Check if the user entered a value at all
-                        if ((inputValue == null) || (inputValue.trim().length() == 0)) {
-                            // Show error message
-                            displayErrorMessage(maxNr);
-                            return;
-                        }
-
-                        // Check if the user really entered a number
-                        int segmentNr;
-                        try {
-                            // Just parse it. If parsed, it's a number.
-                            segmentNr = Integer.parseInt(inputValue);
-                        } catch (NumberFormatException e) {
-                            // If the exception is thrown, the user didn't
-                            // enter a number
-                            // Show error message
-                            displayErrorMessage(maxNr);
-                            return;
-                        }
-
-                        // Check if the segment number is within bounds
-                        if (segmentNr < 1 || segmentNr > maxNr) {
-                            // Tell the user he has to enter a number within
-                            // certain bounds
-                            displayErrorMessage(maxNr);
-                            return;
-                        }
-                    }
-
-                    // If we're here, the user has either pressed
-                    // Cancel/Esc,
-                    // or has entered a valid number. In all cases, close
-                    // the dialog.
-                    dialog.setVisible(false);
-                }
-            }
-
-            private void displayErrorMessage(int maxNr) {
-                JOptionPane.showMessageDialog(dialog,
-                        StaticUtils.format(OStrings.getString("MW_SEGMENT_NUMBER_ERROR"), maxNr),
-                        OStrings.getString("TF_ERROR"), JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        // Show the input dialog
-        dialog.pack(); // make it look good
-        dialog.setLocationRelativeTo(Core.getMainWindow().getApplicationFrame()); // center it on the main window
-        dialog.setVisible(true); // show it
-
-        // Get the input value, if any
-        Object inputValue = input.getInputValue();
-        if ((inputValue != null) && !inputValue.equals(JOptionPane.UNINITIALIZED_VALUE)) {
-            // Go to the segment the user requested
-            try {
-                Core.getEditor().gotoEntry(Integer.parseInt((String) inputValue));
-            } catch (ClassCastException e) {
-                // Shouldn't happen, but still... Just eat silently.
-            } catch (NumberFormatException e) {
-            }
+        int jumpTo = dialog.getResult();
+        
+        if (jumpTo != -1) {
+            Core.getEditor().gotoEntry(jumpTo);
         }
     }
 
@@ -945,14 +888,30 @@ public class MainWindowMenuHandler {
     }
     
     /**
-     * Displays the dialog to configure proxy
+     * Displays the dialog to set login and password for proxy.
      */
     public void optionsViewOptionsMenuLoginItemActionPerformed() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new ProxyDialog();
-			}
-		});
+        UserPassDialog proxyOptions = new UserPassDialog(mainWindow);
+
+        String encodedUser = (Preferences.getPreference(Preferences.PROXY_USER_NAME));
+        String encodedPassword = (Preferences.getPreference(Preferences.PROXY_PASSWORD));
+
+        try {
+            proxyOptions.userText.setText(new String(org.omegat.util.Base64.decode(encodedUser)));
+            proxyOptions.passwordField.setText(new String(org.omegat.util.Base64.decode(encodedPassword)));
+        } catch (IOException ex) {
+            Log.logErrorRB("LOG_DECODING_ERROR");
+            Log.log(ex);
+        }
+
+        proxyOptions.setVisible(true);
+
+        if (proxyOptions.getReturnStatus() == UserPassDialog.RET_OK) {
+            encodedUser = org.omegat.util.Base64.encodeBytes(proxyOptions.userText.getText().getBytes());
+            encodedPassword = org.omegat.util.Base64.encodeBytes(new String(proxyOptions.passwordField.getPassword()).getBytes());
+
+            Preferences.setPreference(Preferences.PROXY_USER_NAME, encodedUser);
+            Preferences.setPreference(Preferences.PROXY_PASSWORD, encodedPassword);
+        }
     }
 }

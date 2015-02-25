@@ -9,7 +9,7 @@
                2008 Andrzej Sawula, Alex Buloichik, Didier Briel
                2013 Yu Tang, Aaron Madlon-Kay
                2014 Piotr Kulik
-               2015 Yu Tang
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -36,8 +36,9 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -52,6 +53,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.text.JTextComponent;
 import javax.swing.WindowConstants;
 
@@ -61,7 +63,7 @@ import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
-import org.omegat.gui.common.PeroFrame;
+import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
@@ -74,7 +76,6 @@ import org.omegat.util.StringUtil;
 import org.omegat.util.WikiGet;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.OmegaTFileChooser;
-import org.omegat.util.gui.ResourcesUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 
 import com.vlsolutions.swing.docking.Dockable;
@@ -99,7 +100,7 @@ import com.vlsolutions.swing.docking.FloatingDialog;
  * @author Piotr Kulik
  */
 @SuppressWarnings("serial")
-public class MainWindow extends PeroFrame implements IMainWindow {
+public class MainWindow extends JFrame implements IMainWindow {
     public final MainWindowMenu menu;
 
     protected ProjectFilesListController m_projWin;
@@ -111,7 +112,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
     private Font m_font;
 
     /** Set of all open search windows. */
-    private final Set<SearchWindowController> m_searches = new HashSet<>();
+    private final Set<SearchWindowController> m_searches = new HashSet<SearchWindowController>();
 
     protected JLabel lengthLabel;
     protected JLabel progressLabel;
@@ -150,12 +151,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
 
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
 
-        // set two icons, 16x16 and 32x32
-        final List<Image> icons = new ArrayList<>();
-        final String RESOURCES = "/org/omegat/gui/resources/";
-        icons.add(ResourcesUtil.getIcon(RESOURCES + "OmegaT_small.gif").getImage());
-        icons.add(ResourcesUtil.getIcon(RESOURCES + "OmegaT.gif").getImage());
-        setIconImages(icons);
+        OmegaTIcons.setIconImages(this);
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
@@ -168,7 +164,6 @@ public class MainWindow extends PeroFrame implements IMainWindow {
 
         CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
             public void onApplicationStartup() {
-                MainWindowUI.resetDesktopLayout(MainWindow.this);
                 MainWindowUI.loadScreenLayout(MainWindow.this);
 
                 DockingUI.removeUnusedMenuSeparators(menu.getOptionsMenu().getPopupMenu());
@@ -331,9 +326,10 @@ public class MainWindow extends PeroFrame implements IMainWindow {
             File sourcedir = new File(projectsource);
             File[] selFiles = chooser.getSelectedFiles();
             try {
-                for (File selSrc : selFiles) {
+                for (int i = 0; i < selFiles.length; i++) {
+                    File selSrc = selFiles[i];
                     if (selSrc.isDirectory()) {
-                        List<String> files = new ArrayList<>();
+                        List<String> files = new ArrayList<String>();
                         StaticUtils.buildFileList(files, selSrc, true);
                         String selSourceParent = selSrc.getParent();
                         for (String filename : files) {
@@ -343,7 +339,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
                             LFileCopy.copy(src, dest);
                         }
                     } else {
-                        File dest = new File(sourcedir, selSrc.getName());
+                        File dest = new File(sourcedir, selFiles[i].getName());
                         LFileCopy.copy(selSrc, dest);
                     }
                 }
@@ -374,21 +370,57 @@ public class MainWindow extends PeroFrame implements IMainWindow {
      * {@inheritDoc}
      */
     public void showStatusMessageRB(final String messageKey, final Object... params) {
-        final String msg;
-        if (messageKey == null) {
-            msg = " ";
-        } else {
-            if (params != null) {
-                msg = StaticUtils.format(OStrings.getString(messageKey), params);
-            } else {
-                msg = OStrings.getString(messageKey);
-            }
-        }
+        final String msg = getLocalizedString(messageKey, params);
         UIThreadsUtil.executeInSwingThread(new Runnable() {
+            @Override
             public void run() {
                 statusLabel.setText(msg);
             }
         });
+    }
+    
+    private String getLocalizedString(String messageKey, Object... params) {
+        if (messageKey == null) {
+            return " ";
+        } else if (params == null) {
+            return OStrings.getString(messageKey);
+        } else {
+            return StaticUtils.format(OStrings.getString(messageKey), params);
+        }
+    }
+
+    /**
+     * Same as {@link #showStatusMessageRB(String, Object...)} but 
+     * this will clear the message after ten seconds.
+     * 
+     * @param messageKey
+     *            message key in resource bundle
+     * @param params
+     *            message parameters for formatting
+     */
+    public void showTimedStatusMessageRB(String messageKey, Object... params) {
+        showStatusMessageRB(messageKey, params);
+
+        if (messageKey == null) {
+            return;
+        }
+
+        // clear the message after 10 seconds
+        final String localizedString = getLocalizedString(messageKey, params);
+        ActionListener clearStatus = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                String text = statusLabel.getText();
+                if (localizedString.equals(text)) {
+                    statusLabel.setText(null);
+                }
+            }
+        };
+
+        final int DELAY = 10000; // milliseconds
+        final Timer timer = new Timer(DELAY, clearStatus);
+        timer.setRepeats(false);  // one-time only
+        timer.start();
     }
 
     /**
@@ -432,8 +464,8 @@ public class MainWindow extends PeroFrame implements IMainWindow {
      */
     public void displayWarningRB(String warningKey, Object... params) {
         displayWarningRB(warningKey, null, params);
-    }
-
+    };
+    
     /**
      * {@inheritDoc}
      */
@@ -481,7 +513,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
                 statusLabel.setText(msg);
                 String fulltext = msg;
                 if (ex != null)
-                    fulltext += '\n' + ex.toString();
+                    fulltext += "\n" + ex.toString();
                 JOptionPane.showMessageDialog(MainWindow.this, fulltext, OStrings.getString("TF_ERROR"),
                         JOptionPane.ERROR_MESSAGE);
             }

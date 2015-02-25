@@ -4,7 +4,8 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2007 Zoltan Bartko, Alex Buloichik
-               2009 Didier Briel               
+               2009 Didier Briel
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/               
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -56,6 +57,7 @@ import org.omegat.util.Preferences;
  * @author Zoltan Bartko (bartkozoltan at bartkozoltan dot com)
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
+ * @author Aaron Madlon-Kay
  */
 public class SpellChecker implements ISpellChecker {
     /** The spell checking provider. */
@@ -255,6 +257,8 @@ public class SpellChecker implements ISpellChecker {
         if (checker==null) 
             return true;
 
+        word = normalize(word);
+        
         // check in cache first
         synchronized (this) {
             if (incorrectWordsCache.contains(word)) {
@@ -292,13 +296,14 @@ public class SpellChecker implements ISpellChecker {
             return Collections.EMPTY_LIST;
         }
 
-        return checker.suggest(word);
+        return checker.suggest(normalize(word));
     }
 
     /**
      * Add a word to the list of ignored words
      */
     public void ignoreWord(String word) {
+        word = normalize(word);
         if (!ignoreList.contains(word)) {
             ignoreList.add(word);
             synchronized (this) {
@@ -312,6 +317,7 @@ public class SpellChecker implements ISpellChecker {
      * Add a word to the list of correct words
      */
     public void learnWord(String word) {
+        word = normalize(word);
         if (!learnedList.contains(word)) {
             learnedList.add(word);
             checker.learnWord(word);
@@ -320,5 +326,14 @@ public class SpellChecker implements ISpellChecker {
                 correctWordsCache.add(word);
             }
         }
+    }
+    
+    /**
+     * Normalize the orthography of the word by replacing alternative characters
+     * with "canonical" ones.
+     */
+    private static String normalize(String word) {
+        // U+2019 RIGHT SINGLE QUOTATION MARK to U+0027 APOSTROPHE
+        return word.replace('\u2019', '\'');
     }
 }

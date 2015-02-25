@@ -36,6 +36,7 @@ import javax.swing.AbstractAction;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -84,6 +85,7 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
                 doClose(RET_CANCEL);
             }
         });
+        DockingUI.displayCentered(this);
     }
 
     private final OpenXMLOptions options;
@@ -347,7 +349,6 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void preserveSpacesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preserveSpacesCBActionPerformed
