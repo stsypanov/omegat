@@ -73,23 +73,23 @@ public class Preferences {
     public static final String FILE_PREFERENCES = OStrings.BRANDING.isEmpty() ? "omegat.prefs"
             : "omegat-" + OStrings.BRANDING + ".prefs";
 
-    // preference names
-    public static final String SOURCE_LOCALE = "source_lang";
-    public static final String TARGET_LOCALE = "target_lang";
-    public static final String CURRENT_FOLDER = "current_folder";
-    public static final String SOURCE_FOLDER = "source_folder";
-    public static final String TARGET_FOLDER = "target_folder";
-    public static final String TM_FOLDER = "tm_folder";
-    public static final String DICT_FOLDER = "dict_folder";
-    public static final String GLOSSARY_FOLDER = "glossary_folder";
-    public static final String GLOSSARY_FILE = "glossary_file";
-    public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
+	// preference names
+	public static final String SOURCE_LOCALE = "source_lang";
+	public static final String TARGET_LOCALE = "target_lang";
+	public static final String CURRENT_FOLDER = "current_folder";
+	public static final String SOURCE_FOLDER = "source_folder";
+	public static final String TARGET_FOLDER = "target_folder";
+	public static final String TM_FOLDER = "tm_folder";
+	public static final String DICT_FOLDER = "dict_folder";
+	public static final String GLOSSARY_FOLDER = "glossary_folder";
+	public static final String GLOSSARY_FILE = "glossary_file";
+	public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
 
-    public static final String MAINWINDOW_WIDTH = "screen_width";
-    public static final String MAINWINDOW_HEIGHT = "screen_height";
-    public static final String MAINWINDOW_X = "screen_x";
-    public static final String MAINWINDOW_Y = "screen_y";
-    public static final String MAINWINDOW_LAYOUT = "docking_layout";
+	public static final String MAINWINDOW_WIDTH = "screen_width";
+	public static final String MAINWINDOW_HEIGHT = "screen_height";
+	public static final String MAINWINDOW_X = "screen_x";
+	public static final String MAINWINDOW_Y = "screen_y";
+	public static final String MAINWINDOW_LAYOUT = "docking_layout";
 
     // Project files window size and position
     public static final String PROJECT_FILES_WINDOW_WIDTH = "project_files_window_width";
@@ -102,212 +102,161 @@ public class Preferences {
     // Currently not exposed in UI.
     public static final String PROJECT_FILES_SHOW_ON_LOAD = "project_files_show_on_load";
 
-    // Search window size and position
-    public static final String SEARCHWINDOW_WIDTH = "search_window_width";
-    public static final String SEARCHWINDOW_HEIGHT = "search_window_height";
-    public static final String SEARCHWINDOW_X = "search_window_x";
-    public static final String SEARCHWINDOW_Y = "search_window_y";
-    public static final String SEARCHWINDOW_SEARCH_TYPE = "search_window_search_type";
-    public static final String SEARCHWINDOW_REPLACE_TYPE = "search_window_replace_type";
-    public static final String SEARCHWINDOW_CASE_SENSITIVE = "search_window_case_sensitive";
-    public static final String SEARCHWINDOW_SPACE_MATCH_NBSP = "search_window_space_match_nbsp";
-    public static final String SEARCHWINDOW_CASE_SENSITIVE_REPLACE = "search_window_case_sensitive_replace";
-    public static final String SEARCHWINDOW_SPACE_MATCH_NBSP_REPLACE = "search_window_space_match_nbsp_replace";
-    public static final String SEARCHWINDOW_REPLACE_UNTRANSLATED = "search_window_replace_untranslated";
-    public static final String SEARCHWINDOW_SEARCH_SOURCE = "search_window_search_source";
-    public static final String SEARCHWINDOW_SEARCH_TRANSLATION = "search_window_search_translation";
-    public static final String SEARCHWINDOW_SEARCH_STATE = "search_window_search_state";
-    public static final String SEARCHWINDOW_SEARCH_NOTES = "search_window_search_notes";
-    public static final String SEARCHWINDOW_SEARCH_COMMENTS = "search_window_search_comments";
-    public static final String SEARCHWINDOW_REG_EXPRESSIONS = "search_window_reg_expressions";
-    public static final String SEARCHWINDOW_GLOSSARY_SEARCH = "search_window_glossary_search";
-    public static final String SEARCHWINDOW_MEMORY_SEARCH = "search_window_memory_search";
-    public static final String SEARCHWINDOW_TM_SEARCH = "search_window_tm_search";
-    public static final String SEARCHWINDOW_ALL_RESULTS = "search_window_all_results";
-    public static final String SEARCHWINDOW_FILE_NAMES = "search_window_file_names";
-    public static final String SEARCHWINDOW_ADVANCED_VISIBLE = "search_window_advanced_visible";
-    public static final String SEARCHWINDOW_SEARCH_AUTHOR = "search_window_search_author";
-    public static final String SEARCHWINDOW_AUTHOR_NAME = "search_window_author_name";
-    public static final String SEARCHWINDOW_DATE_FROM = "search_window_date_from";
-    public static final String SEARCHWINDOW_DATE_FROM_VALUE = "search_window_date_from_value";
-    public static final String SEARCHWINDOW_DATE_TO = "search_window_date_to";
-    public static final String SEARCHWINDOW_DATE_TO_VALUE = "search_window_date_to_value";
-    public static final String SEARCHWINDOW_NUMBER_OF_RESULTS = "search_window_number_of_results";
-    public static final String SEARCHWINDOW_DIR = "search_window_dir";
-    public static final String SEARCHWINDOW_SEARCH_FILES = "search_window_search_files";
-    public static final String SEARCHWINDOW_RECURSIVE = "search_window_search_recursive";
-    
-    // Search history
-    public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
-    public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
-    public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
+	// Search window size and position
+	public static final String SEARCHWINDOW_WIDTH = "search_window_width";
+	public static final String SEARCHWINDOW_HEIGHT = "search_window_height";
+	public static final String SEARCHWINDOW_X = "search_window_x";
+	public static final String SEARCHWINDOW_Y = "search_window_y";
+	public static final String SEARCHWINDOW_SEARCH_TYPE = "search_window_search_type";
+	public static final String SEARCHWINDOW_REPLACE_TYPE = "search_window_replace_type";
+	public static final String SEARCHWINDOW_CASE_SENSITIVE = "search_window_case_sensitive";
+	public static final String SEARCHWINDOW_SPACE_MATCH_NBSP = "search_window_space_match_nbsp";
+	public static final String SEARCHWINDOW_CASE_SENSITIVE_REPLACE = "search_window_case_sensitive_replace";
+	public static final String SEARCHWINDOW_SPACE_MATCH_NBSP_REPLACE = "search_window_space_match_nbsp_replace";
+	public static final String SEARCHWINDOW_REPLACE_UNTRANSLATED = "search_window_replace_untranslated";
+	public static final String SEARCHWINDOW_SEARCH_SOURCE = "search_window_search_source";
+	public static final String SEARCHWINDOW_SEARCH_TRANSLATION = "search_window_search_translation";
+	public static final String SEARCHWINDOW_SEARCH_STATE = "search_window_search_state";
+	public static final String SEARCHWINDOW_SEARCH_NOTES = "search_window_search_notes";
+	public static final String SEARCHWINDOW_SEARCH_COMMENTS = "search_window_search_comments";
+	public static final String SEARCHWINDOW_REG_EXPRESSIONS = "search_window_reg_expressions";
+	public static final String SEARCHWINDOW_GLOSSARY_SEARCH = "search_window_glossary_search";
+	public static final String SEARCHWINDOW_MEMORY_SEARCH = "search_window_memory_search";
+	public static final String SEARCHWINDOW_TM_SEARCH = "search_window_tm_search";
+	public static final String SEARCHWINDOW_ALL_RESULTS = "search_window_all_results";
+	public static final String SEARCHWINDOW_FILE_NAMES = "search_window_file_names";
+	public static final String SEARCHWINDOW_ADVANCED_VISIBLE = "search_window_advanced_visible";
+	public static final String SEARCHWINDOW_SEARCH_AUTHOR = "search_window_search_author";
+	public static final String SEARCHWINDOW_AUTHOR_NAME = "search_window_author_name";
+	public static final String SEARCHWINDOW_DATE_FROM = "search_window_date_from";
+	public static final String SEARCHWINDOW_DATE_FROM_VALUE = "search_window_date_from_value";
+	public static final String SEARCHWINDOW_DATE_TO = "search_window_date_to";
+	public static final String SEARCHWINDOW_DATE_TO_VALUE = "search_window_date_to_value";
+	public static final String SEARCHWINDOW_NUMBER_OF_RESULTS = "search_window_number_of_results";
+	public static final String SEARCHWINDOW_DIR = "search_window_dir";
+	public static final String SEARCHWINDOW_SEARCH_FILES = "search_window_search_files";
+	public static final String SEARCHWINDOW_RECURSIVE = "search_window_search_recursive";
 
-    // Tag validation window size and position
-    public static final String TAGVWINDOW_WIDTH = "tagv_window_width";
-    public static final String TAGVWINDOW_HEIGHT = "tagv_window_height";
-    public static final String TAGVWINDOW_X = "tagv_window_x";
-    public static final String TAGVWINDOW_Y = "tagv_window_y";
+	// Search history
+	public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
+	public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
+	public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
 
-    // Help window size and position
-    public static final String HELPWINDOW_WIDTH = "help_window_width";
-    public static final String HELPWINDOW_HEIGHT = "help_window_height";
-    public static final String HELPWINDOW_X = "help_window_x";
-    public static final String HELPWINDOW_Y = "help_window_y";
+	// Tag validation window size and position
+	public static final String TAGVWINDOW_WIDTH = "tagv_window_width";
+	public static final String TAGVWINDOW_HEIGHT = "tagv_window_height";
+	public static final String TAGVWINDOW_X = "tagv_window_x";
+	public static final String TAGVWINDOW_Y = "tagv_window_y";
 
-    /** Use the TAB button to advance to the next segment */
-    public static final String USE_TAB_TO_ADVANCE = "tab_advance";
-    /** Always confirm Quit, even if the project is saved */
-    public static final String ALWAYS_CONFIRM_QUIT = "always_confirm_quit";
+	// Help window size and position
+	public static final String HELPWINDOW_WIDTH = "help_window_width";
+	public static final String HELPWINDOW_HEIGHT = "help_window_height";
+	public static final String HELPWINDOW_X = "help_window_x";
+	public static final String HELPWINDOW_Y = "help_window_y";
 
-    public static final String ALLOW_GOOGLE_TRANSLATE = "allow_google_translate";
-    public static final String ALLOW_GOOGLE2_TRANSLATE = "allow_google2_translate";
+	/** Use the TAB button to advance to the next segment */
+	public static final String USE_TAB_TO_ADVANCE = "tab_advance";
+	/** Always confirm Quit, even if the project is saved */
+	public static final String ALWAYS_CONFIRM_QUIT = "always_confirm_quit";
 
-    public static final String ALLOW_BELAZAR_TRANSLATE = "allow_belazar_translate";
+	public static final String ALLOW_GOOGLE_TRANSLATE = "allow_google_translate";
+	public static final String ALLOW_GOOGLE2_TRANSLATE = "allow_google2_translate";
 
-    public static final String ALLOW_APERTIUM_TRANSLATE = "allow_apertium_translate";
+	public static final String ALLOW_BELAZAR_TRANSLATE = "allow_belazar_translate";
 
-    public static final String ALLOW_MICROSOFT_TRANSLATE = "allow_microsoft_translate";
-    
-    public static final String ALLOW_MYMEMORY_HUMAN_TRANSLATE = "allow_mymemory_human_translate";
-    public static final String ALLOW_MYMEMORY_MACHINE_TRANSLATE = "allow_mymemory_machine_translate";
-    
-    public static final String ALLOW_YANDEX_TRANSLATE = "allow_yandex_translate";
-    
-    /** Enable TransTips */
-    public static final String TRANSTIPS = "transtips";
-    /** TransTips Option: Only match exact words */
-    public static final String TRANSTIPS_EXACT_SEARCH = "transtips_exact_search";
+	public static final String ALLOW_APERTIUM_TRANSLATE = "allow_apertium_translate";
 
-    /** Mark the segments with a note with a different color */
-    public static final String MARK_NOTED_SEGMENTS = "mark_noted_segments";
-    
-    /** Mark the non-breakable spaces with a different color */
-    public static final String MARK_NBSP = "mark_nbsp";
-    /** Mark whitespace as symbols */
-    public static final String MARK_WHITESPACE = "mark_whitespace";
-    /** Mark Bidi controls as symbols */
-    public static final String MARK_BIDI = "mark_bidi";
+	public static final String ALLOW_MICROSOFT_TRANSLATE = "allow_microsoft_translate";
 
-    /** Mark the translated segments with a different color */
-    public static final String MARK_TRANSLATED_SEGMENTS = "mark_translated_segments";
+	public static final String ALLOW_MYMEMORY_HUMAN_TRANSLATE = "allow_mymemory_human_translate";
+	public static final String ALLOW_MYMEMORY_MACHINE_TRANSLATE = "allow_mymemory_machine_translate";
 
-    public static final String MARK_AUTOPOPULATED = "mark_autopopulated";
+	public static final String ALLOW_YANDEX_TRANSLATE = "allow_yandex_translate";
 
-    /** Mark the untranslated segments with a different color */
-    public static final String MARK_UNTRANSLATED_SEGMENTS = "mark_untranslated_segments";
+	/** Enable TransTips */
+	public static final String TRANSTIPS = "transtips";
+	/** TransTips Option: Only match exact words */
+	public static final String TRANSTIPS_EXACT_SEARCH = "transtips_exact_search";
 
-    /** Workflow Option: Don't Insert Source Text Into Translated Segment */
-    public static final String DONT_INSERT_SOURCE_TEXT = "wf_noSourceText";
-    /** Workflow Option: Allow translation to be equal to source */
-    public static final String ALLOW_TRANS_EQUAL_TO_SRC = "wf_allowTransEqualToSrc";
-    /** Workflow Option: Insert Best Match Into Translated Segment */
-    public static final String BEST_MATCH_INSERT = "wf_insertBestMatch";
-    /** Workflow Option: Minimal Similarity Of the Best Fuzzy Match to insert */
-    public static final String BEST_MATCH_MINIMAL_SIMILARITY = "wf_minimalSimilarity";
-    /**
-     * Default Value of Workflow Option: Minimal Similarity Of the Best Fuzzy
-     * Match to insert
-     */
-    public static final String BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = "80";
-    /** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
-    public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";
-    /** Workflow Option: Export current segment */
-    public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment";
-    /** Workflow Option: Go To Next Untranslated Segment stops when there is at least one
-    alternative translation */
-    public static final String STOP_ON_ALTERNATIVE_TRANSLATION="wf_stopOnAlternativeTranslation";
-    /** Workflow Option: Attempt to convert numbers when inserting a fuzzy match */
-    public static final String CONVERT_NUMBERS = "wf_convertNumbers";
-    /** Workflow Option: Save auto-populated status */
-    public static final String SAVE_AUTO_STATUS = "save_auto_status";
-    
-    /** Tag Validation Option: Don't check printf-tags */
-    public static final String DONT_CHECK_PRINTF_TAGS = "tagValidation_noCheck";
-    /** Tag Validation Option: check simple printf-tags */
-    public static final String CHECK_SIMPLE_PRINTF_TAGS = "tagValidation_simpleCheck";
-    /** Tag Validation Option: check all printf-tags */
-    public static final String CHECK_ALL_PRINTF_TAGS = "tagValidation_elaborateCheck";
-    /** Tag Validation Option: check simple java MessageFormat pattern tags */
-    public static final String CHECK_JAVA_PATTERN_TAGS = "tagValidation_javaMessageFormatSimplePatternCheck";
-    /** Tag Validation Option: check user defined tags according to regexp.*/
-    public static final String CHECK_CUSTOM_PATTERN = "tagValidation_customPattern";
-    /** Tag Validation Option: check target for text that should have been removed according to regexp.*/
-    public static final String CHECK_REMOVE_PATTERN = "tagValidation_removePattern";
+	/** Mark the segments with a note with a different color */
+	public static final String MARK_NOTED_SEGMENTS = "mark_noted_segments";
 
-    /** Tag Validation Option: allow tag editing in editor. */
-    public static final String ALLOW_TAG_EDITING = "allowTagEditing";
+	/** Mark the non-breakable spaces with a different color */
+	public static final String MARK_NBSP = "mark_nbsp";
+	/** Mark whitespace as symbols */
+	public static final String MARK_WHITESPACE = "mark_whitespace";
+	/** Mark Bidi controls as symbols */
+	public static final String MARK_BIDI = "mark_bidi";
 
-    /** Tag Validation Option: allow tag editing in editor. */
-    public static final String TAG_VALIDATE_ON_LEAVE = "tagValidateOnLeave";
+	/** Mark the translated segments with a different color */
+	public static final String MARK_TRANSLATED_SEGMENTS = "mark_translated_segments";
 
-    /** Team option: author ID */
-    public static final String TEAM_AUTHOR = "team_Author";
+	public static final String MARK_AUTOPOPULATED = "mark_autopopulated";
 
-    /**
-     * allow automatic spell checking or not
-     */
-    public static final String ALLOW_AUTO_SPELLCHECKING = "allow_auto_spellchecking";
+	/** Mark the untranslated segments with a different color */
+	public static final String MARK_UNTRANSLATED_SEGMENTS = "mark_untranslated_segments";
 
-    /**
-     * The location of the spell checker dictionaries
-     */
-    public static final String SPELLCHECKER_DICTIONARY_DIRECTORY = "spellcheker_dir";
+	/** Workflow Option: Don't Insert Source Text Into Translated Segment */
+	public static final String DONT_INSERT_SOURCE_TEXT = "wf_noSourceText";
+	/** Workflow Option: Allow translation to be equal to source */
+	public static final String ALLOW_TRANS_EQUAL_TO_SRC = "wf_allowTransEqualToSrc";
+	/** Workflow Option: Insert Best Match Into Translated Segment */
+	public static final String BEST_MATCH_INSERT = "wf_insertBestMatch";
+	/** Workflow Option: Minimal Similarity Of the Best Fuzzy Match to insert */
+	public static final String BEST_MATCH_MINIMAL_SIMILARITY = "wf_minimalSimilarity";
+	/**
+	 * Default Value of Workflow Option: Minimal Similarity Of the Best Fuzzy
+	 * Match to insert
+	 */
+	public static final String BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = "80";
+	/** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
+	public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";
+	/** Workflow Option: Export current segment */
+	public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment";
+	/** Workflow Option: Go To Next Untranslated Segment stops when there is at least one
+	 alternative translation */
+	public static final String STOP_ON_ALTERNATIVE_TRANSLATION = "wf_stopOnAlternativeTranslation";
+	/** Workflow Option: Attempt to convert numbers when inserting a fuzzy match */
+	public static final String CONVERT_NUMBERS = "wf_convertNumbers";
+	/** Workflow Option: Save auto-populated status */
+	public static final String SAVE_AUTO_STATUS = "save_auto_status";
 
-    /**
-     * URL of the dictionary repository
-     */
-    public static final String SPELLCHECKER_DICTIONARY_URL = "dictionary_url";
+	/** Tag Validation Option: Don't check printf-tags */
+	public static final String DONT_CHECK_PRINTF_TAGS = "tagValidation_noCheck";
+	/** Tag Validation Option: check simple printf-tags */
+	public static final String CHECK_SIMPLE_PRINTF_TAGS = "tagValidation_simpleCheck";
+	/** Tag Validation Option: check all printf-tags */
+	public static final String CHECK_ALL_PRINTF_TAGS = "tagValidation_elaborateCheck";
+	/** Tag Validation Option: check simple java MessageFormat pattern tags */
+	public static final String CHECK_JAVA_PATTERN_TAGS = "tagValidation_javaMessageFormatSimplePatternCheck";
+	/** Tag Validation Option: check user defined tags according to regexp.*/
+	public static final String CHECK_CUSTOM_PATTERN = "tagValidation_customPattern";
+	/** Tag Validation Option: check target for text that should have been removed according to regexp.*/
+	public static final String CHECK_REMOVE_PATTERN = "tagValidation_removePattern";
 
-    /**
-     * The location of the scripts
-     */
-    public static final String SCRIPTS_DIRECTORY = "scripts_dir";
-    
-    /** Quick script names */
-    public static final String SCRIPTS_QUICK_1 = "scripts_quick_1";
-    public static final String SCRIPTS_QUICK_2 = "scripts_quick_2";
-    public static final String SCRIPTS_QUICK_3 = "scripts_quick_3";
-    public static final String SCRIPTS_QUICK_4 = "scripts_quick_4";
-    public static final String SCRIPTS_QUICK_5 = "scripts_quick_5";
-    public static final String SCRIPTS_QUICK_6 = "scripts_quick_6";
-    public static final String SCRIPTS_QUICK_7 = "scripts_quick_7";
-    public static final String SCRIPTS_QUICK_8 = "scripts_quick_8";
-    public static final String SCRIPTS_QUICK_9 = "scripts_quick_9";
-    public static final String SCRIPTS_QUICK_0 = "scripts_quick_0";
+	/** Tag Validation Option: allow tag editing in editor. */
+	public static final String ALLOW_TAG_EDITING = "allowTagEditing";
 
-    /** Script window */
-    public static final String SCRIPTWINDOW_WIDTH = "script_window_width";
-    public static final String SCRIPTWINDOW_HEIGHT = "script_window_height";
-    public static final String SCRIPTWINDOW_X = "script_window_x";
-    public static final String SCRIPTWINDOW_Y = "script_window_y";
-    
-    /** Most recent projects list */
-    public static final String MOST_RECENT_PROJECTS_SIZE = "most_recent_projects_size";
-    public static final String MOST_RECENT_PROJECTS_PREFIX = "most_recent_projects_";
+	/** Tag Validation Option: allow tag editing in editor. */
+	public static final String TAG_VALIDATE_ON_LEAVE = "tagValidateOnLeave";
 
-    /**
-     * display the segment sources
-     */
-    public static final String DISPLAY_SEGMENT_SOURCES = "display_segment_sources";
+	/** Team option: author ID */
+	public static final String TEAM_AUTHOR = "team_Author";
 
-    /**
-     * mark unique segments
-     */
-    public static final String MARK_NON_UNIQUE_SEGMENTS = "mark_non_unique_segments";
+	/**
+	 * allow automatic spell checking or not
+	 */
+	public static final String ALLOW_AUTO_SPELLCHECKING = "allow_auto_spellchecking";
 
-    /**
-     * display modification info (author and modification date)
-     */
-    public static final String DISPLAY_MODIFICATION_INFO = "display_modification_info";
+	/**
+	 * The location of the spell checker dictionaries
+	 */
+	public static final String SPELLCHECKER_DICTIONARY_DIRECTORY = "spellcheker_dir";
 
-    /** External TMX options: Display level 2 tags */
-    public static final String EXT_TMX_SHOW_LEVEL2 = "ext_tmx_show_level2";
-    /** External TMX options: Use / for stand-alone tags */
-    public static final String EXT_TMX_USE_SLASH = "ext_tmx_use_slash";
-    /** External TMX options: Display template **/
-    public static final String EXT_TMX_MATCH_TEMPLATE = "ext_tmx_match_template";
-    /** External TMX options: Fuzzy match sort key **/
-    public static final String EXT_TMX_SORT_KEY = "ext_tmx_sort_key";
+	/**
+	 * URL of the dictionary repository
+	 */
+	public static final String SPELLCHECKER_DICTIONARY_URL = "dictionary_url";
 
     /** View options: Show all sources in bold */
     public static final String VIEW_OPTION_SOURCE_ALL_BOLD = "view_option_source_all_bold";
@@ -319,106 +268,170 @@ public class Preferences {
     public static final String VIEW_OPTION_TEMPLATE_ACTIVE = "view_option_template_active";
     public static final String VIEW_OPTION_MOD_INFO_TEMPLATE = "view_option_mod_info_template";
     public static final String VIEW_OPTION_MOD_INFO_TEMPLATE_WO_DATE = "view_option_mod_info_template_wo_date";
+	/**
+	 * The location of the scripts
+	 */
+	public static final String SCRIPTS_DIRECTORY = "scripts_dir";
 
-    /** Proxy options: User name for proxy access */
-    public static final String PROXY_USER_NAME = "proxy_user_name";
-    /** Proxy options: Password for proxy  access */
-    public static final String PROXY_PASSWORD = "proxy_password";
 
-    /** Automatic save interval in seconds */
-    public static final String AUTO_SAVE_INTERVAL = "auto_save_interval";
+	/** Script window */
+	public static final String SCRIPTWINDOW_WIDTH = "script_window_width";
+	public static final String SCRIPTWINDOW_HEIGHT = "script_window_height";
+	public static final String SCRIPTWINDOW_X = "script_window_x";
+	public static final String SCRIPTWINDOW_Y = "script_window_y";
 
-    /** Default number of seconds to auto save project */
-    public static final String AUTO_SAVE_DEFAULT = "180";
-    
-    /** Custom external command for post-processing */
-    public static final String EXTERNAL_COMMAND = "external_command";
-    
-    /** Allow per-project external commands */
-    public static final String ALLOW_PROJECT_EXTERN_CMD = "allow_project_extern_cmd";
+	/** Most recent projects list */
+	public static final String MOST_RECENT_PROJECTS_SIZE = "most_recent_projects_size";
+	public static final String MOST_RECENT_PROJECTS_PREFIX = "most_recent_projects_";
 
-    /**
-     * Version of file filters. Unfortunately cannot put it into filters itself
-     * for backwards compatibility reasons.
-     */
-    public static final String FILTERS_VERSION = "filters_version";
+	/**
+	 * display the segment sources
+	 */
+	public static final String DISPLAY_SEGMENT_SOURCES = "display_segment_sources";
 
-    public static final String LT_DISABLED = "lt_disabled";
+	/**
+	 * mark unique segments
+	 */
+	public static final String MARK_NON_UNIQUE_SEGMENTS = "mark_non_unique_segments";
 
-    public static final String LOOSE_TAG_ORDERING = "loose_tag_ordering";
+	/**
+	 * display modification info (author and modification date)
+	 */
+	public static final String DISPLAY_MODIFICATION_INFO = "display_modification_info";
 
-    public static final String TAGS_VALID_REQUIRED = "tags_valid_required";
+	/** External TMX options: Display level 2 tags */
+	public static final String EXT_TMX_SHOW_LEVEL2 = "ext_tmx_show_level2";
+	/** External TMX options: Use / for stand-alone tags */
+	public static final String EXT_TMX_USE_SLASH = "ext_tmx_use_slash";
+	/** External TMX options: Display template **/
+	public static final String EXT_TMX_MATCH_TEMPLATE = "ext_tmx_match_template";
+	/** External TMX options: Fuzzy match sort key **/
+	public static final String EXT_TMX_SORT_KEY = "ext_tmx_sort_key";
 
-    /**
-     * Prefix for keys used to record default tokenizer behavior settings.
-     * Prepend to the full name of the tokenizer, e.g.
-     * 
-     * <code>TOK_BEHAVIOR_PREFIX + tokenizer.class.getName()</code> to obtain
-     * <code>tokenizer_behavior_org.omegat.tokenizer.LuceneXXTokenizer</code>
-     */
-    public static final String TOK_BEHAVIOR_PREFIX = "tokenizer_behavior_";
+//	/** View options: Show all sources in bold */
+//	public static final String VIEW_OPTION_SOURCE_ALL_BOLD = "view_option_source_all_bold";
+//	/** View options: Mark first non-unique */
+//	public static final String VIEW_OPTION_UNIQUE_FIRST = "view_option_unique_first";
+//	/** View options: Strip tags from protected parts tooltip */
+//	public static final String VIEW_OPTION_PPT_STRIP_TAGS = "view_option_ppt_strip_tags";
+//	/** View options: Display text in protected parts tooltip in bold */
+//	public static final String VIEW_OPTION_PPT_BOLD_TEXT = "view_option_ppt_bold_text";
+//	/** View options: Modification Info display templates **/
+//	public static final String VIEW_OPTION_TEMPLATE_ACTIVE = "view_option_template_active";
+//	public static final String VIEW_OPTION_MOD_INFO_TEMPLATE = "view_option_mod_info_template";
+//	public static final String VIEW_OPTION_MOD_INFO_TEMPLATE_WO_DATE = "view_option_mod_info_template_wo_date";
 
-    /** glossary auto-completion */
-    public static final String AC_GLOSSARY_SHOW_SOURCE = "ac_glossary_show_source";
-    public static final String AC_GLOSSARY_SHOW_TARGET_BEFORE_SOURCE = "ac_glossary_show_target_before_source";
-    public static final String AC_GLOSSARY_SORT_BY_SOURCE = "ac_glossary_sort_by_source";
-    public static final String AC_GLOSSARY_SORT_BY_LENGTH = "ac_glossary_sort_by_length";
-    public static final String AC_GLOSSARY_SORT_ALPHABETICALLY = "ac_glossary_sort_alphabetically";
-    public static final String AC_GLOSSARY_CAPITALIZE = "ac_glossary_capitalize";
+	/** Proxy options: User name for proxy access */
+	public static final String PROXY_USER_NAME = "proxy_user_name";
+	/** Proxy options: Password for proxy  access */
+	public static final String PROXY_PASSWORD = "proxy_password";
 
-    /** autotext auto-completion */
-    public static final String AC_AUTOTEXT_FILE_NAME = "omegat.autotext";
-    public static final String AC_AUTOTEXT_SORT_BY_LENGTH = "ac_autotext_sort_by_length";
-    public static final String AC_AUTOTEXT_SORT_ALPHABETICALLY = "ac_autotext_sort_alphabetically";
-    public static final String AC_AUTOTEXT_SORT_FULL_TEXT = "ac_autotext_sort_full_text";
+	/** Automatic save interval in seconds */
+	public static final String AUTO_SAVE_INTERVAL = "auto_save_interval";
 
-    /** char table auto-completion */
-    public static final String AC_CHARTABLE_USE_CUSTOM_CHARS = "ac_chartable_use_custom_chars";
-    public static final String AC_CHARTABLE_CUSTOM_CHAR_STRING = "ac_chartable_custom_char_string";
-    public static final String AC_CHARTABLE_UNIQUE_CUSTOM_CHARS = "ac_chartable_unique_custom_chars";
+	/** Default number of seconds to auto save project */
+	public static final String AUTO_SAVE_DEFAULT = "180";
 
-    /** status bar progress mode */
-    public static final String SB_PROGRESS_MODE = "sb_progress_mode";
+	/** Custom external command for post-processing */
+	public static final String EXTERNAL_COMMAND = "external_command";
 
-    /** TaaS glossary client.*/
-    public static final String TAAS_LOOKUP = "taas_lookup";
-    public static final String TAAS_DOMAIN = "taas_domain";
+	/** Allow per-project external commands */
+	public static final String ALLOW_PROJECT_EXTERN_CMD = "allow_project_extern_cmd";
 
-    /** Private constructor, because this file is singleton */
-    static {
-        m_loaded = false;
-        m_preferenceMap = new HashMap<String, Integer>(64);
-        m_nameList = new ArrayList<String>(32);
-        m_valList = new ArrayList<String>(32);
-        m_changed = false;
-        doLoad();
-    }
+	/**
+	 * Version of file filters. Unfortunately cannot put it into filters itself
+	 * for backwards compatibility reasons.
+	 */
+	public static final String FILTERS_VERSION = "filters_version";
 
-    /**
-     * Returns the defaultValue of some preference out of OmegaT's preferences
-     * file.
-     * <p>
-     * If the key is not found, returns the empty string.
-     * 
-     * @param key
-     *            key of the key to look up, usually OConsts.PREF_...
-     * @return preference defaultValue as a string
-     */
-    public static String getPreference(String key) {
-        if (key == null || key.equals(""))
-            return "";
-        if (!m_loaded)
-            doLoad();
+	public static final String LT_DISABLED = "lt_disabled";
 
-        Integer i = m_preferenceMap.get(key);
-        String v = "";
-        if (i != null) {
-            // mapping exists - recover defaultValue
-            v = m_valList.get(i);
-        }
-        return v;
-    }
-    
+	public static final String LOOSE_TAG_ORDERING = "loose_tag_ordering";
+
+	public static final String TAGS_VALID_REQUIRED = "tags_valid_required";
+
+	/**
+	 * Prefix for keys used to record default tokenizer behavior settings.
+	 * Prepend to the full name of the tokenizer, e.g.
+	 *
+	 * <code>TOK_BEHAVIOR_PREFIX + tokenizer.class.getName()</code> to obtain
+	 * <code>tokenizer_behavior_org.omegat.tokenizer.LuceneXXTokenizer</code>
+	 */
+	public static final String TOK_BEHAVIOR_PREFIX = "tokenizer_behavior_";
+
+	/** glossary auto-completion */
+	public static final String AC_GLOSSARY_SHOW_SOURCE = "ac_glossary_show_source";
+	public static final String AC_GLOSSARY_SHOW_TARGET_BEFORE_SOURCE = "ac_glossary_show_target_before_source";
+	public static final String AC_GLOSSARY_SORT_BY_SOURCE = "ac_glossary_sort_by_source";
+	public static final String AC_GLOSSARY_SORT_BY_LENGTH = "ac_glossary_sort_by_length";
+	public static final String AC_GLOSSARY_SORT_ALPHABETICALLY = "ac_glossary_sort_alphabetically";
+	public static final String AC_GLOSSARY_CAPITALIZE = "ac_glossary_capitalize";
+
+	/** autotext auto-completion */
+	public static final String AC_AUTOTEXT_FILE_NAME = "omegat.autotext";
+	public static final String AC_AUTOTEXT_SORT_BY_LENGTH = "ac_autotext_sort_by_length";
+	public static final String AC_AUTOTEXT_SORT_ALPHABETICALLY = "ac_autotext_sort_alphabetically";
+	public static final String AC_AUTOTEXT_SORT_FULL_TEXT = "ac_autotext_sort_full_text";
+
+	/** char table auto-completion */
+	public static final String AC_CHARTABLE_USE_CUSTOM_CHARS = "ac_chartable_use_custom_chars";
+	public static final String AC_CHARTABLE_CUSTOM_CHAR_STRING = "ac_chartable_custom_char_string";
+	public static final String AC_CHARTABLE_UNIQUE_CUSTOM_CHARS = "ac_chartable_unique_custom_chars";
+
+	/** status bar progress mode */
+	public static final String SB_PROGRESS_MODE = "sb_progress_mode";
+
+	/** TaaS glossary client.*/
+	public static final String TAAS_LOOKUP = "taas_lookup";
+	public static final String TAAS_DOMAIN = "taas_domain";
+
+	public static final String PROXY_POLICY = "proxyPolicy";
+
+	public static final String SET_HTTP_PROXY = "httpProxySet";
+	public static final String SET_HTTPS_PROXY = "httpsProxySet";
+
+	public static final String HTTP_PROXY_HOST = "httpProxyHost";
+	public static final String HTTP_PROXY_PORT = "httpProxyPort";
+
+	public static final String HTTPS_PROXY_HOST = "httpsProxySet";
+	public static final String HTTPS_PROXY_PORT = "httpsProxySet";
+
+
+	/** Private constructor, because this file is singleton */
+	static {
+		m_loaded = false;
+		m_preferenceMap = new HashMap<>(64);
+		m_nameList = new ArrayList<>(32);
+		m_valList = new ArrayList<>(32);
+		m_changed = false;
+		doLoad();
+	}
+
+	/**
+	 * Returns the defaultValue of some preference out of OmegaT's preferences
+	 * file.
+	 * <p>
+	 * If the key is not found, returns the empty string.
+	 *
+	 * @param key
+	 *            key of the key to look up, usually OConsts.PREF_...
+	 * @return preference defaultValue as a string
+	 */
+	public static String getPreference(String key) {
+		if (key == null || key.isEmpty())
+			return "";
+		if (!m_loaded)
+			doLoad();
+
+		Integer i = m_preferenceMap.get(key);
+		String v = "";
+		if (i != null) {
+			// mapping exists - recover defaultValue
+			v = m_valList.get(i);
+		}
+		return v;
+	}
+
 	/**
 	 * Returns true if the preference is in OmegaT's preferences
 	 * file.

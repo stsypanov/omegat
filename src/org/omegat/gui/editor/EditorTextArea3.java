@@ -62,9 +62,11 @@ import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
+import org.omegat.util.Log;
 import org.omegat.util.Platform;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -86,7 +88,7 @@ public class EditorTextArea3 extends JEditorPane {
 
     protected final EditorController controller;
 
-    protected final List<PopupMenuConstructorInfo> popupConstructors = new ArrayList<PopupMenuConstructorInfo>();
+    protected final List<PopupMenuConstructorInfo> popupConstructors = new ArrayList<>();
 
     protected String currentWord;
 
@@ -111,6 +113,8 @@ public class EditorTextArea3 extends JEditorPane {
 
         addMouseListener(mouseListener);
 
+        ClipboardUtils.bind(this, Core.getMainWindow().getApplicationFrame());
+
         addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent e) {
                 try {
@@ -126,7 +130,7 @@ public class EditorTextArea3 extends JEditorPane {
                         CoreEvents.fireEditorNewWord(newWord);
                     }
                 } catch (BadLocationException ex) {
-                    ex.printStackTrace();
+                    Log.log(ex);
                 }
             }
         });

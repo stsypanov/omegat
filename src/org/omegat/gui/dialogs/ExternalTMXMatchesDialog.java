@@ -29,9 +29,10 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
+import javax.swing.JLabel;
 
 import org.omegat.core.matching.NearString.SORT_KEY;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.matches.MatchesVarExpansion;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -46,7 +47,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class ExternalTMXMatchesDialog extends JDialog {
+public class ExternalTMXMatchesDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

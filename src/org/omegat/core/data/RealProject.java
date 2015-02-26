@@ -10,6 +10,7 @@
                2012 Alex Buloichik, Guido Leenders, Didier Briel, Martin Fleurke
                2013 Aaron Madlon-Kay, Didier Briel
                2014 Aaron Madlon-Kay, Alex Buloichik, Didier Briel
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -1163,21 +1164,15 @@ public class RealProject implements IProject {
                 SourceTextEntry prevSte = exists.get(ste.getSrcText());
 
                 if (prevSte == null) {
-                    // didn't processed the same entry yet
-                    ste.duplicate = SourceTextEntry.DUPLICATE.NONE;
-                } else {
-                    if (prevSte.duplicate == SourceTextEntry.DUPLICATE.NONE) {
-                        // already processed,but this is first duplicate
-                        prevSte.duplicate = SourceTextEntry.DUPLICATE.FIRST;
-                        ste.duplicate = SourceTextEntry.DUPLICATE.NEXT;
-                    } else {
-                        // already processed, and this is not first duplicate
-                        ste.duplicate = SourceTextEntry.DUPLICATE.NEXT;
-                    }
-                }
-
-                if (prevSte == null) {
+                    // Note first appearance of this STE
                     exists.put(ste.getSrcText(), ste);
+                } else {
+                    // Note duplicate of already-seen STE
+                    if (prevSte.duplicates == null) {
+                        prevSte.duplicates = new ArrayList<SourceTextEntry>();
+                    }
+                    prevSte.duplicates.add(ste);
+                    ste.firstInstance = prevSte;
                 }
             }
         }
