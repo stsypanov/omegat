@@ -12,6 +12,7 @@
                     Aaron Madlon-Kay
                2013 Aaron Madlon-Kay, Zoltan Bartko
                2014 Piotr Kulik, Aaron Madlon-Kay
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -68,8 +69,9 @@ import org.omegat.util.xml.XMLStreamReader;
  * @author Aaron Madlon-Kay
  */
 public class Preferences {
-	/** OmegaT-wide Preferences Filename */
-	public static final String FILE_PREFERENCES = "omegat.prefs";
+    /** OmegaT-wide Preferences Filename */
+    public static final String FILE_PREFERENCES = OStrings.BRANDING.isEmpty() ? "omegat.prefs"
+            : "omegat-" + OStrings.BRANDING + ".prefs";
 
 	// preference names
 	public static final String SOURCE_LOCALE = "source_lang";
@@ -89,13 +91,16 @@ public class Preferences {
 	public static final String MAINWINDOW_Y = "screen_y";
 	public static final String MAINWINDOW_LAYOUT = "docking_layout";
 
-	// Project files window size and position
-	public static final String PROJECT_FILES_WINDOW_WIDTH = "project_files_window_width";
-	public static final String PROJECT_FILES_WINDOW_HEIGHT = "project_files_window_height";
-	public static final String PROJECT_FILES_WINDOW_X = "project_files_window_x";
-	public static final String PROJECT_FILES_WINDOW_Y = "project_files_window_y";
-	// Using the main font for the Project Files window
-	public static final String PROJECT_FILES_USE_FONT = "project_files_use_font";
+    // Project files window size and position
+    public static final String PROJECT_FILES_WINDOW_WIDTH = "project_files_window_width";
+    public static final String PROJECT_FILES_WINDOW_HEIGHT = "project_files_window_height";
+    public static final String PROJECT_FILES_WINDOW_X = "project_files_window_x";
+    public static final String PROJECT_FILES_WINDOW_Y = "project_files_window_y";
+    // Using the main font for the Project Files window
+    public static final String PROJECT_FILES_USE_FONT = "project_files_use_font";
+    // Determines whether or not the Project Files window is shown on project load.
+    // Currently not exposed in UI.
+    public static final String PROJECT_FILES_SHOW_ON_LOAD = "project_files_show_on_load";
 
 	// Search window size and position
 	public static final String SEARCHWINDOW_WIDTH = "search_window_width";
@@ -253,6 +258,16 @@ public class Preferences {
 	 */
 	public static final String SPELLCHECKER_DICTIONARY_URL = "dictionary_url";
 
+    /** View options: Show all sources in bold */
+    public static final String VIEW_OPTION_SOURCE_ALL_BOLD = "view_option_source_all_bold";
+    /** View options: Mark first non-unique */
+    public static final String VIEW_OPTION_UNIQUE_FIRST = "view_option_unique_first";
+    /** View options: Simplify protected parts tooltips */
+    public static final String VIEW_OPTION_PPT_SIMPLIFY = "view_option_ppt_simplify";
+    /** View options: Modification Info display templates **/
+    public static final String VIEW_OPTION_TEMPLATE_ACTIVE = "view_option_template_active";
+    public static final String VIEW_OPTION_MOD_INFO_TEMPLATE = "view_option_mod_info_template";
+    public static final String VIEW_OPTION_MOD_INFO_TEMPLATE_WO_DATE = "view_option_mod_info_template_wo_date";
 	/**
 	 * The location of the scripts
 	 */

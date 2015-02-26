@@ -47,6 +47,7 @@ import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.FiltersTableModel;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -136,7 +137,7 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
             dialogSize.height = screenSize.height;
             setSize(dialogSize);
         }
-        setLocationRelativeTo(null);
+        DockingUI.displayCentered(this);
      }    
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -365,8 +366,6 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(cbIgnoreFileContext, gridBagConstraints);
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void projectSpecificCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSpecificCBActionPerformed

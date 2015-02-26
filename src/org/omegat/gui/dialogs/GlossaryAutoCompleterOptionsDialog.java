@@ -30,6 +30,7 @@ import java.awt.Frame;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -59,6 +60,7 @@ public class GlossaryAutoCompleterOptionsDialog extends PeroDialog {
         longerFirstCheckBox.setSelected(Preferences.isPreference(Preferences.AC_GLOSSARY_SORT_BY_LENGTH));
         sortEntriesCheckBox.setSelected(Preferences.isPreference(Preferences.AC_GLOSSARY_SORT_ALPHABETICALLY));
         followCapitalizationCheckBox.setSelected(Preferences.isPreference(Preferences.AC_GLOSSARY_CAPITALIZE));
+        DockingUI.displayCentered(this);
     }
 
     /**
@@ -200,7 +202,6 @@ public class GlossaryAutoCompleterOptionsDialog extends PeroDialog {
         );
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void doClose() {

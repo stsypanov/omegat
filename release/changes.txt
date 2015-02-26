@@ -1,11 +1,11 @@
 ----------------------------------------------------------------------
- OmegaT 3.1.8 update 1
+ OmegaT 3.1.9
 ----------------------------------------------------------------------
-   4 Enhancements
-   7 Bug fixes
-   2 Localisation updates
+  14 Enhancements
+  12 Bug fixes
+   3 Localisation updates
 ----------------------------------------------------------------------
-3.1.8 update 1 vs. 3.1.8
+3.1.9 vs. 3.1.8
 
   Implemented requests:
 
@@ -14,6 +14,21 @@
 
   - Use selection for text Search from "Fuzzy Match" or "Glossary" panes
   https://sourceforge.net/p/omegat/feature-requests/877/
+
+  - Allow to insert selection into translation from the Fuzzy Matches pane
+  https://sourceforge.net/p/omegat/feature-requests/1057/ 
+
+  - Warn user if the Enter key is hit while "Use TAB to Advance" is checked 
+  https://sourceforge.net/p/omegat/feature-requests/1061/
+
+  - Support XLIFF equiv-text in tooltips, simplify tooltip prefs
+  https://sourceforge.net/p/omegat/feature-requests/1064/
+
+  - Show the number of non-unique segment instances in the segment markers
+  https://sourceforge.net/p/omegat/feature-requests/1068/
+
+   - Contextual menu to jump to another instance of non-unique segments
+  https://sourceforge.net/p/omegat/feature-requests/1067/
 
   Other enhancements:
   
@@ -25,9 +40,33 @@ Mozilla filter, it has to be unabled to load them with the ILIAS filter.
 source segment already translated will not be requested again during
 the same session (i.e., until OmegaT is closed).
 
+  - The initial location and the layout when resized of various dialogs 
+were improved. The OK button was set as the default button for all dialogs.
+
+  - The Custom Colours dialog was improved. It can be closed with Escape, 
+changes are remembered immediately and all colours can be reset at once.
+There's also a new tab for colour selection.
+
+  - The Project Files dialog can be hidden on project load via hidden preference
+(project_files_show_on_load)
+
+  - OmegaT can be "branded" for custom deployments. If the brand is "Foo",
+the version number will be displayed as OmegaT 3.1.9 Foo. In TMX, the creator 
+will be "3.1.9_Foo". Instead of omegat.prefs and uiLayout.xml, preferences are
+stored in omegat-Foo.prefs and uiLayout-Foo.xml. This lets the deployment keep 
+settings independent of any existing "stock" OmegaT installation, and makes sure
+any default preferences bundled are used by default no matter what.
+
+  - It is possible to define the text and background colour of modification 
+information
+
+
   Bug fixes:
 
   - There's now a 3-second retry when OmegaT attempts to rename files
+
+  -  java.io.IOException: Error rename new file to glossary in team projects
+  https://sourceforge.net/p/omegat/bugs/695/
 
   - In some specific cases, the content of Mozilla DTD files was not 
 loaded
@@ -46,10 +85,24 @@ distributions
   - Ellipses missing in several menu items
   https://sourceforge.net/p/omegat/bugs/728/
 
+  - Both menu items for alternative translation are enabled 
+  https://sourceforge.net/p/omegat/bugs/731/
+
+  - Incorrect handling of typographic apostrophe (U+2019)
+  https://sourceforge.net/p/omegat/bugs/598/
+
+  - The project-specific filter configuration was not saved when creating a
+new project
+
+  - Mac OS X: A workaround was added for the full-screen window sizing
+bug on OS X + Java 1.8. See https://bugs.openjdk.java.net/browse/JDK-8065739
+for the bug description.
+
   Localisation updates:
 
   - Belarusian localisation updated to 3.1.8 (UI, tutorial, scripts, readme)
   - Russian localisation updated to 3.1.8 update 1 (UI, tutorial, scripts, readme)
+  - Japanese localisation updated to 3.1.9 (UI, documentation, readme)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.8 (2014-12-04)

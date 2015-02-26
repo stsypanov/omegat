@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -58,6 +59,7 @@ public class UserPassDialog extends PeroDialog {
 
         invalidate();
         pack();
+        DockingUI.displayCentered(this);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -169,11 +171,6 @@ public class UserPassDialog extends PeroDialog {
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         getContentPane().add(jPanel1, gridBagConstraints);
-
-        pack();
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension dialogSize = getSize();
-        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_okButtonActionPerformed

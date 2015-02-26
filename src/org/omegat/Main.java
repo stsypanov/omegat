@@ -67,6 +67,7 @@ import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.Styles;
 
 import com.vlsolutions.swing.docking.DockingDesktop;
+import org.omegat.util.Platform;
 
 /**
  * The main OmegaT class, used to launch the program.
@@ -230,7 +231,7 @@ public class Main {
      */
     protected static int runGUI() {
         // MacOSX-specific - they must be setted BEFORE any GUI calls
-        if (StaticUtils.onMacOSX()) {
+        if (Platform.isMacOSX()) {
             OSXIntegration.init();
         }
 
