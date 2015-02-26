@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.regex.Matcher;
 
+import org.omegat.filters2.AbstractReader;
 import org.omegat.util.OConsts;
 import org.omegat.util.PatternConsts;
 
@@ -49,9 +50,7 @@ import org.omegat.util.PatternConsts;
  * 
  * @author Maxym Mykhalchuk
  */
-public class HTMLReader extends Reader {
-    /** Inner reader */
-    private BufferedReader reader;
+public class HTMLReader extends AbstractReader {
 
     /**
      * Creates a new instance of HTMLReader. If encoding cannot be detected,
@@ -66,15 +65,6 @@ public class HTMLReader extends Reader {
      */
     public HTMLReader(String fileName, String encoding) throws IOException {
         reader = new BufferedReader(createReader(fileName, encoding));
-    }
-
-    private String encoding = null;
-
-    /**
-     * Returns encoding that was used to read the HTML file.
-     */
-    public String getEncoding() {
-        return encoding;
     }
 
     /**
@@ -156,23 +146,4 @@ public class HTMLReader extends Reader {
 
         return isr;
     }
-
-    public void close() throws IOException {
-        reader.close();
-    }
-
-    boolean readFirstTime = true;
-
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        // BOM (byte order mark) bugfix
-        if (readFirstTime) {
-            readFirstTime = false;
-            reader.mark(1);
-            int ch = reader.read();
-            if (ch != 0xFEFF)
-                reader.reset();
-        }
-        return reader.read(cbuf, off, len);
-    }
-
 }

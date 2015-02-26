@@ -33,9 +33,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.regex.Matcher;
 
+import org.omegat.filters2.AbstractReader;
 import org.omegat.util.OConsts;
 import org.omegat.util.PatternConsts;
 
@@ -54,25 +54,7 @@ import org.omegat.util.PatternConsts;
  * @author Maxym Mykhalchuk
  * @author Didier Briel
  */
-public class XMLReader extends Reader {
-    /** Inner reader */
-    private BufferedReader reader;
-
-    /** Inner encoding. */
-    private String encoding;
-
-    /** EOL chars used in source file. */
-    private String eol;
-
-    /** Returns detected encoding. */
-    public String getEncoding() {
-        return encoding;
-    }
-
-    /** Returns detected EOL chars. */
-    public String getEol() {
-        return eol;
-    }
+public class XMLReader extends AbstractReader {
 
     /**
      * Creates a new instance of XMLReader. If encoding cannot be detected,
@@ -194,23 +176,4 @@ public class XMLReader extends Reader {
         rd.reset();
         return rd;
     }
-
-    public void close() throws IOException {
-        reader.close();
-    }
-
-    boolean readFirstTime = true;
-
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        // BOM (byte order mark) bugfix
-        if (readFirstTime) {
-            readFirstTime = false;
-            reader.mark(1);
-            int ch = reader.read();
-            if (ch != 0xFEFF)
-                reader.reset();
-        }
-        return reader.read(cbuf, off, len);
-    }
-
 }
