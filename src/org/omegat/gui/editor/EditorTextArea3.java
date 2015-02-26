@@ -66,6 +66,7 @@ import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
+import org.omegat.util.Log;
 import org.omegat.util.Platform;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
