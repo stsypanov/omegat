@@ -25,17 +25,13 @@
 
 package org.omegat.core.segmentation.datamodels;
 
-import java.beans.ExceptionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.PatternSyntaxException;
-
-import javax.swing.table.AbstractTableModel;
-
 import org.omegat.core.segmentation.MapRule;
 import org.omegat.core.segmentation.Rule;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.util.OStrings;
+
+import java.util.ArrayList;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Table Model for Sets of segmentation rules.
@@ -43,8 +39,12 @@ import org.omegat.util.OStrings;
  * @author Maxym Mykhalchuk
  */
 @SuppressWarnings("serial")
-public class MappingRulesModel extends AbstractTableModel {
+public class MappingRulesModel extends AbstractModel {
     private SRX srx;
+
+	private static String[] COLUMN_NAMES = new String[]{
+			OStrings.getString("CORE_SRX_TABLE_HEADER_Language_Name"),
+			OStrings.getString("CORE_SRX_TABLE_HEADER_Language_Pattern") };
 
     /**
      * Creates a new instance of MappingRulesModel
@@ -71,11 +71,6 @@ public class MappingRulesModel extends AbstractTableModel {
     public int getColumnCount() {
         return 2;
     }
-
-    /** The names of table columns */
-    private static String[] COLUMN_NAMES = new String[] {
-            OStrings.getString("CORE_SRX_TABLE_HEADER_Language_Name"),
-            OStrings.getString("CORE_SRX_TABLE_HEADER_Language_Pattern") };
 
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
@@ -137,27 +132,4 @@ public class MappingRulesModel extends AbstractTableModel {
         srx.getMappingRules().add(row, mapruleNext);
         fireTableRowsUpdated(row, row + 1);
     }
-
-    //
-    // Managing Listeners of Errorneous Input
-    //
-
-    /** List of listeners */
-    protected List<ExceptionListener> listeners = new ArrayList<>();
-
-    public void addExceptionListener(ExceptionListener l) {
-        listeners.add(l);
-    }
-
-    public void removeTableModelListener(ExceptionListener l) {
-        listeners.remove(l);
-    }
-
-    public void fireException(Exception e) {
-        for (int i = listeners.size() - 1; i >= 0; i--) {
-            ExceptionListener l = listeners.get(i);
-            l.exceptionThrown(e);
-        }
-    }
-
 }

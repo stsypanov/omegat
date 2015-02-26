@@ -19,7 +19,7 @@ import java.awt.event.ItemListener;
 import java.net.*;
 
 /**
- * Created by rad1kal on 30.10.2014.
+ * Created by stsypanov on 30.10.2014.
  */
 public class ProxyDialog extends JFrame {
 

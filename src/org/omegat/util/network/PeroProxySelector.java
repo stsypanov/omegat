@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by rad1kal on 29.10.2014.
+ * Created by stsypanov on 29.10.2014.
  */
 public class PeroProxySelector extends ProxySelector {
     protected ProxySelector defaultSelector;

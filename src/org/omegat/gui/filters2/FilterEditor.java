@@ -41,6 +41,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
+import org.jetbrains.annotations.NotNull;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.OneFilterTableModel;
@@ -350,11 +351,7 @@ public class FilterEditor extends PeroDialog implements ListSelectionListener {
                 f.isTargetEncodingVariable(), f.getHint());
         ie.setVisible(true);
         if (ie.getReturnStatus() == InstanceEditor.RET_OK) {
-            Files ff = new Files();
-            ff.setSourceEncoding(setEncodingName(ie.getSourceEncoding()));
-            ff.setSourceFilenameMask(ie.getSourceFilenameMask());
-            ff.setTargetEncoding(setEncodingName(ie.getTargetEncoding()));
-            ff.setTargetFilenamePattern(ie.getTargetFilenamePattern());
+			Files ff = getFiles(ie);
             filter.getFiles().add(ff);
             instances.setModel(new OneFilterTableModel(filter));
         }
@@ -372,17 +369,23 @@ public class FilterEditor extends PeroDialog implements ListSelectionListener {
                         .getValueAt(row, 3).toString());
         ie.setVisible(true);
         if (ie.getReturnStatus() == InstanceEditor.RET_OK) {
-            Files ff = new Files();
-            ff.setSourceEncoding(setEncodingName(ie.getSourceEncoding()));
-            ff.setSourceFilenameMask(ie.getSourceFilenameMask());
-            ff.setTargetEncoding(setEncodingName(ie.getTargetEncoding()));
-            ff.setTargetFilenamePattern(ie.getTargetFilenamePattern());
+			Files ff = getFiles(ie);
             filter.getFiles().set(row, ff);
             instances.setModel(new OneFilterTableModel(filter));
         }
     }// GEN-LAST:event_editButtonActionPerformed
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_okButtonActionPerformed
+	@NotNull
+	private Files getFiles(InstanceEditor ie) {
+		Files ff = new Files();
+		ff.setSourceEncoding(setEncodingName(ie.getSourceEncoding()));
+		ff.setSourceFilenameMask(ie.getSourceFilenameMask());
+		ff.setTargetEncoding(setEncodingName(ie.getTargetEncoding()));
+		ff.setTargetFilenamePattern(ie.getTargetFilenamePattern());
+		return ff;
+	}
+
+	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_okButtonActionPerformed
         doClose(filter);
     }// GEN-LAST:event_okButtonActionPerformed
 

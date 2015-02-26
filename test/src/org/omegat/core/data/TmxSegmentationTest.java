@@ -31,21 +31,16 @@ import java.util.TreeMap;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.util.Language;
 
-public class TmxSegmentationTest extends TestCase {
+public class TmxSegmentationTest {
     @Test
     public void testProjectTMX() throws Exception {
-        Segmenter.srx = SRX.getDefault();
-
-        ProjectProperties props = new ProjectProperties();
-        props.setSupportDefaultTranslations(true);
-        props.setSourceLanguage(new Language("en"));
-        props.setTargetLanguage(new Language("fr"));
-        props.setSentenceSegmentingEnabled(true);
+		ProjectProperties props = getProjectProperties();
         ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), new File("test/data/tmx/resegmenting.tmx"),
                 new ProjectTMX.CheckOrphanedCallback() {
                     public boolean existSourceInProject(String src) {
@@ -64,13 +59,7 @@ public class TmxSegmentationTest extends TestCase {
 
     @Test
     public void testExternalTMX() throws Exception {
-        Segmenter.srx = SRX.getDefault();
-
-        ProjectProperties props = new ProjectProperties();
-        props.setSupportDefaultTranslations(true);
-        props.setSourceLanguage(new Language("en"));
-        props.setTargetLanguage(new Language("fr"));
-        props.setSentenceSegmentingEnabled(true);
+		ProjectProperties props = getProjectProperties();
 
         ExternalTMX tmx = new ExternalTMX(props, new File("test/data/tmx/resegmenting.tmx"), false, false);
 
@@ -80,4 +69,16 @@ public class TmxSegmentationTest extends TestCase {
         Assert.assertEquals("Just a test.", tmx.getEntries().get(1).source);
         Assert.assertEquals("Juste un test.", tmx.getEntries().get(1).translation);
     }
+
+	@NotNull
+	private ProjectProperties getProjectProperties() {
+		Segmenter.srx = SRX.getDefault();
+
+		ProjectProperties props = new ProjectProperties();
+		props.setSupportDefaultTranslations(true);
+		props.setSourceLanguage(new Language("en"));
+		props.setTargetLanguage(new Language("fr"));
+		props.setSentenceSegmentingEnabled(true);
+		return props;
+	}
 }

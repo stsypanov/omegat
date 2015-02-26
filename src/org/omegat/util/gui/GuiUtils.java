@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * User: rad1kal
+ * User: stsypanov
  * Date: 04.07.2014
  * Time: 12:11
  */
@@ -38,15 +38,20 @@ public class GuiUtils {
 	}
 
 	public static void loadPreferences(Window window, String prefX, String prefY, String prefWidth, String prefHeight) {
-		String dx = Preferences.getPreference(prefX);
-		String dy = Preferences.getPreference(prefY);
-		int x = Integer.parseInt(dx);
-		int y = Integer.parseInt(dy);
+		int x = Integer.parseInt(Preferences.getPreference(prefX));
+		int y = Integer.parseInt(Preferences.getPreference(prefY));
 		window.setLocation(x, y);
-		String dw = Preferences.getPreference(prefWidth);
-		String dh = Preferences.getPreference(prefHeight);
-		int w = Integer.parseInt(dw);
-		int h = Integer.parseInt(dh);
-		window.setSize(w, h);
+
+		int width = Integer.parseInt(Preferences.getPreference(prefWidth));
+		int height = Integer.parseInt(Preferences.getPreference(prefHeight));
+		window.setSize(width, height);
+	}
+
+	public static void saveLayoutPreferences(String prefX, String prefY, String prefWidth, String prefHeight,
+											 int x, int y, int width, int height) {
+		Preferences.setPreference(prefX, x);
+		Preferences.setPreference(prefY, y);
+		Preferences.setPreference(prefWidth, width);
+		Preferences.setPreference(prefHeight, height);
 	}
 }

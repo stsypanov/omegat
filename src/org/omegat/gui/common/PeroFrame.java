@@ -7,7 +7,7 @@ import java.awt.*;
 
 /**
  * Created with IntelliJ IDEA.
- * User: rad1kal
+ * User: stsypanov
  * Date: 28.07.2014
  * Time: 15:46
  */
@@ -41,6 +41,12 @@ public class PeroFrame extends JFrame {
 		} catch (NumberFormatException nfe) {
 			// set default size and position
 			setSize(600, 500);
+			setLocation(0, 0);
 		}
+	}
+
+	protected void saveLayoutPreferences(String prefX, String prefY, String prefWidth, String prefHeight,
+										 int x, int y, int width, int height) {
+		GuiUtils.saveLayoutPreferences(prefX, prefY, prefWidth, prefHeight, x, y, width, height);
 	}
 }

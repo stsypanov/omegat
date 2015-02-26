@@ -74,6 +74,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter.HighlightPainter;
 
+import org.jetbrains.annotations.NotNull;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
@@ -100,7 +101,7 @@ public class ScriptingWindow extends PeroFrame {
 
     static ScriptingWindow window;
 
-    // XXX Still needed ?
+    // todo Still needed ?
     /**
      * @deprecated
      */
@@ -119,8 +120,10 @@ public class ScriptingWindow extends PeroFrame {
 
     @Override
     public void dispose() {
-        savePreferences();
-        monitor.stop();
+		monitor.stop();
+		saveLayoutPreferences(Preferences.SCRIPTWINDOW_X, Preferences.SCRIPTWINDOW_Y,
+				Preferences.SCRIPTWINDOW_WIDTH, Preferences.SCRIPTWINDOW_HEIGHT,
+				getX(), getY(), getWidth(), getHeight());
         super.dispose();
     }
 
@@ -538,12 +541,7 @@ public class ScriptingWindow extends PeroFrame {
             scriptEngine = manager.getEngineByName(DEFAULT_SCRIPT);
         }
 
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put(VAR_PROJECT, Core.getProject());
-        bindings.put(VAR_EDITOR, Core.getEditor());
-        bindings.put(VAR_GLOSSARY, Core.getGlossary());
-        bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
-        bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
+		SimpleBindings bindings = getSimpleBindings(scriptItem);
 
         if (additionalBindings != null) {
             bindings.putAll(additionalBindings);
@@ -563,7 +561,18 @@ public class ScriptingWindow extends PeroFrame {
         return eval;
     }
 
-    public void executeScriptFile(ScriptItem scriptItem, boolean forceFromFile, Map<String, Object> additionalBindings) {
+	@NotNull
+	private static SimpleBindings getSimpleBindings(ScriptItem scriptItem) {
+		SimpleBindings bindings = new SimpleBindings();
+		bindings.put(VAR_PROJECT, Core.getProject());
+		bindings.put(VAR_EDITOR, Core.getEditor());
+		bindings.put(VAR_GLOSSARY, Core.getGlossary());
+		bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
+		bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
+		return bindings;
+	}
+
+	public void executeScriptFile(ScriptItem scriptItem, boolean forceFromFile, Map<String, Object> additionalBindings) {
         ScriptLogger scriptLogger = new ScriptLogger(m_txtResult);
 
         ScriptEngine scriptEngine = manager.getEngineByExtension(getFileExtension(scriptItem.getName()));
@@ -573,13 +582,8 @@ public class ScriptingWindow extends PeroFrame {
         }
 
         //logResult(StaticUtils.format(OStrings.getString("SCW_SELECTED_LANGUAGE"), scriptEngine.getFactory().getEngineName()));
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put(VAR_PROJECT, Core.getProject());
-        bindings.put(VAR_EDITOR, Core.getEditor());
-        bindings.put(VAR_GLOSSARY, Core.getGlossary());
-        bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
-        bindings.put(VAR_CONSOLE, scriptLogger);
-        bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
+		SimpleBindings bindings = getSimpleBindings(scriptItem);
+		bindings.put(VAR_CONSOLE, scriptLogger);
 
         if (additionalBindings != null) {
             bindings.putAll(additionalBindings);
@@ -651,17 +655,6 @@ public class ScriptingWindow extends PeroFrame {
 
         monitor.stop();
         monitor.start(m_scriptsDirectory);
-    }
-
-    /**
-     * Saves the size and position of the script window
-     */
-    private void savePreferences() {
-        // window size and position
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_WIDTH, getWidth());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_HEIGHT, getHeight());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_X, getX());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_Y, getY());
     }
 
     public HighlightPainter getPainter() {

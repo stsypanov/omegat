@@ -8,7 +8,7 @@ import java.awt.*;
 
 /**
  * Created with IntelliJ IDEA.
- * User: rad1kal
+ * User: stsypanov
  * Date: 19.07.14
  * Time: 16:31
  */

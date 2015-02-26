@@ -330,22 +330,14 @@ public class HelpFrame extends PeroFrame {
         return prop.getProperty("version");
     }
 
-    /**
-     * Saves the size and position of the help window
-     */
-    private void saveWindowLayout() {
-        Preferences.setPreference(Preferences.HELPWINDOW_WIDTH, getWidth());
-        Preferences.setPreference(Preferences.HELPWINDOW_HEIGHT, getHeight());
-        Preferences.setPreference(Preferences.HELPWINDOW_X, getX());
-        Preferences.setPreference(Preferences.HELPWINDOW_Y, getY());
-    }
-
     @Override
     public void processWindowEvent(WindowEvent w) {
         int evt = w.getID();
         if (evt == WindowEvent.WINDOW_CLOSING || evt == WindowEvent.WINDOW_CLOSED) {
             // save window size and position
-            saveWindowLayout();
+            saveLayoutPreferences(Preferences.HELPWINDOW_X, Preferences.HELPWINDOW_Y,
+					Preferences.HELPWINDOW_WIDTH, Preferences.HELPWINDOW_HEIGHT,
+					getX(), getY(), getWidth(), getHeight());
         }
         super.processWindowEvent(w);
     }

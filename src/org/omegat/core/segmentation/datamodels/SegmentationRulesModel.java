@@ -25,15 +25,11 @@
 
 package org.omegat.core.segmentation.datamodels;
 
-import java.beans.ExceptionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.PatternSyntaxException;
-
-import javax.swing.table.AbstractTableModel;
-
 import org.omegat.core.segmentation.Rule;
 import org.omegat.util.OStrings;
+
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Table Model for Segmentation Rules.
@@ -41,8 +37,12 @@ import org.omegat.util.OStrings;
  * @author Maxym Mykhalchuk
  */
 @SuppressWarnings("serial")
-public class SegmentationRulesModel extends AbstractTableModel {
+public class SegmentationRulesModel extends AbstractModel {
     private List<Rule> rules;
+
+	private static String[] COLUMN_NAMES = new String[]{OStrings.getString("CORE_SRX_TABLE_COLUMN_Break"),
+			OStrings.getString("CORE_SRX_TABLE_COLUMN_Before_Break"),
+			OStrings.getString("CORE_SRX_TABLE_COLUMN_After_Break") };
 
     /**
      * Creates a new instance of SegmentationRulesModel
@@ -78,11 +78,6 @@ public class SegmentationRulesModel extends AbstractTableModel {
         else
             return String.class;
     }
-
-    /** The names of table columns */
-    private static String[] COLUMN_NAMES = new String[] { OStrings.getString("CORE_SRX_TABLE_COLUMN_Break"),
-            OStrings.getString("CORE_SRX_TABLE_COLUMN_Before_Break"),
-            OStrings.getString("CORE_SRX_TABLE_COLUMN_After_Break") };
 
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
@@ -145,27 +140,5 @@ public class SegmentationRulesModel extends AbstractTableModel {
         rules.remove(row + 1);
         rules.add(row, ruleNext);
         fireTableRowsUpdated(row, row + 1);
-    }
-
-    //
-    // Managing Listeners of Errorneous Input
-    //
-
-    /** List of listeners */
-    protected List<ExceptionListener> listeners = new ArrayList<>();
-
-    public void addExceptionListener(ExceptionListener l) {
-        listeners.add(l);
-    }
-
-    public void removeTableModelListener(ExceptionListener l) {
-        listeners.remove(l);
-    }
-
-    public void fireException(Exception e) {
-        for (int i = listeners.size() - 1; i >= 0; i--) {
-            ExceptionListener l = listeners.get(i);
-            l.exceptionThrown(e);
-        }
     }
 }

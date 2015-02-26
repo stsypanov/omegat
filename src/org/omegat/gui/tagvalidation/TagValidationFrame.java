@@ -141,22 +141,14 @@ public class TagValidationFrame extends PeroFrame {
             update();
     }
 
-    /**
-     * Saves the size and position of the tag validation window
-     */
-    private void saveWindowLayout() {
-        Preferences.setPreference(Preferences.TAGVWINDOW_WIDTH, getWidth());
-        Preferences.setPreference(Preferences.TAGVWINDOW_HEIGHT, getHeight());
-        Preferences.setPreference(Preferences.TAGVWINDOW_X, getX());
-        Preferences.setPreference(Preferences.TAGVWINDOW_Y, getY());
-    }
-
     @Override
     public void processWindowEvent(WindowEvent w) {
         int evt = w.getID();
         if (evt == WindowEvent.WINDOW_CLOSING || evt == WindowEvent.WINDOW_CLOSED) {
             // save window size and position
-            saveWindowLayout();
+            saveLayoutPreferences(Preferences.TAGVWINDOW_X, Preferences.TAGVWINDOW_Y,
+					Preferences.TAGVWINDOW_WIDTH, Preferences.TAGVWINDOW_HEIGHT,
+					getX(), getY(), getWidth(), getHeight());
         }
         super.processWindowEvent(w);
     }
