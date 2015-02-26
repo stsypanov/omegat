@@ -5,6 +5,7 @@
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2009-2013 Alex Buloichik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -26,6 +27,8 @@
 
 package org.omegat.core.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,6 +38,7 @@ import java.util.List;
  * 
  * @author Keith Godfrey
  * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Aaron Madlon-Kay
  */
 public class SourceTextEntry {
 
@@ -61,8 +65,17 @@ public class SourceTextEntry {
         NEXT
     };
 
-    /** If entry with the same source already exist in project. */
-    DUPLICATE duplicate;
+    /** 
+     * A list of duplicates of this STE. Will be non-null for the FIRST duplicate,
+     * null for NONE and NEXT STEs. See {@link #getDuplicate()} for full logic.
+     */
+    List<SourceTextEntry> duplicates;
+    
+    /**
+     * The first duplicate of this STE. Will be null for NONE and FIRST STEs,
+     * non-null for NEXT STEs. See {@link #getDuplicate()} for full logic.
+     */
+    SourceTextEntry firstInstance;
 
     /** Holds the number of this entry in a project. */
     private final int m_entryNum;
@@ -104,6 +117,8 @@ public class SourceTextEntry {
             }
             this.protectedParts = protectedParts.toArray(new ProtectedPart[protectedParts.size()]);
         }
+        this.duplicates = null;
+        this.firstInstance = null;
     }
 
     public EntryKey getKey() {
@@ -132,9 +147,31 @@ public class SourceTextEntry {
 
     /** If entry with the same source already exist in project. */
     public DUPLICATE getDuplicate() {
-        return duplicate;
+        if (firstInstance != null) {
+            return DUPLICATE.NEXT;
+        }
+        return duplicates == null ? DUPLICATE.NONE : DUPLICATE.FIRST;
     }
 
+    public int getNumberOfDuplicates() {
+        if (firstInstance != null) {
+            return firstInstance.getNumberOfDuplicates();
+        }
+        return duplicates == null ? 0 : duplicates.size();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<SourceTextEntry> getDuplicates() {
+        if (firstInstance != null) {
+            List<SourceTextEntry> result = new ArrayList<SourceTextEntry>(firstInstance.getDuplicates());
+            result.remove(this);
+            result.add(0, firstInstance);
+            return Collections.unmodifiableList(result);
+        }
+        return duplicates == null ? Collections.EMPTY_LIST
+                : Collections.unmodifiableList(duplicates);
+    }
+    
     public String getSourceTranslation() {
         return sourceTranslation;
     }

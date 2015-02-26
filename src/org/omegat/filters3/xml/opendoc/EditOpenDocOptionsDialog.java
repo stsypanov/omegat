@@ -33,6 +33,7 @@ import javax.swing.AbstractAction;
 
 
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -69,6 +70,7 @@ public class EditOpenDocOptionsDialog extends javax.swing.JDialog {
                 doClose(RET_CANCEL);
             }
         });
+        DockingUI.displayCentered(this);
     }
 
     private final OpenDocOptions options;
@@ -208,9 +210,6 @@ public class EditOpenDocOptionsDialog extends javax.swing.JDialog {
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension dialogSize = getSize();
-        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
     }// </editor-fold>//GEN-END:initComponents
 
     private void translateCommentsCBradiosActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_translateCommentsCBradiosActionPerformed

@@ -12,6 +12,7 @@
                     Aaron Madlon-Kay
                2013 Aaron Madlon-Kay, Zoltan Bartko
                2014 Piotr Kulik, Aaron Madlon-Kay
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -69,7 +70,8 @@ import org.omegat.util.xml.XMLStreamReader;
  */
 public class Preferences {
     /** OmegaT-wide Preferences Filename */
-    public static final String FILE_PREFERENCES = "omegat.prefs";
+    public static final String FILE_PREFERENCES = OStrings.BRANDING.isEmpty() ? "omegat.prefs"
+            : "omegat-" + OStrings.BRANDING + ".prefs";
 
     // preference names
     public static final String SOURCE_LOCALE = "source_lang";
@@ -96,6 +98,9 @@ public class Preferences {
     public static final String PROJECT_FILES_WINDOW_Y = "project_files_window_y";
     // Using the main font for the Project Files window
     public static final String PROJECT_FILES_USE_FONT = "project_files_use_font";
+    // Determines whether or not the Project Files window is shown on project load.
+    // Currently not exposed in UI.
+    public static final String PROJECT_FILES_SHOW_ON_LOAD = "project_files_show_on_load";
 
     // Search window size and position
     public static final String SEARCHWINDOW_WIDTH = "search_window_width";
@@ -165,6 +170,8 @@ public class Preferences {
     
     public static final String ALLOW_MYMEMORY_HUMAN_TRANSLATE = "allow_mymemory_human_translate";
     public static final String ALLOW_MYMEMORY_MACHINE_TRANSLATE = "allow_mymemory_machine_translate";
+    
+    public static final String ALLOW_YANDEX_TRANSLATE = "allow_yandex_translate";
     
     /** Enable TransTips */
     public static final String TRANSTIPS = "transtips";
@@ -306,10 +313,8 @@ public class Preferences {
     public static final String VIEW_OPTION_SOURCE_ALL_BOLD = "view_option_source_all_bold";
     /** View options: Mark first non-unique */
     public static final String VIEW_OPTION_UNIQUE_FIRST = "view_option_unique_first";
-    /** View options: Strip tags from protected parts tooltip */
-    public static final String VIEW_OPTION_PPT_STRIP_TAGS = "view_option_ppt_strip_tags";
-    /** View options: Display text in protected parts tooltip in bold */
-    public static final String VIEW_OPTION_PPT_BOLD_TEXT = "view_option_ppt_bold_text";
+    /** View options: Simplify protected parts tooltips */
+    public static final String VIEW_OPTION_PPT_SIMPLIFY = "view_option_ppt_simplify";
     /** View options: Modification Info display templates **/
     public static final String VIEW_OPTION_TEMPLATE_ACTIVE = "view_option_template_active";
     public static final String VIEW_OPTION_MOD_INFO_TEMPLATE = "view_option_mod_info_template";

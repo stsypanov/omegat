@@ -43,6 +43,7 @@ import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -97,6 +98,8 @@ public class NewTeamProject extends javax.swing.JDialog {
         });
         
         StaticUIUtils.setEscapeClosable(this);
+        getRootPane().setDefaultButton(btnOk);
+        DockingUI.displayCentered(this);
     }
     
     private void suggestSaveDirectory(String repoName) {

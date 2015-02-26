@@ -6,6 +6,7 @@
  Copyright (C) 2009 Didier Briel
                2010 Wildrich Fourie
                2011 Alex Buloichik, Didier Briel
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -41,14 +42,13 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
-import org.omegat.core.data.PrepareTMXEntry;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.TMXEntry;
 import org.omegat.core.spellchecker.SpellCheckerMarker;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.TagUtil;
+import org.omegat.util.Token;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -57,14 +57,16 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Wildrich Fourie
  * @author Didier Briel
+ * @author Aaron Madlon-Kay
  */
 public class EditorPopups {
     public static void init(EditorController ec) {
         ec.registerPopupMenuConstructors(100, new SpellCheckerPopup(ec));
         ec.registerPopupMenuConstructors(200, new GoToSegmentPopup(ec));
         ec.registerPopupMenuConstructors(400, new DefaultPopup());
-        ec.registerPopupMenuConstructors(500, new EmptyNoneTranslationPopup(ec));
-        ec.registerPopupMenuConstructors(600, new InsertTagsPopup(ec));
+        ec.registerPopupMenuConstructors(500, new DuplicateSegmentsPopup(ec));
+        ec.registerPopupMenuConstructors(600, new EmptyNoneTranslationPopup(ec));
+        ec.registerPopupMenuConstructors(700, new InsertTagsPopup(ec));
     }
 
     /**
@@ -85,76 +87,89 @@ public class EditorPopups {
                 boolean isInActiveEntry, boolean isInActiveTranslation, SegmentBuilder sb) {
             if (!ec.getSettings().isAutoSpellChecking()) {
                 // spellchecker disabled
+                return;
             }
             if (!isInActiveTranslation) {
                 // there is no need to display suggestions
                 return;
             }
 
-            try {
-                // find the word boundaries
-                final int wordStart = EditorUtils.getWordStart(comp, mousepos);
-                final int wordEnd = EditorUtils.getWordEnd(comp, mousepos);
-
-                final String word = comp.getText(wordStart, wordEnd - wordStart);
-
-                final AbstractDocument xlDoc = (AbstractDocument) comp.getDocument();
-
-                if (!Core.getSpellChecker().isCorrect(word)) {
-                    // get the suggestions and create a menu
-                    List<String> suggestions = Core.getSpellChecker().suggest(word);
-
-                    // the suggestions
-                    for (final String replacement : suggestions) {
-                        JMenuItem item = menu.add(replacement);
-                        item.addActionListener(new ActionListener() {
-                            // the action: replace the word with the selected
-                            // suggestion
-                            public void actionPerformed(ActionEvent e) {
-                                try {
-                                    int pos = comp.getCaretPosition();
-                                    xlDoc.replace(wordStart, wordEnd - wordStart, replacement, null);
-                                    comp.setCaretPosition(pos);
-                                } catch (BadLocationException exc) {
-                                    Log.log(exc);
-                                }
-                            }
-                        });
-                    }
-
-                    // what if no action is done?
-                    if (suggestions.size() == 0) {
-                        JMenuItem item = menu.add(OStrings.getString("SC_NO_SUGGESTIONS"));
-                        item.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                // just hide the menu
-                            }
-                        });
-                    }
-
-            menu.addSeparator();
-
-                    // let us ignore it
-                    JMenuItem item = menu.add(OStrings.getString("SC_IGNORE_ALL"));
-                    item.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            addIgnoreWord(word, wordStart, false);
-                        }
-                    });
-
-                    // or add it to the dictionary
-                    item = menu.add(OStrings.getString("SC_ADD_TO_DICTIONARY"));
-                    item.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            addIgnoreWord(word, wordStart, true);
-                        }
-                    });
-                    
-            menu.addSeparator();
-
+            // Use the project's target tokenizer to determine the word that was right-clicked.
+            // EditorUtils.getWordEnd() and getWordStart() use Java's built-in BreakIterator
+            // under the hood, which leads to inconsistent results when compared to other spell-
+            // checking functionality in OmegaT.
+            String translation = ec.getCurrentTranslation();
+            Token tok = null;
+            int relOffset = ec.getPositionInEntryTranslation(mousepos);
+            for (Token t : Core.getProject().getTargetTokenizer().tokenizeWordsForSpelling(translation)) {
+                if (t.getOffset() <= relOffset && relOffset < t.getOffset() + t.getLength()) {
+                    tok = t;
+                    break;
                 }
-            } catch (BadLocationException ex) {
-                Log.log(ex);
+            }
+            
+            if (tok == null) {
+                return;
+            }
+            
+            final String word = tok.getTextFromString(translation);
+            // The wordStart must be the absolute offset in the Editor document.
+            final int wordStart = mousepos - relOffset + tok.getOffset();
+            final int wordLength = tok.getLength();
+            final AbstractDocument xlDoc = (AbstractDocument) comp.getDocument();
+
+            if (!Core.getSpellChecker().isCorrect(word)) {
+                // get the suggestions and create a menu
+                List<String> suggestions = Core.getSpellChecker().suggest(word);
+
+                // the suggestions
+                for (final String replacement : suggestions) {
+                    JMenuItem item = menu.add(replacement);
+                    item.addActionListener(new ActionListener() {
+                        // the action: replace the word with the selected
+                        // suggestion
+                        public void actionPerformed(ActionEvent e) {
+                            try {
+                                int pos = comp.getCaretPosition();
+                                xlDoc.replace(wordStart, wordLength, replacement, null);
+                                comp.setCaretPosition(pos);
+                            } catch (BadLocationException exc) {
+                                Log.log(exc);
+                            }
+                        }
+                    });
+                }
+
+                // what if no action is done?
+                if (suggestions.size() == 0) {
+                    JMenuItem item = menu.add(OStrings.getString("SC_NO_SUGGESTIONS"));
+                    item.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            // just hide the menu
+                        }
+                    });
+                }
+
+                menu.addSeparator();
+
+                // let us ignore it
+                JMenuItem item = menu.add(OStrings.getString("SC_IGNORE_ALL"));
+                item.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        addIgnoreWord(word, wordStart, false);
+                    }
+                });
+
+                // or add it to the dictionary
+                item = menu.add(OStrings.getString("SC_ADD_TO_DICTIONARY"));
+                item.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        addIgnoreWord(word, wordStart, true);
+                    }
+                });
+                
+                menu.addSeparator();
+
             }
         }
 
@@ -284,6 +299,40 @@ public class EditorPopups {
                     ec.goToSegmentAtLocation(comp.getCaretPosition());
                 }
             });
+            menu.addSeparator();
+        }
+    }
+    
+    public static class DuplicateSegmentsPopup implements IPopupMenuConstructor {
+        protected final EditorController ec;
+        
+        public DuplicateSegmentsPopup(EditorController ec) {
+            this.ec = ec;
+        }
+        
+        @Override
+        public void addItems(JPopupMenu menu, JTextComponent comp,
+                int mousepos, boolean isInActiveEntry,
+                boolean isInActiveTranslation, SegmentBuilder sb) {
+            if (!isInActiveEntry) {
+                return;
+            }
+            SourceTextEntry ste = ec.getCurrentEntry();
+            List<SourceTextEntry> dups = ste.getDuplicates();
+            if (dups.isEmpty()) {
+                return;
+            }
+            JMenuItem header = menu.add(StaticUtils.format(OStrings.getString("MW_GO_TO_DUPLICATE_HEADER"), dups.size()));
+            header.setEnabled(false);
+            for (final SourceTextEntry dup : dups) {
+                JMenuItem item = menu.add(StaticUtils.format(OStrings.getString("MW_GO_TO_DUPLICATE_ITEM"), dup.entryNum()));
+                item.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ec.gotoEntry(dup.entryNum());
+                    }
+                });
+            }
             menu.addSeparator();
         }
     }

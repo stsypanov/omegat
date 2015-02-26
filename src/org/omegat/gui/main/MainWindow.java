@@ -9,6 +9,7 @@
                2008 Andrzej Sawula, Alex Buloichik, Didier Briel
                2013 Yu Tang, Aaron Madlon-Kay
                2014 Piotr Kulik
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -35,8 +36,9 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -51,6 +53,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.text.JTextComponent;
 import javax.swing.WindowConstants;
 
 import org.omegat.core.Core;
@@ -61,16 +65,17 @@ import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
 import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.gui.filelist.ProjectFilesListController;
+import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.WikiGet;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.OmegaTFileChooser;
-import org.omegat.util.gui.ResourcesUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 
 import com.vlsolutions.swing.docking.Dockable;
@@ -159,7 +164,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 
         CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
             public void onApplicationStartup() {
-                MainWindowUI.resetDesktopLayout(MainWindow.this);
                 MainWindowUI.loadScreenLayout(MainWindow.this);
 
                 DockingUI.removeUnusedMenuSeparators(menu.getOptionsMenu().getPopupMenu());
@@ -225,21 +229,37 @@ public class MainWindow extends JFrame implements IMainWindow {
         setTitle(s);
     }
 
-    /** insert current fuzzy match at cursor position */
+    /** insert current fuzzy match or selection at cursor position */
     public void doInsertTrans() {
-        if (!Core.getProject().isProjectLoaded())
+        if (!Core.getProject().isProjectLoaded()) {
             return;
+        }
 
-        NearString near = Core.getMatcher().getActiveMatch();
-        if (near != null) {
-            Core.getEditor().insertText(near.translation);
+        String text = getSelectedTextInMatcher();
+        if (StringUtil.isEmpty(text)) {
+            NearString near = Core.getMatcher().getActiveMatch();
+            if (near != null) {
+                text = near.translation;
+            }
+        }
+        if (!StringUtil.isEmpty(text)) {
+            Core.getEditor().insertText(text);
+            Core.getEditor().requestFocus();
         }
     }
 
-    /** replace entire edit area with active fuzzy match */
+    /** replace entire edit area with active fuzzy match or selection */
     public void doRecycleTrans() {
-        if (!Core.getProject().isProjectLoaded())
+        if (!Core.getProject().isProjectLoaded()) {
             return;
+        }
+
+        String selection = getSelectedTextInMatcher();
+        if (!StringUtil.isEmpty(selection)) {
+            Core.getEditor().replaceEditText(selection);
+            Core.getEditor().requestFocus();
+            return;
+        }
 
         NearString near = Core.getMatcher().getActiveMatch();
         if (near != null) {
@@ -255,7 +275,15 @@ public class MainWindow extends JFrame implements IMainWindow {
             } else {
                 Core.getEditor().replaceEditText(translation);
             }
+            Core.getEditor().requestFocus();
         }
+    }
+
+    private String getSelectedTextInMatcher() {
+        IMatcher matcher = Core.getMatcher();
+        return matcher instanceof JTextComponent
+                ? ((JTextComponent) matcher).getSelectedText()
+                : null;
     }
 
     protected void addSearchWindow(SearchWindowController newSearchWindow) {
@@ -342,21 +370,57 @@ public class MainWindow extends JFrame implements IMainWindow {
      * {@inheritDoc}
      */
     public void showStatusMessageRB(final String messageKey, final Object... params) {
-        final String msg;
-        if (messageKey == null) {
-            msg = new String() + ' ';
-        } else {
-            if (params != null) {
-                msg = StaticUtils.format(OStrings.getString(messageKey), params);
-            } else {
-                msg = OStrings.getString(messageKey);
-            }
-        }
+        final String msg = getLocalizedString(messageKey, params);
         UIThreadsUtil.executeInSwingThread(new Runnable() {
+            @Override
             public void run() {
                 statusLabel.setText(msg);
             }
         });
+    }
+    
+    private String getLocalizedString(String messageKey, Object... params) {
+        if (messageKey == null) {
+            return " ";
+        } else if (params == null) {
+            return OStrings.getString(messageKey);
+        } else {
+            return StaticUtils.format(OStrings.getString(messageKey), params);
+        }
+    }
+
+    /**
+     * Same as {@link #showStatusMessageRB(String, Object...)} but 
+     * this will clear the message after ten seconds.
+     * 
+     * @param messageKey
+     *            message key in resource bundle
+     * @param params
+     *            message parameters for formatting
+     */
+    public void showTimedStatusMessageRB(String messageKey, Object... params) {
+        showStatusMessageRB(messageKey, params);
+
+        if (messageKey == null) {
+            return;
+        }
+
+        // clear the message after 10 seconds
+        final String localizedString = getLocalizedString(messageKey, params);
+        ActionListener clearStatus = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                String text = statusLabel.getText();
+                if (localizedString.equals(text)) {
+                    statusLabel.setText(null);
+                }
+            }
+        };
+
+        final int DELAY = 10000; // milliseconds
+        final Timer timer = new Timer(DELAY, clearStatus);
+        timer.setRepeats(false);  // one-time only
+        timer.start();
     }
 
     /**

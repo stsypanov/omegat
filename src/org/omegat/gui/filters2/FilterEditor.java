@@ -48,6 +48,7 @@ import org.omegat.filters2.master.OneFilterTableModel;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -74,14 +75,14 @@ public class FilterEditor extends JDialog implements ListSelectionListener {
 
         IFilter f = FilterMaster.getFilterInstance(filter.getClassName());
         fileFormatTextField.setText(f.getFileFormatName());
-        if (!StringUtil.isEmpty(f.getHint()))
+        if (!StringUtil.isEmpty(f.getHint())) {
             hintTextArea.setText(f.getHint());
-        else
+        } else {
             hintTextArea.setVisible(false);
+        }
 
         getRootPane().setDefaultButton(okButton);
 
-        instances.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         instances.getSelectionModel().addListSelectionListener(this);
 
         TableColumn sourceEnc = instances.getColumnModel().getColumn(1);
@@ -93,12 +94,12 @@ public class FilterEditor extends JDialog implements ListSelectionListener {
         // accomodating table dimensions
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = instancesScrollPane.getPreferredSize().width + 200;
-        if (width > screenSize.width)
+        if (width > screenSize.width) {
             width = screenSize.width - addButton.getWidth() - 50;
+        }
         instancesScrollPane.setPreferredSize(new Dimension(width, instances.getPreferredSize().height + 70));
         pack();
-        Dimension dialogSize = getSize();
-        setLocation((screenSize.width - dialogSize.width) / 2, (screenSize.height - dialogSize.height) / 2);
+        DockingUI.displayCentered(this);
     }
 
     private JComboBox encodingComboBox() {
@@ -233,6 +234,7 @@ public class FilterEditor extends JDialog implements ListSelectionListener {
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         instances.setModel(new OneFilterTableModel(filter));
+        instances.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         instancesScrollPane.setViewportView(instances);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -312,8 +314,6 @@ public class FilterEditor extends JDialog implements ListSelectionListener {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(hintTextArea, gridBagConstraints);
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_removeButtonActionPerformed

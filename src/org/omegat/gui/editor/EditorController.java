@@ -12,6 +12,7 @@
                2012 Guido Leenders, Didier Briel
                2013 Zoltan Bartko, Alex Buloichik, Aaron Madlon-Kay
                2014 Aaron Madlon-Kay, Piotr Kulik
+               2015 Aaron Madlon-Kay, Yu Tang
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -40,9 +41,11 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +55,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -81,8 +85,8 @@ import org.omegat.gui.editor.mark.Mark;
 import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.main.DockablePanel;
 import org.omegat.gui.main.MainWindow;
+import org.omegat.gui.main.MainWindowUI;
 import org.omegat.gui.tagvalidation.ITagValidation;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -96,8 +100,6 @@ import org.omegat.util.gui.UIThreadsUtil;
 import com.vlsolutions.swing.docking.DockingDesktop;
 import com.vlsolutions.swing.docking.event.DockableSelectionEvent;
 import com.vlsolutions.swing.docking.event.DockableSelectionListener;
-
-import org.omegat.gui.main.MainWindowUI;
 
 /**
  * Class for control all editor operations.
@@ -118,6 +120,7 @@ import org.omegat.gui.main.MainWindowUI;
  * @author Guido Leenders
  * @Author Aaron Madlon-Kay
  * @author Piotr Kulik
+ * @author Yu Tang
  */
 public class EditorController implements IEditor {
 
@@ -1024,11 +1027,14 @@ public class EditorController implements IEditor {
         commitAndDeactivate();
 
         List<FileInfo> files = Core.getProject().getProjectFiles();
+        if (files.isEmpty()) {
+            return;
+        }
         SourceTextEntry ste;
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
         boolean looped = false;
-        do {
+        while (true) {
             displayedEntryIndex++;
             if (displayedEntryIndex >= m_docSegList.length) {
                 displayedFileIndex++;
@@ -1040,10 +1046,22 @@ public class EditorController implements IEditor {
                 loadDocument();
             }
             ste = getCurrentEntry();
-        } while (ste == null // filtered file has no entries
-                && (!looped || !(displayedFileIndex == startFileIndex && displayedEntryIndex >= startEntryIndex) 
-                // and we have not had all entries
-                ));
+            if (ste != null) {
+            	// We found an entry
+            	break;
+            }
+            if (looped && displayedFileIndex == startFileIndex) {
+                if (displayedEntryIndex >= startEntryIndex) {
+                    // We have looped back to our starting point
+                    break;
+                }
+                if (m_docSegList.length == 0) {
+                    // We have looped back to our starting point
+                    // and there were no hits in any files
+                    break;
+                }
+            }
+        }
 
         activateEntry();
         this.editor.setCursor(oldCursor);
@@ -1062,6 +1080,9 @@ public class EditorController implements IEditor {
         commitAndDeactivate();
 
         List<FileInfo> files = Core.getProject().getProjectFiles();
+        if (files.isEmpty()) {
+            return;
+        }
         SourceTextEntry ste;
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
@@ -1112,6 +1133,9 @@ public class EditorController implements IEditor {
         commitAndDeactivate();
 
         List<FileInfo> files = Core.getProject().getProjectFiles();
+        if (files.isEmpty()) {
+            return;
+        }
         SourceTextEntry ste;
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
@@ -1193,6 +1217,9 @@ public class EditorController implements IEditor {
         commitAndDeactivate();
 
         List<FileInfo> files = Core.getProject().getProjectFiles();
+        if (files.isEmpty()) {
+            return;
+        }
         SourceTextEntry ste;
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
@@ -1248,6 +1275,9 @@ public class EditorController implements IEditor {
         commitAndDeactivate();
 
         List<FileInfo> files = Core.getProject().getProjectFiles();
+        if (files.isEmpty()) {
+            return;
+        }
         SourceTextEntry ste;
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
@@ -1300,6 +1330,9 @@ public class EditorController implements IEditor {
         commitAndDeactivate();
 
         List<FileInfo> files = Core.getProject().getProjectFiles();
+        if (files.isEmpty()) {
+            return;
+        }
         SourceTextEntry ste;
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
@@ -1697,10 +1730,19 @@ public class EditorController implements IEditor {
     public int getCurrentPositionInEntryTranslation() {
         UIThreadsUtil.mustBeSwingThread();
 
+        return getPositionInEntryTranslation(editor.getCaretPosition());
+    }
+
+    /**
+     * Returns the relative caret position in the editable translation for a
+     * given absolute index into the overall editor document.
+     */
+    public int getPositionInEntryTranslation(int pos) {
+        UIThreadsUtil.mustBeSwingThread();
+
         if (!editor.getOmDocument().isEditMode()) {
             return -1;
         }
-        int pos = editor.getCaretPosition();
         int beg = editor.getOmDocument().getTranslationStart();
         int end = editor.getOmDocument().getTranslationEnd();
         if (pos < beg) {
@@ -2088,7 +2130,49 @@ public class EditorController implements IEditor {
             timer.cancel();
         }
     }
-    
+
+    public AlphabeticalMarkers getAlphabeticalMarkers() {
+        return new AlphabeticalMarkers(scrollPane) {
+
+            @Override
+            protected Map<Integer, Point> getViewableSegmentLocations() {
+                final int UPPER_GAP = 5;
+                Map<Integer, Point> map = new LinkedHashMap<Integer, Point>(); // keep putting order
+
+                // no segments
+                if (m_docSegList == null) {
+                    return map;
+                }
+
+                JViewport viewport = scrollPane.getViewport();
+                int x = sourceLangIsRTL
+                        ? editor.getWidth() - editor.getInsets().right
+                        : editor.getInsets().left;
+                Rectangle viewRect = viewport.getViewRect();
+
+                // expand a bit rect for the segment at the upper end of the editor.
+                viewRect.setBounds(viewRect.x, viewRect.y - UPPER_GAP,
+                                    viewRect.width, viewRect.height + UPPER_GAP);
+
+                Point viewPosition = viewport.getViewPosition();
+                for (SegmentBuilder sb : m_docSegList) {
+                    try {
+                        Point location = editor.modelToView(sb.getStartPosition()).getLocation();
+                        if (viewRect.contains(location)) { // location is viewable
+                            int segmentNo = sb.segmentNumberInProject;
+                            location.translate(0, -viewPosition.y); // adjust to vertically view position
+                            location.x = x;                          // align in the left or right border
+                            map.put(segmentNo, location);
+                        }
+                    } catch (BadLocationException ex) {
+                        // Eat exception silently
+                    }
+                }
+                return map;
+            }
+        };
+    }
+
     private class ForceCommitTimer extends Thread {
         
         private final long limit;
