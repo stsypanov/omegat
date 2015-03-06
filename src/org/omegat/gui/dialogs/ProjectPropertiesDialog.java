@@ -8,7 +8,7 @@
                2011 Martin Fleurke
                2012 Didier Briel, Aaron Madlon-Kay
                2013 Aaron Madlon-Kay, Yu Tang
-               2014 Aaron Madlon-Kay
+               2014-2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -35,10 +35,9 @@ import gen.core.filters.Filters;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.Insets;
+import java.awt.GraphicsEnvironment;
 import java.awt.Label;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -48,6 +47,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -59,6 +59,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.Scrollable;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -175,13 +176,16 @@ public class ProjectPropertiesDialog extends PeroDialog {
         srcExcludes.addAll(projectProperties.getSourceRootExcludes());
 
         Border emptyBorder = new EmptyBorder(2, 0, 2, 0);
-        Box centerBox = Box.createVerticalBox();
+        Box centerBox = new ScrollableBox(BoxLayout.Y_AXIS);
+        // Have to set background and opacity on OS X or else entire dialog is white.
+        centerBox.setBackground(getBackground());
+        centerBox.setOpaque(true);
         centerBox.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         // hinting message
         JTextArea m_messageArea = new JTextArea();
         m_messageArea.setEditable(false);
-        m_messageArea.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
+        m_messageArea.setBackground(getBackground());
         m_messageArea.setFont(new Label().getFont());
         Box bMes = Box.createHorizontalBox();
         bMes.setBorder(emptyBorder);
@@ -639,10 +643,12 @@ public class ProjectPropertiesDialog extends PeroDialog {
         centerBox.add(dirsBox);
 
         JScrollPane scrollPane = new JScrollPane(centerBox);
+        scrollPane.getViewport().setBackground(getBackground());
         getContentPane().add(scrollPane, "Center");
 
         JButton m_okButton = new JButton();
         Mnemonics.setLocalizedText(m_okButton, OStrings.getString("BUTTON_OK"));
+        getRootPane().setDefaultButton(m_okButton);
         JButton m_cancelButton = new JButton();
         Mnemonics.setLocalizedText(m_cancelButton, OStrings.getString("BUTTON_CANCEL"));
 
@@ -681,6 +687,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
             }
         });
         m_srcExcludes.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 List<String> result = FilenamePatternsEditorController.show(srcExcludes);
                 if (result != null) {
@@ -859,16 +866,10 @@ public class ProjectPropertiesDialog extends PeroDialog {
         pack();
 
         setSize(9 * getWidth() / 8, getHeight() + 10);
-        this.setResizable(true);
-        Toolkit kit = getToolkit();
-        Dimension screenSize = kit.getScreenSize();
-        Dimension dialogSize = getSize();
-        GraphicsConfiguration config = getGraphicsConfiguration();
-        Insets insets = kit.getScreenInsets(config);
-        screenSize.height -= (insets.top + insets.bottom);  // excluding the Windows taskbar
-        if (dialogSize.height > screenSize.height) {
-            dialogSize.height = screenSize.height;
-            setSize(dialogSize);
+        setResizable(true);
+        Rectangle rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        if (getHeight() > rect.height) {
+            setSize(getWidth(), rect.height);
         }
         DockingUI.displayCentered(this);
     }
@@ -1245,6 +1246,39 @@ public class ProjectPropertiesDialog extends PeroDialog {
         }
     }
 
+    private class ScrollableBox extends Box implements Scrollable {
+
+        public ScrollableBox(int axis) {
+            super(axis);
+        }
+        
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return getFont().getSize();
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return getFont().getSize();
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
+        
+    }
+    
     /**
      * Whether the user cancelled the dialog.
      */
