@@ -39,6 +39,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -55,6 +56,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -63,6 +65,7 @@ import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -121,6 +124,7 @@ public class ProjectFilesListController {
     private static final Color COLOR_SELECTION_FG = Color.WHITE;
     private static final Color COLOR_SELECTION_BG = new Color(0x2F77DA);
     private static final Color COLOR_ALTERNATING_HILITE = new Color(245, 245, 245);
+    private static final Border TABLE_FOCUS_BORDER = new MatteBorder(1, 1, 1, 1, new Color(0x76AFE8));
 
     private static final int LINE_SPACING = 6;
 
@@ -227,11 +231,11 @@ public class ProjectFilesListController {
                         break;
                     }
                     list.setVisible(true);
-                    list.tableFiles.requestFocus();
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             list.toFront();
+                            list.tableFiles.requestFocus();
                         }
                     });
                     break;
@@ -289,39 +293,47 @@ public class ProjectFilesListController {
                 gotoFile(list.tableFiles.rowAtPoint(e.getPoint()));
             }
         });
+        
         list.tableFiles.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     gotoFile(list.tableFiles.getSelectedRow());
-                    endFilter();
                     e.consume();
                 } else if (filterPanel != null && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     endFilter();
                     e.consume();
                 }
             }
-            @Override
-            public void keyTyped(KeyEvent e) {
-                char c = e.getKeyChar();
-                if ((e.getModifiers() == 0 || e.getModifiers() == KeyEvent.SHIFT_MASK)
-                        && !Character.isWhitespace(c) && !Character.isISOControl(c)) {
-                    if (filterPanel == null) {
-                        startFilter(e.getKeyChar());
-                    } else {
-                        resumeFilter(e.getKeyChar());
-                    }
-                    e.consume();
-                }
-            }
-            
         });
-
+        list.tableFiles.addKeyListener(filterTrigger);
+        list.tableTotal.addKeyListener(filterTrigger);
+        list.btnUp.addKeyListener(filterTrigger);
+        list.btnDown.addKeyListener(filterTrigger);
+        list.btnFirst.addKeyListener(filterTrigger);
+        list.btnLast.addKeyListener(filterTrigger);
+        
         list.btnUp.addActionListener(moveAction);
         list.btnDown.addActionListener(moveAction);
         list.btnFirst.addActionListener(moveAction);
         list.btnLast.addActionListener(moveAction);
     }
+    
+    private final KeyListener filterTrigger = new KeyAdapter() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();
+            if ((e.getModifiers() == 0 || e.getModifiers() == KeyEvent.SHIFT_MASK)
+                    && !Character.isWhitespace(c) && !Character.isISOControl(c)) {
+                if (filterPanel == null) {
+                    startFilter(e.getKeyChar());
+                } else {
+                    resumeFilter(e.getKeyChar());
+                }
+                e.consume();
+            }
+        }
+    };
     
     private void startFilter(char c) {
         if (filterPanel != null) {
@@ -539,7 +551,7 @@ public class ProjectFilesListController {
     /**
      * Builds the table which lists all the project files.
      */
-    public void buildDisplay(List<IProject.FileInfo> files) {
+    private void buildDisplay(List<IProject.FileInfo> files) {
         UIThreadsUtil.mustBeSwingThread();
 
         String path;
@@ -560,6 +572,7 @@ public class ProjectFilesListController {
         setTableFilesModel(files);
         
         resetColWidthData();
+        adjustTableColumns();
     }
 
     private void createTableFiles() {
@@ -894,7 +907,7 @@ public class ProjectFilesListController {
     }
 
     /** Updates the Import Files button status. */
-    public void uiUpdateImportButtonStatus() {
+    private void uiUpdateImportButtonStatus() {
         list.m_addNewFileButton.setEnabled(Core.getProject().isProjectLoaded());
         list.m_wikiImportButton.setEnabled(Core.getProject().isProjectLoaded());
     }
@@ -965,6 +978,9 @@ public class ProjectFilesListController {
             } else {
                 result.setForeground(table.getForeground());
                 result.setBackground(table.getBackground());
+            }
+            if (hasFocus && result instanceof JComponent) {
+                ((JComponent) result).setBorder(TABLE_FOCUS_BORDER);
             }
             return result;
         }
