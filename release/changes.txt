@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------
- OmegaT 3.1.9
+ OmegaT 3.1.9 (2015-03-09)
 ----------------------------------------------------------------------
-  17 Enhancements
-  12 Bug fixes
+  20 Enhancements
+  13 Bug fixes
    6 Localisation updates
 ----------------------------------------------------------------------
 3.1.9 vs. 3.1.8
@@ -33,6 +33,12 @@
   - Make it easy to "brand" OmegaT for custom deployments 
   https://sourceforge.net/p/omegat/feature-requests/1069/
 
+  - Make it easy to find specific files by name or path
+  https://sourceforge.net/p/omegat/feature-requests/1070/
+
+  - Improve resizing behavior of Project Files dialog
+  https://sourceforge.net/p/omegat/feature-requests/1071/
+
   Other enhancements:
   
   - ILIAS Language File filter. Those files can have the .lang or
@@ -61,6 +67,9 @@ information and the active segment's source and target
   - The Visio filter was updated to remove unneeded tags in Visio 2010 documents
 
   - For versions including Java, the JRE is now 1.8.0_31 instead of 1.7
+
+  - The appearance of the Project Files dialog has been improved on OS X.
+The new styling has been applied to all platforms.
 
   Bug fixes:
 
@@ -99,12 +108,15 @@ new project
 bug on OS X + Java 1.8. See https://bugs.openjdk.java.net/browse/JDK-8065739
 for the bug description.
 
+  - The font set in Options > Font was only used after the change when
+Apply this font to the Project Files dialog was used
+
   Localisation updates:
 
   - Belarusian localisation updated to 3.1.9 (UI, tutorial, scripts, readme)
-  - Basque localisation updated to 3.1.8 (UI, tutorial, scripts, readme)
-  - Dutch localisation updated to 3.1.8 (UI, documentation, scripts, readme)
-  - Italian localisation updated to 3.1.8 (UI, documentation, scripts, readme)
+  - Basque localisation updated to 3.1.9 (UI, tutorial, scripts, readme)
+  - Dutch localisation updated to 3.1.9 (UI, documentation, scripts, readme)
+  - Italian localisation updated to 3.1.9 (UI, documentation, scripts, readme)
   - Japanese localisation updated to 3.1.9 (UI, documentation, readme)
   - Russian localisation updated to 3.1.9 (UI, tutorial, scripts, readme)
 
