@@ -217,6 +217,7 @@ Contributi al codice:
   Yu Tang
   Rashid Umarov  
   Antonio Vilei
+  Ilia Vinogradov
   Martin Wunderlich
   Michael Zakharov
 
@@ -224,7 +225,7 @@ Altri contributi:
   Sabine Cretella
   Dmitri Gabinski
   Jean-Christophe Helary (gestore della localizzazione)
-  Vito Smolej (gestore della documentazione)
+  Vincent Bidaux (gestore della documentazione)
   Samuel Murray
   Marc Prior (webmaster)
   e tantissime altre persone che hanno contribuito
