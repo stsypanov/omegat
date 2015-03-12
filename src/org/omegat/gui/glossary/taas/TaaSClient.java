@@ -42,11 +42,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 
@@ -77,15 +79,15 @@ public class TaaSClient {
      * terminology entries, 4- Terminology DB based terminology annotation (fast)
      */
     public static final String EXTRACTION_METHOD = "4";
+	private static final Pattern PATTERN = Pattern.compile(" ", Pattern.LITERAL);
 
-    private final JAXBContext context;
+	private final JAXBContext context;
 
     private final String basicAuth;
     private final String taasUserKey;
 
     public TaaSClient() throws Exception {
-        this.basicAuth = "Basic "
-                + Base64.encodeBytes((M_USERNAME + ":" + M_PASSWORD).getBytes("ISO-8859-1"));
+        this.basicAuth = "Basic " + Base64.encodeBytes((M_USERNAME + ':' + M_PASSWORD).getBytes("ISO-8859-1"));
         this.taasUserKey = System.getProperty("taas.user.key");
         if (this.taasUserKey == null || this.taasUserKey.isEmpty()) {
             Log.logWarningRB("TAAS_API_KEY_NOT_FOUND");
@@ -97,7 +99,7 @@ public class TaaSClient {
     /**
      * Request specified URL and check response code.
      */
-    HttpURLConnection requestGet(String url) throws IOException, Unauthorized, FormatError {
+    HttpURLConnection requestGet(String url) throws IOException, Unauthorized, FormatError, URISyntaxException {
         Log.logInfoRB("TAAS_REQUEST", url);
         HttpURLConnection conn;
         conn = (HttpURLConnection) new URL(url).openConnection();
@@ -121,7 +123,7 @@ public class TaaSClient {
     /**
      * Request specified URL and check response code.
      */
-    HttpURLConnection requestPost(String url, String body) throws IOException, Unauthorized, FormatError {
+    HttpURLConnection requestPost(String url, String body) throws IOException, Unauthorized, FormatError, URISyntaxException {
         Log.logInfoRB("TAAS_REQUEST", url);
         HttpURLConnection conn;
         conn = (HttpURLConnection) new URL(url).openConnection();
@@ -171,7 +173,7 @@ public class TaaSClient {
         if (contentType == null) {
             throw new FormatError("Empty Content-Type header");
         }
-        String ct = contentType.replace(" ", "").toLowerCase();
+        String ct = PATTERN.matcher(contentType).replaceAll("").toLowerCase();
         if (!"text/xml;charset=utf-8".equals(ct) && !"application/xml;charset=utf-8".equals(ct)) {
             throw new FormatError("Wrong Content-Type header: " + contentType);
         }
@@ -191,7 +193,7 @@ public class TaaSClient {
     /**
      * Get a List of Collections.
      */
-    List<TaasCollection> getCollectionsList() throws IOException, Unauthorized, FormatError {
+    List<TaasCollection> getCollectionsList() throws IOException, Unauthorized, FormatError, URISyntaxException {
         HttpURLConnection conn = requestGet(WS_URL + "/collections");
         checkXMLUTF8ContentType(conn);
 
@@ -209,7 +211,7 @@ public class TaaSClient {
     /**
      * Get a List of Domains.
      */
-    List<TaasDomain> getDomainsList() throws IOException, Unauthorized, FormatError {
+    List<TaasDomain> getDomainsList() throws IOException, Unauthorized, FormatError, URISyntaxException {
         HttpURLConnection conn = requestGet(WS_URL + "/domains");
         checkXMLUTF8ContentType(conn);
 
@@ -242,9 +244,9 @@ public class TaaSClient {
      * Look ups translation for given term.
      */
     List<TaasTerm> termLookup(Language sourceLang, Language targetLang, String term) throws IOException,
-            Unauthorized, FormatError {
+			Unauthorized, FormatError, URISyntaxException {
         HttpURLConnection conn = requestGet(WS_URL + "/lookup/" + sourceLang.getLanguageCode().toLowerCase()
-                + "/" + URLEncoder.encode(term, "UTF-8") + "?targetLang="
+                + '/' + URLEncoder.encode(term, "UTF-8") + "?targetLang="
                 + targetLang.getLanguageCode().toLowerCase());
         checkXMLUTF8ContentType(conn);
 
@@ -263,7 +265,7 @@ public class TaaSClient {
      * Term Extraction method. Domain can be null for request all domains.
      */
     TaasExtractionResult termExtraction(Language sourceLang, Language targetLang, String text, String domain)
-            throws IOException, Unauthorized, FormatError {
+			throws IOException, Unauthorized, FormatError, URISyntaxException {
         StringBuilder r = new StringBuilder();
         r.append(WS_URL).append("/extraction/");
         r.append("?sourceLang=").append(sourceLang.getLanguageCode().toLowerCase());
