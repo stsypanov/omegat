@@ -552,8 +552,8 @@ public class SearchWindowController {
      */
     private void savePreferences() {
         // window size and position
-        GuiUtils.saveLayoutPreferences(Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT,
-				Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y,
+        GuiUtils.saveLayoutPreferences(Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y,
+                Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT,
 				form.getX(), form.getY(), form.getWidth(), form.getHeight());
 
         // search type
