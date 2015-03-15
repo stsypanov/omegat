@@ -62,6 +62,7 @@ public class CreateGlossaryEntry extends PeroDialog {
   
         invalidate();
         pack();
+        sourceText.requestFocus();
         DockingUI.displayCentered(this);
     }
 
