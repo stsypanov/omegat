@@ -117,6 +117,8 @@ public class SearchWindowForm extends PeroFrame {
         filler30 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 0), new java.awt.Dimension(5, 32767));
         m_replaceUntranslated = new javax.swing.JCheckBox();
         filler11 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+        createGlossaryEntry = new javax.swing.JCheckBox();
+        filler11 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         m_SearchInPane = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         m_SearchInProjectPane = new javax.swing.JPanel();
@@ -344,6 +346,10 @@ public class SearchWindowForm extends PeroFrame {
 
         org.openide.awt.Mnemonics.setLocalizedText(m_replaceUntranslated, OStrings.getString("SW_REPLACE_UNTRANSLATED")); // NOI18N
         jPanel11.add(m_replaceUntranslated);
+        jPanel11.add(filler11);
+//        org.openide.awt.Mnemonics.setLocalizedText(createGlossaryEntry, OStrings.getString("SW_CREATE_GLOSSARY_ENTRY")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(createGlossaryEntry, "Create glossary entry"); // NOI18N
+        jPanel11.add(createGlossaryEntry);
         jPanel11.add(filler11);
 
         m_panelReplace.add(jPanel11);
@@ -755,5 +761,6 @@ public class SearchWindowForm extends PeroFrame {
     javax.swing.JCheckBox m_searchTranslation;
     javax.swing.JRadioButton m_searchUntranslated;
     javax.swing.JTextPane m_viewer;
+    javax.swing.JCheckBox createGlossaryEntry;
     // End of variables declaration//GEN-END:variables
 }
