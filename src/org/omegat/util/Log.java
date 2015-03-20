@@ -316,4 +316,8 @@ public class Log {
             logger.log(rec);
         }
     }
+
+    public static void log(Level level, String message, Throwable e) {
+        LOGGER.log(level, message, e);
+    }
 }
