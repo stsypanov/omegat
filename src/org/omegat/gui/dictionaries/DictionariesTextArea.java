@@ -39,6 +39,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -61,6 +62,7 @@ import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.tokenizer.ITokenizer;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.Token;
@@ -179,7 +181,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                         scrollRectToVisible(rect);
                     }
                 } catch (BadLocationException ex) {
-                    // shouldn't be throwed
+                    Log.log(Level.SEVERE, "callDictionary", ex);
                 }
             }
         }
@@ -220,7 +222,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             } else {
                 wasPrev = true;
             }
-            txt.append("<b><span id=\"" + i + "\">");
+            txt.append("<b><span id=\"").append(i).append("\">");
             txt.append(de.getWord());
             txt.append("</span></b>");
             txt.append(" - ").append(de.getArticle());
@@ -265,7 +267,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     /**
      * Thread for search data in dictionaries.
      */
-    public class DictionaryEntriesSearchThread extends EntryInfoSearchThread<List<DictionaryEntry>> {
+    private class DictionaryEntriesSearchThread extends EntryInfoSearchThread<List<DictionaryEntry>> {
         protected final String src;
         protected final ITokenizer tok;
 
