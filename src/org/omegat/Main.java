@@ -74,6 +74,7 @@ import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.Styles;
 
 import com.vlsolutions.swing.docking.DockingDesktop;
+import org.omegat.util.Platform;
 
 /**	
  * The main OmegaT class, used to launch the program.
@@ -221,7 +222,7 @@ public class Main {
      */
     protected static int runGUI() {
         // MacOSX-specific - they must be setted BEFORE any GUI calls
-        if (StaticUtils.onMacOSX()) {
+        if (Platform.isMacOSX()) {
             OSXIntegration.init();
         }
 
@@ -254,6 +255,8 @@ public class Main {
 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             setNimbusLaF();
+            
+            System.setProperty("swing.aatext", "true");
             
             // Override LAF with custom colors, if any (they default to the LAF attributes)
             Styles.setupLAF();

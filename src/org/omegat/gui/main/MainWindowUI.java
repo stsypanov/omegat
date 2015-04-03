@@ -8,6 +8,7 @@
                2007 Zoltan Bartko
                2008 Andrzej Sawula, Alex Buloichik
                2014 Piotr Kulik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -52,6 +53,7 @@ import org.omegat.gui.editor.EditorController;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.DockingUI;
@@ -73,9 +75,11 @@ import com.vlsolutions.swing.docking.event.DockableStateWillChangeListener;
  * @author Andrzej Sawula
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Piotr Kulik
+ * @author Aaron Madlon-Kay
  */
 public class MainWindowUI {
-    public static String UI_LAYOUT_FILE = "uiLayout.xml";
+    public static String UI_LAYOUT_FILE = OStrings.BRANDING.isEmpty() ? "uiLayout.xml"
+            : "uiLayout-" + OStrings.BRANDING + ".xml";
     
     public enum STATUS_BAR_MODE {
         DEFAULT,
@@ -207,6 +211,12 @@ public class MainWindowUI {
                 h = 700;
             }
         }
+        if (Platform.isMacOSX() && System.getProperty("java.version").startsWith("1.8")) {
+            // Work around Java bug: https://bugs.openjdk.java.net/browse/JDK-8065739
+            int screenWidth = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
+            // 50 is a magic number. Can be as low as 11 (tested on OS X 10.10.2, Java 1.8.0_31).
+            w = Math.min(w, screenWidth - 50);
+        }
         mainWindow.setBounds(x, y, w, h);
 
         File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
@@ -218,6 +228,8 @@ public class MainWindowUI {
                 // In case something wrong happened, it's better to have a default screen than a blank one
                 resetDesktopLayout(mainWindow);
             }
+        } else {
+            resetDesktopLayout(mainWindow);
         }
     }
 

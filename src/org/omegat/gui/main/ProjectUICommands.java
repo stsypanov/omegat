@@ -8,6 +8,7 @@
                2012 Thomas Cordonnier
                2013 Yu Tang
                2014 Aaron Madlon-Kay, Piotr Kulik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -36,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+
 import org.omegat.core.Core;
 import org.omegat.core.KnownException;
 import org.omegat.core.data.ProjectFactory;
@@ -44,7 +46,6 @@ import org.omegat.core.team.GITRemoteRepository;
 import org.omegat.core.team.IRemoteRepository;
 import org.omegat.core.team.RepositoryUtils;
 import org.omegat.core.team.SVNRemoteRepository;
-import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.dialogs.NewProjectFileChooser;
 import org.omegat.gui.dialogs.NewTeamProject;
 import org.omegat.gui.dialogs.ProjectPropertiesDialog;
@@ -138,7 +139,6 @@ public class ProjectUICommands {
                 Core.getMainWindow().showStatusMessageRB(null);
 
                 final NewTeamProject dialog = new NewTeamProject(Core.getMainWindow().getApplicationFrame(), true);
-                DockingUI.displayCentered(dialog);
                 dialog.setVisible(true);
 
                 IMainWindow mainWindow = Core.getMainWindow();
@@ -492,7 +492,6 @@ public class ProjectUICommands {
         if (newProps == null) {
             return;
         }
-        FilterMaster.saveConfig(newProps.getProjectFilters(), newProps.getProjectInternal());
 
         int res = JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
                 OStrings.getString("MW_REOPEN_QUESTION"), OStrings.getString("MW_REOPEN_TITLE"),

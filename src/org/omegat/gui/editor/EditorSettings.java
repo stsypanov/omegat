@@ -5,6 +5,7 @@
 
  Copyright (C) 2008 Alex Buloichik
                2012 Martin Fleurke, Hans-Peter Jacobs
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -44,6 +45,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Martin Fleurke
  * @author Hans-Peter Jacobs
+ * @author Aaron Madlon-Kay
  */
 public class EditorSettings {
     private final EditorController parent;
@@ -385,7 +387,9 @@ public class EditorSettings {
         // Custom foreground colors
         if (active) {
             if (isSource) {
-                fg = Styles.EditorColor.COLOR_SOURCE_FG.getColor();
+                fg = Styles.EditorColor.COLOR_ACTIVE_SOURCE_FG.getColor();
+            } else {
+                fg = Styles.EditorColor.COLOR_ACTIVE_TARGET_FG.getColor();
             }
         } else {
             if (isSource) {
@@ -427,7 +431,9 @@ public class EditorSettings {
         Color bg = null;
         if (active) {
             if (isSource) {
-                bg = Styles.EditorColor.COLOR_SOURCE.getColor();
+                bg = Styles.EditorColor.COLOR_ACTIVE_SOURCE.getColor();
+            } else {
+                bg = Styles.EditorColor.COLOR_ACTIVE_TARGET.getColor();
             }
         } else {
             if (isSource) {
@@ -487,7 +493,8 @@ public class EditorSettings {
      * @return
      */
     public AttributeSet getModificationInfoAttributeSet() {
-        return Styles.createAttributeSet(null, null, null, true);
+        return Styles.createAttributeSet(Styles.EditorColor.COLOR_MOD_INFO_FG.getColor(),
+                Styles.EditorColor.COLOR_MOD_INFO.getColor(), false, true);
     }
     /**
      * Returns font attributes for the segment marker.

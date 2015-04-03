@@ -31,8 +31,6 @@
 package org.omegat.util.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Window;
 
 import javax.swing.ImageIcon;
@@ -48,6 +46,7 @@ import org.omegat.util.OStrings;
 import com.vlsolutions.swing.docking.AutoHidePolicy;
 import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
 import com.vlsolutions.swing.docking.ui.DockingUISettings;
+import java.awt.Font;
 
 /**
  * Docking UI support.
@@ -82,7 +81,9 @@ public class DockingUI {
         UIManager.put("DockTabbedPane.floatButtonText", OStrings.getString("DOCKING_HINT_UNDOCK"));
         UIManager.put("DockTabbedPane.closeButtonText", "");
 
-        UIManager.put("DockViewTitleBar.titleFont", new JLabel().getFont());
+        Font defaultFont = new JLabel().getFont();
+        UIManager.put("DockViewTitleBar.titleFont", defaultFont);
+        UIManager.put("JTabbedPaneSmartIcon.font", defaultFont);
 
         UIManager.put("DockViewTitleBar.isCloseButtonDisplayed", Boolean.FALSE);
 
@@ -168,18 +169,7 @@ public class DockingUI {
      *            window
      */
     public static void displayCentered(final Window window) {
-        Point mLocation = Core.getMainWindow().getApplicationFrame().getLocation();
-        Dimension mSize = Core.getMainWindow().getApplicationFrame().getSize();
-
-        Point mCenter = new Point();
-        mCenter.x = mLocation.x + mSize.width / 2;
-        mCenter.y = mLocation.y + mSize.height / 2;
-
-        Dimension dSize = window.getSize();
-        Point dLocation = new Point();
-        dLocation.x = mCenter.x - dSize.width / 2;
-        dLocation.y = mCenter.y - dSize.height / 2;
-        window.setLocation(dLocation);
+        window.setLocationRelativeTo(Core.getMainWindow().getApplicationFrame());
     }
 
     /**

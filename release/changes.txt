@@ -1,16 +1,85 @@
 ----------------------------------------------------------------------
- OmegaT 3.1.8 update 1
+ OmegaT 3.1.4 
 ----------------------------------------------------------------------
-   3 Enhancements
-   6 Bug fixes
-   2 Localisation updates
+   1 Enhancement
+   2 Bug fixes
+   0 Localisation update
 ----------------------------------------------------------------------
-3.1.8 update 1 vs. 3.1.8
+3.1.4 update 3.1.9 update 1
+
+  Other changes:
+
+  - New XML Spreadsheet 2003 filter. This allows translating Excel document
+exported in XML 2003 format. As the extension is .xml, other filters may
+"steal" the file. In that case, they have to be disabled. The XML 
+Spreadhsheet 2003 filter limit itself to documents where the first tag
+is "Workbook".
+
+----------------------------------------------------------------------
+ OmegaT 3.1.9 update 1
+----------------------------------------------------------------------
+   1 Enhancement
+   2 Bug fixes
+   0 Localisation update
+----------------------------------------------------------------------
+3.1.9 update 1 vs. 3.1.9
+
+  Implemented requests:
+
+  - Change auto-completion mode access keys 
+  https://sourceforge.net/p/omegat/feature-requests/1073/
+
+  Bug fixes:
+  
+  - The OK and Cancel buttons of Options > Editing Behaviour were not
+displayed correctly
+
+  - Newly assigned scripts execute several times 
+  https://sourceforge.net/p/omegat/bugs/737/
+
+----------------------------------------------------------------------
+ OmegaT 3.1.9 (2015-03-09)
+----------------------------------------------------------------------
+  21 Enhancements
+  13 Bug fixes
+   6 Localisation updates
+----------------------------------------------------------------------
+3.1.9 vs. 3.1.8
 
   Implemented requests:
 
   - Machine translation with Yandex 
   https://sourceforge.net/p/omegat/feature-requests/790/
+
+  - Use selection for text Search from "Fuzzy Match" or "Glossary" panes
+  https://sourceforge.net/p/omegat/feature-requests/877/
+
+  - Allow to insert selection into translation from the Fuzzy Matches pane
+  https://sourceforge.net/p/omegat/feature-requests/1057/ 
+
+  - Warn user if the Enter key is hit while "Use TAB to Advance" is checked 
+  https://sourceforge.net/p/omegat/feature-requests/1061/
+
+  - Support XLIFF equiv-text in tooltips, simplify tooltip prefs
+  https://sourceforge.net/p/omegat/feature-requests/1064/
+
+  - Show the number of non-unique segment instances in the segment markers
+  https://sourceforge.net/p/omegat/feature-requests/1068/
+
+  - Contextual menu to jump to another instance of non-unique segments
+  https://sourceforge.net/p/omegat/feature-requests/1067/
+
+  - Make it easy to "brand" OmegaT for custom deployments 
+  https://sourceforge.net/p/omegat/feature-requests/1069/
+
+  - Make it easy to find specific files by name or path
+  https://sourceforge.net/p/omegat/feature-requests/1070/
+
+  - Improve resizing behavior of Project Files dialog
+  https://sourceforge.net/p/omegat/feature-requests/1071/
+
+  - Make segment numbers visible for all segments
+  https://sourceforge.net/p/omegat/feature-requests/1038/
 
   Other enhancements:
   
@@ -22,9 +91,34 @@ Mozilla filter, it has to be unabled to load them with the ILIAS filter.
 source segment already translated will not be requested again during
 the same session (i.e., until OmegaT is closed).
 
+  - The initial location and the layout when resized of various dialogs 
+were improved. The OK button was set as the default button for all dialogs.
+
+  - The Custom Colours dialog was improved. It can be closed with Escape, 
+changes are remembered immediately and all colours can be reset at once.
+There's also a new tab for colour selection.
+
+  - The Project Files dialog can be hidden on project load via hidden preference
+(project_files_show_on_load)
+
+  - It is possible to define the text and background colour of modification 
+information and the active segment's source and target
+
+  - Dialogs are now centered against the main window instead of the screen
+
+  - The Visio filter was updated to remove unneeded tags in Visio 2010 documents
+
+  - For versions including Java, the JRE is now 1.8.0_31 instead of 1.7
+
+  - The appearance of the Project Files dialog has been improved on OS X.
+The new styling has been applied to all platforms.
+
   Bug fixes:
 
   - There's now a 3-second retry when OmegaT attempts to rename files
+
+  -  java.io.IOException: Error rename new file to glossary in team projects
+  https://sourceforge.net/p/omegat/bugs/695/
 
   - In some specific cases, the content of Mozilla DTD files was not 
 loaded
@@ -39,11 +133,34 @@ distributions
   
   - Filtering after a search with no live segments freezes OmegaT
   https://sourceforge.net/p/omegat/bugs/692/
+  
+  - Ellipses missing in several menu items
+  https://sourceforge.net/p/omegat/bugs/728/
+
+  - Both menu items for alternative translation are enabled 
+  https://sourceforge.net/p/omegat/bugs/731/
+
+  - Incorrect handling of typographic apostrophe (U+2019)
+  https://sourceforge.net/p/omegat/bugs/598/
+
+  - The project-specific filter configuration was not saved when creating a
+new project
+
+  - Mac OS X: A workaround was added for the full-screen window sizing
+bug on OS X + Java 1.8. See https://bugs.openjdk.java.net/browse/JDK-8065739
+for the bug description.
+
+  - The font set in Options > Font was only used after the change when
+Apply this font to the Project Files dialog was used
 
   Localisation updates:
 
-  - Belarusian localisation updated to 3.1.8 (UI, tutorial, scripts, readme)
-  - Russian localisation updated to 3.1.8 update 1 (UI, tutorial, scripts, readme)
+  - Belarusian localisation updated to 3.1.9 (UI, tutorial, scripts, readme)
+  - Basque localisation updated to 3.1.9 (UI, tutorial, scripts, readme)
+  - Dutch localisation updated to 3.1.9 (UI, documentation, scripts, readme)
+  - Italian localisation updated to 3.1.9 (UI, documentation, scripts, readme)
+  - Japanese localisation updated to 3.1.9 (UI, documentation, readme)
+  - Russian localisation updated to 3.1.9 (UI, tutorial, scripts, readme)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.8 (2014-12-04)

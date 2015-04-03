@@ -47,6 +47,7 @@ import org.omegat.gui.editor.autotext.AutotextPair;
 import org.omegat.gui.editor.autotext.AutotextTableModel;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -95,6 +96,7 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         model.load();
         entryTable.setModel(model);
         model.addTableModelListener(entryTable);
+        DockingUI.displayCentered(this);
     }
     
     /**
@@ -234,9 +236,11 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
             }
         ));
         jScrollPane2.setViewportView(entryTable);
-        entryTable.getColumnModel().getColumn(0).setHeaderValue(OStrings.getString("AC_AUTOTEXT_ABBREVIATION")); // NOI18N
-        entryTable.getColumnModel().getColumn(1).setHeaderValue(OStrings.getString("AC_AUTOTEXT_TEXT")); // NOI18N
-        entryTable.getColumnModel().getColumn(2).setHeaderValue(OStrings.getString("AC_AUTOTEXT_COMMENT")); // NOI18N
+        if (entryTable.getColumnModel().getColumnCount() > 0) {
+            entryTable.getColumnModel().getColumn(0).setHeaderValue(OStrings.getString("AC_AUTOTEXT_ABBREVIATION")); // NOI18N
+            entryTable.getColumnModel().getColumn(1).setHeaderValue(OStrings.getString("AC_AUTOTEXT_TEXT")); // NOI18N
+            entryTable.getColumnModel().getColumn(2).setHeaderValue(OStrings.getString("AC_AUTOTEXT_COMMENT")); // NOI18N
+        }
 
         org.openide.awt.Mnemonics.setLocalizedText(addNewRowButton, OStrings.getString("BUTTON_ADD_NODOTS")); // NOI18N
         addNewRowButton.addActionListener(new java.awt.event.ActionListener() {
@@ -317,7 +321,6 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         );
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed

@@ -6,6 +6,7 @@
  Copyright (C) 2011 Briac Pilpre (briacp@gmail.com)
                2013 Alex Buloichik
                2014 Briac Pilpre (briacp@gmail.com), Yu Tang
+               2015 Yu Tang
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -232,6 +233,7 @@ public class ScriptingWindow extends PeroFrame {
 
     private void unsetQuickScriptMenu(int index) {
         m_quickScripts[index] = null;
+        removeAllQuickScriptActionListenersFrom(m_quickMenus[index]);
         m_quickMenus[index].setEnabled(false);
         Mnemonics.setLocalizedText(m_quickMenus[index], "&" + scriptKey(index) + " - " + OStrings.getString("SCW_SCRIPTS_NONE"));
     }
@@ -239,6 +241,7 @@ public class ScriptingWindow extends PeroFrame {
     private void setQuickScriptMenu(ScriptItem scriptItem, int index) {
         m_quickScripts[index] = scriptItem.getName();
 
+        removeAllQuickScriptActionListenersFrom(m_quickMenus[index]);
         m_quickMenus[index].addActionListener(new QuickScriptActionListener(index));
 
         // Since the script is run while editing a segment, the shortcut should not interfere
@@ -252,6 +255,18 @@ public class ScriptingWindow extends PeroFrame {
         Mnemonics.setLocalizedText(m_quickMenus[index], "&" + scriptKey(index) + " - " + scriptItem.getScriptName());
     }
 
+    private void removeAllQuickScriptActionListenersFrom(JMenuItem menu) {
+        if (menu == null) {
+            return;
+        }
+
+        for (ActionListener l: menu.getActionListeners()) {
+            if (l instanceof QuickScriptActionListener) {
+                menu.removeActionListener(l);
+            }
+        }
+    }
+    
     private class QuickScriptActionListener implements ActionListener {
 
         private final int index;

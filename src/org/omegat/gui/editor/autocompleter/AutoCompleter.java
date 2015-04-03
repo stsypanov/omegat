@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2013 Zoltan Bartko, Aaron Madlon-Kay
-               2014 Aaron Madlon-Kay
+               2014-2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -35,11 +35,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 
 import org.omegat.gui.editor.EditorTextArea3;
@@ -49,6 +50,7 @@ import org.omegat.gui.editor.chartable.CharTableAutoCompleterView;
 import org.omegat.gui.glossary.GlossaryAutoCompleterView;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
 import org.omegat.util.StaticUtils;
 
 /**
@@ -59,10 +61,13 @@ import org.omegat.util.StaticUtils;
  */
 public class AutoCompleter {    
     
+    private final static int GO_NEXT_KEY = KeyEvent.VK_RIGHT;
+    private final static int GO_PREV_KEY = KeyEvent.VK_LEFT;
+    
     JPopupMenu popup = new JPopupMenu(); 
     private EditorTextArea3 editor; 
     
-    boolean onMac = StaticUtils.onMacOSX();
+    boolean onMac = Platform.isMacOSX();
     
     private boolean visible = false;
     
@@ -85,13 +90,13 @@ public class AutoCompleter {
         this.editor = editor; 
         
         scroll = new JScrollPane();
-        scroll.setBorder(null);
+        scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
         scroll.setPreferredSize(new Dimension(200,200));
         scroll.setColumnHeaderView(null);
         scroll.setFocusable(false);
  
-        scroll.getVerticalScrollBar().setFocusable( false ); 
-        scroll.getHorizontalScrollBar().setFocusable( false ); 
+        scroll.getVerticalScrollBar().setFocusable(false); 
+        scroll.getHorizontalScrollBar().setFocusable(false); 
         
         // add any views here
         views.add(new GlossaryAutoCompleterView(this));
@@ -100,8 +105,11 @@ public class AutoCompleter {
         views.add(new CharTableAutoCompleterView(this));
 
         viewLabel = new JLabel();
-        viewLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-        popup.setBorder(BorderFactory.createLineBorder(Color.black));
+        viewLabel.setBorder(new CompoundBorder(
+                new MatteBorder(1, 0, 0, 0, Color.BLACK),
+                new EmptyBorder(5, 5, 5, 5)));
+        viewLabel.setOpaque(true);
+        popup.setBorder(new MatteBorder(1, 1, 1, 1, Color.BLACK));
         popup.setLayout(new BorderLayout());
         popup.add(scroll, BorderLayout.CENTER); 
         popup.add(viewLabel, BorderLayout.SOUTH);
@@ -154,16 +162,15 @@ public class AutoCompleter {
                 return true;
             }
             
-            if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_UP,
-                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
+            if (StaticUtils.isKey(e, GO_PREV_KEY, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
                 if (popup.isVisible()) {
                     selectPreviousView();
                 }
                 return true;
             }
             
-            if (StaticUtils.isKey(e, KeyEvent.VK_SPACE, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
-                    || StaticUtils.isKey(e, KeyEvent.VK_PAGE_DOWN, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
+            if ((!onMac && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
+                    || StaticUtils.isKey(e, GO_NEXT_KEY, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
                 if (popup.isVisible()) {
                     selectNextView();
                 }
@@ -200,9 +207,10 @@ public class AutoCompleter {
     /**
      * Show the popup list.
      */
-    public void updatePopup() {
-        if (!visible)
+    public void updatePopup() { 
+        if (!isVisible()) {
             return;
+        }
         
         if (editor.isEnabled() && updateViewData() && views.get(currentView).getRowCount()!=0) { 
             scroll.setPreferredSize(new Dimension(
@@ -297,8 +305,8 @@ public class AutoCompleter {
         sb.append("</b>");
         
         if (views.size() != 1) {
-            String nextKeyString = keyText(KeyEvent.VK_PAGE_DOWN, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-            String prevKeyString = keyText(KeyEvent.VK_PAGE_UP, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+            String nextKeyString = keyText(GO_NEXT_KEY, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+            String prevKeyString = keyText(GO_PREV_KEY, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
             
             if (views.size() >= 2) {
                 sb.append("<br>");

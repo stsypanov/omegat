@@ -64,6 +64,9 @@ import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
+import org.omegat.gui.main.IMainWindow;
+import org.omegat.gui.main.MainWindow;
+import org.omegat.util.Platform;
 import org.omegat.util.Log;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -247,7 +250,7 @@ public class EditorTextArea3 extends JEditorPane {
 
         boolean processed = false;
 
-        boolean mac = StaticUtils.onMacOSX();
+        boolean mac = Platform.isMacOSX();
 
         Document3 doc = getOmDocument();
 
@@ -283,6 +286,12 @@ public class EditorTextArea3 extends JEditorPane {
                 controller.nextEntry();
                 processed = true;
             } else {
+                IMainWindow mainWindow = Core.getMainWindow();
+                // Timed warning is not available for console window
+                if (mainWindow instanceof MainWindow) {
+                    MainWindow window = (MainWindow) mainWindow;
+                    window.showTimedStatusMessageRB("ETA_WARNING_TAB_ADVANCE");
+                }
                 processed = true;
             }
         } else if ((StaticUtils.isKey(e, KeyEvent.VK_ENTER,

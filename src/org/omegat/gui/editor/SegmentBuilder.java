@@ -6,6 +6,7 @@
  Copyright (C) 2009 Alex Buloichik, Martin Fleurke
                2010 Alex Buloichik, Didier Briel
                2012 Martin Fleurke, Hans-Peter Jacobs
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -61,6 +62,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Didier Briel
  * @author Martin Fleurke
  * @author Hans-Peter Jacobs
+ * @author Aaron Madlon-Kay
  */
 public class SegmentBuilder {
 
@@ -568,12 +570,20 @@ public class SegmentBuilder {
     private String createSegmentMarkText() {
         String text = OConsts.segmentMarkerString;
 
-        // trim and replace spaces to non-break spaces
-        text = text.trim().replace(' ', '\u00A0');
         //replace placeholder with actual segment number
         if (text.contains("0000")) {
-            text = text.replace("0000", NUMBER_FORMAT.format(segmentNumberInProject));
+            String replacement = NUMBER_FORMAT.format(segmentNumberInProject);
+            if (Preferences.isPreference(Preferences.MARK_NON_UNIQUE_SEGMENTS)
+                    && ste.getDuplicate() != SourceTextEntry.DUPLICATE.NONE) {
+                replacement = StaticUtils.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
+                        replacement,
+                        ste.getNumberOfDuplicates());
+            }
+            text = text.replace("0000", replacement);
         }
+        
+        // trim and replace spaces to non-break spaces
+        text = text.trim().replace(' ', '\u00A0');
 
         return text;
     }
