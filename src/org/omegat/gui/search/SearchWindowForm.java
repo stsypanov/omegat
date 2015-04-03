@@ -613,6 +613,10 @@ public class SearchWindowForm extends PeroFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public boolean createGlossaryEntryOnReplace(){
+        return createGlossaryEntry.isSelected();
+    }
+
     /**
      * @param args the command line arguments
      */

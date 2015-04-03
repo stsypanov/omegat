@@ -700,6 +700,9 @@ public class SearchWindowController {
     }
 
     private void doReplace() {
+        if (form.createGlossaryEntryOnReplace()){
+
+        }
         String replaceString = form.m_replaceField.getEditor().getItem().toString();
         HistoryManager.addReplaceItem(replaceString);
         form.m_replaceField.setModel(new DefaultComboBoxModel(HistoryManager.getReplaceItems()));
