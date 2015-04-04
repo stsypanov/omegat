@@ -58,24 +58,24 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 /**
  * This is test for team project concurrent modification. It doesn't simple junit test, but looks like
  * 'integration' test.
- * 
+ *
  * This test prepare scenario, execute separate JVMs for concurrent updates, then check remote repository
  * data.
- * 
+ *
  * Each child process updates own segments with source1..5/0/1/2/3 by values from 1 and more. Segment source/0
  * updated each time, but source/1/2/3 updated once per cycle. After process will be finished, values in tmx
  * should be in right order, i.e. only by increasing order. That means user will not commit previous
  * translation for other user's segments.
- * 
+ *
  * Segment with 'concurrent' source will be modified by all users by values from 1 and more with user's
  * prefix. Conflicts should be resolved by choose higher value. After process will be finished, values in
  * 'concurrent' segment should be also increased only.
- * 
+ *
  * Each child saves Integer.MAXVALUE as last translation, but current OmegaT implementation doesn't require to
  * commit it, see "GIT_CONFLICT=Push failed. Will be synchronized next time."
- * 
+ *
  * @author Alex Buloichik (alex73mail@gmail.com)
- * 
+ *
  *         TODO: "svn: E160028: Commit failed" during commit
  */
 public class TestTeamIntegration {
@@ -149,11 +149,10 @@ public class TestTeamIntegration {
         data.put(TestTeamIntegrationChild.CONCURRENT_NAME, new ArrayList<Long>());
         data.get(TestTeamIntegrationChild.CONCURRENT_NAME).add(0L);
 
-        ProjectTMX tmx = null;
         int tmxCount = 0;
         for (String rev : repo.listRevisions(startVersion)) {
             repo.checkout(rev);
-            tmx = new ProjectTMX(new Language("en"), new Language("be"), false, new File(DIR
+			ProjectTMX tmx = new ProjectTMX(new Language("en"), new Language("be"), false, new File(DIR
                     + "/repo/omegat/project_save.tmx"), checkOrphanedCallback);
 
             for (String th : data.keySet()) {
@@ -295,9 +294,9 @@ public class TestTeamIntegration {
         }
 
         public void end() {
-            if (p.isAlive()) {
-                p.destroyForcibly();
-            }
+//            if (p.isAlive()) {
+//                p.destroyForcibly();
+//            }
         }
     }
 

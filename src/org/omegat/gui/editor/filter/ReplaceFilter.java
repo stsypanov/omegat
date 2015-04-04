@@ -162,48 +162,35 @@ public class ReplaceFilter implements IEditorFilter {
 
         // find to the end of project
         for (int i = currentEntryNumber + 1; i <= maxEntryNum; i++) {
-            SourceTextEntry ste = entries.get(i);
-            if (ste == null) {
-                continue; // entry not filtered
-            }
-            TMXEntry en = Core.getProject().getTranslationInfo(ste);
-            String trans = getEntryText(ste, en);
-            if (trans == null) {
-                continue;
-            }
-            found = getReplacementsForEntry(trans);
-            if (found == null) {
-                continue; // no replacements
-            }
-            for (SearchMatch m : found) {
-                ec.gotoEntry(i, new EditorController.CaretPosition(m.getStart(), m.getEnd()));
-                ec.requestFocus();
-                return;
-            }
+            find(i, found, ec);
         }
         // find from the beginning of project
         for (int i = minEntryNum; i < currentEntryNumber; i++) {
-            SourceTextEntry ste = entries.get(i);
-            if (ste == null) {
-                continue; // entry not filtered
-            }
-            TMXEntry en = Core.getProject().getTranslationInfo(ste);
-            String trans = getEntryText(ste, en);
-            if (trans == null) {
-                continue;
-            }
-            found = getReplacementsForEntry(trans);
-            if (found == null) {
-                continue; // no replacements
-            }
-            for (SearchMatch m : found) {
-                ec.gotoEntry(i, new EditorController.CaretPosition(m.getStart(), m.getEnd()));
-                ec.requestFocus();
-                return;
-            }
+            find(i, found, ec);
         }
         // not found
         ec.activateEntry();
+    }
+
+    protected void find(int i, List<SearchMatch> found, EditorController ec){
+        SourceTextEntry ste = entries.get(i);
+        if (ste == null) {
+            return; // entry not filtered
+        }
+        TMXEntry en = Core.getProject().getTranslationInfo(ste);
+        String trans = getEntryText(ste, en);
+        if (trans == null) {
+            return;
+        }
+        found = getReplacementsForEntry(trans);
+        if (found == null) {
+            return; // no replacements
+        }
+        for (SearchMatch m : found) {
+            ec.gotoEntry(i, new EditorController.CaretPosition(m.getStart(), m.getEnd()));
+            ec.requestFocus();
+            return;
+        }
     }
 
     private void replace() {

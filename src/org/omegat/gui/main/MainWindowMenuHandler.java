@@ -358,16 +358,12 @@ public class MainWindowMenuHandler {
     }
 
     public void editReplaceInProjectMenuItemActionPerformed() {
-        searchReplace(SearchMode.REPLACE);
-    }
-
-    private void searchReplace(SearchMode mode) {
         if (!Core.getProject().isProjectLoaded())
             return;
 
         String selection = getTrimmedSelectedTextInMainWindow();
 
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, mode);
+        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.REPLACE);
         mainWindow.addSearchWindow(search);
     }
 
