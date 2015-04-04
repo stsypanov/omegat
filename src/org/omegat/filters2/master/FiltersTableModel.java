@@ -146,7 +146,7 @@ public class FiltersTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
         Filter filter = filters.get(rowIndex);
         switch (columnIndex) {
         case 1:
