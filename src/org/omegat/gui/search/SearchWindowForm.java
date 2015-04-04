@@ -742,7 +742,7 @@ public class SearchWindowForm extends PeroFrame {
     javax.swing.JButton m_replaceButton;
     javax.swing.JCheckBox m_replaceCase;
     javax.swing.JRadioButton m_replaceExactSearchRB;
-    javax.swing.JComboBox m_replaceField;
+    javax.swing.JComboBox<String> m_replaceField;
     javax.swing.JLabel m_replaceLabel;
     javax.swing.JRadioButton m_replaceRegexpSearchRB;
     javax.swing.JCheckBox m_replaceSpaceMatchNbsp;

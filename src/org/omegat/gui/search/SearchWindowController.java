@@ -68,6 +68,7 @@ import org.omegat.core.search.Searcher;
 import org.omegat.core.threads.SearchThread;
 import org.omegat.gui.editor.filter.ReplaceFilter;
 import org.omegat.gui.editor.filter.SearchFilter;
+import org.omegat.gui.glossary.GlossaryTextArea;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -554,7 +555,7 @@ public class SearchWindowController {
         // window size and position
         GuiUtils.saveLayoutPreferences(Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y,
                 Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT,
-				form.getX(), form.getY(), form.getWidth(), form.getHeight());
+                form.getX(), form.getY(), form.getWidth(), form.getHeight());
 
         // search type
         if (form.m_searchExactSearchRB.isSelected()) {
@@ -700,24 +701,19 @@ public class SearchWindowController {
     }
 
     private void doReplace() {
-        if (form.createGlossaryEntryOnReplace()){
-
-        }
         String replaceString = form.m_replaceField.getEditor().getItem().toString();
         HistoryManager.addReplaceItem(replaceString);
-        form.m_replaceField.setModel(new DefaultComboBoxModel(HistoryManager.getReplaceItems()));
+        form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
 
         EntryListPane viewer = (EntryListPane) form.m_viewer;
         Core.getEditor().commitAndLeave(); // Otherwise, the current segment being edited is lost
-        Core.getEditor()
-                .setFilter(
-                        new ReplaceFilter(viewer.getEntryList(), viewer.getSearcher(), replaceString));
+        Core.getEditor().setFilter(new ReplaceFilter(viewer.getEntryList(), viewer.getSearcher(), replaceString));
     }
 
     private void doReplaceAll() {
         String replaceString = form.m_replaceField.getEditor().getItem().toString();
         HistoryManager.addReplaceItem(replaceString);
-        form.m_replaceField.setModel(new DefaultComboBoxModel(HistoryManager.getReplaceItems()));
+        form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
 
         EntryListPane viewer = (EntryListPane) form.m_viewer;
         Core.getEditor().commitAndDeactivate(); // Otherwise, the current segment being edited is lost
@@ -731,6 +727,17 @@ public class SearchWindowController {
         Core.getEditor().activateEntry();
         form.m_replaceButton.setEnabled(false);
         form.m_replaceAllButton.setEnabled(false);
+        if (form.createGlossaryEntryOnReplace()){
+            createGlossaryEntry(replaceString);
+        }
+    }
+
+    private void createGlossaryEntry(String replaceString) {
+        String searchString = form.m_searchField.getEditor().getItem().toString();
+        if (StringUtil.notEmpty(replaceString) && StringUtil.notEmpty(searchString)){
+            final File out = new File(Core.getProject().getProjectProperties().getWriteableGlossary());
+            GlossaryTextArea.createGlossaryEntry(searchString, replaceString, "created for 'Replace all action'", out);
+        }
     }
 
     private void doSearch() {
@@ -745,7 +752,7 @@ public class SearchWindowController {
         String queryString = form.m_searchField.getEditor().getItem().toString();
 
         HistoryManager.addSearchItem(queryString);
-        form.m_searchField.setModel(new DefaultComboBoxModel(HistoryManager.getSearchItems()));
+        form.m_searchField.setModel(new DefaultComboBoxModel<>(HistoryManager.getSearchItems()));
         form.m_searchField.requestFocus();
 
         viewer.reset();

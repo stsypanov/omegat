@@ -43,6 +43,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -297,15 +298,19 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
                     String loc = dialog.getTargetText().getText();
                     String com = dialog.getCommentText().getText();
                     if (!StringUtil.isEmpty(src) && !StringUtil.isEmpty(loc)) {
-                        try {
-                            GlossaryReaderTSV.append(out, new GlossaryEntry(src, loc, com, true));
-                        } catch (Exception ex) {
-                            Log.log(ex);
-                        }
+                        createGlossaryEntry(src, loc, com, out);
                     }
                 }
             }
         });
         createGlossaryEntryDialog = dialog;
+    }
+
+    public static void createGlossaryEntry(String src, String loc, String com, File out) {
+        try {
+            GlossaryReaderTSV.append(out, new GlossaryEntry(src, loc, com, true));
+        } catch (Exception ex) {
+            Log.log(Level.SEVERE, "failed to create glossary entry", ex);
+        }
     }
 }
