@@ -42,7 +42,7 @@ import org.omegat.core.matching.ISimilarityCalculator;
 import org.omegat.core.matching.LevenshteinDistance;
 import org.omegat.core.matching.NearString;
 import org.omegat.core.threads.LongProcessThread;
-import org.omegat.gui.stat.StatisticsWindow;
+import org.omegat.gui.stat.BaseMatchStatisticsPanel;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
@@ -66,41 +66,42 @@ import org.omegat.util.gui.TextUtil;
  * @author Thomas Cordonnier
  */
 public class CalcMatchStatistics extends LongProcessThread {
-    private String[] header = new String[] { "", OStrings.getString("CT_STATS_Segments"),
+    private final String[] header = new String[] { "", OStrings.getString("CT_STATS_Segments"),
             OStrings.getString("CT_STATS_Words"), OStrings.getString("CT_STATS_Characters_NOSP"),
             OStrings.getString("CT_STATS_Characters") };
 
-    private String[] rowsTotal = new String[] { OStrings.getString("CT_STATSMATCH_RowRepetitions"),
+    private final String[] rowsTotal = new String[] { OStrings.getString("CT_STATSMATCH_RowRepetitions"),
             OStrings.getString("CT_STATSMATCH_RowExactMatch"),
             OStrings.getString("CT_STATSMATCH_RowMatch95"), OStrings.getString("CT_STATSMATCH_RowMatch85"),
             OStrings.getString("CT_STATSMATCH_RowMatch75"), OStrings.getString("CT_STATSMATCH_RowMatch50"),
             OStrings.getString("CT_STATSMATCH_RowNoMatch"), OStrings.getString("CT_STATSMATCH_Total") };
-    private String[] rowsPerFile = new String[] {
+    private final String[] rowsPerFile = new String[] {
             OStrings.getString("CT_STATSMATCH_RowRepetitionsWithinThisFile"),
             OStrings.getString("CT_STATSMATCH_RowRepetitionsFromOtherFiles"),
             OStrings.getString("CT_STATSMATCH_RowExactMatch"),
             OStrings.getString("CT_STATSMATCH_RowMatch95"), OStrings.getString("CT_STATSMATCH_RowMatch85"),
             OStrings.getString("CT_STATSMATCH_RowMatch75"), OStrings.getString("CT_STATSMATCH_RowMatch50"),
             OStrings.getString("CT_STATSMATCH_RowNoMatch"), OStrings.getString("CT_STATSMATCH_Total") };
-    private boolean[] align = new boolean[] { false, true, true, true, true };
+    private final boolean[] align = new boolean[] { false, true, true, true, true };
 
-    private final StatisticsWindow callback;
+    private final BaseMatchStatisticsPanel callback;
     private final boolean perFile;
     private int entriesToProcess;
 
     /** Already processed segments. Used for repetitions detect. */
-    private Set<String> alreadyProcessedInFile = new HashSet<String>();
-    private Set<String> alreadyProcessedInProject = new HashSet<String>();
+    private final Set<String> alreadyProcessedInFile = new HashSet<String>();
+    private final Set<String> alreadyProcessedInProject = new HashSet<String>();
 
     private ISimilarityCalculator distanceCalculator;
     private FindMatches finder;
-    private StringBuilder textForLog = new StringBuilder();
+    private final StringBuilder textForLog = new StringBuilder();
 
-    public CalcMatchStatistics(StatisticsWindow callback, boolean perFile) {
+    public CalcMatchStatistics(BaseMatchStatisticsPanel callback, boolean perFile) {
         this.callback = callback;
         this.perFile = perFile;
     }
 
+    @Override
     public void run() {
             finder = new FindMatches(Core.getProject().getSourceTokenizer(), OConsts.MAX_NEAR_STRINGS, true,
                     false);
@@ -115,15 +116,24 @@ public class CalcMatchStatistics extends LongProcessThread {
             callback.finishData();
     }
 
-    void show(String text, boolean append) {
-        if (append) {
-            textForLog.append(text);
-            callback.appendData(text);
-        } else {
-            textForLog.setLength(0);
-            textForLog.append(text);
-            callback.displayData(text);
-        }
+    
+    void appendText(String text) {
+        textForLog.append(text);
+        callback.appendTextData(text);
+    }
+
+    void showText(String text) {
+        textForLog.setLength(0);
+        textForLog.append(text);
+        callback.setTextData(text);
+    }
+    
+    void appendTable(String title, String[][] table) {
+        callback.appendTable(title, header, table);
+    }
+    
+    void showTable(String[][] table) {
+        callback.setTable(header, table);
     }
 
     void calcPerFile() {
@@ -136,18 +146,20 @@ public class CalcMatchStatistics extends LongProcessThread {
 
             String[][] table = perFile.calcTable(rowsPerFile);
             String outText = TextUtil.showTextTable(header, table, align);
-            show(StaticUtils.format(OStrings.getString("CT_STATSMATCH_File"), 
-                    new Object[] { fileNumber, fi.filePath  } )
-                    + "\n", true);
-            show(outText + "\n", true);
+            String title = StaticUtils.format(OStrings.getString("CT_STATSMATCH_File"), fileNumber, fi.filePath);
+            appendText(title + "\n");
+            appendText(outText + "\n");
+            appendTable(title, table);
         }
 
         MatchStatCounts total = calcTotal(false);
 
-        show(OStrings.getString("CT_STATSMATCH_FileTotal") + "\n", true);
+        String title = OStrings.getString("CT_STATSMATCH_FileTotal");
+        appendText(title + "\n");
         String[][] table = total.calcTable(rowsTotal);
         String outText = TextUtil.showTextTable(header, table, align);
-        show(outText + "\n", true);
+        appendText(outText + "\n");
+        appendTable(title, table);
 
         String fn = Core.getProject().getProjectProperties().getProjectInternal()
                 + OConsts.STATS_MATCH_PER_FILE_FILENAME;
@@ -182,7 +194,8 @@ public class CalcMatchStatistics extends LongProcessThread {
         if (outData) {
             String[][] table = result.calcTableWithoutPercentage(rowsTotal);
             String outText = TextUtil.showTextTable(header, table, align);
-            show(outText, false);
+            showText(outText);
+            showTable(table);
         }
 
         calcSimilarity(untranslatedEntries, result);
@@ -190,7 +203,8 @@ public class CalcMatchStatistics extends LongProcessThread {
         if (outData) {
             String[][] table = result.calcTable(rowsTotal);
             String outText = TextUtil.showTextTable(header, table, align);
-            show(outText, false);
+            showText(outText);
+            showTable(table);
             String fn = Core.getProject().getProjectProperties().getProjectInternal()
                     + OConsts.STATS_MATCH_FILENAME;
             Statistics.writeStat(fn, outText);
@@ -261,6 +275,7 @@ public class CalcMatchStatistics extends LongProcessThread {
             List<NearString> nears;
             try {
                 nears = finder.search(Core.getProject(), srcNoXmlTags, true, false, new IStopped() {
+                    @Override
                     public boolean isStopped() {
                         return isInterrupted();
                     }

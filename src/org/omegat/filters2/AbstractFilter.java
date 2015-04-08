@@ -7,6 +7,7 @@
                2006 Martin Wunderlich
                2011 Alex Buloichik, Didier Briel,
                2012 Guido Leenders
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -416,16 +417,26 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected void processFile(File inFile, File outFile, FilterContext fc) throws IOException,
             TranslationException {
-        inEncodingLastParsedFile = fc.getInEncoding();
-        BufferedReader reader = createReader(inFile, inEncodingLastParsedFile);
-        if (inEncodingLastParsedFile == null) {
-            inEncodingLastParsedFile = Charset.defaultCharset().name();
+        String encoding = fc.getInEncoding();
+        if (encoding == null && isSourceEncodingVariable()) {
+            encoding = EncodingDetector.detectEncoding(inFile);
         }
+        BufferedReader reader = createReader(inFile, encoding);
+        inEncodingLastParsedFile = encoding == null ? Charset.defaultCharset().name() : encoding;
         try {
             BufferedWriter writer;
 
             if (outFile != null) {
-                writer = createWriter(outFile, fc.getOutEncoding());
+                String outEncoding = fc.getOutEncoding();
+                if (outEncoding == null && isTargetEncodingVariable()) {
+                    // Use input encoding if it's Unicode; otherwise default to UTF-8
+                    if (inEncodingLastParsedFile.toLowerCase().startsWith("utf-")) {
+                        outEncoding = inEncodingLastParsedFile;
+                    } else {
+                        outEncoding = "UTF-8";
+                    }
+                }
+                writer = createWriter(outFile, outEncoding);
             } else {
                 writer = new NullBufferedWriter();
             }
