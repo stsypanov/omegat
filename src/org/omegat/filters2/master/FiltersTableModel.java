@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
+               2015 Yu Tang
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -43,9 +44,31 @@ import org.omegat.util.OStrings;
  * to write/read it to/from XML file and provides a table model.
  * 
  * @author Maxym Mykhalchuk
+ * @author Yu Tang
  */
 @SuppressWarnings("serial")
 public class FiltersTableModel extends AbstractTableModel {
+
+    public enum COLUMN {
+
+        FILTERS_FILE_FORMAT (0),
+        FILTERS_ON          (1);
+
+        public final int index;
+
+        private COLUMN(int index) {
+            this.index = index;
+        }
+
+        /**
+         * Returns a name for the column. This is a cover method that 
+         * delegates to the method of the same name in <code>FiltersTableModel</code>.
+         * @return a string containing the name of <code>column</code>
+         */
+        public String getColumnName() {
+            return OStrings.getString(name());
+        }
+    }
 
     private final List<Filter> filters;
     
@@ -76,10 +99,12 @@ public class FiltersTableModel extends AbstractTableModel {
     // TableModel implementation
     // ////////////////////////////////////////////////////////////////////////
 
+    @Override
     public int getColumnCount() {
         return 2;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
             case 0:
@@ -91,6 +116,7 @@ public class FiltersTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
@@ -102,10 +128,12 @@ public class FiltersTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
     public int getRowCount() {
         return filters.size();
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Filter filter = filters.get(rowIndex);
         switch (columnIndex) {
@@ -117,7 +145,8 @@ public class FiltersTableModel extends AbstractTableModel {
         return null;
     }
 
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         Filter filter = filters.get(rowIndex);
         switch (columnIndex) {
         case 1:
@@ -128,6 +157,7 @@ public class FiltersTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         switch (columnIndex) {
             case 0:
