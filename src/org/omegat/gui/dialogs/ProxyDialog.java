@@ -9,14 +9,14 @@ import org.omegat.util.network.ProxyPolicy;
 import org.omegat.util.network.ProxyUtils;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.net.*;
+import java.util.Objects;
 
 /**
  * Created by rad1kal on 30.10.2014.
@@ -65,8 +65,6 @@ public class ProxyDialog extends JFrame {
 		topLevelControls.add(autoDetectProxy);
 		topLevelControls.add(manualConfigurationProxy);
 
-		JButton button = new JButton();
-
 		noProxy.setFocusable(false);
 		autoDetectProxy.setFocusable(false);
 		manualConfigurationProxy.setFocusable(false);
@@ -95,13 +93,17 @@ public class ProxyDialog extends JFrame {
 			}
 		});
 
-		okButton.addActionListener(new ActionListener() {
+		ActionListener applyConfigurationListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveProxyPreferences();
 				ProxyDialog.this.dispose();
+				ProxyUtils.applyProxyPreferences();
+				saveProxyPreferences();
 			}
-		});
+		};
+
+		okButton.addActionListener(applyConfigurationListener);
+		applyButton.addActionListener(applyConfigurationListener);
 
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
@@ -165,7 +167,7 @@ public class ProxyDialog extends JFrame {
 
 	private void loadProxyConfiguration() {
 		String host = Preferences.getPreference(Preferences.HTTP_PROXY_HOST);
-		String port = Preferences.getPreference(Preferences.HTTP_PROXY_PORT);
+		int port = Integer.parseInt(Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
 		hostField.setText(host);
 		portSpinner.setValue(port);
 	}
@@ -173,7 +175,23 @@ public class ProxyDialog extends JFrame {
 	private void checkConnection(String urlString) {
 		try {
 			URL url = new URL(urlString);
-		} catch (MalformedURLException e) {
+			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+			urlConn.connect();
+			int responseCode = urlConn.getResponseCode();
+			switch (responseCode) {
+				case HttpURLConnection.HTTP_OK: {
+					JOptionPane.showMessageDialog(this, "Connection is OK\n" + responseCode, "Connection test", JOptionPane.INFORMATION_MESSAGE);
+					break;
+				}
+				case HttpURLConnection.HTTP_FORBIDDEN: {
+					JOptionPane.showMessageDialog(this, "Forbidden\n" + responseCode, "Connection test", JOptionPane.ERROR_MESSAGE);
+					break;
+				}
+				default: {
+					JOptionPane.showMessageDialog(this, "Response code: " + responseCode, "Connection test", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
 		}
 	}
@@ -184,7 +202,7 @@ public class ProxyDialog extends JFrame {
 
 
 	public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-		JFrame frame = new ProxyDialog();
+		new ProxyDialog();
 	}
 
 	private void switchToNoProxyMode() {
@@ -192,12 +210,12 @@ public class ProxyDialog extends JFrame {
 		setComponentState(manualConfigurationComponents, false);
 	}
 
-	private void switchToManualConfigurationMoude() {
+	private void switchToManualConfigurationMode() {
 		setComponentState(autoConfigurationComponents, false);
 		setComponentState(manualConfigurationComponents, true);
 	}
 
-	private void switchToAutoConfigurationMoude() {
+	private void switchToAutoConfigurationMode() {
 		setComponentState(autoConfigurationComponents, true);
 		setComponentState(manualConfigurationComponents, false);
 	}
@@ -392,16 +410,13 @@ public class ProxyDialog extends JFrame {
 		public void itemStateChanged(ItemEvent e) {
 			JRadioButton button = (JRadioButton) e.getSource();
 
-			if (button == noProxy) {
+			if (Objects.equals(button, noProxy)) {
 				switchToNoProxyMode();
-			} else if (button == manualConfigurationProxy) {
-				switchToManualConfigurationMoude();
-			} else if (button == autoDetectProxy) {
-				switchToAutoConfigurationMoude();
+			} else if (Objects.equals(button, manualConfigurationProxy)) {
+				switchToManualConfigurationMode();
+			} else if (Objects.equals(button, autoDetectProxy)) {
+				switchToAutoConfigurationMode();
 			}
-
-			ButtonModel model = button.getModel();
-			boolean selected = model.isSelected();
 		}
 	}
 }

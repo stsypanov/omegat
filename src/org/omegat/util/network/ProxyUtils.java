@@ -2,8 +2,8 @@ package org.omegat.util.network;
 
 import com.btr.proxy.search.ProxySearch;
 import com.btr.proxy.util.PlatformUtil;
-import gen.core.tbx.P;
 import org.omegat.core.data.StringData;
+import org.omegat.util.Preferences;
 
 import java.io.IOException;
 import java.net.*;
@@ -87,13 +87,24 @@ public class ProxyUtils {
         return false;
     }
 
-    private static boolean isProxySettingsDefined() {
-        try {
-            List<Proxy> proxyList = getProxySelector(URL);
-            return !proxyList.isEmpty() && !proxyList.get(0).equals(Proxy.NO_PROXY);
-        } catch (final URISyntaxException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+	private static boolean isProxySettingsDefined() {
+		try {
+			List<Proxy> proxyList = getProxySelector(URL);
+			return !proxyList.isEmpty() && !proxyList.get(0).equals(Proxy.NO_PROXY);
+		} catch (final URISyntaxException e) {
+			logger.log(Level.SEVERE, "Bad URI", e);
+			return false;
+		}
+	}
+
+	public static void applyProxyPreferences() {
+		System.setProperty("http.proxySet", "true");
+		System.setProperty("http.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
+		System.setProperty("http.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+
+		System.setProperty("https.proxySet", "true");
+		System.setProperty("https.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
+		System.setProperty("https.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+
+	}
 }
