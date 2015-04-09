@@ -2,6 +2,7 @@ package org.omegat.util.network;
 
 import com.btr.proxy.search.ProxySearch;
 import com.btr.proxy.util.PlatformUtil;
+import org.omegat.util.Preferences;
 
 import java.io.IOException;
 import java.net.*;
@@ -90,5 +91,16 @@ public class ProxyUtils {
 			logger.log(Level.SEVERE, "Bad URI", e);
 			return false;
 		}
+	}
+
+	public static void applyProxyPreferences() {
+		System.setProperty("http.proxySet", "true");
+		System.setProperty("http.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
+		System.setProperty("http.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+
+		System.setProperty("https.proxySet", "true");
+		System.setProperty("https.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
+		System.setProperty("https.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+
 	}
 }
