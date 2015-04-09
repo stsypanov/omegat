@@ -26,10 +26,7 @@
 
 package org.omegat.filters2.pdf;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +79,7 @@ public class PdfFilter  extends AbstractFilter {
         String text = stripper.getText(document);
         document.close();
 
-        return new BufferedReader(new ReaderFromString(text));
+        return new BufferedReader(new StringReader(text));
     }
 
     @Override
