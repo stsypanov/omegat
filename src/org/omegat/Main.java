@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool 
-          with fuzzy matching, translation memory, keyword search, 
+ OmegaT - Computer Assisted Translation (CAT) tool
+          with fuzzy matching, translation memory, keyword search,
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
@@ -80,12 +80,14 @@ import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXWriter;
 import org.omegat.util.gui.OSXIntegration;
+import org.omegat.util.gui.Styles;
+import org.omegat.util.network.ProxyUtils;
 
 import com.vlsolutions.swing.docking.DockingDesktop;
 
-/**	
+/**
  * The main OmegaT class, used to launch the program.
- * 
+ *
  * @author Keith Godfrey
  * @author Martin Fleurke
  * @author Alex Buloichik
@@ -172,7 +174,7 @@ public class Main {
         if (params.containsKey(CLIParameters.DISABLE_PROJECT_LOCKING)) {
             RuntimePreferences.setProjectLockingEnabled(false);
         }
-        
+
         if (params.containsKey(CLIParameters.DISABLE_LOCATION_SAVE)) {
             RuntimePreferences.setLocationSaveEnabled(false);
         }
@@ -271,13 +273,7 @@ public class Main {
 		String setProxy = Preferences.getPreference(Preferences.SET_HTTP_PROXY);
 
 		if ("true".equals(setProxy)){
-			System.setProperty("http.proxySet", "true");
-			System.setProperty("http.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
-			System.setProperty("http.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
-
-			System.setProperty("https.proxySet", "true");
-			System.setProperty("https.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
-			System.setProperty("https.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+            ProxyUtils.applyProxyPreferences();
 		}
 	}
 
@@ -387,22 +383,22 @@ public class Main {
         else
             p.compileProject(".*", false);
 
-        // Called *after* executing post processing command (unlike the 
+        // Called *after* executing post processing command (unlike the
         // regular PROJECT_CHANGE_TYPE.COMPILE)
         executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
 
         p.closeProject();
         executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.CLOSE);
         System.out.println(OStrings.getString("CONSOLE_FINISHED"));
-        
+
         return 0;
     }
-    
+
     /**
      * Validates tags according to command line specs:
      * --tag-validation=[abort|warn]
-     * 
-     * On abort, the program is aborted when tag validation finds errors. 
+     *
+     * On abort, the program is aborted when tag validation finds errors.
      * On warn the errors are printed but the program continues.
      * In all other cases no tag validation is done.
      */
@@ -539,7 +535,7 @@ public class Main {
      * creates the project class and adds it to the Core. Loads the project if
      * specified. An exit occurs on error loading the project. This method is
      * for the different console modes, to prevent code duplication.
-     * 
+     *
      * @param loadProject
      *            load the project or not
      * @return the project.
@@ -571,10 +567,10 @@ public class Main {
         }
         return p;
     }
-    
-    /** Execute script as PROJECT_CHANGE events. We can't use the regular project listener because 
+
+    /** Execute script as PROJECT_CHANGE events. We can't use the regular project listener because
      *  the SwingUtilities.invokeLater method used in CoreEvents doesn't stop the project processing
-     *  in console mode. 
+     *  in console mode.
      */
     private static void executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
         if (params.containsKey(CLIParameters.SCRIPT)) {
