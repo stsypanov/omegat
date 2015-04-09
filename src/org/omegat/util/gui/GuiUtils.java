@@ -1,10 +1,13 @@
 package org.omegat.util.gui;
 
+import org.omegat.util.Log;
 import org.omegat.util.Preferences;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,8 +22,13 @@ public class GuiUtils {
 	static {
 		String resources = "/org/omegat/gui/resources/";
 		icons = new ArrayList<>();
-		icons.add(ResourcesUtil.getIcon(resources + "OmegaT_small.gif").getImage());
-		icons.add(ResourcesUtil.getIcon(resources + "OmegaT.gif").getImage());
+		try {
+			icons.add(ResourcesUtil.getImage(resources + "OmegaT_small.gif"));
+			icons.add(ResourcesUtil.getImage(resources + "OmegaT.gif"));
+		} catch (FileNotFoundException e) {
+			Log.log(Level.SEVERE, "failed to load image", e);
+		}
+
 	}
 
 	public static void setOmegatIcons(Window window) {

@@ -47,5 +47,6 @@
 	<classpathentry kind="lib" path="lib/forms_rt.jar"/>
 	<classpathentry kind="lib" path="lib/annotations.jar"/>
 	<classpathentry kind="lib" path="lib/vldocking-3.0.5-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
