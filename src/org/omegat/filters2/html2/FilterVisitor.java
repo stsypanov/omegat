@@ -49,7 +49,6 @@ import org.htmlparser.Text;
 import org.htmlparser.nodes.TextNode;
 import org.htmlparser.visitors.NodeVisitor;
 import org.omegat.core.Core;
-import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.PatternConsts;
 import org.omegat.util.StaticUtils;
@@ -164,7 +163,7 @@ public class FilterVisitor extends NodeVisitor {
             // configuration
             Vector<Attribute> tagAttributes = tag.getAttributesEx();
             Iterator<Attribute> i = tagAttributes.iterator();
-            while (i.hasNext() && !intactTag) {
+            while (i.hasNext() && intactTag == false) {
                 Attribute attribute = i.next();
                 String name = attribute.getName();
                 String value = attribute.getValue();
@@ -400,7 +399,7 @@ public class FilterVisitor extends NodeVisitor {
         try {
             writer.write(something);
         } catch (IOException ioe) {
-            Log.log(ioe);
+            System.out.println(ioe);
         }
     }
 
@@ -412,7 +411,7 @@ public class FilterVisitor extends NodeVisitor {
         // detecting the first starting tag in 'befors'
         // that has its ending in the paragraph
         // all before this "first good" are simply written out
-        List<Node> all = new ArrayList<>();
+        List<Node> all = new ArrayList<Node>();
         all.addAll(befors);
         all.addAll(translatable);
         int firstgoodlimit = befors.size();
@@ -635,12 +634,12 @@ public class FilterVisitor extends NodeVisitor {
         text = false;
         recurse = true;
         // paragraph = new StringBuffer();
-        befors = new ArrayList<>();
-        translatable = new ArrayList<>();
-        afters = new ArrayList<>();
-        s_tags = new ArrayList<>();
-        s_tag_numbers = new ArrayList<>();
-        s_shortcuts = new ArrayList<>();
+        befors = new ArrayList<Node>();
+        translatable = new ArrayList<Node>();
+        afters = new ArrayList<Node>();
+        s_tags = new ArrayList<Tag>();
+        s_tag_numbers = new ArrayList<Integer>();
+        s_shortcuts = new ArrayList<String>();
         s_nshortcuts = 0;
     }
 
@@ -648,7 +647,7 @@ public class FilterVisitor extends NodeVisitor {
      * Creates and stores a shortcut for the tag.
      */
     private void shortcut(Tag tag, StringBuffer paragraph) {
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         result.append('<');
         int n = -1;
         if (tag.isEndTag()) {
@@ -813,160 +812,160 @@ public class FilterVisitor extends NodeVisitor {
 
     /** Named HTML Entities and corresponding numeric character references */
     private static final Object ENTITIES[][] = {
-            { "quot", 34},
-            { "amp", 38},
-            { "lt", 60},
-            { "gt", 62},
+            { "quot", 34 },
+            { "amp", 38 },
+            { "lt", 60 },
+            { "gt", 62 },
 
             // Latin Extended-A
-            { "OElig", 338}, // latin capital ligature OE, U+0152
+            { "OElig", 338 }, // latin capital ligature OE, U+0152
                                            // ISOlat2
-            { "oelig", 339}, // latin small ligature oe, U+0153
+            { "oelig", 339 }, // latin small ligature oe, U+0153
                                            // ISOlat2
             // ligature is a misnomer, this is a separate character in some
             // languages
-            { "Scaron", 352}, // latin capital letter S with
+            { "Scaron", 352 }, // latin capital letter S with
                                             // caron, U+0160 ISOlat2
-            { "scaron", 353}, // latin small letter s with caron,
+            { "scaron", 353 }, // latin small letter s with caron,
                                             // U+0161 ISOlat2
-            { "Yuml", 376}, // latin capital letter Y with
+            { "Yuml", 376 }, // latin capital letter Y with
                                           // diaeresis, U+0178 ISOlat2
 
             // Spacing Modifier Letters
-            { "circ", 710}, // modifier letter circumflex accent,
+            { "circ", 710 }, // modifier letter circumflex accent,
                                           // U+02C6 ISOpub
-            { "tilde", 732}, // small tilde, U+02DC ISOdia
+            { "tilde", 732 }, // small tilde, U+02DC ISOdia
 
             // General Punctuation
-            { "ensp", 8194}, // en space, U+2002 ISOpub
-            { "emsp", 8195}, // em space, U+2003 ISOpub
-            { "thinsp", 8201}, // thin space, U+2009 ISOpub
-            { "zwnj", 8204}, // zero width non-joiner, U+200C NEW
+            { "ensp", 8194 }, // en space, U+2002 ISOpub
+            { "emsp", 8195 }, // em space, U+2003 ISOpub
+            { "thinsp", 8201 }, // thin space, U+2009 ISOpub
+            { "zwnj", 8204 }, // zero width non-joiner, U+200C NEW
                                            // RFC 2070
-            { "zwj", 8205}, // zero width joiner, U+200D NEW RFC
+            { "zwj", 8205 }, // zero width joiner, U+200D NEW RFC
                                           // 2070
-            { "lrm", 8206}, // left-to-right mark, U+200E NEW RFC
+            { "lrm", 8206 }, // left-to-right mark, U+200E NEW RFC
                                           // 2070
-            { "rlm", 8207}, // right-to-left mark, U+200F NEW RFC
+            { "rlm", 8207 }, // right-to-left mark, U+200F NEW RFC
                                           // 2070
-            { "ndash", 8211}, // en dash, U+2013 ISOpub
-            { "mdash", 8212}, // em dash, U+2014 ISOpub
-            { "lsquo", 8216}, // left single quotation mark,
+            { "ndash", 8211 }, // en dash, U+2013 ISOpub
+            { "mdash", 8212 }, // em dash, U+2014 ISOpub
+            { "lsquo", 8216 }, // left single quotation mark,
                                             // U+2018 ISOnum
-            { "rsquo", 8217}, // right single quotation mark,
+            { "rsquo", 8217 }, // right single quotation mark,
                                             // U+2019 ISOnum
-            { "sbquo", 8218}, // single low-9 quotation mark,
+            { "sbquo", 8218 }, // single low-9 quotation mark,
                                             // U+201A NEW
-            { "ldquo", 8220}, // left double quotation mark,
+            { "ldquo", 8220 }, // left double quotation mark,
                                             // U+201C ISOnum
-            { "rdquo", 8221}, // right double quotation mark,
+            { "rdquo", 8221 }, // right double quotation mark,
                                             // U+201D ISOnum
-            { "bdquo", 8222}, // double low-9 quotation mark,
+            { "bdquo", 8222 }, // double low-9 quotation mark,
                                             // U+201E NEW
-            { "dagger", 8224}, // dagger, U+2020 ISOpub
-            { "Dagger", 8225}, // double dagger, U+2021 ISOpub
-            { "permil", 8240}, // per mille sign, U+2030 ISOtech
-            { "lsaquo", 8249}, // single left-pointing angle
+            { "dagger", 8224 }, // dagger, U+2020 ISOpub
+            { "Dagger", 8225 }, // double dagger, U+2021 ISOpub
+            { "permil", 8240 }, // per mille sign, U+2030 ISOtech
+            { "lsaquo", 8249 }, // single left-pointing angle
                                              // quotation mark, U+2039 ISO
                                              // proposed
             // lsaquo is proposed but not yet ISO standardized
-            { "rsaquo", 8250}, // single right-pointing angle
+            { "rsaquo", 8250 }, // single right-pointing angle
                                              // quotation mark, U+203A ISO
                                              // proposed
             // rsaquo is proposed but not yet ISO standardized
-            { "euro", 8364}, // euro sign, U+20AC NEW
+            { "euro", 8364 }, // euro sign, U+20AC NEW
 
-            { "nbsp", 160}, { "iexcl", 161}, { "cent", 162},
-            { "pound", 163}, { "curren", 164}, { "yen", 165},
-            { "brvbar", 166}, { "sect", 167}, { "uml", 168},
-            { "copy", 169}, { "ordf", 170}, { "laquo", 171},
-            { "not", 172}, { "shy", 173}, { "reg", 174},
-            { "macr", 175}, { "deg", 176}, { "plusmn", 177},
-            { "sup2", 178}, { "sup3", 179}, { "acute", 180},
-            { "micro", 181}, { "para", 182}, { "middot", 183},
-            { "cedil", 184}, { "sup1", 185}, { "ordm", 186},
-            { "raquo", 187}, { "frac14", 188}, { "frac12", 189},
-            { "frac34", 190}, { "iquest", 191}, { "Agrave", 192},
-            { "Aacute", 193}, { "Acirc", 194}, { "Atilde", 195},
-            { "Auml", 196}, { "Aring", 197}, { "AElig", 198},
-            { "Ccedil", 199}, { "Egrave", 200}, { "Eacute", 201},
-            { "Ecirc", 202}, { "Euml", 203}, { "Igrave", 204},
-            { "Iacute", 205}, { "Icirc", 206}, { "Iuml", 207},
-            { "ETH", 208}, { "Ntilde", 209}, { "Ograve", 210},
-            { "Oacute", 211}, { "Ocirc", 212}, { "Otilde", 213},
-            { "Ouml", 214}, { "times", 215}, { "Oslash", 216},
-            { "Ugrave", 217}, { "Uacute", 218}, { "Ucirc", 219},
-            { "Uuml", 220}, { "Yacute", 221}, { "THORN", 222},
-            { "szlig", 223}, { "agrave", 224}, { "aacute", 225},
-            { "acirc", 226}, { "atilde", 227}, { "auml", 228},
-            { "aring", 229}, { "aelig", 230}, { "ccedil", 231},
-            { "egrave", 232}, { "eacute", 233}, { "ecirc", 234},
-            { "euml", 235}, { "igrave", 236}, { "iacute", 237},
-            { "icirc", 238}, { "iuml", 239}, { "eth", 240},
-            { "ntilde", 241}, { "ograve", 242}, { "oacute", 243},
-            { "ocirc", 244}, { "otilde", 245}, { "ouml", 246},
-            { "divide", 247}, { "oslash", 248}, { "ugrave", 249},
-            { "uacute", 250}, { "ucirc", 251}, { "uuml", 252},
-            { "yacute", 253}, { "thorn", 254}, { "yuml", 255},
+            { "nbsp", 160 }, { "iexcl", 161 }, { "cent", 162 },
+            { "pound", 163 }, { "curren", 164 }, { "yen", 165 },
+            { "brvbar", 166 }, { "sect", 167 }, { "uml", 168 },
+            { "copy", 169 }, { "ordf", 170 }, { "laquo", 171 },
+            { "not", 172 }, { "shy", 173 }, { "reg", 174 },
+            { "macr", 175 }, { "deg", 176 }, { "plusmn", 177 },
+            { "sup2", 178 }, { "sup3", 179 }, { "acute", 180 },
+            { "micro", 181 }, { "para", 182 }, { "middot", 183 },
+            { "cedil", 184 }, { "sup1", 185 }, { "ordm", 186 },
+            { "raquo", 187 }, { "frac14", 188 }, { "frac12", 189 },
+            { "frac34", 190 }, { "iquest", 191 }, { "Agrave", 192 },
+            { "Aacute", 193 }, { "Acirc", 194 }, { "Atilde", 195 },
+            { "Auml", 196 }, { "Aring", 197 }, { "AElig", 198 },
+            { "Ccedil", 199 }, { "Egrave", 200 }, { "Eacute", 201 },
+            { "Ecirc", 202 }, { "Euml", 203 }, { "Igrave", 204 },
+            { "Iacute", 205 }, { "Icirc", 206 }, { "Iuml", 207 },
+            { "ETH", 208 }, { "Ntilde", 209 }, { "Ograve", 210 },
+            { "Oacute", 211 }, { "Ocirc", 212 }, { "Otilde", 213 },
+            { "Ouml", 214 }, { "times", 215 }, { "Oslash", 216 },
+            { "Ugrave", 217 }, { "Uacute", 218 }, { "Ucirc", 219 },
+            { "Uuml", 220 }, { "Yacute", 221 }, { "THORN", 222 },
+            { "szlig", 223 }, { "agrave", 224 }, { "aacute", 225 },
+            { "acirc", 226 }, { "atilde", 227 }, { "auml", 228 },
+            { "aring", 229 }, { "aelig", 230 }, { "ccedil", 231 },
+            { "egrave", 232 }, { "eacute", 233 }, { "ecirc", 234 },
+            { "euml", 235 }, { "igrave", 236 }, { "iacute", 237 },
+            { "icirc", 238 }, { "iuml", 239 }, { "eth", 240 },
+            { "ntilde", 241 }, { "ograve", 242 }, { "oacute", 243 },
+            { "ocirc", 244 }, { "otilde", 245 }, { "ouml", 246 },
+            { "divide", 247 }, { "oslash", 248 }, { "ugrave", 249 },
+            { "uacute", 250 }, { "ucirc", 251 }, { "uuml", 252 },
+            { "yacute", 253 }, { "thorn", 254 }, { "yuml", 255 },
 
-            { "fnof", 402},
+            { "fnof", 402 },
 
-            { "Alpha", 913}, { "Beta", 914}, { "Gamma", 915},
-            { "Delta", 916}, { "Epsilon", 917}, { "Zeta", 918},
-            { "Eta", 919}, { "Theta", 920}, { "Iota", 921},
-            { "Kappa", 922}, { "Lambda", 923}, { "Mu", 924},
-            { "Nu", 925}, { "Xi", 926}, { "Omicron", 927},
-            { "Pi", 928}, { "Rho", 929}, { "Sigma", 931},
-            { "Tau", 932}, { "Upsilon", 933}, { "Phi", 934},
-            { "Chi", 935}, { "Psi", 936}, { "Omega", 937},
-            { "alpha", 945}, { "beta", 946}, { "gamma", 947},
-            { "delta", 948}, { "epsilon", 949}, { "zeta", 950},
-            { "eta", 951}, { "theta", 952}, { "iota", 953},
-            { "kappa", 954}, { "lambda", 955}, { "mu", 956},
-            { "nu", 957}, { "xi", 958}, { "omicron", 959},
-            { "pi", 960}, { "rho", 961}, { "sigmaf", 962},
-            { "sigma", 963}, { "tau", 964}, { "upsilon", 965},
-            { "phi", 966}, { "chi", 967}, { "psi", 968},
-            { "omega", 969}, { "thetasym", 977}, { "upsih", 978},
-            { "piv", 982},
+            { "Alpha", 913 }, { "Beta", 914 }, { "Gamma", 915 },
+            { "Delta", 916 }, { "Epsilon", 917 }, { "Zeta", 918 },
+            { "Eta", 919 }, { "Theta", 920 }, { "Iota", 921 },
+            { "Kappa", 922 }, { "Lambda", 923 }, { "Mu", 924 },
+            { "Nu", 925 }, { "Xi", 926 }, { "Omicron", 927 },
+            { "Pi", 928 }, { "Rho", 929 }, { "Sigma", 931 },
+            { "Tau", 932 }, { "Upsilon", 933 }, { "Phi", 934 },
+            { "Chi", 935 }, { "Psi", 936 }, { "Omega", 937 },
+            { "alpha", 945 }, { "beta", 946 }, { "gamma", 947 },
+            { "delta", 948 }, { "epsilon", 949 }, { "zeta", 950 },
+            { "eta", 951 }, { "theta", 952 }, { "iota", 953 },
+            { "kappa", 954 }, { "lambda", 955 }, { "mu", 956 },
+            { "nu", 957 }, { "xi", 958 }, { "omicron", 959 },
+            { "pi", 960 }, { "rho", 961 }, { "sigmaf", 962 },
+            { "sigma", 963 }, { "tau", 964 }, { "upsilon", 965 },
+            { "phi", 966 }, { "chi", 967 }, { "psi", 968 },
+            { "omega", 969 }, { "thetasym", 977 }, { "upsih", 978 },
+            { "piv", 982 },
 
-            { "bull", 8226}, { "hellip", 8230}, { "prime", 8242},
-            { "Prime", 8243}, { "oline", 8254}, { "frasl", 8260},
+            { "bull", 8226 }, { "hellip", 8230 }, { "prime", 8242 },
+            { "Prime", 8243 }, { "oline", 8254 }, { "frasl", 8260 },
 
-            { "weierp", 8472}, { "image", 8465}, { "real", 8476},
-            { "trade", 8482}, { "alefsym", 8501},
+            { "weierp", 8472 }, { "image", 8465 }, { "real", 8476 },
+            { "trade", 8482 }, { "alefsym", 8501 },
 
-            { "larr", 8592}, { "uarr", 8593}, { "rarr", 8594},
-            { "darr", 8595}, { "harr", 8596}, { "crarr", 8629},
-            { "lArr", 8656}, { "uArr", 8657}, { "rArr", 8658},
-            { "dArr", 8659}, { "hArr", 8660},
+            { "larr", 8592 }, { "uarr", 8593 }, { "rarr", 8594 },
+            { "darr", 8595 }, { "harr", 8596 }, { "crarr", 8629 },
+            { "lArr", 8656 }, { "uArr", 8657 }, { "rArr", 8658 },
+            { "dArr", 8659 }, { "hArr", 8660 },
 
-            { "forall", 8704}, { "part", 8706}, { "exist", 8707},
-            { "empty", 8709}, { "nabla", 8711}, { "isin", 8712},
-            { "notin", 8713}, { "ni", 8715}, { "prod", 8719},
-            { "sum", 8722}, { "minus", 8722}, { "lowast", 8727},
-            { "radic", 8730}, { "prop", 8733}, { "infin", 8734},
-            { "ang", 8736}, { "and", 8869}, { "or", 8870},
-            { "cap", 8745}, { "cup", 8746}, { "int", 8747},
-            { "there4", 8756}, { "sim", 8764}, { "cong", 8773},
-            { "asymp", 8773}, { "ne", 8800}, { "equiv", 8801},
-            { "le", 8804}, { "ge", 8805}, { "sub", 8834},
-            { "sup", 8835}, { "nsub", 8836}, { "sube", 8838},
-            { "supe", 8839}, { "oplus", 8853}, { "otimes", 8855},
-            { "perp", 8869}, { "sdot", 8901},
+            { "forall", 8704 }, { "part", 8706 }, { "exist", 8707 },
+            { "empty", 8709 }, { "nabla", 8711 }, { "isin", 8712 },
+            { "notin", 8713 }, { "ni", 8715 }, { "prod", 8719 },
+            { "sum", 8722 }, { "minus", 8722 }, { "lowast", 8727 },
+            { "radic", 8730 }, { "prop", 8733 }, { "infin", 8734 },
+            { "ang", 8736 }, { "and", 8869 }, { "or", 8870 },
+            { "cap", 8745 }, { "cup", 8746 }, { "int", 8747 },
+            { "there4", 8756 }, { "sim", 8764 }, { "cong", 8773 },
+            { "asymp", 8773 }, { "ne", 8800 }, { "equiv", 8801 },
+            { "le", 8804 }, { "ge", 8805 }, { "sub", 8834 },
+            { "sup", 8835 }, { "nsub", 8836 }, { "sube", 8838 },
+            { "supe", 8839 }, { "oplus", 8853 }, { "otimes", 8855 },
+            { "perp", 8869 }, { "sdot", 8901 },
 
-            { "lceil", 8968}, { "rceil", 8969}, { "lfloor", 8970},
-            { "rfloor", 8971}, { "lang", 9001}, { "rang", 9002},
+            { "lceil", 8968 }, { "rceil", 8969 }, { "lfloor", 8970 },
+            { "rfloor", 8971 }, { "lang", 9001 }, { "rang", 9002 },
 
-            { "loz", 9674},
+            { "loz", 9674 },
 
-            { "spades", 9824}, { "clubs", 9827}, { "hearts", 9829},
-            { "diams", 9830}, };
+            { "spades", 9824 }, { "clubs", 9827 }, { "hearts", 9829 },
+            { "diams", 9830 }, };
 
     /** Converts HTML entities to normal characters */
     protected String entitiesToChars(String str) {
         int strlen = str.length();
-        StringBuilder res = new StringBuilder(strlen);
+        StringBuffer res = new StringBuffer(strlen);
         for (int i = 0; i < strlen; i++) {
             char ch = str.charAt(i);
             switch (ch) {
@@ -1085,7 +1084,8 @@ public class FilterVisitor extends NodeVisitor {
      * entity
      */
     private int lookupEntity(String entity) {
-        for (Object[] ONENT : ENTITIES) {
+        for (int i = 0; i < ENTITIES.length; i++) {
+            Object[] ONENT = ENTITIES[i];
             if (entity.equals(ONENT[0]))
                 return ((Integer) ONENT[1]).intValue();
         }
@@ -1098,7 +1098,7 @@ public class FilterVisitor extends NodeVisitor {
      */
     protected String charsToEntities(String str) {
         int strlen = str.length();
-        StringBuilder res = new StringBuilder(strlen * 5);
+        StringBuffer res = new StringBuffer(strlen * 5);
         for (int i = 0; i < strlen; i++) {
             char ch = str.charAt(i);
             switch (ch) {

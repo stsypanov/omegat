@@ -50,7 +50,7 @@ public class DirectoryMonitor extends Thread {
     protected final File dir;
     protected final Callback callback;
     protected final DirectoryCallback directoryCallback;
-    private final Map<String, FileInfo> existFiles = new TreeMap<>();
+    private final Map<String, FileInfo> existFiles = new TreeMap<String, FileInfo>();
     protected static final long LOOKUP_PERIOD = 1000;
 
     /**
@@ -85,10 +85,10 @@ public class DirectoryMonitor extends Thread {
 
     @Override
     public void run() {
-//        if (LOOKUP_PERIOD == 0) {
+        if (LOOKUP_PERIOD == 0) {
             // don't check
-//            return;
-//        }
+            return;
+        }
         setName(this.getClass().getSimpleName());
         setPriority(MIN_PRIORITY);
 
@@ -103,7 +103,7 @@ public class DirectoryMonitor extends Thread {
     }
 
     public synchronized Set<File> getExistFiles() {
-        Set<File> result = new TreeSet<>();
+        Set<File> result = new TreeSet<File>();
         for (String fn : existFiles.keySet()) {
             result.add(new File(fn));
         }
@@ -117,7 +117,7 @@ public class DirectoryMonitor extends Thread {
     public synchronized void checkChanges() {
     	boolean directoryChanged = false;
         // find deleted or changed files
-        for (String fn : new ArrayList<>(existFiles.keySet())) {
+        for (String fn : new ArrayList<String>(existFiles.keySet())) {
             if (stopped)
                 return;
             File f = new File(fn);
@@ -176,13 +176,12 @@ public class DirectoryMonitor extends Thread {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            FileInfo fileInfo = (FileInfo) o;
-
-            return lastModified == fileInfo.lastModified && length == fileInfo.length;
+        public boolean equals(Object obj) {
+            if (obj == null || !(obj instanceof FileInfo)) {
+                return false;
+            }
+            FileInfo o = (FileInfo) obj;
+            return lastModified == o.lastModified && length == o.length;
         }
     }
 

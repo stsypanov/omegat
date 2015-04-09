@@ -44,9 +44,9 @@ public class MapRule implements Serializable {
 
     /** creates an initialized MapRule */
     public MapRule(String language, String pattern, List<Rule> rules) {
-        this.languageCode = language;
+        this.setLanguage(language);
         this.setPattern(pattern);
-        this.rules = rules;
+        this.setRules(rules);
     }
 
     /** Language Name */
@@ -101,7 +101,7 @@ public class MapRule implements Serializable {
         MapRule result = new MapRule();
         result.languageCode = languageCode;
         result.pattern = pattern;
-        result.rules = new ArrayList<>(rules.size());
+        result.rules = new ArrayList<Rule>(rules.size());
         for (Rule rule : rules) {
             result.rules.add(rule.clone());
         }
@@ -123,23 +123,22 @@ public class MapRule implements Serializable {
 
     /** Indicates whether some other MapRule is "equal to" this one. */
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (obj == null || !(obj instanceof MapRule)) {
             return false;
-        else {
-            MapRule that = (MapRule) obj;
-            return this.getPattern().equals(that.getPattern())
-                    && this.getLanguage().equals(that.getLanguage())
-                    && rules.equals(that.rules);
         }
+        MapRule that = (MapRule) obj;
+        return this.getPattern().equals(that.getPattern())
+                && this.getLanguage().equals(that.getLanguage())
+                && this.getRules().equals(that.getRules());
     }
 
     /** Returns a hash code value for the object. */
     public int hashCode() {
-        return this.getPattern().hashCode() + this.getLanguage().hashCode() + rules.hashCode();
+        return this.getPattern().hashCode() + this.getLanguage().hashCode() + this.getRules().hashCode();
     }
 
     /** Returns a string representation of the MapRule for debugging purposes. */
     public String toString() {
-        return getLanguage() + " (" + getPattern() + ") " + rules.toString();
+        return getLanguage() + " (" + getPattern() + ") " + getRules().toString();
     }
 }
