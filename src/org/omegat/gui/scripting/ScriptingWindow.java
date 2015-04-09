@@ -52,6 +52,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -75,11 +76,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter.HighlightPainter;
 
-import org.jetbrains.annotations.NotNull;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
-import org.omegat.gui.common.PeroFrame;
+import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.gui.editor.mark.Mark;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -96,13 +96,13 @@ import org.openide.awt.Mnemonics;
  * @author Alex Buloichik
  * @author Yu Tang
  */
-public class ScriptingWindow extends PeroFrame {
+public class ScriptingWindow extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
     static ScriptingWindow window;
 
-    // todo Still needed ?
+    // XXX Still needed ?
     /**
      * @deprecated
      */
@@ -121,10 +121,8 @@ public class ScriptingWindow extends PeroFrame {
 
     @Override
     public void dispose() {
-		monitor.stop();
-		saveLayoutPreferences(Preferences.SCRIPTWINDOW_X, Preferences.SCRIPTWINDOW_Y,
-				Preferences.SCRIPTWINDOW_WIDTH, Preferences.SCRIPTWINDOW_HEIGHT,
-				getX(), getY(), getWidth(), getHeight());
+        savePreferences();
+        monitor.stop();
         super.dispose();
     }
 
@@ -139,6 +137,8 @@ public class ScriptingWindow extends PeroFrame {
 
     public ScriptingWindow() {
         setTitle(OStrings.getString("SCW_TITLE"));
+
+        OmegaTIcons.setIconImages(this);
 
         StaticUIUtils.setEscapeClosable(this);
 
@@ -155,7 +155,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private List<String> getAvailableScriptExtensions() {
-        ArrayList<String> extensions = new ArrayList<>();
+        ArrayList<String> extensions = new ArrayList<String>();
         for (ScriptEngineFactory engine : manager.getEngineFactories()) {
             for (String ext : engine.getExtensions()) {
                 extensions.add(ext);
@@ -205,15 +205,14 @@ public class ScriptingWindow extends PeroFrame {
 
         toolsMenu.add(scriptMenu);
 
+        File scriptDir = new File(getScriptsDir());
         for (int i = 0; i < NUMBERS_OF_QUICK_SCRIPTS; i++) {
             JMenuItem menuItem = new JMenuItem();
             m_quickMenus[i] = menuItem;
 
             String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey(i), null);
 
-            File scriptDir = new File(Preferences.getPreferenceDefault("scripts_dir", new File(".", DEFAULT_SCRIPTS_DIR).getAbsolutePath()));
-
-            if (scriptName != null || scriptName != null && scriptName.isEmpty()) {
+            if (scriptName != null || "".equals(scriptName)) {
                 setQuickScriptMenu(new ScriptItem(new File(scriptDir, scriptName)), i);
             } else {
                 unsetQuickScriptMenu(i);
@@ -251,7 +250,7 @@ public class ScriptingWindow extends PeroFrame {
         // with the segment content, so we set it to a Function key.
         m_quickMenus[index].setAccelerator(KeyStroke.getKeyStroke("shift ctrl F" + (index + 1)));
         m_quickMenus[index].setEnabled(true);
-        if (scriptItem.getDescription() != null && scriptItem.getDescription().isEmpty()) {
+        if ("".equals(scriptItem.getDescription())) {
             m_quickMenus[index].setToolTipText(scriptItem.getDescription());
         }
 
@@ -312,7 +311,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private void initWindowLayout() {
-        loadLayoutPreferences(Preferences.SCRIPTWINDOW_X, Preferences.SCRIPTWINDOW_Y, Preferences.SCRIPTWINDOW_WIDTH, Preferences.SCRIPTWINDOW_HEIGHT);
+        loadPreferences();
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         JPanel panelNorth = new JPanel();
@@ -398,8 +397,7 @@ public class ScriptingWindow extends PeroFrame {
         m_txtScriptsDir = new JTextField();
         panel.add(m_txtScriptsDir);
 
-        m_txtScriptsDir.setText(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY,
-                new File(".", DEFAULT_SCRIPTS_DIR).getAbsolutePath()));
+        m_txtScriptsDir.setText(getScriptsDir());
 
         m_txtScriptsDir.setColumns(40);
         m_txtScriptsDir.addActionListener(new ActionListener() {
@@ -419,6 +417,11 @@ public class ScriptingWindow extends PeroFrame {
         });
 
         panel.add(btnBrowse);
+    }
+
+    private String getScriptsDir() {
+        return Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY,
+                new File(DEFAULT_SCRIPTS_DIR).getAbsolutePath());
     }
 
     private void setupRunButtons(JPanel panel) {
@@ -441,7 +444,7 @@ public class ScriptingWindow extends PeroFrame {
 
             String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey, null);
 
-            if (scriptName != null || scriptName != null && scriptName.isEmpty()) {
+            if (scriptName != null || "".equals(scriptName)) {
                 m_quickScriptButtons[i].setToolTipText(scriptName);
                 m_quickScriptButtons[i].setText("<" + scriptKey + ">");
             } else {
@@ -556,7 +559,12 @@ public class ScriptingWindow extends PeroFrame {
             scriptEngine = manager.getEngineByName(DEFAULT_SCRIPT);
         }
 
-		SimpleBindings bindings = getSimpleBindings(scriptItem);
+        SimpleBindings bindings = new SimpleBindings();
+        bindings.put(VAR_PROJECT, Core.getProject());
+        bindings.put(VAR_EDITOR, Core.getEditor());
+        bindings.put(VAR_GLOSSARY, Core.getGlossary());
+        bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
+        bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
 
         if (additionalBindings != null) {
             bindings.putAll(additionalBindings);
@@ -576,18 +584,7 @@ public class ScriptingWindow extends PeroFrame {
         return eval;
     }
 
-	@NotNull
-	private static SimpleBindings getSimpleBindings(ScriptItem scriptItem) {
-		SimpleBindings bindings = new SimpleBindings();
-		bindings.put(VAR_PROJECT, Core.getProject());
-		bindings.put(VAR_EDITOR, Core.getEditor());
-		bindings.put(VAR_GLOSSARY, Core.getGlossary());
-		bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
-		bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
-		return bindings;
-	}
-
-	public void executeScriptFile(ScriptItem scriptItem, boolean forceFromFile, Map<String, Object> additionalBindings) {
+    public void executeScriptFile(ScriptItem scriptItem, boolean forceFromFile, Map<String, Object> additionalBindings) {
         ScriptLogger scriptLogger = new ScriptLogger(m_txtResult);
 
         ScriptEngine scriptEngine = manager.getEngineByExtension(getFileExtension(scriptItem.getName()));
@@ -597,8 +594,13 @@ public class ScriptingWindow extends PeroFrame {
         }
 
         //logResult(StaticUtils.format(OStrings.getString("SCW_SELECTED_LANGUAGE"), scriptEngine.getFactory().getEngineName()));
-		SimpleBindings bindings = getSimpleBindings(scriptItem);
-		bindings.put(VAR_CONSOLE, scriptLogger);
+        SimpleBindings bindings = new SimpleBindings();
+        bindings.put(VAR_PROJECT, Core.getProject());
+        bindings.put(VAR_EDITOR, Core.getEditor());
+        bindings.put(VAR_GLOSSARY, Core.getGlossary());
+        bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
+        bindings.put(VAR_CONSOLE, scriptLogger);
+        bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
 
         if (additionalBindings != null) {
             bindings.putAll(additionalBindings);
@@ -609,7 +611,7 @@ public class ScriptingWindow extends PeroFrame {
             String scriptString;
             if (forceFromFile) {
                 scriptString = scriptItem.getText();
-            } else if (m_txtScriptEditor.getText().trim() != null && m_txtScriptEditor.getText().trim().isEmpty()) {
+            } else if ("".equals(m_txtScriptEditor.getText().trim())) {
                 scriptString = scriptItem.getText();
                 m_txtScriptEditor.setText(scriptString);
             } else {
@@ -640,8 +642,8 @@ public class ScriptingWindow extends PeroFrame {
         Document doc = e.getDocument();
         try {
             doc.insertString(doc.getLength(), s, null);
-        } catch (BadLocationException ex) {
-            Log.log(ex);
+        } catch (BadLocationException e1) {
+            /* empty */
         }
     }
 
@@ -672,12 +674,47 @@ public class ScriptingWindow extends PeroFrame {
         monitor.start(m_scriptsDirectory);
     }
 
+    /**
+     * Loads the position and size of the script window
+     */
+    private void loadPreferences() {
+        // window size and position
+        try {
+            String dx = Preferences.getPreference(Preferences.SCRIPTWINDOW_X);
+            String dy = Preferences.getPreference(Preferences.SCRIPTWINDOW_Y);
+            int x = Integer.parseInt(dx);
+            int y = Integer.parseInt(dy);
+            setLocation(x, y);
+            String dw = Preferences.getPreference(Preferences.SCRIPTWINDOW_WIDTH);
+            String dh = Preferences.getPreference(Preferences.SCRIPTWINDOW_HEIGHT);
+            int w = Integer.parseInt(dw);
+            int h = Integer.parseInt(dh);
+            setSize(w, h);
+        } catch (NumberFormatException nfe) {
+            // set default size and position
+            setBounds(50, 80, 1150, 650);
+        }
+    }
+
+    /**
+     * Saves the size and position of the script window
+     */
+    private void savePreferences() {
+        // window size and position
+        Preferences.setPreference(Preferences.SCRIPTWINDOW_WIDTH, getWidth());
+        Preferences.setPreference(Preferences.SCRIPTWINDOW_HEIGHT, getHeight());
+        Preferences.setPreference(Preferences.SCRIPTWINDOW_X, getX());
+        Preferences.setPreference(Preferences.SCRIPTWINDOW_Y, getY());
+    }
+
     public HighlightPainter getPainter() {
         return null;
     }
 
-    public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive) throws Exception {
-        return Collections.emptyList();
+    @SuppressWarnings("unchecked")
+    public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive)
+            throws Exception {
+        return Collections.EMPTY_LIST;
     }
 
     private void onListSelectionChanged() {

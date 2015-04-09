@@ -5,6 +5,7 @@
 
  Copyright (C) 2009 Alex Buloichik
                2012 Thomas Cordonnier
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -26,19 +27,16 @@
 
 package org.omegat.gui.stat;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.*;
-
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import org.omegat.core.Core;
 import org.omegat.core.statistics.CalcMatchStatistics;
 import org.omegat.core.statistics.CalcStandardStatistics;
 import org.omegat.core.threads.LongProcessThread;
-import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
@@ -48,109 +46,147 @@ import org.omegat.util.gui.StaticUIUtils;
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Thomas Cordonnier
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class StatisticsWindow extends PeroFrame {
+public class StatisticsWindow extends javax.swing.JDialog {
 
+    private String textData;
+    
     public static enum STAT_TYPE {
         STANDARD, MATCHES, MATCHES_PER_FILE
-    }
-
-    private JProgressBar progressBar;
-    private JTextArea output;
+    };
+    
     private LongProcessThread thread;
 
+    /**
+     * Creates new form StatisticsWindow
+     */
     public StatisticsWindow(STAT_TYPE statType) {
-        super();
-        resolveStatTypeAndStartCalculation(statType);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(800, 400);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent windowEvent) {
-                Core.getMainWindow().getApplicationFrame().setEnabled(true);
-                Core.getMainWindow().getApplicationFrame().requestFocus();
-                Core.getEditor().requestFocus();
-            }
+        super(Core.getMainWindow().getApplicationFrame(), true);
+        initComponents();
+        copyDataButton.setVisible(false);
+        
+        JComponent output = null;
 
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                thread.fin();
-            }
-        });
-
-        Core.getMainWindow().getApplicationFrame().setEnabled(false);
-
-        // Prepare UI
-        setLayout(new BorderLayout());
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        add(p);
-
-        progressBar = new JProgressBar();
-        progressBar.setStringPainted(true);
-        p.add(progressBar, BorderLayout.SOUTH);
-
-        output = new JTextArea();
-        output.setEditable(false);
-        output.setFont(new Font("Monospaced", Font.PLAIN, Core.getMainWindow().getApplicationFont().getSize()));
-        p.add(new JScrollPane(output), BorderLayout.CENTER);
-
-        StaticUIUtils.setEscapeAction(this, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                thread.fin();
-                dispose();
-            }
-        });
-        DockingUI.displayCentered(this);
-    }
-
-    private void resolveStatTypeAndStartCalculation(STAT_TYPE statType) {
         switch (statType) {
-            case STANDARD:
-                setTitle(OStrings.getString("CT_STATSSTANDARD_WindowHeader"));
-                thread = new CalcStandardStatistics(this);
-                break;
-            case MATCHES:
-                setTitle(OStrings.getString("CT_STATSMATCH_WindowHeader"));
-                thread = new CalcMatchStatistics(this, false);
-                break;
-            case MATCHES_PER_FILE:
-                setTitle(OStrings.getString("CT_STATSMATCH_PER_FILE_WindowHeader"));
-                thread = new CalcMatchStatistics(this, true);
-                break;
+        case STANDARD:
+            setTitle(OStrings.getString("CT_STATSSTANDARD_WindowHeader"));
+            StatisticsPanel panel = new StatisticsPanel(this);
+            thread = new CalcStandardStatistics(panel);
+            output = panel;
+            break;
+        case MATCHES:
+            setTitle(OStrings.getString("CT_STATSMATCH_WindowHeader"));
+            MatchStatisticsPanel panel1 = new MatchStatisticsPanel(this);
+            thread = new CalcMatchStatistics(panel1, false);
+            output = panel1;
+            break;
+        case MATCHES_PER_FILE:
+            setTitle(OStrings.getString("CT_STATSMATCH_PER_FILE_WindowHeader"));
+            PerFileMatchStatisticsPanel panel2 = new PerFileMatchStatisticsPanel(this);
+            thread = new CalcMatchStatistics(panel2, true);
+            output = panel2;
+            break;
         }
 
         // Run calculation
         thread.setPriority(Thread.MIN_PRIORITY);
         thread.start();
+
+        displayPanel.add(output);
+
+        StaticUIUtils.setEscapeClosable(this);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                thread.fin();
+            }
+        });
+
+        setSize(800, 400);
+        DockingUI.displayCentered(this);
     }
 
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        displayPanel = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+        progressBar = new javax.swing.JProgressBar();
+        copyDataButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        displayPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        displayPanel.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(displayPanel, java.awt.BorderLayout.CENTER);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
+        jPanel2.add(filler1);
+
+        progressBar.setStringPainted(true);
+        jPanel2.add(progressBar);
+
+        org.openide.awt.Mnemonics.setLocalizedText(copyDataButton, OStrings.getString("CT_STATS_CopyToClipboard")); // NOI18N
+        copyDataButton.setEnabled(false);
+        copyDataButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyDataButtonActionPerformed(evt);
+            }
+        });
+        jPanel2.add(copyDataButton);
+
+        org.openide.awt.Mnemonics.setLocalizedText(closeButton, OStrings.getString("BUTTON_CLOSE")); // NOI18N
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+        jPanel2.add(closeButton);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void copyDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyDataButtonActionPerformed
+        if (textData != null) {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                new StringSelection(textData), null);
+        }
+    }//GEN-LAST:event_copyDataButtonActionPerformed
+
+    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_closeButtonActionPerformed
+
+    public void setTextData(final String textData) {
+        this.textData = textData;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                copyDataButton.setEnabled(textData != null && !textData.isEmpty());
+            }
+        });
+    }
+    
     public void showProgress(final int percent) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 progressBar.setValue(percent);
                 progressBar.setString(percent + "%");
-            }
-        });
-    }
-
-    public void displayData(final String result) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                output.setText(result);
-            }
-        });
-    }
-
-    public void appendData(final String result) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                output.append(result);
             }
         });
     }
@@ -162,8 +198,17 @@ public class StatisticsWindow extends PeroFrame {
                 progressBar.setValue(100);
                 progressBar.setString("");
                 progressBar.setVisible(false);
-                output.setCaretPosition(0);
+                copyDataButton.setVisible(true);
             }
         });
     }
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton closeButton;
+    private javax.swing.JButton copyDataButton;
+    javax.swing.JPanel displayPanel;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.JPanel jPanel2;
+    javax.swing.JProgressBar progressBar;
+    // End of variables declaration//GEN-END:variables
 }

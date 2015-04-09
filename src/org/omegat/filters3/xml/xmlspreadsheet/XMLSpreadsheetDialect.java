@@ -44,7 +44,7 @@ public class XMLSpreadsheetDialect extends DefaultXMLDialect {
     public XMLSpreadsheetDialect() {
         defineConstraint(CONSTRAINT_ROOT, ROOT_PATTERN);
         defineParagraphTags(new String[] { "Workbook", "Cell", });
-//        defineIntactTags(new String[] { "source", "ut", "skeleton", "revisions"});
+        defineIntactTags(new String[] { "DocumentProperties", "ExcelWorkbook", "WorksheetOptions", });
 
     }
     
@@ -61,8 +61,9 @@ public class XMLSpreadsheetDialect extends DefaultXMLDialect {
      */
     @Override
     public Boolean validateIntactTag(String tag, Attributes atts) {
-        if (!tag.equalsIgnoreCase("Data")) // We test only "data"
+        if (!tag.equalsIgnoreCase("Data")) { // We test only "data"
             return false;
+        }
 
         if (atts != null) {
             for (int i = 0; i < atts.size(); i++) {
