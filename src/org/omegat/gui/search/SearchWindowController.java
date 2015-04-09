@@ -233,7 +233,7 @@ public class SearchWindowController {
             }
         });
 
-        form.m_authorField.enterActionListener = new ActionListener() {
+        ((MFindField) form.m_authorField).enterActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 doSearch();
@@ -657,7 +657,8 @@ public class SearchWindowController {
             public void run() {
                 EntryListPane viewer = (EntryListPane) form.m_viewer;
                 viewer.displaySearchResult(searcher, ((Integer) form.m_numberOfResults.getValue()));
-                form.m_resultsLabel.setText(StaticUtils.format(OStrings.getString("SW_NR_OF_RESULTS"), viewer.getNrEntries()));
+                form.m_resultsLabel.setText(StaticUtils.format(OStrings.getString("SW_NR_OF_RESULTS"),
+                        new Object[] { viewer.getNrEntries()}));
                 form.m_filterButton.setEnabled(true);
                 form.m_replaceButton.setEnabled(true);
                 form.m_replaceAllButton.setEnabled(true);
@@ -755,7 +756,7 @@ public class SearchWindowController {
             File f = new File(root);
             if (!f.exists() || !f.isDirectory()) {
                 String error = StaticUtils.format(OStrings.getString("SW_ERROR_BAD_DIR"),
-                        form.m_dirField.getText());
+                        new Object[] { form.m_dirField.getText() });
                 form.m_viewer.setText(error);
                 Log.log(error);
                 return;
@@ -794,11 +795,11 @@ public class SearchWindowController {
                 }
                 s.caseSensitive = form.m_searchCase.isSelected();
                 s.spaceMatchNbsp = form.m_searchSpaceMatchNbsp.isSelected();
-                s.glossary = form.m_cbSearchInGlossaries.isSelected();
-                s.memory = form.m_cbSearchInMemory.isSelected();
-                s.tm = form.m_cbSearchInTMs.isSelected();
-                s.allResults = form.m_allResultsCB.isSelected();
-                s.fileNames = form.m_fileNamesCB.isSelected();
+                s.glossary = mode == SearchMode.SEARCH ? form.m_cbSearchInGlossaries.isSelected() : false;
+                s.memory = mode == SearchMode.SEARCH ? form.m_cbSearchInMemory.isSelected() : true;
+                s.tm = mode == SearchMode.SEARCH ? form.m_cbSearchInTMs.isSelected() : false;
+                s.allResults = mode == SearchMode.SEARCH ? form.m_allResultsCB.isSelected() : true;
+                s.fileNames = mode == SearchMode.SEARCH ? form.m_fileNamesCB.isSelected() : true;
                 s.searchSource = form.m_searchSource.isSelected();
                 s.searchTarget = form.m_searchTranslation.isSelected();
                 if (form.m_searchTranslatedUntranslated.isSelected()) {
