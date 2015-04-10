@@ -55,7 +55,7 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
 
     private static final String EXPLANATION = OStrings.getString("GUI_COMMENTSWINDOW_explanation");
 
-    private final List<ProviderStorage> providers = new ArrayList<>();
+    private final List<ProviderStorage> providers = new ArrayList<ProviderStorage>();
 
     /** Creates new Comments Text Area Pane */
     public CommentsTextArea(MainWindow mw) {
@@ -79,7 +79,7 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
 
         List<ProviderStorage> list;
         synchronized (providers) {
-            list = new ArrayList<>(providers);
+            list = new ArrayList<ProviderStorage>(providers);
         }
         StringBuilder text = new StringBuilder(1024);
         for (ProviderStorage ps : list) {
@@ -155,7 +155,7 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
             Collections.sort(providers, new Comparator<ProviderStorage>() {
                 @Override
                 public int compare(ProviderStorage o1, ProviderStorage o2) {
-                    return new Integer(o1.priority).compareTo(o2.priority);
+                    return o1.priority < o2.priority ? -1 : o1.priority > o2.priority ? 1 : 0;
                 }
             });
         }

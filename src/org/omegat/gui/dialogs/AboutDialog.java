@@ -25,14 +25,10 @@
 
 package org.omegat.gui.dialogs;
 
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-
-import org.omegat.gui.common.PeroDialog;
+import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.DockingUI;
@@ -45,7 +41,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  */
 @SuppressWarnings("serial")
-public class AboutDialog extends PeroDialog {
+public class AboutDialog extends JDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -60,10 +56,10 @@ public class AboutDialog extends PeroDialog {
         initComponents();
         if ((OStrings.UPDATE != null) && !OStrings.UPDATE.equals("0")) {
             versionLabel.setText(StaticUtils.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE"),
-                    OStrings.VERSION, OStrings.UPDATE));
+                    new Object[] { OStrings.VERSION, OStrings.UPDATE }));
         } else {
             versionLabel.setText(StaticUtils.format(OStrings.getString("ABOUTDIALOG_VERSION"),
-                    OStrings.VERSION));
+                    new Object[] { OStrings.VERSION }));
         }
         Object[] args = { Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024,
@@ -74,17 +70,7 @@ public class AboutDialog extends PeroDialog {
         invalidate();
         pack();
 
-        // Reduce automatically size of dialog when it doesn't fit on screen
-        Toolkit kit = getToolkit();
-        Dimension screenSize = kit.getScreenSize();
-        Dimension dialogSize = getSize();
-        GraphicsConfiguration config = getGraphicsConfiguration();
-        Insets insets = kit.getScreenInsets(config);
-        screenSize.height -= (insets.top + insets.bottom);  // excluding the Windows taskbar
-        if (dialogSize.height > screenSize.height) {
-            dialogSize.height = screenSize.height;
-            setSize(dialogSize);
-        }
+        StaticUIUtils.fitInScreen(this);
         DockingUI.displayCentered(this);
     }
 
@@ -151,7 +137,7 @@ public class AboutDialog extends PeroDialog {
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
-        versionLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/omegat/gui/resources/OmegaT.gif"))); // NOI18N
+        versionLabel.setIcon(new ImageIcon(OmegaTIcons.ICONS.get(1)));
         org.openide.awt.Mnemonics.setLocalizedText(versionLabel, OStrings.getString("ABOUTDIALOG_VERSION")); // NOI18N
         versionLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         getContentPane().add(versionLabel, java.awt.BorderLayout.NORTH);

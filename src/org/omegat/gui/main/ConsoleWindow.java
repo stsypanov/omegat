@@ -1,11 +1,11 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
- with fuzzy matching, translation memory, keyword search,
- glossaries, and translation leveraging into updated projects.
+          with fuzzy matching, translation memory, keyword search, 
+          glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2008 Alex Buloichik
- Home page: http://www.omegat.org/
- Support center: http://groups.yahoo.com/group/OmegaT/
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -40,115 +40,115 @@ import com.vlsolutions.swing.docking.Dockable;
 /**
  * The main window of OmegaT application, if the program is started in
  * consoleMode.
- *
+ * 
  * @author Martin Fleurke
  */
 public class ConsoleWindow implements IMainWindow {
-	/**
-	 * {@inheritDoc}
-	 */
-	public void displayErrorRB(Throwable ex, String errorKey, Object... params) {
-		String msg;
-		if (params != null) {
-			msg = StaticUtils.format(OStrings.getString(errorKey), params);
-		} else {
-			msg = OStrings.getString(errorKey);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public void displayErrorRB(Throwable ex, String errorKey, Object... params) {
+        String msg;
+        if (params != null) {
+            msg = StaticUtils.format(OStrings.getString(errorKey), params);
+        } else {
+            msg = OStrings.getString(errorKey);
+        }
 
-		System.err.println(msg);
-		String fulltext = msg;
-		if (ex != null)
-			fulltext += '\n' + ex.toString();
-		System.err.println(OStrings.getString("TF_ERROR"));
-		System.err.println(fulltext);
+        System.err.println(msg);
+        String fulltext = msg;
+        if (ex != null)
+            fulltext += "\n" + ex.toString();
+        System.err.println(OStrings.getString("TF_ERROR"));
+        System.err.println(fulltext);
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc} Nothing is shown in quiet mode.
-	 */
-	public void showStatusMessageRB(String messageKey, Object... params) {
-		if (RuntimePreferences.isQuietMode())
-			return;
+    /**
+     * {@inheritDoc} Nothing is shown in quiet mode.
+     */
+    public void showStatusMessageRB(String messageKey, Object... params) {
+        if (RuntimePreferences.isQuietMode())
+            return;
 
-		final String msg;
-		if (messageKey == null) {
-			msg = " ";
-		} else {
-			if (params != null) {
-				msg = StaticUtils.format(OStrings.getString(messageKey), params);
-			} else {
-				msg = OStrings.getString(messageKey);
-			}
-		}
-		System.out.println(msg);
-	}
+        final String msg;
+        if (messageKey == null) {
+            msg = " ";
+        } else {
+            if (params != null) {
+                msg = StaticUtils.format(OStrings.getString(messageKey), params);
+            } else {
+                msg = OStrings.getString(messageKey);
+            }
+        }
+        System.out.println(msg);
+    }
 
-	public void displayWarningRB(String message, Object... args) {
-		displayWarningRB(message, null, args);
-	}
+    public void displayWarningRB(String message, Object... args) {
+        displayWarningRB(message, null, args);
+    }
+    
+    public void displayWarningRB(String message, String supercedesKey, Object... args) {
+        System.err.println(StaticUtils.format(OStrings.getString(message), args));
+    }
 
-	public void displayWarningRB(String message, String supercedesKey, Object... args) {
-		System.err.println(StaticUtils.format(OStrings.getString(message), args));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void showErrorDialogRB(String message, Object[] args, String title) {
+        System.err.println(StaticUtils.format(OStrings.getString(message), args));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void showErrorDialogRB(String message, Object[] args, String title) {
-		System.err.println(StaticUtils.format(OStrings.getString(message), args));
-	}
+    public void addDockable(Dockable pane) {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public void addDockable(Dockable pane) {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public Font getApplicationFont() {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public Font getApplicationFont() {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public JFrame getApplicationFrame() {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public JFrame getApplicationFrame() {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public void lockUI() {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public void lockUI() {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public void showLengthMessage(String messageText) {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public void showLengthMessage(String messageText) {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public void showProgressMessage(String messageText) {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public void showProgressMessage(String messageText) {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public void unlockUI() {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public void unlockUI() {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public IMainMenu getMainMenu() {
+        throw new NoSuchMethodError("Invalid call of ConsoleWindow");
+    }
 
-	public IMainMenu getMainMenu() {
-		throw new NoSuchMethodError("Invalid call of ConsoleWindow");
-	}
+    public Cursor getCursor() {
+        return new Cursor(Cursor.DEFAULT_CURSOR);
+    }
 
-	public Cursor getCursor() {
-		return new Cursor(Cursor.DEFAULT_CURSOR);
-	}
+    public void setCursor(Cursor cursor) {
+    }
 
-	public void setCursor(Cursor cursor) {
-	}
+    public int showConfirmDialog(Object message, String title, int optionType,
+            int messageType) throws HeadlessException {
 
-	public int showConfirmDialog(Object message, String title, int optionType,
-								 int messageType) throws HeadlessException {
+        System.out.println(title);
+        System.out.println(message);
+        System.out.println(OStrings.getString("TF_CHOSEN_YES"));
+        return 0; //JOptionPane.YES_OPTION
+    }
 
-		System.out.println(title);
-		System.out.println(message);
-		System.out.println(OStrings.getString("TF_CHOSEN_YES"));
-		return 0; //JOptionPane.YES_OPTION
-	}
-
-	public void showMessageDialog(String message) {
-		System.out.println(message);
-	}
+    public void showMessageDialog(String message) {
+        System.out.println(message);
+    }
 
 }

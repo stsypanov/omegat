@@ -111,7 +111,7 @@ public class FilterMaster {
     static {
         try {
             CONFIG_CTX = JAXBContext.newInstance(Filters.class);
-            filtersClasses = new ArrayList<>();
+            filtersClasses = new ArrayList<Class<IFilter>>();
             filtersClasses.addAll((List)PluginUtils.getFilterClasses());
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
@@ -196,7 +196,7 @@ public class FilterMaster {
 
             filterObject.parseFile(inFile, lookup.config, fc, parseCallback);
         } catch (Exception ioe) {
-            Log.log(ioe);
+            ioe.printStackTrace();
             throw new IOException(filename + "\n" + ioe);
         }
         return filterObject;
@@ -233,7 +233,17 @@ public class FilterMaster {
 
         File inFile = new File(sourcedir + File.separator + filename);
 
-        File outFile = getOutFile(filename, targetdir, fc, lookup, inFile);
+        String name = inFile.getName();
+        String path = filename.substring(0, filename.length() - name.length());
+
+        File outFile = new File(targetdir
+                + File.separator
+                + path
+                + File.separator
+                + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
+                        lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang(),
+                        lookup.outFilesInfo.getSourceEncoding(), lookup.outFilesInfo.getTargetEncoding(),
+                        lookup.filterObject.getFileFormatName()));
 
         fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
         fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());
@@ -258,7 +268,17 @@ public class FilterMaster {
 
         File inFile = new File(sourceDir + File.separator + fileName);
 
-        File outFile = getOutFile(fileName, targetdir, fc, lookup, inFile);
+        String name = inFile.getName();
+        String path = fileName.substring(0, fileName.length() - name.length());
+
+        File outFile = new File(targetdir
+                + File.separator
+                + path
+                + File.separator
+                + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
+                        lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang(),
+                        lookup.outFilesInfo.getSourceEncoding(), lookup.outFilesInfo.getTargetEncoding(),
+                        lookup.filterObject.getFileFormatName()));
 
         if (!outFile.exists()) {
             // out file not exist - skip
@@ -276,7 +296,7 @@ public class FilterMaster {
         }
     }
 
-    protected static class LookupInformation {
+    static class LookupInformation {
         public final Files outFilesInfo;
         public final IFilter filterObject;
         public final Map<String, String> config;
@@ -350,7 +370,7 @@ public class FilterMaster {
      */
     public static List<String> getSupportedEncodings() {
         if (supportedEncodings == null) {
-            supportedEncodings = new ArrayList<>();
+            supportedEncodings = new ArrayList<String>();
             supportedEncodings.add(AbstractFilter.ENCODING_AUTO_HUMAN);
             supportedEncodings.addAll(Charset.availableCharsets().keySet());
         }
@@ -598,8 +618,8 @@ public class FilterMaster {
         }
         
         String[] splitName = filename.split("\\.");
-        StringBuilder nameOnlyBuf = new StringBuilder(splitName[0]);
-        StringBuilder extensionBuf = new StringBuilder(splitName[splitName.length - 1]);
+        StringBuffer nameOnlyBuf = new StringBuffer (splitName[0]);
+        StringBuffer extensionBuf = new StringBuffer (splitName[splitName.length - 1]);
         for (int i = 0; i < splitName.length; i++) {
             res = res.replaceAll ("\\$\\{nameOnly-" + i + "\\}", nameOnlyBuf.toString());
             res = res.replaceAll ("\\$\\{extension-" + i + "\\}", extensionBuf.toString());
@@ -699,7 +719,7 @@ public class FilterMaster {
      * @return options for filter usage
      */
     public static Map<String, String> forFilter(List<Option> options) {
-        final Map<String, String> result = new TreeMap<>();
+        final Map<String, String> result = new TreeMap<String, String>();
         for (Option opt : options) {
             result.put(opt.getName(), opt.getValue());
         }
@@ -723,19 +743,4 @@ public class FilterMaster {
             f.getOption().add(opt);
         }
     }
-
-    private File getOutFile(String filename, String targetDir, FilterContext fc, LookupInformation lookup, File inFile) {
-        String name = inFile.getName();
-        String path = filename.substring(0, filename.length() - name.length());
-
-        return new File(targetDir
-                + File.separator
-                + path
-                + File.separator
-                + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
-                lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang(),
-                lookup.outFilesInfo.getSourceEncoding(), lookup.outFilesInfo.getTargetEncoding(),
-                lookup.filterObject.getFileFormatName()));
-    }
-
 }

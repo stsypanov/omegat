@@ -95,7 +95,7 @@ public class Statistics {
         BreakIterator breaker = DefaultTokenizer.getWordBreaker();
         breaker.setText(str);
 
-        String tokenStr;
+        String tokenStr = "";
 
         int start = breaker.first();
         for (int end = breaker.next(); end != BreakIterator.DONE; start = end, end = breaker.next()) {
@@ -122,10 +122,15 @@ public class Statistics {
      * @param data
      */
     public static void writeStat(String filename, String text) {
-        try (OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8)) {
-            out.write(DateFormat.getInstance().format(new Date()) + "\n");
-            out.write(text);
-            out.flush();
+        try {
+            OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8);
+            try {
+                out.write(DateFormat.getInstance().format(new Date()) + "\n");
+                out.write(text);
+                out.flush();
+            } finally {
+                out.close();
+            }
         } catch (Exception ex) {
             Log.log(ex);
         }

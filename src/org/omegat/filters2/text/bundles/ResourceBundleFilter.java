@@ -6,7 +6,8 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2009 Alex Buloichik
                2011 Martin Fleurke
-               2013-2014 Enrique Est�vez, Didier Briel
+               2013-2014 Enrique Estevez, Didier Briel
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -28,17 +29,32 @@
 
 package org.omegat.filters2.text.bundles;
 
-import org.omegat.core.data.ProtectedPart;
-import org.omegat.filters2.AbstractAlignmentFilter;
-import org.omegat.filters2.Instance;
-import org.omegat.util.*;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Dialog;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.omegat.core.data.ProtectedPart;
+import org.omegat.filters2.AbstractFilter;
+import org.omegat.filters2.FilterContext;
+import org.omegat.filters2.Instance;
+import org.omegat.util.Log;
+import org.omegat.util.LinebreakPreservingReader;
+import org.omegat.util.NullBufferedWriter;
+import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
+import org.omegat.util.PatternConsts;
+import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * Filter to support Java Resource Bundles - the files that are used to I18ze
@@ -48,8 +64,9 @@ import java.util.Map;
  * @author Keith Godfrey
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Martin Fleurke
- * @author Enrique Est�vez (keko.gl@gmail.com)
+ * @author Enrique Estevez (keko.gl@gmail.com)
  * @author Didier Briel
+ * @author Aaron Madlon-Kay
  *
  * Option to remove untranslated segments in the target files
  * Code adapted from the file: MozillaDTDFilter.java
@@ -62,11 +79,14 @@ import java.util.Map;
  *
  * Support for the comments into the Comments panel (localization notes).
  */
-public class ResourceBundleFilter extends AbstractAlignmentFilter {
+public class ResourceBundleFilter extends AbstractFilter {
 
     public static final String OPTION_REMOVE_STRINGS_UNTRANSLATED = "unremoveStringsUntranslated";
+    public static final String DEFAULT_TARGET_ENCODING = OConsts.ASCII;
 
-    private String targetEncoding;
+    protected Map<String, String> align;
+    
+    private String targetEncoding = DEFAULT_TARGET_ENCODING;
     
     /**
      * If true, will remove non-translated segments in the target files
@@ -113,13 +133,19 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
      * "Bundle_ru.properties"
      */
     @Override
-    public BufferedWriter createWriter(File outfile, String encoding) throws
+    public BufferedWriter createWriter(File outfile, String encoding) throws UnsupportedEncodingException,
             IOException {
-        if (encoding == null) { // Automatic target is considered as being ASCII
-            encoding = OConsts.ASCII;
+        if (encoding != null) {
+            targetEncoding = encoding;
         }
-        targetEncoding = encoding;
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outfile), encoding));
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outfile), targetEncoding));
+    }
+
+    @Override
+    protected String getOutputEncoding(FilterContext fc) {
+        String encoding = fc.getOutEncoding();
+        // Use default if the user didn't specify anything ("<auto>")
+        return encoding == null ? DEFAULT_TARGET_ENCODING : encoding;
     }
 
     /**
@@ -137,7 +163,7 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
         if (ascii == null)
             return null;
 
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         for (int i = 0; i < ascii.length(); i++) {
             char ch = ascii.charAt(i);
             if (ch == '\\' && i != ascii.length() - 1) {
@@ -181,14 +207,9 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
      *            it is UTF-8, what is the another supported encoding)
      */
     private String toAscii(String text, boolean key) {
-        
-            
-        if (targetEncoding == null) {
-            targetEncoding = OConsts.ASCII;
-        }
         CharsetEncoder charsetEncoder = Charset.forName(targetEncoding).newEncoder();
         
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
 
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
@@ -230,7 +251,7 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
      * >#1606595</a>.
      */
     private String removeExtraSlashes(String string) {
-        StringBuilder result = new StringBuilder(string.length());
+        StringBuffer result = new StringBuffer(string.length());
         for (int i = 0; i < string.length(); i++) {
             char ch = string.charAt(i);
             if (ch == '\\') {
@@ -302,7 +323,7 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
                 // Save the comments
                 comments = (comments==null? str : comments + "\n" + str);
                 // checking if the next string shouldn't be internationalized
-                if (trimmed.contains("NOI18N"))
+                if (trimmed.indexOf("NOI18N") >= 0)
                     noi18n = true;
 
                 continue;
@@ -372,7 +393,7 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
                     if (trans.length() > 0 && trans.charAt(0) == ' ')
                         trans = '\\' + trans;
                     // Non-translated segments are written based on the filter options 
-                    if (translatedSegment || !removeStringsUntranslated) {
+                    if (translatedSegment == true || removeStringsUntranslated == false) {
                         outfile.write(toAscii(key, true));
                         outfile.write(equals);
                         outfile.write(trans);
@@ -437,6 +458,24 @@ public class ResourceBundleFilter extends AbstractAlignmentFilter {
         return value;
     }
 
+    @Override
+    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
+        Map<String, String> source = new HashMap<String, String>();
+        Map<String, String> translated = new HashMap<String, String>();
+
+        align = source;
+        processFile(sourceFile, new NullBufferedWriter(), fc);
+        align = translated;
+        processFile(translatedFile, new NullBufferedWriter(), fc);
+        for (Map.Entry<String, String> en : source.entrySet()) {
+            String tr = translated.get(en.getKey());
+            if (!StringUtil.isEmpty(tr)) {
+                entryAlignCallback.addTranslation(en.getKey(), en.getValue(), tr, false, null, this);
+            }
+        }
+    }
+
+    
     @Override
     public Map<String, String> changeOptions(Dialog parent, Map<String, String> config) {
         try {

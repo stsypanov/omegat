@@ -37,13 +37,13 @@ import javax.swing.table.AbstractTableModel;
  */
 @SuppressWarnings("serial")
 public class CharTableModel extends AbstractTableModel {
-//    Font font;
+    Font font;
     
-    private int columnCount = 16;
+    int columnCount = 16; 
     
-    private int glyphCount = 65535-32;
+    int glyphCount = 65535-32;
     
-    private StringBuilder data;
+    StringBuilder data = null;
     
     public CharTableModel(String data) {
         setData(data);
@@ -55,23 +55,21 @@ public class CharTableModel extends AbstractTableModel {
      * @return true if the data have been replaced.
      */
     public boolean setData(String data) {
-        if (this.data == null && data == null)
+        if (this.data == null && data == null) {
             return false;
+        }
         
-        if (data != null) {
-            if (this.data == null || !this.data.toString().equals(data)) {
-                glyphCount = data.length();
-                this.data = new StringBuilder(data);
-                fireTableDataChanged();
-                return true;
-            }
+        if (data != null && (this.data == null || !this.data.toString().equals(data))) {
+            glyphCount = data.length();
+            this.data = new StringBuilder(data);
+            fireTableDataChanged();
+            return true;
         } else {
             glyphCount = 0xFFFF-32;
             this.data = null;
             fireTableDataChanged();
             return true;
         }
-        return false;
     }
     
     public String getData() {
@@ -102,14 +100,16 @@ public class CharTableModel extends AbstractTableModel {
      * @param c the character
      * @param checkUnique check for being unique or not
      */
-    public void appendChar(char c, boolean checkUnique) {
+    public void appendChar(Character c, boolean checkUnique) {
+        char cv = c.charValue();
         if (checkUnique) {
             for (int i = 0; i < data.length(); i++) {
-                if (data.charAt(i) == c)
+                if (data.charAt(i) == cv) {
                     return;
+                }
             }
         }
-        data.append(c);
+        this.data.append(cv);
         glyphCount++;
         fireTableDataChanged();
     }
@@ -122,12 +122,13 @@ public class CharTableModel extends AbstractTableModel {
      * @param col2 to column
      */
     public void removeSelection(int row1, int col1, int row2, int col2) {
-        if (data.length() == 0)
+        if (data.length() == 0) {
             return;
-
-        int pos1 = row1 * columnCount + col1;
+        }
+        
+        int pos1 = row1 * getColumnCount() + col1;
         pos1 = pos1 >= data.length() ? data.length() - 1 : pos1;
-        int pos2 = row2 * columnCount + col2;
+        int pos2 = row2 * getColumnCount() + col2;
         pos2 = (pos2 >= data.length()) ? data.length() - 1 : pos2;
         pos2 = (pos2 == pos1) ? pos1+1 : pos2;
         data.delete(pos1, pos2);

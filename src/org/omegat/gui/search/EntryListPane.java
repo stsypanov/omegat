@@ -135,7 +135,7 @@ class EntryListPane extends JTextPane {
     protected class DisplayMatches implements Runnable {
         protected final DefaultStyledDocument doc;
 
-        private final List<SearchMatch> matches = new ArrayList<>();
+        private final List<SearchMatch> matches = new ArrayList<SearchMatch>();
 
         public DisplayMatches(final List<SearchResultEntry> entries) {
             UIThreadsUtil.mustBeSwingThread();
@@ -151,7 +151,7 @@ class EntryListPane extends JTextPane {
 
             if (entries.size() >= numberOfResults) {
                 addMessage(m_stringBuf, StaticUtils.format(OStrings.getString("SW_MAX_FINDS_REACHED"),
-                        numberOfResults));
+                        new Object[] { numberOfResults }));
             }
 
             for (SearchResultEntry e : entries) {
@@ -182,9 +182,9 @@ class EntryListPane extends JTextPane {
             if (m_stringBuf.length() > 0)
                 m_stringBuf.append("---------\n");
 
-            if (preamble != null && !preamble.isEmpty())
+            if (preamble != null && !preamble.equals(""))
                 m_stringBuf.append(preamble + "\n");
-            if (src != null && !src.isEmpty()) {
+            if (src != null && !src.equals("")) {
                 m_stringBuf.append("-- ");
                 if (srcPrefix != null) {
                     m_stringBuf.append(srcPrefix);
@@ -198,7 +198,7 @@ class EntryListPane extends JTextPane {
                 m_stringBuf.append(src);
                 m_stringBuf.append('\n');
             }
-            if (loc != null && !loc.isEmpty()) {
+            if (loc != null && !loc.equals("")) {
                 m_stringBuf.append("-- ");
                 if (targetMatches != null) {
                     for (SearchMatch m : targetMatches) {
@@ -210,7 +210,7 @@ class EntryListPane extends JTextPane {
                 m_stringBuf.append('\n');
             }
 
-            if (note != null && !note.isEmpty()) {
+            if (note != null && !note.equals("")) {
                 m_stringBuf.append("= ");
                 if (noteMatches != null) {
                     for (SearchMatch m : noteMatches) {
@@ -266,10 +266,10 @@ class EntryListPane extends JTextPane {
 
     public void setFont() {
         String srcFont = Preferences.getPreference(OConsts.TF_SRC_FONT_NAME);
-        if (!srcFont.isEmpty()) {
+        if (!srcFont.equals("")) {
             int fontsize;
             try {
-                fontsize = Integer.valueOf(Preferences.getPreference(OConsts.TF_SRC_FONT_SIZE)).intValue();
+                fontsize = Integer.parseInt(Preferences.getPreference(OConsts.TF_SRC_FONT_SIZE));
             } catch (NumberFormatException nfe) {
                 fontsize = 12;
             }
@@ -294,8 +294,8 @@ class EntryListPane extends JTextPane {
     }
 
     private volatile Searcher m_searcher;
-    private final List<Integer> m_entryList = new ArrayList<>();
-    private final List<Integer> m_offsetList = new ArrayList<>();
+    private final List<Integer> m_entryList = new ArrayList<Integer>();
+    private final List<Integer> m_offsetList = new ArrayList<Integer>();
     private DisplayMatches currentlyDisplayedMatches;
     private int numberOfResults;
 }
