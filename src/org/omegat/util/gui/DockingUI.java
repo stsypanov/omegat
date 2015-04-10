@@ -224,8 +224,9 @@ public class DockingUI {
         // Panel title bars
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
         UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
+        UIManager.put("InternalFrame.activeTitleForeground", Color.BLACK);
         UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
-        UIManager.put("InternalFrame.inactiveTitleForeground", new Color(0x808080)); // Label.disabledForeground on OS X LAF
+        UIManager.put("InternalFrame.inactiveTitleForeground", Color.BLACK); // Label.disabledForeground on OS X LAF
         // Disable gradient on pane title bars
         UIManager.put("DockViewTitleBar.disableCustomPaint", true);
 
