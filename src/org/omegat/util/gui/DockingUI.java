@@ -75,7 +75,7 @@ public class DockingUI {
         // Install VLDocking defaults
         DockingUISettings.getInstance().installUI();
         DockableContainerFactory.setFactory(new CustomContainerFactory());
-        
+
         // Enable animated popup when mousing over minimized tab
         AutoHidePolicy.getPolicy().setExpandMode(ExpandMode.EXPAND_ON_ROLLOVER);
         
@@ -104,7 +104,7 @@ public class DockingUI {
         UIManager.put("DockingDesktop.maximizeActionAccelerator", null);
         UIManager.put("DockingDesktop.dockActionAccelerator", null);
         UIManager.put("DockingDesktop.floatActionAccelerator", null);
-        
+
         // Disused icons
         UIManager.put("DockViewTitleBar.menu.close", getIcon("empty.gif"));
         UIManager.put("DockTabbedPane.close", getIcon("empty.gif"));
@@ -203,7 +203,7 @@ public class DockingUI {
         // Main window main area
         int outside = 5;
         UIManager.put("DockingDesktop.border", new EmptyBorder(outside, outside, outside, outside));
-        
+
         // Docked, visible panels get two borders if we're not careful:
         // 1. Drawn by VLDocking. Surrounds panel content AND header. Set this to empty margin instead.
         int panel = 2;
@@ -228,18 +228,19 @@ public class DockingUI {
         } else {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(5, 5, 5, 5, standardBgColor));
         }
-        
+
         // Windows 8+ is very square.
         int cornerRadius = isFlatWindows() ? 0 : 8;
-        
+
         // Panel title bars
         Color activeTitleText = UIManager.getColor("Label.foreground");
         Color inactiveTitleText = adjustRGB(activeTitleText, 0x80); // #000000 -> #808080; GTK+ has Color.WHITE for Label.disabledForeground
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(cornerRadius, borderColor, RoundedCornerBorder.SIDE_TOP));
         UIManager.put("InternalFrame.activeTitleForeground", activeTitleText); // Windows 7 "Classic" has Color.WHITE for this
         UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
-        UIManager.put("InternalFrame.inactiveTitleForeground", inactiveTitleText); 
+        UIManager.put("InternalFrame.inactiveTitleForeground", inactiveTitleText);
         UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
+        UIManager.put("InternalFrame.inactiveTitleForeground", Color.BLACK); // Label.disabledForeground on OS X LAF
         // Disable gradient on pane title bars
         UIManager.put("DockViewTitleBar.disableCustomPaint", true);
 
@@ -256,7 +257,7 @@ public class DockingUI {
         UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, statusAreaColor));
         // Lowermost section margins
         UIManager.put("OmegaTMainWindowBottomMargin.border", new EmptyBorder(0, 2 * outside, outside, 2 * outside));
-        
+
         UIManager.put("OmegaTEditorFilter.border", new MatteBorder(1, 1, 0, 1, borderColor));
         
         // Undocked panel
@@ -322,7 +323,7 @@ public class DockingUI {
             UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.png"));
         }
     }
-    
+
     /**
      * Adjust a color by adding some constant to its RGB values, clamping to the
      * range 0-255.
@@ -333,7 +334,7 @@ public class DockingUI {
                 Math.max(0, Math.min(255, color.getBlue() + adjustment)));
         return result;
     }
-    
+
     // Windows Classic LAF detection from http://stackoverflow.com/a/4386821/448068
     private static boolean isWindowsLAF() {
         return UIManager.getLookAndFeel().getID().equals("Windows");
