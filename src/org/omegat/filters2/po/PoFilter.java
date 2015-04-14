@@ -52,8 +52,7 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.PatternConsts;
-import org.omegat.util.StringUtil;
-import org.omegat.util.TagUtil;
+import org.omegat.util.StaticUtils;
 
 /**
  * Filter to support po files (in various encodings).
@@ -368,10 +367,7 @@ public class PoFilter extends AbstractFilter {
     @Override
     protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
         // BOM (byte order mark) bugfix
-        translatedFile.mark(1);
-        int ch = translatedFile.read();
-        if (ch != 0xFEFF)
-            translatedFile.reset();
+        ByteUtils.checkByteOrderMark(translatedFile);
 
         this.out = null;
         processPoFile(translatedFile, fc);
@@ -380,10 +376,7 @@ public class PoFilter extends AbstractFilter {
     @Override
     public void processFile(BufferedReader in, BufferedWriter out, FilterContext fc) throws IOException {
         // BOM (byte order mark) bugfix
-        in.mark(1);
-        int ch = in.read();
-        if (ch != 0xFEFF)
-            in.reset();
+        ByteUtils.checkByteOrderMark(in);
 
         this.out = out;
         processPoFile(in, fc);

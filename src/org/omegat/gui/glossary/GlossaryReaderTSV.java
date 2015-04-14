@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.omegat.util.EncodingDetector;
+import org.omegat.util.ByteUtils;
 import org.omegat.util.OConsts;
 import org.omegat.util.StringUtil;
 
@@ -74,10 +75,7 @@ public class GlossaryReaderTSV {
         BufferedReader in = new BufferedReader(reader);
         try {
             // BOM (byte order mark) bugfix
-            in.mark(1);
-            int ch = in.read();
-            if (ch != 0xFEFF)
-                in.reset();
+            ByteUtils.checkByteOrderMark(in);
 
             for (String s = in.readLine(); s != null; s = in.readLine()) {
                 // skip lines that start with '#'
