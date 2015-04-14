@@ -42,6 +42,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.Instance;
+import org.omegat.util.ByteUtils;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
@@ -82,10 +83,7 @@ public class LatexFilter extends AbstractFilter {
     @Override
     public void processFile(BufferedReader in, BufferedWriter out, org.omegat.filters2.FilterContext fc) throws IOException {
         // BOM (byte order mark) bugfix
-        in.mark(1);
-        int ch = in.read();
-        if (ch != 0xFEFF)
-            in.reset();
+        ByteUtils.checkByteOrderMark(in);
 
         init();
 

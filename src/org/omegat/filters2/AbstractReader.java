@@ -1,6 +1,7 @@
 package org.omegat.filters2;
 
 import org.jetbrains.annotations.NotNull;
+import org.omegat.util.ByteUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,10 +27,7 @@ public abstract class AbstractReader extends Reader {
 		// BOM (byte order mark) bugfix
 		if (readFirstTime) {
 			readFirstTime = false;
-			reader.mark(1);
-			int ch = reader.read();
-			if (ch != 0xFEFF)
-				reader.reset();
+			ByteUtils.checkByteOrderMark(reader);
 		}
 		return reader.read(cbuf, off, len);
 	}
