@@ -30,8 +30,8 @@ public class ProxyUtilsTest {
 
 	@Test
 	public void testHttpConnection() throws Exception {
-		URL google = new URL(httpsURL);
-		List<Proxy> proxies = ProxyUtils.getProxySelector(httpsURL);
+		URL google = new URL(httpURL);
+		List<Proxy> proxies = ProxyUtils.getProxySelector(httpURL);
 
 		for (Proxy proxy : proxies) {
 			int responseCode = getResponseCode(google, proxy);
