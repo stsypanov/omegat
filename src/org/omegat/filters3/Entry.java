@@ -136,7 +136,7 @@ public class Entry {
      * filter.
      */
     private void aggregateTags() {
-        List<Element> newElements = new ArrayList<>();
+        List<Element> newElements = new ArrayList<Element>();
         AggregatedTag aggregated = null;
 
         for (Element elem : elements) {
@@ -274,7 +274,7 @@ public class Entry {
             // trying to test
             int recursion = 1;
             for (int i = firstGood + 1; i < textEnd; i++) {
-                Element candElement = get(i);
+                Element candElement = (Element) get(i);
                 if (candElement instanceof Tag) {
                     Tag cand = (Tag) candElement;
                     if (cand.getTag().equals(good.getTag())) {
@@ -475,7 +475,7 @@ public class Entry {
      *       text&lt;ept i="0"&gt;&amp;lt;/b0&amp;gt;&lt;/ept&gt;</code>.
      */
     public String sourceToTMX() {
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < size(); i++)
             buf.append(get(i).toTMX());
         return buf.toString();
@@ -488,7 +488,7 @@ public class Entry {
      * <code>Here's &lt;b&gt;bold text&lt;/b&gt;</code>.
      */
     public String sourceToOriginal() {
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < size(); i++)
             buf.append(get(i).toOriginal());
         return buf.toString();
@@ -578,7 +578,7 @@ public class Entry {
         // TODO: implement checking
     }
 
-    protected static class ShortTag {
+    static class ShortTag {
         String tag;
         int pos;
 
@@ -596,7 +596,7 @@ public class Entry {
         if (translatedEntry == null)
             return sourceToTMX();
 
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
 
         for (int i = 0; i < getFirstGood(); i++)
             buf.append(get(i).toTMX());
@@ -617,7 +617,7 @@ public class Entry {
         if (translatedEntry == null)
             return sourceToOriginal();
 
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
 
         for (int i = 0; i < getFirstGood(); i++)
             buf.append(get(i).toOriginal());
@@ -635,7 +635,7 @@ public class Entry {
     // /////////////////////////////////////////////////////////////////////////
 
     /** Elements (tags and text) of this entry. */
-    private List<Element> elements = new ArrayList<>();
+    private List<Element> elements = new ArrayList<Element>();
 
     /**
      * Adds an element to this entry. Can be either a {@link Text} or a

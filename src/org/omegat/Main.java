@@ -65,6 +65,7 @@ import org.omegat.gui.scripting.ScriptingWindow;
 import org.omegat.util.*;
 import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.Styles;
+import org.omegat.util.network.ProxyUtils;
 
 import com.vlsolutions.swing.docking.DockingDesktop;
 import org.omegat.util.Platform;
@@ -216,13 +217,7 @@ public class Main {
 		String setProxy = Preferences.getPreference(Preferences.SET_HTTP_PROXY);
 
 		if ("true".equals(setProxy)){
-			System.setProperty("http.proxySet", "true");
-			System.setProperty("http.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
-			System.setProperty("http.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
-
-			System.setProperty("https.proxySet", "true");
-			System.setProperty("https.proxyHost", Preferences.getPreference(Preferences.HTTP_PROXY_HOST));
-			System.setProperty("https.proxyPort", Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+            ProxyUtils.applyProxyPreferences();
 		}
 	}
 

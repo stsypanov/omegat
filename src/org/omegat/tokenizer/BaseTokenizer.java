@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
  
  Copyright (C) 2008 Alex Buloichik (alex73mail@gmail.com)
-               2013 Aaron Madlon-Kay
+               2013, 2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.text.BreakIterator;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -201,6 +202,17 @@ public abstract class BaseTokenizer implements ITokenizer {
 
         return result.toArray(new Token[result.size()]);
     }
+    
+    protected Token[] tokenizeByCodePoint(String strOrig) {
+        // See http://www.ibm.com/developerworks/library/j-unicode/#1-5
+        // Example 1-5 appears to be faster than 1-6 for us (because our strings are short?)
+        Token[] tokens = new Token[strOrig.codePointCount(0, strOrig.length())];
+        for (int cp, i = 0, j = 0; i < strOrig.length(); i += Character.charCount(cp)) {
+            cp = strOrig.codePointAt(i);
+            tokens[j++] = new Token(new String(Character.toChars(cp)), i);
+        }
+        return tokens;
+    }
 
     protected Token[] tokenize(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed, final boolean filterDigits) {
@@ -259,5 +271,34 @@ public abstract class BaseTokenizer implements ITokenizer {
             if (Character.isDigit(b.charAt(b.length() - 1))) b.insert(b.length() - 1, '.');
             supportedBehaviors.put(v, b.toString());
         }
+    }
+    
+    protected void test(String... args) {
+        System.out.println(getClass().getName());
+        for (String input : args) {
+            System.out.println("Input:");
+            System.out.println(input);
+            System.out.println("tokenizeAllExactly:");
+            printTest(tokenizeAllExactly(input), input);
+            System.out.println("tokenize:");
+            printTest(tokenize(input, false, false, false), input);
+            System.out.println("tokenize (stemsAllowed):");
+            printTest(tokenize(input, true, false, false), input);
+            System.out.println("tokenize (stemsAllowed stopWordsAllowed):");
+            printTest(tokenize(input, true, true, false), input);
+            System.out.println("tokenize (stemsAllowed stopWordsAllowed filterDigits) (=tokenizeWords(MATCHING)):");
+            printTest(tokenize(input, true, true, true), input);
+            System.out.println("tokenize (stemsAllowed filterDigits) (=tokenizeWords(GLOSSARY)):");
+            printTest(tokenize(input, true, false, true), input);
+            System.out.println("tokenize (filterDigits) (=tokenizeWords(NONE) tokenizeWordsForSpelling):");
+            printTest(tokenize(input, false, false, true), input);
+            System.out.println("----------------------------------");
+        }
+    }
+    
+    protected void printTest(Token[] tokens, String input) {
+        String[] strings = Token.getTextsFromString(tokens, input);
+        System.out.println(StringUtils.join(strings, ", "));
+        System.out.println("Is verbatim: " + StringUtils.join(strings, "").equals(input));
     }
 }

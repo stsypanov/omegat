@@ -7,6 +7,7 @@
                2006 Martin Wunderlich
                2011 Alex Buloichik, Didier Briel,
                2012 Guido Leenders
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -63,6 +64,7 @@ import org.omegat.util.OStrings;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
  * @author Guido Leenders
+ * @author Aaron Madlon-Kay
  */
 public abstract class AbstractFilter implements IFilter {
 
@@ -256,10 +258,20 @@ public abstract class AbstractFilter implements IFilter {
      * @return Does the filter support the file.
      */
     public boolean isFileSupported(File inFile, Map<String, String> config, FilterContext fc) {
-        try (BufferedReader reader = createReader(inFile, fc.getInEncoding())){
+        BufferedReader reader = null;
+        try {
+            reader = createReader(inFile, fc.getInEncoding());
             return isFileSupported(reader);
         } catch (IOException e) {
             return false;
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (Exception e) {
+                // ignore it
+            }
         }
     }
 
@@ -314,7 +326,7 @@ public abstract class AbstractFilter implements IFilter {
      *             If any I/O Error occurs upon reader creation
      */
     protected BufferedReader createReader(File inFile, String inEncoding)
-            throws IOException {
+            throws UnsupportedEncodingException, IOException {
         InputStreamReader isr;
         if (inEncoding == null)
             isr = new InputStreamReader(new FileInputStream(inFile));
@@ -337,7 +349,7 @@ public abstract class AbstractFilter implements IFilter {
      *             If any I/O Error occurs upon writer creation
      */
     protected BufferedWriter createWriter(File outFile, String outEncoding)
-            throws IOException {
+            throws UnsupportedEncodingException, IOException {
         OutputStreamWriter osw;
         if (outEncoding == null)
             osw = new OutputStreamWriter(new FileOutputStream(outFile));
@@ -406,15 +418,15 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected void processFile(File inFile, File outFile, FilterContext fc) throws IOException,
             TranslationException {
-        inEncodingLastParsedFile = fc.getInEncoding();
-        if (inEncodingLastParsedFile == null) {
-            inEncodingLastParsedFile = Charset.defaultCharset().name();
-        }
-        try (BufferedReader reader = createReader(inFile, inEncodingLastParsedFile)) {
+        String encoding = getInputEncoding(fc, inFile);
+        BufferedReader reader = createReader(inFile, encoding);
+        inEncodingLastParsedFile = encoding == null ? Charset.defaultCharset().name() : encoding;
+        try {
             BufferedWriter writer;
 
             if (outFile != null) {
-                writer = createWriter(outFile, fc.getOutEncoding());
+                String outEncoding = getOutputEncoding(fc);
+                writer = createWriter(outFile, outEncoding);
             } else {
                 writer = new NullBufferedWriter();
             }
@@ -424,7 +436,48 @@ public abstract class AbstractFilter implements IFilter {
             } finally {
                 writer.close();
             }
+        } finally {
+            reader.close();
         }
+    }
+    
+    /**
+     * Get the input encoding. If it's not set in the FilterContext (setting is "&lt;auto>")
+     * and the filter allows ({@link #isSourceEncodingVariable()}), try to detect it. The result may be null.
+     * @param fc
+     * @param inFile
+     * @return
+     * @throws IOException
+     */
+    protected String getInputEncoding(FilterContext fc, File inFile) throws IOException {
+        String encoding = fc.getInEncoding();
+        if (encoding == null && isSourceEncodingVariable()) {
+            encoding = EncodingDetector.detectEncoding(inFile);
+        }
+        return encoding;
+    }
+    
+    /**
+     * Get the output encoding. If it's not set in the FilterContext (setting is "&lt;auto>")
+     * and the filter allows ({@link #isTargetEncodingVariable()}):
+     * <ul><li>Reuse the input encoding if it's Unicode
+     * <li>If the input was not Unicode, fall back to UTF-8.
+     * </ul>
+     * The result may be null.
+     * @param fc
+     * @return
+     */
+    protected String getOutputEncoding(FilterContext fc) {
+        String encoding = fc.getOutEncoding();
+        if (encoding == null && isTargetEncodingVariable()) {
+            // Use input encoding if it's Unicode; otherwise default to UTF-8
+            if (inEncodingLastParsedFile != null && inEncodingLastParsedFile.toLowerCase().startsWith("utf-")) {
+                encoding = inEncodingLastParsedFile;
+            } else {
+                encoding = "UTF-8";
+            }
+        }
+        return encoding;
     }
 
     public final void parseFile(File inFile, Map<String, String> config, FilterContext fc,
@@ -453,9 +506,14 @@ public abstract class AbstractFilter implements IFilter {
         entryAlignCallback = callback;
         processOptions = config;
 
-        try (BufferedReader readerIn = createReader(inFile, fc.getInEncoding());
-             BufferedReader readerOut = createReader(outFile, fc.getOutEncoding())) {
+        BufferedReader readerIn = createReader(inFile, fc.getInEncoding());
+        BufferedReader readerOut = createReader(outFile, fc.getOutEncoding());
+
+        try {
             alignFile(readerIn, readerOut, fc);
+        } finally {
+            readerIn.close();
+            readerOut.close();
         }
     }
 

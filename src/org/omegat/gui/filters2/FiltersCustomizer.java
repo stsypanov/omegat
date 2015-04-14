@@ -6,6 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2013 Alex Buloichik, Yu Tang
                2014 Aaron Madlon-Kay
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -30,18 +31,28 @@ package org.omegat.gui.filters2;
 import gen.core.filters.Filter;
 import gen.core.filters.Filters;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 
+import org.omegat.core.Core;
+import org.omegat.core.data.IProject;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.FiltersTableModel;
@@ -49,6 +60,7 @@ import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.TableColumnSizer;
 
 /**
  * Main dialog for for setting up filters. Filter is a class that allows for
@@ -70,10 +82,6 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
     public Filters result;
     /** Filters from OmegaT. */
     private final Filters defaultFilters;
-    /** Filters from user preferences. */
-    private final Filters userFilters;
-    /** Filters from current project. */
-    private final Filters projectFilters;
     /** Filters which editable now. */
     private Filters editableFilters;
 
@@ -89,8 +97,6 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         isProjectSpecific = projectSpecific;
 
         this.defaultFilters = defaultFilters;
-        this.userFilters = userFilters;
-        this.projectFilters = projectFilters;
         if (userFilters == null) {
             userFilters = defaultFilters;
         }
@@ -104,6 +110,30 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         getRootPane().setDefaultButton(okButton);
         filtersTable.setModel(new FiltersTableModel(editableFilters));
         filtersTable.getSelectionModel().addListSelectionListener(this);
+        filtersTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                if (isLeftDoubleClick(me) && isClickOnFileFormatColumn(me)) {
+                    editButtonActionPerformed(null);
+                }
+            }
+
+            private boolean isLeftDoubleClick(MouseEvent me) {
+                return me.getClickCount() == 2
+                        && me.getButton() == MouseEvent.BUTTON1;
+            }
+
+            private boolean isClickOnFileFormatColumn(MouseEvent me) {
+                int viewColumnIndex = filtersTable.columnAtPoint(me.getPoint());
+                int modelColumnIndex = filtersTable.convertColumnIndexToModel(viewColumnIndex);
+                return modelColumnIndex == FiltersTableModel.COLUMN.FILTERS_FILE_FORMAT.index;
+            }
+        });
+        String columnName = FiltersTableModel.COLUMN.FILTERS_FILE_FORMAT.getColumnName();
+        TableColumn column = filtersTable.getColumn(columnName);
+        column.setCellRenderer(new FilterFormatCellRenderer(getInUseFormatNames()));
+        
+        TableColumnSizer.autoSize(filtersTable, 0, true);
 
         if (projectSpecific) {
             setTitle(OStrings.getString("FILTERSCUSTOMIZER_TITLE_PROJECTSPECIFIC"));
@@ -124,19 +154,10 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         // hack for "autoresizing" the dialog
         // accomodating table dimensions
         Dimension tableSize = filtersTable.getPreferredSize();
-        tableSize.height = tableSize.height + 70;
+        tableSize.height += 70;
         filtersScrollPane.setPreferredSize(tableSize);
         pack();
-        Toolkit kit = getToolkit();
-        Dimension screenSize = kit.getScreenSize();
-        Dimension dialogSize = getSize();
-        GraphicsConfiguration config = getGraphicsConfiguration();
-        Insets insets = kit.getScreenInsets(config);
-        screenSize.height -= (insets.top + insets.bottom);  // excluding the Windows taskbar
-        if (dialogSize.height > screenSize.height) {
-            dialogSize.height = screenSize.height;
-            setSize(dialogSize);
-        }
+        StaticUIUtils.fitInScreen(this);
         DockingUI.displayCentered(this);
      }    
 
@@ -430,6 +451,9 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_editButtonActionPerformed
         int row = filtersTable.getSelectedRow();
+        if (row < 0) {
+            return;
+        }
         FilterEditor editor = new FilterEditor(this, editableFilters.getFilters().get(row));
         editor.setVisible(true);
         if (editor.result != null) {
@@ -462,6 +486,39 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         }
         setVisible(false);
         dispose();
+    }
+
+    private Set<String> getInUseFormatNames() {
+        Set<String> inUseFormatNames = new HashSet<String>();
+        IProject project = Core.getProject();
+        if (project.isProjectLoaded()) {
+            Filters projectSpecificFilters = Core.getProject().getProjectProperties().getProjectFilters();
+            boolean noProjectSpecificFiltersAvailable = (projectSpecificFilters == null);
+            if (isProjectSpecific || noProjectSpecificFiltersAvailable) {
+                for (IProject.FileInfo fi : project.getProjectFiles()) {
+                    inUseFormatNames.add(fi.filterFileFormatName);
+                }
+            }
+        }
+        return inUseFormatNames;
+    }
+
+    private class FilterFormatCellRenderer extends DefaultTableCellRenderer {
+
+        private final Set<String> highlightFormatNames;
+
+        private FilterFormatCellRenderer(Set<String> highlightFormatNames) {
+            this.highlightFormatNames = highlightFormatNames;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (highlightFormatNames.contains(value.toString())) {
+                component.setFont(component.getFont().deriveFont(Font.BOLD));
+            }
+            return component;
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

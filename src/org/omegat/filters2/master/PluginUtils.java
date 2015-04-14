@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -63,10 +64,10 @@ public final class PluginUtils {
 
     enum PLUGIN_TYPE {
         FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
-    }
+    };
 
     protected static URLClassLoader pluginsClassLoader;
-    protected static List<Class<?>> loadedPlugins = new ArrayList<>();
+    protected static List<Class<?>> loadedPlugins = new ArrayList<Class<?>>();
 
     /** Private constructor to disallow creation */
     private PluginUtils() {
@@ -104,9 +105,12 @@ public final class PluginUtils {
             for (Enumeration<URL> mlist = pluginsClassLoader.getResources("META-INF/MANIFEST.MF"); mlist
                     .hasMoreElements();) {
                 URL mu = mlist.nextElement();
+                InputStream in = mu.openStream();
                 Manifest m;
-                try (InputStream in = mu.openStream()) {
+                try {
                     m = new Manifest(in);
+                } finally {
+                    in.close();
                 }
                 if ("org.omegat.Main".equals(m.getMainAttributes().getValue("Main-Class"))) {
                     // found main manifest - not in development mode
@@ -122,8 +126,11 @@ public final class PluginUtils {
                 }
                 for (String mf : manifests.split(File.pathSeparator)) {
                     Manifest m;
-                    try (InputStream in = new FileInputStream(mf)) {
+                    InputStream in = new FileInputStream(mf);
+                    try {
                         m = new Manifest(in);
+                    } finally {
+                        in.close();
                     }
                     loadFromManifest(m, pluginsClassLoader);
                 }
@@ -183,7 +190,7 @@ public final class PluginUtils {
     private static boolean isDefault(Class<?> c) {
         if (c == null) return false;
         Tokenizer ann = c.getAnnotation(Tokenizer.class);
-        return ann != null && ann.isDefault();
+        return ann == null ? false : ann.isDefault();
     }
 
     private static Class<?> searchForTokenizer(String lang) {
@@ -229,17 +236,17 @@ public final class PluginUtils {
         return glossaryClasses;
     }
 
-    protected static List<Class<?>> filterClasses = new ArrayList<>();
+    protected static List<Class<?>> filterClasses = new ArrayList<Class<?>>();
 
-    protected static List<Class<?>> tokenizerClasses = new ArrayList<>();
+    protected static List<Class<?>> tokenizerClasses = new ArrayList<Class<?>>();
 
-    protected static List<Class<?>> markerClasses = new ArrayList<>();
+    protected static List<Class<?>> markerClasses = new ArrayList<Class<?>>();
 
-    protected static List<Class<?>> machineTranslationClasses = new ArrayList<>();
+    protected static List<Class<?>> machineTranslationClasses = new ArrayList<Class<?>>();
 
-    protected static List<Class<?>> glossaryClasses = new ArrayList<>();
+    protected static List<Class<?>> glossaryClasses = new ArrayList<Class<?>>();
 
-    protected static List<Class<?>> basePluginClasses = new ArrayList<>();
+    protected static List<Class<?>> basePluginClasses = new ArrayList<Class<?>>();
 
     /**
      * Parse one manifest file.
@@ -296,8 +303,9 @@ public final class PluginUtils {
         }
 
         Map<String, Attributes> entries = m.getEntries();
-        for (Map.Entry<String, Attributes> entry : entries.entrySet()) {
-            Attributes attrs = entry.getValue();
+        for (Entry<String, Attributes> e : entries.entrySet()) {
+            String key = e.getKey();
+            Attributes attrs = e.getValue();
             String sType = attrs.getValue("OmegaT-Plugin");
             if ("true".equals(attrs.getValue("OmegaT-Tokenizer"))) {
                 // TODO remove after release new tokenizers
@@ -313,34 +321,33 @@ public final class PluginUtils {
             } catch (Exception ex) {
                 pType = PLUGIN_TYPE.UNKNOWN;
             }
-            String key = entry.getKey();
             switch (pType) {
-                case FILTER:
-                    filterClasses.add(classLoader.loadClass(key));
-                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                    break;
-                case TOKENIZER:
-                    tokenizerClasses.add(classLoader.loadClass(key));
-                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                    break;
-                case MARKER:
-                    markerClasses.add(classLoader.loadClass(key));
-                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                    break;
-                case MACHINETRANSLATOR:
-                    machineTranslationClasses.add(classLoader.loadClass(key));
-                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                    break;
-                case BASE:
-                    basePluginClasses.add(classLoader.loadClass(key));
-                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                    break;
-                case GLOSSARY:
-                    glossaryClasses.add(classLoader.loadClass(key));
-                    Log.logInfoRB("PLUGIN_LOAD_OK", key);
-                    break;
-                default:
-                    Log.logErrorRB("PLUGIN_UNKNOWN", key);
+            case FILTER:
+                filterClasses.add(classLoader.loadClass(key));
+                Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                break;
+            case TOKENIZER:
+                tokenizerClasses.add(classLoader.loadClass(key));
+                Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                break;
+            case MARKER:
+                markerClasses.add(classLoader.loadClass(key));
+                Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                break;
+            case MACHINETRANSLATOR:
+                machineTranslationClasses.add(classLoader.loadClass(key));
+                Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                break;
+            case BASE:
+                basePluginClasses.add(classLoader.loadClass(key));
+                Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                break;
+            case GLOSSARY:
+                glossaryClasses.add(classLoader.loadClass(key));
+                Log.logInfoRB("PLUGIN_LOAD_OK", key);
+                break;
+            default:
+                Log.logErrorRB("PLUGIN_UNKNOWN", key);
             }
         }
     }

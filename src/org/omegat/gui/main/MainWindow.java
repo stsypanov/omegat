@@ -121,8 +121,6 @@ public class MainWindow extends JFrame implements IMainWindow {
         menu = new MainWindowMenu(this, new MainWindowMenuHandler(this));
 
         setJMenuBar(menu.initComponents());
-        getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
-        pack();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -146,7 +144,9 @@ public class MainWindow extends JFrame implements IMainWindow {
         MainWindowUI.createMainComponents(this, m_font);
 
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
-
+        pack();
+        getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
+        
         OmegaTIcons.setIconImages(this);
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
