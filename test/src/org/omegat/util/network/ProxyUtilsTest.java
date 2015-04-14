@@ -25,9 +25,21 @@ public class ProxyUtilsTest {
 
     }
 
-    @Test
-    public void testProxySelector() throws Exception {
-        Proxy proxy = ProxyUtils.getProxy(googleURL);
+	@Test
+	public void testHttpConnection() throws Exception {
+		URL google = new URL(httpURL);
+		List<Proxy> proxies = ProxyUtils.getProxySelector(httpURL);
+
+		for (Proxy proxy : proxies) {
+			int responseCode = getResponseCode(google, proxy);
+
+			logger.info(proxy.toString() + ' ' + responseCode);
+		}
+	}
+
+	@Test
+	public void testProxySelector() throws Exception {
+		Proxy proxy = ProxyUtils.getProxy(httpsURL);
 
         System.out.println(proxy.toString() + " " + getResponseCode(new URL(googleURL), proxy));
     }
