@@ -38,9 +38,7 @@ import org.omegat.core.Core;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
-import org.omegat.util.LinebreakPreservingReader;
-import org.omegat.util.Log;
-import org.omegat.util.OStrings;
+import org.omegat.util.*;
 
 /**
  * Filter to support plain text files (in various encodings).
@@ -119,10 +117,7 @@ public class TextFilter extends AbstractFilter {
     @Override
     public void processFile(BufferedReader in, BufferedWriter out, FilterContext fc) throws IOException {
         // BOM (byte order mark) bugfix
-        in.mark(1);
-        int ch = in.read();
-        if (ch != 0xFEFF)
-            in.reset();
+        ByteUtils.checkByteOrderMark(in);
 
         int lineLength, maxLineLength;
         try {
