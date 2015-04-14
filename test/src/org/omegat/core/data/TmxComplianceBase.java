@@ -53,6 +53,7 @@ import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.ITranslateCallback;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.text.TextFilter;
+import org.omegat.util.ByteUtils;
 
 /**
  * Base methods for TMX compliance tests.
@@ -93,14 +94,7 @@ public abstract class TmxComplianceBase extends TestCase {
     protected List<String> readTextFile(File f, String charset) throws Exception {
         BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset));
 
-        int ch;
-
-        // BOM (byte order mark) bugfix
-        rd.mark(1);
-        ch = rd.read();
-        if (ch != 0xFEFF) {
-            rd.reset();
-        }
+        ByteUtils.checkByteOrderMark(rd);
 
         List<String> result = new ArrayList<String>();
         String s;
