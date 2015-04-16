@@ -75,7 +75,7 @@ public class CreateDocIndexUtil {
                     "Error creating docs/index.html: there are no marks");
         }
         StringBuilder text = new StringBuilder();
-        text.append("<table>" + System.getProperty("line.separator"));
+        text.append("<table>").append(System.getProperty("line.separator"));
         int count = 0;
         for (File f : ls) {
             String locale = f.getName();
@@ -100,8 +100,7 @@ public class CreateDocIndexUtil {
             text.append(transVersion);
             if (transVersion.equals(OStrings.VERSION))
                 text.append("</strong>");
-            text.append("</font>)</td></tr>"
-                    + System.getProperty("line.separator"));
+            text.append("</font>)</td></tr>").append(System.getProperty("line.separator"));
             count++;
         }
         text.append("</table>");

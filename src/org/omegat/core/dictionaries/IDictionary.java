@@ -33,7 +33,7 @@ import java.util.Map;
  * Each dictionary format reader should implement this interface. Each instance
  * of this interface represents one dictionary.
  * 
- * Simplest dictionay implementation can just read full dictionary data into
+ * Simplest dictionary implementation can just read full dictionary data into
  * map, but we don't recommend it, because it's very memory consuming algorithm.
  * Recommended way is to just read article's names and store some short data,
  * like position in dictionary file, in the value of map. After that,

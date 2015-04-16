@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omegat.util.ByteUtils;
 import org.omegat.util.OConsts;
 
 /**
@@ -52,10 +53,7 @@ public class GlossaryReaderCSV {
         List<GlossaryEntry> result = new ArrayList<>();
         try (BufferedReader in = new BufferedReader(reader)) {
             // BOM (byte order mark) bugfix
-            in.mark(1);
-            int ch = in.read();
-            if (ch != 0xFEFF)
-                in.reset();
+            ByteUtils.checkByteOrderMark(in);
 
             for (String s = in.readLine(); s != null; s = in.readLine()) {
                 // skip lines that start with '#'
