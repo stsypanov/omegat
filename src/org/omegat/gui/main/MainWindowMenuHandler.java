@@ -34,25 +34,12 @@
 
 package org.omegat.gui.main;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-import javax.swing.text.JTextComponent;
-
-
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
-import org.omegat.core.search.SearchMode;
 import org.omegat.core.matching.NearString;
 import org.omegat.core.matching.NearString.MATCH_SOURCE;
 import org.omegat.core.search.SearchMode;
@@ -75,7 +62,10 @@ import org.omegat.util.*;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Handler for main menu items.
@@ -792,15 +782,21 @@ public class MainWindowMenuHandler {
      * Displays the tag validation setup dialog to allow customizing the diverse tag validation options.
      */
     public void optionsTagValidationMenuItemActionPerformed() {
-        TagValidationOptionsDialog tagValidationOptionsDialog = new TagValidationOptionsDialog(mainWindow);
-        tagValidationOptionsDialog.setVisible(true);
+        TagProcessingOptionsDialog tagProcessingOptionsDialog = new TagProcessingOptionsDialog(mainWindow);
+        tagProcessingOptionsDialog.setVisible(true);
         
-        if (tagValidationOptionsDialog.getReturnStatus() == TagValidationOptionsDialog.RET_OK
+        if (tagProcessingOptionsDialog.getReturnStatus() == TagProcessingOptionsDialog.RET_OK
                 && Core.getProject().isProjectLoaded()) {
             // Redisplay according to new view settings
             Core.getEditor().getSettings().updateTagValidationPreferences();
+
+            // asking to reload a project
+            int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
+                    OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
+            if (res == JOptionPane.YES_OPTION) {
+                ProjectUICommands.projectReload();
+            }
         }
-        
     }
 
     /**

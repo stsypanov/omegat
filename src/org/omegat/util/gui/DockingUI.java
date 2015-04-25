@@ -33,6 +33,7 @@ package org.omegat.util.gui;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.Window;
 
 import javax.swing.ImageIcon;
@@ -188,12 +189,12 @@ public class DockingUI {
     
     private static void installFlatDesign() {
         // Colors
-        Color standardBgColor = new Color(0xEEEEEE); // Label.background on Metal & OS X LAF
-        Color activeTitleBgColor = new Color(0xF6F6F7); // Lighter than standard background
-        Color bottomAreaBgColor = new Color(0xDEDEDE); // Darkest background
-        Color borderColor = new Color(0x9B9B9B); // Standard border. Darker than standard background.
+        Color standardBgColor = UIManager.getColor("Panel.background"); // #EEEEEE on Metal & OS X LAF
+        Color activeTitleBgColor = adjustRGB(standardBgColor, 0xF6 - 0xEE); // #EEEEEE -> #F6F6F6; Lighter than standard background
+        Color bottomAreaBgColor = adjustRGB(standardBgColor, 0xDE - 0xEE); // #EEEEEE -> #DEDEDE; Darkest background
+        Color borderColor = adjustRGB(standardBgColor, 0x9B - 0xEE); // #EEEEEE -> #9B9B9B; Standard border. Darker than standard background.
         UIManager.put("OmegaTBorder.color", borderColor);
-        Color statusAreaColor = new Color(0x575757); // Darkest border
+        Color statusAreaColor = adjustRGB(standardBgColor, 0x57 - 0xEE); // #EEEEEE -> #575757; Darkest border
         
         // General highlight & shadow used in a lot of places
         UIManager.put("VLDocking.highlight", activeTitleBgColor);
@@ -219,12 +220,17 @@ public class DockingUI {
         // colors don't appear to be available through the API. These values are from visual inspection.
         if (Platform.isMacOSX()) {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(0, 5, 5, 5, new Color(0xE6E6E6)));
-        } else {
+        } else if (isWindowsLAF() && !isWindowsClassicLAF()) {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
+        } else {
+            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(5, 5, 5, 5, standardBgColor));
         }
         
         // Panel title bars
+        Color activeTitleText = UIManager.getColor("Label.foreground");
+        Color inactiveTitleText = adjustRGB(activeTitleText, 0x80); // #000000 -> #808080; GTK+ has Color.WHITE for Label.disabledForeground
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
+        UIManager.put("InternalFrame.activeTitleForeground", activeTitleText); // Windows 7 "Classic" has Color.WHITE for this
         UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
         UIManager.put("InternalFrame.activeTitleForeground", Color.BLACK);
         UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
@@ -308,6 +314,26 @@ public class DockingUI {
             
             UIManager.put("DragControler.detachCursor", getImage("appbar.fullscreen.png"));
         }
+    }
+    
+    /**
+     * Adjust a color by adding some constant to its RGB values, wrapping around within the range 0-255.
+     */
+    private static Color adjustRGB(Color color, int adjustment) {
+        Color result = new Color((color.getRed() + adjustment + 255) % 255,
+                (color.getGreen() + adjustment + 255) % 255,
+                (color.getBlue() + adjustment + 255) % 255);
+        return result;
+    }
+    
+    // Windows Classic LAF detection from http://stackoverflow.com/a/4386821/448068
+    private static boolean isWindowsLAF() {
+        return UIManager.getLookAndFeel().getID().equals("Windows");
+    }
+
+    private static boolean isWindowsClassicLAF() {
+        return isWindowsLAF() &&
+                !(Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
     }
 
     /**
