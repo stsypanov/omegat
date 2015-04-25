@@ -31,11 +31,7 @@ package org.omegat.gui.editor;
 
 import java.awt.Cursor;
 import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,6 +59,8 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.clipboard.ClipboardUtils;
+import org.omegat.gui.dictionaries.DictionaryPopup;
+import org.omegat.gui.dictionaries.DictionaryPopupController;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
@@ -111,6 +109,8 @@ public class EditorTextArea3 extends JEditorPane {
             }
         });
 
+        addDictionaryAction();
+
         addMouseListener(mouseListener);
 
         ClipboardUtils.bind(this, Core.getMainWindow().getApplicationFrame());
@@ -135,6 +135,23 @@ public class EditorTextArea3 extends JEditorPane {
             }
         });
         setToolTipText("");
+    }
+
+    private void addDictionaryAction() {
+       addKeyListener(new KeyAdapter() {
+           private long lastShiftStroke;
+
+           @Override
+           public void keyReleased(KeyEvent e) {
+               if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
+                   if (suits){
+                       new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
+                   }
+                   lastShiftStroke = System.currentTimeMillis();
+               }
+           }
+       });
     }
 
     /**
