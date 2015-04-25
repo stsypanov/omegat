@@ -1,9 +1,22 @@
 ----------------------------------------------------------------------
- OmegaT 3.4 
+ OmegaT 3.4 update 1
+----------------------------------------------------------------------
+   0 Enhancement
+   1 Bug fix
+   0 Localisation update
+----------------------------------------------------------------------
+3.4 update 1 vs 3.4
+
+  Bug fixes:
+
+  - Panel header title was white under Windows 7 with a classic theme
+
+----------------------------------------------------------------------
+ OmegaT 3.4 (2015-04-20)
 ----------------------------------------------------------------------
   11 Enhancements
    4 Bug fixes
-   1 Localisation update
+   3 Localisation updates
 ----------------------------------------------------------------------
 3.4 vs 3.1.9 update 1
 
@@ -16,7 +29,7 @@
   https://sourceforge.net/p/omegat/feature-requests/820/
 
   - Increase the size or better layout of the statistics window
-  https://sourceforge.net/p/omegat/feature-requests/820/
+  https://sourceforge.net/p/omegat/feature-requests/656/
 
   - Add Close button to Statistics window 
   https://sourceforge.net/p/omegat/feature-requests/859/
@@ -32,7 +45,7 @@
   - New XML Spreadsheet 2003 filter. This allows translating Excel document
 exported in XML 2003 format. As the extension is .xml, other filters may
 "steal" the file. In that case, they have to be disabled. The XML 
-Spreadhsheet 2003 filter limit itself to documents where the first tag
+Spreadhsheet 2003 filter limits itself to documents where the first tag
 is "Workbook".
 
   - In Options > File Filters, the filters used by the current project
@@ -64,7 +77,9 @@ of "foo\.\scripts"
 
   Localisation updates:
 
-  - Dutch localisation updated to 3.4 (UI)
+  - Dutch localisation updated to 3.4 (UI, documentation, scripts, readme)
+  - Italian localisation updated to 3.4 (UI, documentation, scripts)
+  - Japanese localisation updated to 3.4 (UI, readme)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 1 (2015-04-15)
