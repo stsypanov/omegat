@@ -18,6 +18,7 @@ public class DictionaryPopup extends JFrame {
     private JPopupMenu popup;
     private JList<String> container;
     private JTextField textField;
+    private StringCallback callback;
 
 
     public DictionaryPopup(String title) throws HeadlessException {
@@ -28,7 +29,6 @@ public class DictionaryPopup extends JFrame {
         setResizable(false);
         pack();
         GuiUtil.displayWindowCentered(this);
-        setVisible(true);
     }
 
     public DictionaryPopup() {
@@ -52,8 +52,7 @@ public class DictionaryPopup extends JFrame {
                 } else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN){
                     container.requestFocus();
                 } else if (keyCode == KeyEvent.VK_ENTER){
-
-//                    JOptionPane.showMessageDialog(null, textField.getText());
+                    callback.execute(textField.getText());
                     popup.setVisible(false);
                 }
 
@@ -113,7 +112,12 @@ public class DictionaryPopup extends JFrame {
         container.setListData(strings);
     }
 
+    public void setCallback(StringCallback callback) {
+        this.callback = callback;
+    }
+
     public void showPopup() {
+        popup.setVisible(true);
         popup.show(textField, textField.getX() - 3, textField.getY() + getHeight() - textField.getHeight());
     }
 

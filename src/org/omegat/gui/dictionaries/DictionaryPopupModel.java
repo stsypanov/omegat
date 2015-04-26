@@ -13,9 +13,10 @@ import java.util.Set;
 public class DictionaryPopupModel implements SearchByKeyProvider {
 
     private List<String> keys;
-    private BaseDictionariesManager manager;
+    private BaseDictionariesManager dictionariesManager;
 
-    public DictionaryPopupModel() {
+    public DictionaryPopupModel(BaseDictionariesManager dictionariesManager) {
+        this.dictionariesManager = dictionariesManager;
         keys = new ArrayList<>();
     }
 
@@ -29,11 +30,8 @@ public class DictionaryPopupModel implements SearchByKeyProvider {
 
     @Override
     public List<String> findByKey(String key) {
-        if (manager == null){
-            manager = new BaseDictionariesManager();
-        }
        if (key.length() >= 2){
-           Set<String> keys = manager.getKeys(key);
+           Set<String> keys = dictionariesManager.getKeys(key);
            return new ArrayList<>(keys);
        } else {
            return Collections.emptyList();

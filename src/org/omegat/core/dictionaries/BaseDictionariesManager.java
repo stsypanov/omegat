@@ -6,10 +6,9 @@ import org.omegat.util.Log;
 import java.util.*;
 
 /**
- * Created by Сергей on 19.04.2015.
+ * Created by stsypanov on 19.04.2015.
  */
 public class BaseDictionariesManager {
-    protected static String DICTIONARY_SUBDIR = "dictionary";
     protected static final Map<String, DictionaryInfo> infos = new TreeMap<>();
     protected final Set<String> ignoreWords = new TreeSet<>();
     protected DirectoryMonitor monitor;

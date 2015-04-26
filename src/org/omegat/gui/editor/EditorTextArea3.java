@@ -91,6 +91,7 @@ public class EditorTextArea3 extends JEditorPane {
     protected String currentWord;
 
     protected AutoCompleter autoCompleter = new AutoCompleter(this);
+    private DictionaryPopupController dictionaryPopupController;
 
     public EditorTextArea3(EditorController controller) {
         this.controller = controller;
@@ -143,10 +144,13 @@ public class EditorTextArea3 extends JEditorPane {
 
            @Override
            public void keyReleased(KeyEvent e) {
-               if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+               if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                    boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
-                   if (suits){
-                       new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
+                   if (suits) {
+                       if (dictionaryPopupController == null) {
+                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
+                       }
+                       dictionaryPopupController.showPopup();
                    }
                    lastShiftStroke = System.currentTimeMillis();
                }
