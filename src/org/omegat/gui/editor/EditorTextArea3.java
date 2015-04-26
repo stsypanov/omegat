@@ -98,10 +98,12 @@ public class EditorTextArea3 extends JEditorPane {
 
     protected AutoCompleter autoCompleter = new AutoCompleter(this);
 
+    private DictionaryPopupController dictionaryPopupController;
+
     /**
      * Whether or not we are confining the cursor to the editable part of the
      * text area. The user can optionally allow the caret to roam freely.
-     * 
+     *
      * @see #checkAndFixCaret(boolean)
      */
     protected boolean lockCursorToInputArea = true;
@@ -152,7 +154,7 @@ public class EditorTextArea3 extends JEditorPane {
         setCaretColor(Styles.EditorColor.COLOR_FOREGROUND.getColor());
         setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
     }
-    
+
     @Override
     public void setFont(Font font) {
         super.setFont(font);
@@ -160,6 +162,25 @@ public class EditorTextArea3 extends JEditorPane {
         if (doc != null) {
             doc.setFont(font);
         }
+
+    private void addDictionaryAction() {
+       addKeyListener(new KeyAdapter() {
+           private long lastShiftStroke;
+
+           @Override
+           public void keyReleased(KeyEvent e) {
+               if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
+                   if (suits) {
+                       if (dictionaryPopupController == null) {
+                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
+                       }
+                       dictionaryPopupController.showPopup();
+                   }
+                   lastShiftStroke = System.currentTimeMillis();
+               }
+           }
+       });
     }
 
     /**
@@ -189,7 +210,7 @@ public class EditorTextArea3 extends JEditorPane {
         @Override
         public void mouseClicked(MouseEvent e) {
             autoCompleter.setVisible(false);
-            
+
             // Handle double-click
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 int mousepos = viewToModel(e.getPoint());
@@ -620,7 +641,7 @@ public class EditorTextArea3 extends JEditorPane {
     /**
      * Checks whether the selection & caret is inside editable text, and changes
      * their positions accordingly if not.
-     * 
+     *
      * @param force
      *            When true, ignore {@link #lockCursorToInputArea} and always
      *            fix the caret even if the user has enabled free roaming
