@@ -3,7 +3,7 @@ package org.omegat.gui.dictionaries;
 /**
  * Created by Сергей on 25.04.2015.
  */
-public interface StringCallback {
+public interface Callback<T> {
 
-    void execute(String str);
+    void execute(T arg);
 }

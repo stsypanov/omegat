@@ -18,7 +18,7 @@ public class DictionaryPopup extends JFrame {
     private JPopupMenu popup;
     private JList<String> container;
     private JTextField textField;
-    private StringCallback callback;
+    private Callback callback;
 
 
     public DictionaryPopup(String title) throws HeadlessException {
@@ -112,7 +112,7 @@ public class DictionaryPopup extends JFrame {
         container.setListData(strings);
     }
 
-    public void setCallback(StringCallback callback) {
+    public void setCallback(Callback<String> callback) {
         this.callback = callback;
     }
 

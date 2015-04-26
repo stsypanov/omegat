@@ -35,7 +35,7 @@ public class DictionaryPopupController {
                 processKeyEvent(e);
             }
         });
-        popup.setCallback(new StringCallback() {
+        popup.setCallback(new Callback<String>() {
             @Override
             public void execute(String str) {
                 List<DictionaryEntry> dictionaryEntries = dictionariesManager.findWord(str);
@@ -64,12 +64,12 @@ public class DictionaryPopupController {
         }
     }
 
-    public static void main(String[] args) {
-        new DictionaryPopupController(new DictionaryPopup("Find in dictionary"));
-    }
-
     public void showPopup() {
         popup.setVisible(true);
         popup.showPopup();
+    }
+
+    public static void main(String[] args) {
+        new DictionaryPopupController(new DictionaryPopup("Find in dictionary"));
     }
 }
