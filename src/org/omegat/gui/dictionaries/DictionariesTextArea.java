@@ -209,6 +209,10 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         }
     }
 
+    public void setFoundResult(final List<DictionaryEntry> data){
+        setFoundResult(null, data);
+    }
+
     @Override
     protected void setFoundResult(final SourceTextEntry se, final List<DictionaryEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
