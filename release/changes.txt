@@ -1,15 +1,25 @@
 ----------------------------------------------------------------------
  OmegaT 3.4 update 1
 ----------------------------------------------------------------------
-   0 Enhancement
+   1 Enhancement
    1 Bug fix
-   0 Localisation update
+   1 Localisation update
 ----------------------------------------------------------------------
 3.4 update 1 vs 3.4
+
+
+  Implemented requests:
+
+  - Progress bar L10N improvement 
+  https://sourceforge.net/p/omegat/feature-requests/1055/
 
   Bug fixes:
 
   - Panel header title was white under Windows 7 with a classic theme
+
+  Localisation updates:
+
+  - Dutch localisation updated to 3.4 (Documentation, readme)
 
 ----------------------------------------------------------------------
  OmegaT 3.4 (2015-04-20)
