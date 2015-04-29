@@ -1,6 +1,8 @@
 package org.omegat.gui.dictionaries;
 
 import org.madlonkay.supertmxmerge.util.GuiUtil;
+import org.omegat.gui.common.PeroFrame;
+import org.omegat.util.OStrings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,13 +12,12 @@ import java.util.List;
 
 public class DictionaryPopup extends JFrame {
     public static final int CELL_HEIGHT = 12;
-    public static final int WIDTH = 600;
+    public static final int WIDTH = 400;
 
     private JPopupMenu popup;
     private JList<String> container;
     private JTextField textField;
-    private Callback callback;
-
+    private Callback<String> callback;
 
     public DictionaryPopup(String title) throws HeadlessException {
         super(title);
@@ -29,7 +30,7 @@ public class DictionaryPopup extends JFrame {
     }
 
     public DictionaryPopup() {
-        this("Find in dictionary");
+        this(OStrings.getString("find.in.dictionary.dialogue.title"));
     }
 
     private void initComponents() {
@@ -49,7 +50,7 @@ public class DictionaryPopup extends JFrame {
                 } else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN){
                     container.requestFocus();
                 } else if (keyCode == KeyEvent.VK_ENTER){
-                    callback.execute(textField.getText());
+                    callback.execute(container.getSelectedValue());
                     popup.setVisible(false);
                 }
 
@@ -65,7 +66,7 @@ public class DictionaryPopup extends JFrame {
             }
         });
 
-        container.setFixedCellWidth(WIDTH);
+        container.setFixedCellWidth(WIDTH - 50);
         container.setCellRenderer(new CellRenderer());
 
         popup = new JPopupMenu();
@@ -82,6 +83,11 @@ public class DictionaryPopup extends JFrame {
                     container.requestFocus();
                 } else {
                     textField.requestFocus();
+                }
+                if (keyCode == KeyEvent.VK_ENTER){
+                    callback.execute(textField.getText());
+                    popup.setVisible(false);
+                    setVisible(false);
                 }
             }
         });
