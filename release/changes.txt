@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 3.4 update 1
 ----------------------------------------------------------------------
-   1 Enhancement
+   2 Enhancements
    1 Bug fix
    1 Localisation update
 ----------------------------------------------------------------------
@@ -12,12 +12,11 @@
   - Progress bar L10N improvement 
   https://sourceforge.net/p/omegat/feature-requests/1055/
 
+  - New script to clear SVN authentication data
+
   Bug fixes:
 
   - Panel header title was white under Windows 7 with a classic theme
-
-  - Too many duplicate segments in the popup menu
-  https://sourceforge.net/p/omegat/bugs/744/
 
   Localisation updates:
 
@@ -96,16 +95,23 @@ of "foo\.\scripts"
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 2
 ----------------------------------------------------------------------
-   0 Enhancement
-   1 Bug fix
+   1 Enhancement
+   2 Bug fixes
    1 Localisation update
 ----------------------------------------------------------------------
 3.1.9 update 2 vs. 3.1.9 update 1
+
+  Implemented requests:
+
+  - Updated LanguageTool to 2.2
 
   Bug fixes:
 
   - In the default source document exclusion patterns, "CVS" folders were
 entered as "CSV"
+
+  - Too many duplicate segments in the popup menu
+  https://sourceforge.net/p/omegat/bugs/744/
 
   Localisation updates:
 
