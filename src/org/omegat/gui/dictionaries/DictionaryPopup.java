@@ -14,7 +14,7 @@ public class DictionaryPopup extends JFrame {
     public static final int CELL_HEIGHT = 12;
     public static final int WIDTH = 400;
 
-    private JPopupMenu popup;
+    private JPopupMenu popupMenu;
     private JList<String> container;
     private JTextField textField;
     private Callback<String> callback;
@@ -51,9 +51,8 @@ public class DictionaryPopup extends JFrame {
                     container.requestFocus();
                 } else if (keyCode == KeyEvent.VK_ENTER){
                     callback.execute(container.getSelectedValue());
-                    popup.setVisible(false);
+                    hidePopup();
                 }
-
             }
 
             @Override
@@ -69,9 +68,17 @@ public class DictionaryPopup extends JFrame {
         container.setFixedCellWidth(WIDTH - 50);
         container.setCellRenderer(new CellRenderer());
 
-        popup = new JPopupMenu();
-        popup.setPreferredSize(new Dimension(WIDTH, CELL_HEIGHT));
-        popup.add(new JScrollPane(container));
+        popupMenu = new JPopupMenu();
+        popupMenu.setPreferredSize(new Dimension(WIDTH, CELL_HEIGHT));
+        popupMenu.add(new JScrollPane(container));
+        popupMenu.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    hidePopup();
+                }
+            }
+        });
 
 
         textField = new JTextField();
@@ -86,12 +93,13 @@ public class DictionaryPopup extends JFrame {
                 }
                 if (keyCode == KeyEvent.VK_ENTER){
                     callback.execute(textField.getText());
-                    popup.setVisible(false);
+                    popupMenu.setVisible(false);
                     setVisible(false);
                 }
             }
         });
         getContentPane().add(textField);
+        textField.requestFocus();
     }
 
     public void addKeyListener(KeyListener listener) {
@@ -100,14 +108,6 @@ public class DictionaryPopup extends JFrame {
 
     public JList getContainer() {
         return container;
-    }
-
-    public JPopupMenu getPopup() {
-        return popup;
-    }
-
-    public boolean visible() {
-        return popup.isVisible();
     }
 
     public void setModel(List<String> keys) {
@@ -120,12 +120,13 @@ public class DictionaryPopup extends JFrame {
     }
 
     public void showPopup() {
-        popup.setVisible(true);
-        popup.show(textField, textField.getX() - 3, textField.getY() + getHeight() - textField.getHeight());
+        popupMenu.show(this, textField.getX(), textField.getY() + getHeight());
     }
 
     public void hidePopup() {
-        popup.setVisible(false);
+        popupMenu.setVisible(false);
+        setVisible(false);
+        dispose();
     }
 
     public String getText() {
@@ -134,18 +135,17 @@ public class DictionaryPopup extends JFrame {
 
     public void redraw() {
         int size = container.getModel().getSize();
-        if (size <= 10){
-            popup.setPreferredSize(new Dimension(WIDTH, size * 20));
+        if (size == 0){
+            popupMenu.setVisible(false);
+        } else if (size <= 10){
+            popupMenu.setPreferredSize(new Dimension(WIDTH, size * 20 + 10));
         } else {
-            popup.setPreferredSize(new Dimension(WIDTH, 200));
+            popupMenu.setPreferredSize(new Dimension(WIDTH, 200));
         }
-        popup.pack();
+        popupMenu.pack();
     }
 
     private static class CellRenderer extends DefaultListCellRenderer {
-
-        public CellRenderer() {
-        }
 
         @Override
         public Component getListCellRendererComponent(JList list, final Object value,

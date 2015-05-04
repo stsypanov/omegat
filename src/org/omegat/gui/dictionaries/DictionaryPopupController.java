@@ -5,6 +5,7 @@ import org.omegat.core.dictionaries.DictionaryEntry;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.List;
 
 public class DictionaryPopupController {
@@ -37,6 +38,7 @@ public class DictionaryPopupController {
             public void execute(String str) {
                 List<DictionaryEntry> dictionaryEntries = dictionariesManager.findWord(str);
                 dictionariesTextArea.setFoundResult(dictionaryEntries);
+                popup.hidePopup();
             }
         });
     }
@@ -58,15 +60,13 @@ public class DictionaryPopupController {
             popup.setModel(byKey);
             popup.redraw();
             popup.showPopup();
+        } else {
+            popup.setModel(Collections.<String>emptyList());
+            popup.redraw();
         }
     }
 
     public void showPopup() {
         popup.setVisible(true);
-        popup.showPopup();
-    }
-
-    public static void main(String[] args) {
-        new DictionaryPopupController(new DictionaryPopup("Find in dictionary"));
     }
 }
