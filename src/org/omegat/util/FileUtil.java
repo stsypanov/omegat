@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.omegat.gui.help.HelpFrame;
 
@@ -59,6 +60,7 @@ import org.omegat.gui.help.HelpFrame;
  * @author Aaron Madlon-Kay
  */
 public class FileUtil {
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n");
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
     public static long RENAME_RETRY_TIMEOUT = 3000;
 
@@ -139,7 +141,7 @@ public class FileUtil {
         outFile.delete();
 
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTemp), OConsts.UTF8))){
-            textToWrite = textToWrite.replaceAll("\n", System.getProperty("line.separator"));
+            textToWrite = NEW_LINE_PATTERN.matcher(textToWrite).replaceAll(System.getProperty("line.separator"));
 
             bw.write(textToWrite);
         } catch (Exception ex) {
@@ -150,11 +152,9 @@ public class FileUtil {
     }
 
     public static String readScriptFile(File file) {
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8));
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))){
 
-            try {
-                StringWriter out = new StringWriter();
+            try (StringWriter out = new StringWriter()){
                 LFileCopy.copy(rd, out);
                 return out.toString().replace(System.getProperty("line.separator"), "\n");
             } finally {

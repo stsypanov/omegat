@@ -46,6 +46,7 @@ public class SrtFilter extends AbstractAlignmentFilter {
     protected static final Pattern PATTERN_TIME_INTERVAL = Pattern
             .compile("([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})\\s+-->\\s+([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})");
     protected static final String EOL = "\r\n";
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n", Pattern.LITERAL);
 
     enum READ_STATE {
         WAIT_TIME, WAIT_TEXT
@@ -127,7 +128,7 @@ public class SrtFilter extends AbstractAlignmentFilter {
             if (tr == null) {
                 tr = text.toString();
             }
-            out.write(tr.replace("\n", EOL));
+            out.write(NEW_LINE_PATTERN.matcher(tr).replaceAll(EOL));
             out.write(EOL);
         }
         
