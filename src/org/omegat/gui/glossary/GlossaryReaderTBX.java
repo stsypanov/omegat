@@ -96,6 +96,7 @@ public class GlossaryReaderTBX {
         if (tbx.getText() == null) {
             return Collections.emptyList();
         }
+        //todo fix search error on closed project
         String sLang = Core.getProject().getProjectProperties().getSourceLanguage().getLanguageCode();
         String tLang = Core.getProject().getProjectProperties().getTargetLanguage().getLanguageCode();
 
