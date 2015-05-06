@@ -99,6 +99,7 @@ import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.dialogs.ConflictDialogController;
 import org.omegat.gui.editor.autocompleter.IAutoCompleter;
+import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromMTMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -301,7 +302,7 @@ public class EditorController implements IEditor {
                 LOGGER.log(Level.SEVERE, "Uncatched exception in thread [" + t.getName() + "]", e);
             }
         });
-        
+
         EditorPopups.init(this);
 
         lazyLoadTimer.setRepeats(false);
@@ -493,21 +494,21 @@ public class EditorController implements IEditor {
     }
 
     private final IDropInfo dropInfo = new IDropInfo() {
-        
+
         @Override
         public DataFlavor getDataFlavor() {
             return DataFlavor.javaFileListFlavor;
         }
-        
+
         @Override
         public int getDnDAction() {
             return DnDConstants.ACTION_COPY;
         }
-        
+
         @Override
         public boolean handleDroppedObject(Object dropped) {
             final List<?> files = (List<?>) dropped;
-            
+
             // Only look at first file to determine intent to open project
             File firstFile = (File) files.get(0);
             if (firstFile.getName().equals(OConsts.FILE_PROJECT)) {
@@ -518,7 +519,7 @@ public class EditorController implements IEditor {
             }
             return handleDroppedFiles(files);
         }
-        
+
         private boolean handleDroppedProject(final File projDir) {
             // Opening/closing might take a long time for team projects.
             // Invoke later so we can return successfully right away.
@@ -530,7 +531,7 @@ public class EditorController implements IEditor {
             });
             return true;
         }
-        
+
         private boolean handleDroppedFiles(final List<?> files) {
             if (!Core.getProject().isProjectLoaded()) {
                 return false;
@@ -546,24 +547,24 @@ public class EditorController implements IEditor {
             });
             return true;
         }
-        
+
         @Override
         public Component getComponentToOverlay() {
             return scrollPane;
         }
-        
+
         @Override
         public String getOverlayMessage() {
             return Core.getProject().isProjectLoaded() ? OStrings.getString("DND_ADD_SOURCE_FILE")
                     : OStrings.getString("DND_OPEN_PROJECT");
         }
-        
+
         @Override
         public boolean canAcceptDrop() {
             return true;
         }
     };
-    
+
     private void updateTitle() {
        pane.setName(StaticUIUtils.truncateToFit(title, pane, 70));
     }
@@ -740,6 +741,7 @@ public class EditorController implements IEditor {
         }
 
         Document3 doc = new Document3(this);
+        entriesFilter = new BaseFilter();
 
         // Clamp displayedSegment to actually available entries.
         displayedEntryIndex = Math.max(0, Math.min(file.entries.size() - 1, displayedEntryIndex));
@@ -2039,7 +2041,7 @@ public class EditorController implements IEditor {
      */
     public void removeFilter() {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         if (entriesFilter == null && entriesFilterControlComponent == null) {
             return;
         }
