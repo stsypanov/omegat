@@ -50,6 +50,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTMLDocument;
 
+import org.jetbrains.annotations.NotNull;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.IProject;
@@ -202,6 +203,10 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         }
     }
 
+    public void setFoundResult(final List<DictionaryEntry> data){
+        setFoundResult(null, data);
+    }
+
     @Override
     protected void setFoundResult(final SourceTextEntry se, final List<DictionaryEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
@@ -213,6 +218,15 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             return;
         }
 
+        String text = buildStringFromDictionaryData(data);
+
+        setText(text);
+        applyFont();
+        setCaretPosition(0);
+    }
+
+    @NotNull
+    private String buildStringFromDictionaryData(List<DictionaryEntry> data) {
         StringBuilder txt = new StringBuilder();
         boolean wasPrev = false;
         int i = 0;
@@ -230,9 +244,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             displayedWords.add(de.getWord().toLowerCase());
             i++;
         }
-        setText(txt.toString());
-        applyFont();
-        setCaretPosition(0);
+        return txt.toString();
     }
 
     protected final MouseAdapter mouseCallback = new MouseAdapter() {

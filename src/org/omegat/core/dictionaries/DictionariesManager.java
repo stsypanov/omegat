@@ -53,15 +53,11 @@ import org.omegat.util.OConsts;
  * @author Alex Buloichik <alex73mail@gmail.com>
  * @author Didier Briel
  */
-public class DictionariesManager implements DirectoryMonitor.Callback {
-    protected DirectoryMonitor monitor;
-    protected final Map<String, DictionaryInfo> infos = new TreeMap<>();
+public class DictionariesManager extends BaseDictionariesManager implements DirectoryMonitor.Callback {
     private final DictionariesTextArea pane;
-    protected static String DICTIONARY_SUBDIR = "dictionary";
-
-    protected final Set<String> ignoreWords = new TreeSet<>();
 
     public DictionariesManager(final DictionariesTextArea pane) {
+        super();
         this.pane = pane;
     }
 
@@ -158,63 +154,4 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         }
     }
 
-    /**
-     * Find words list in all dictionaries.
-     * 
-     * @param words
-     *            words list
-     * @return articles list
-     */
-    public List<DictionaryEntry> findWords(Set<String> words) {
-        List<DictionaryInfo> dicts;
-        synchronized (this) {
-            dicts = new ArrayList<>(infos.values());
-        }
-        List<DictionaryEntry> result = new ArrayList<>();
-        for (String word : words) {
-            for (DictionaryInfo di : dicts) {
-                try {
-                    synchronized (ignoreWords) {
-                        if (ignoreWords.contains(word)) {
-                            continue;
-                        }
-                    }
-                    Object data = di.info.get(word);
-                    if (data == null) {
-                        String lowerCaseWord = word.toLowerCase();
-                        synchronized (ignoreWords) {
-                            if (ignoreWords.contains(lowerCaseWord)) {
-                                continue;
-                            }
-                        }
-                        data = di.info.get(lowerCaseWord);
-                    }
-                    if (data != null) {
-                        if (data.getClass().isArray()) {
-                            for (Object d : (Object[]) data) {
-                                String a = di.dict.readArticle(word, d);
-                                result.add(new DictionaryEntry(word, a));
-                            }
-                        } else {
-                            String a = di.dict.readArticle(word, data);
-                            result.add(new DictionaryEntry(word, a));
-                        }
-                    }
-                } catch (Exception ex) {
-                    Log.log(ex);
-                }
-            }
-        }
-        return result;
-    }
-
-    protected static class DictionaryInfo {
-        public final IDictionary dict;
-        public final Map<String, Object> info;
-
-        public DictionaryInfo(final IDictionary dict, final Map<String, Object> info) {
-            this.dict = dict;
-            this.info = info;
-        }
-    }
 }

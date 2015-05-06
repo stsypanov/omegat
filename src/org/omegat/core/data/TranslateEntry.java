@@ -29,6 +29,8 @@ package org.omegat.core.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import org.omegat.core.Core;
 
 import org.omegat.core.segmentation.Rule;
@@ -50,6 +52,7 @@ import org.omegat.util.StringUtil;
  */
 public abstract class TranslateEntry implements ITranslateCallback {
 
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n", Pattern.LITERAL);
     private final ProjectProperties m_config;
     
     private int pass;
@@ -176,9 +179,9 @@ public abstract class TranslateEntry implements ITranslateCallback {
         }
         
         if (spr.crlf) {
-            r = r.replace("\n", "\r\n");
+            r = NEW_LINE_PATTERN.matcher(r).replaceAll("\r\n");
         } else if (spr.cr) {
-            r = r.replace("\n", "\r");
+            r = NEW_LINE_PATTERN.matcher(r).replaceAll("\r");
         }
 
         if (spr.spacesAtBegin > 0) {

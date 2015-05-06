@@ -8,6 +8,7 @@
                2010 Wildrich Fourie
                2013 Zoltan Bartko
                2014 Aaron Madlon-Kay
+               2015 Yu Tang
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -31,11 +32,7 @@ package org.omegat.gui.editor;
 
 import java.awt.Cursor;
 import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,6 +60,8 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.clipboard.ClipboardUtils;
+import org.omegat.gui.dictionaries.DictionaryPopup;
+import org.omegat.gui.dictionaries.DictionaryPopupController;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
@@ -93,6 +92,7 @@ public class EditorTextArea3 extends JEditorPane {
     protected String currentWord;
 
     protected AutoCompleter autoCompleter = new AutoCompleter(this);
+    private DictionaryPopupController dictionaryPopupController;
 
     public EditorTextArea3(EditorController controller) {
         this.controller = controller;
@@ -110,6 +110,8 @@ public class EditorTextArea3 extends JEditorPane {
                 }
             }
         });
+
+        addDictionaryAction();
 
         addMouseListener(mouseListener);
 
@@ -135,6 +137,26 @@ public class EditorTextArea3 extends JEditorPane {
             }
         });
         setToolTipText("");
+    }
+
+    private void addDictionaryAction() {
+       addKeyListener(new KeyAdapter() {
+           private long lastShiftStroke;
+
+           @Override
+           public void keyReleased(KeyEvent e) {
+               if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
+                   if (suits) {
+                       if (dictionaryPopupController == null) {
+                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
+                       }
+                       dictionaryPopupController.showPopup();
+                   }
+                   lastShiftStroke = System.currentTimeMillis();
+               }
+           }
+       });
     }
 
     /**
@@ -318,6 +340,13 @@ public class EditorTextArea3 extends JEditorPane {
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             controller.toggleOrientation();
             this.setCursor(oldCursor);
+
+            IMainWindow mainWindow = Core.getMainWindow();
+            // Timed warning is not available for console window
+            if (mainWindow instanceof MainWindow) {
+                MainWindow window = (MainWindow) mainWindow;
+                window.showTimedStatusMessageRB("ETA_INFO_TOGGLE_LTR_RTL");
+            }
             processed = true;
         } else if (StaticUtils.isKey(e, KeyEvent.VK_BACK_SPACE,
                 mac ? InputEvent.ALT_MASK : InputEvent.CTRL_MASK)) {

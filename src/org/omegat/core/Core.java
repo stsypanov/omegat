@@ -318,4 +318,8 @@ public class Core {
     public static Autotext getAutoText() {
         return autoText;
     }
+
+    public static DictionariesTextArea getDictionariesTextArea(){
+        return dictionaries;
+    }
 }

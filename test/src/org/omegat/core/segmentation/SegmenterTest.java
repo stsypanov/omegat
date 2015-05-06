@@ -27,6 +27,8 @@ package org.omegat.core.segmentation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import junit.framework.Assert;
 
 import org.omegat.core.TestCore;
@@ -39,6 +41,8 @@ import org.omegat.util.Language;
  */
 public class SegmenterTest extends TestCore
 {
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
+
     protected void setUp() throws Exception {
         Segmenter.srx = SRX.getDefault();
     }
@@ -50,9 +54,9 @@ public class SegmenterTest extends TestCore
     {
         List<StringBuffer> spaces = new ArrayList<StringBuffer>();
         List<String> segments = Segmenter.segment(new Language("en"),"<br7>\n\n<br5>\n\nother", spaces, new ArrayList<Rule>());
-        if(segments.size()!=3 || !segments.get(0).toString().equals("<br7>") || 
-                !segments.get(1).toString().equals("<br5>") ||
-                !segments.get(2).toString().equals("other"))
+        if(segments.size()!=3 || !segments.get(0).equals("<br7>") ||
+                !segments.get(1).equals("<br5>") ||
+                !segments.get(2).equals("other"))
             fail("Bug XXXXXX.");
     }
     
@@ -80,7 +84,7 @@ public class SegmenterTest extends TestCore
 
         // basic combination
         final String SOURCE = "Foo. Bar.\nHere.\n\nThere.\r\nThis.\tThat.\n\tOther.";
-        final String TRANSLATED = SOURCE.replace(" ", "").replace(EN_FULLSTOP, JA_FULLSTOP);
+        final String TRANSLATED = WHITESPACE_PATTERN.matcher(SOURCE).replaceAll("").replace(EN_FULLSTOP, JA_FULLSTOP);
         String translated = getPseudoTranslationFromEnToJa(SOURCE);
         Assert.assertEquals(TRANSLATED, translated);
 

@@ -252,15 +252,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="languagetool-core-2.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/languagetool-core-2.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="LanguageTool-data.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/LanguageTool/LanguageTool-data.jar!/" />
@@ -432,5 +423,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="juniversalchardet-1.0.3" level="project" />
+    <orderEntry type="library" name="vldocking-3.0.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="languagetool-core-2.2" level="project" />
   </component>
 </module>

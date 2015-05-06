@@ -33,7 +33,7 @@ public class PeroFrame extends JFrame {
 	}
 
 	/**
-	 * Loads and sets the position and size of the help window.
+	 * Loads and sets the position and size of the window.
 	 */
 	protected void loadLayoutPreferences(String prefX, String prefY, String prefWidth, String prefHeight) {
 		try {
@@ -45,6 +45,9 @@ public class PeroFrame extends JFrame {
 		}
 	}
 
+	/**
+	 * Loads and sets the position and size of the window.
+	 */
 	protected void saveLayoutPreferences(String prefX, String prefY, String prefWidth, String prefHeight,
 										 int x, int y, int width, int height) {
 		GuiUtils.saveLayoutPreferences(prefX, prefY, prefWidth, prefHeight, x, y, width, height);
