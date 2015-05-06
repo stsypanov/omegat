@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * This is a controller for DictionaryPopup ui class and provides
+ * search functional for popup
+ *
  * Created by stsypanov on 19.04.2015.
  */
 public class DictionaryPopupController {
@@ -70,6 +73,6 @@ public class DictionaryPopupController {
     }
 
     public void showPopup() {
-        popup.setVisible(true);
+        popup.invoke();
     }
 }

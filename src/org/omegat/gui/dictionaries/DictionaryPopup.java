@@ -1,6 +1,7 @@
 package org.omegat.gui.dictionaries;
 
 import org.madlonkay.supertmxmerge.util.GuiUtil;
+import org.omegat.gui.clipboard.TextUtils;
 import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.OStrings;
 
@@ -21,6 +22,7 @@ public class DictionaryPopup extends PeroFrame {
     private JList<String> container;
     private JTextField textField;
     private Callback<String> callback;
+    private Component parent;
 
     public DictionaryPopup(String title) throws HeadlessException {
         super(title);
@@ -32,8 +34,9 @@ public class DictionaryPopup extends PeroFrame {
         GuiUtil.displayWindowCentered(this);
     }
 
-    public DictionaryPopup() {
+    public DictionaryPopup(Component parent) {
         this(OStrings.getString("find.in.dictionary.dialogue.title"));
+        this.parent = parent;
     }
 
     private void initComponents() {
@@ -146,6 +149,11 @@ public class DictionaryPopup extends PeroFrame {
             popupMenu.setPreferredSize(new Dimension(WIDTH, 200));
         }
         popupMenu.pack();
+    }
+
+    public void invoke(){
+        textField.setText(TextUtils.getSelectedTextFromParent(parent));
+        setVisible(true);
     }
 
     private static class CellRenderer extends DefaultListCellRenderer {

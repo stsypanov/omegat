@@ -138,6 +138,10 @@ public class EditorTextArea3 extends JEditorPane {
         setToolTipText("");
     }
 
+    /**
+     * Adds action for Search in Dictionary popup invocation
+     * Pop up invoked with double Shift
+     */
     private void addDictionaryAction() {
        addKeyListener(new KeyAdapter() {
            private long lastShiftStroke;
@@ -148,7 +152,7 @@ public class EditorTextArea3 extends JEditorPane {
                    boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
                    if (suits) {
                        if (dictionaryPopupController == null) {
-                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
+                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(EditorTextArea3.this), Core.getDictionariesTextArea());
                        }
                        dictionaryPopupController.showPopup();
                    }

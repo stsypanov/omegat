@@ -1,6 +1,9 @@
 package org.omegat.gui.clipboard;
 
+import org.jetbrains.annotations.Nullable;
+import org.omegat.gui.editor.EditorUtils;
 import org.omegat.util.Log;
+import org.omegat.util.StringUtil;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -13,11 +16,11 @@ import java.awt.*;
  * Time: 14:44
  */
 public class TextUtils {
-	/*
-	 *  Attempt to center the line containing the caret at the center of the
-	 *  scroll pane.
+	/**
+	 * Attempt to center the line containing the caret at the center of the
+	 * scroll pane.
 	 *
-	 *  @param component the text component in the sroll pane
+	 * @param component the text component in the sroll pane
 	 */
 	public static void centerLineInScrollPane(JTextComponent component) {
 		Container container = SwingUtilities.getAncestorOfClass(JViewport.class, component);
@@ -39,11 +42,11 @@ public class TextUtils {
 		}
 	}
 
-	/*
-	 *  Return the column number at the Caret position.
-	 *
-	 *  The column returned will only make sense when using a
-	 *  Monospaced font.
+	/**
+	 * Return the column number at the Caret position.
+	 * <p/>
+	 * The column returned will only make sense when using a
+	 * Monospaced font.
 	 */
 	public static int getColumnAtCaret(JTextComponent component) {
 		//  Since we assume a monospaced font we can use the width of a single
@@ -64,8 +67,8 @@ public class TextUtils {
 		return column + 1;
 	}
 
-	/*
-	 *  Return the line number at the Caret position.
+	/**
+	 * Return the line number at the Caret position.
 	 */
 	public static int getLineAtCaret(JTextComponent component) {
 		int caretPosition = component.getCaretPosition();
@@ -74,16 +77,16 @@ public class TextUtils {
 		return root.getElementIndex(caretPosition) + 1;
 	}
 
-	/*
-	 *  Return the number of lines of text in the Document
+	/**
+	 * Return the number of lines of text in the Document
 	 */
 	public static int getLinesCount(JTextComponent component) {
 		Element root = component.getDocument().getDefaultRootElement();
 		return root.getElementCount();
 	}
 
-	/*
-	 *  Position the caret at the start of a line.
+	/**
+	 * Position the caret at the start of a line.
 	 */
 	public static void gotoStartOfLine(JTextComponent component, int line) {
 		Element root = component.getDocument().getDefaultRootElement();
@@ -100,8 +103,8 @@ public class TextUtils {
 		return root.getElement(line - 1).getEndOffset();
 	}
 
-	/*
-	 *  Position the caret on the first word of a line.
+	/**
+	 * Position the caret on the first word of a line.
 	 */
 	public static void gotoFirstWordOnLine(JTextComponent component, int line) {
 		gotoStartOfLine(component, line);
@@ -120,8 +123,8 @@ public class TextUtils {
 		}
 	}
 
-	/*
-	 *  Return the number of lines of text, including wrapped lines.
+	/**
+	 * Return the number of lines of text, including wrapped lines.
 	 */
 	public static int getWrappedLines(JTextArea component) {
 		View view = component.getUI().getRootView(component).getView(0);
@@ -130,8 +133,8 @@ public class TextUtils {
 		return preferredHeight / lineHeight;
 	}
 
-	/*
-	 *  Return the number of lines of text, including wrapped lines.
+	/**
+	 * Return the number of lines of text, including wrapped lines.
 	 */
 	public static int getWrappedLines(JTextComponent component) {
 		int lines = 0;
@@ -145,5 +148,28 @@ public class TextUtils {
 		}
 
 		return lines;
+	}
+
+	/**
+	 * This method allows to get the text, selected e.g. in EditorTextArea and place it into invoked dialogue.
+	 * See @ref DictionaryPopup.java for usage example
+	 *
+	 *
+	 * @param component component, which is the parent of the component this method invoked from
+	 * @return text, selected in parent component
+	 */
+	public static String getSelectedTextFromParent(@Nullable Component component) {
+		String selection;
+		if (component instanceof JTextComponent) {
+			selection = ((JTextComponent) component).getSelectedText();
+			if (!StringUtil.isEmpty(selection)) {
+				selection = EditorUtils.removeDirectionChars(selection);
+			} else {
+				selection = "";
+			}
+		} else {
+			selection = "";
+		}
+		return selection;
 	}
 }
