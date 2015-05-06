@@ -1,0 +1,884 @@
+Index: src/org/omegat/gui/editor/autocompleter/AutoCompleter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/editor/autocompleter/AutoCompleter.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/gui/editor/autocompleter/AutoCompleter.java	(revision )
+@@ -211,8 +211,8 @@
+     /**
+      * Show the popup list.
+      */
+-    public void updatePopup() { 
++    public void updatePopup() {
+-        if (!isVisible()) {
++        if (!visible) {
+             return;
+         }
+         
+Index: src/org/omegat/gui/editor/EditorUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/editor/EditorUtils.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/gui/editor/EditorUtils.java	(revision )
+@@ -27,6 +27,7 @@
+ package org.omegat.gui.editor;
+ 
+ import java.util.Locale;
++import java.util.regex.Pattern;
+ 
+ import javax.swing.text.BadLocationException;
+ import javax.swing.text.JTextComponent;
+@@ -39,6 +40,8 @@
+  * @author Didier Briel
+  */
+ public class EditorUtils {
++    private static final Pattern DIRECTION_CHARS_PATTERN = Pattern.compile("[\u202A\u202B\u202C]");
++
+     /**
+      * Check if language is Right-To-Left oriented.
+      * 
+@@ -123,6 +126,6 @@
+      * @return string without direction chars
+      */
+     public static String removeDirectionChars(String text) {
+-        return text.replaceAll("[\u202A\u202B\u202C]", "");
++        return DIRECTION_CHARS_PATTERN.matcher(text).replaceAll("");
+     }
+ }
+Index: src/org/omegat/filters2/html2/FilterVisitor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters2/html2/FilterVisitor.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters2/html2/FilterVisitor.java	(revision )
+@@ -1179,7 +1179,7 @@
+                             // escape special regexp characters
+                             regexp = "\\" + x;
+                         } else
+-                            regexp = "" + x;
++                            regexp = String.valueOf(x);
+                         String replacement = "&#" + (int) x + ';';
+                         contents = contents.replaceAll(regexp, replacement);
+                         break;
+Index: src/org/omegat/core/data/ParseEntry.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/core/data/ParseEntry.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/core/data/ParseEntry.java	(revision )
+@@ -34,6 +34,7 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.regex.Pattern;
+ 
+ import org.omegat.core.Core;
+ import org.omegat.core.data.IProject.FileInfo;
+@@ -58,6 +59,7 @@
+  */
+ public abstract class ParseEntry implements IParseCallback {
+ 
++    private static final Pattern CARET_RETURN_PATTERN = Pattern.compile("\r", Pattern.LITERAL);
+     private final ProjectProperties m_config;
+     
+     /** Cached segments. */
+@@ -311,7 +313,7 @@
+             r = r.replace("\r\n", "\n");
+         per.cr = r.indexOf("\r") > 0;
+         if (per.cr)
+-            r = r.replace("\r", "\n");
++            r = CARET_RETURN_PATTERN.matcher(r).replaceAll("\n");
+ 
+         if(removeTags) {
+             r = PatternConsts.OMEGAT_TAG.matcher(r).replaceAll("");
+Index: src/org/omegat/filters3/xml/Entity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters3/xml/Entity.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters3/xml/Entity.java	(revision )
+@@ -112,20 +112,21 @@
+      * Returns the entity as string.
+      */
+     public String toString() {
+-        StringBuilder res = new StringBuilder();
+-        res.append("<!ENTITY");
+-        if (parameter)
++        StringBuilder res = new StringBuilder("<!ENTITY");
++        if (parameter) {
+             res.append(" %");
++        }
+         res.append(" ");
+         res.append(name);
+         if (internal) {
+             // <!ENTITY % name "value">
+-            res.append(" \"" + value + "\"");
++            res.append(" \"").append(value).append("\"");
+         } else {
+             // <!ENTITY gloss SYSTEM "gloss.xml">
+-            if (publicId != null)
+-                res.append(" PUBLIC \"" + publicId + "\"");
+-            res.append(" SYSTEM \"" + systemId + "\"");
++            if (publicId != null) {
++                res.append(" PUBLIC \"").append(publicId).append("\"");
++            }
++            res.append(" SYSTEM \"").append(systemId).append("\"");
+         }
+         res.append(">");
+         return res.toString();
+Index: src/org/omegat/core/machinetranslators/AbstractMyMemoryTranslate.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/core/machinetranslators/AbstractMyMemoryTranslate.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/core/machinetranslators/AbstractMyMemoryTranslate.java	(revision )
+@@ -29,6 +29,7 @@
+ 
+ import java.io.IOException;
+ import java.io.UnsupportedEncodingException;
++import java.util.regex.Pattern;
+ 
+ import org.omegat.tokenizer.ITokenizer;
+ import org.omegat.util.Language;
+@@ -56,6 +57,15 @@
+ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
+ 	
+     private static final String MYMEMORY_API_EMAIL = "mymemory.api.email";
++    private static final Pattern PATTERN = Pattern.compile("#langCode#", Pattern.LITERAL);
++    private static final Pattern QUOT_PATTERN = Pattern.compile("&quot;", Pattern.LITERAL);
++    private static final Pattern NBSP_PATTERN = Pattern.compile("&nbsp;", Pattern.LITERAL);
++    private static final Pattern AMP_PATTERN = Pattern.compile("&amp;", Pattern.LITERAL);
++    private static final Pattern APOS_PATTERN = Pattern.compile("&apos;", Pattern.LITERAL);
++    private static final Pattern THIRTY_NINE_PATTERN = Pattern.compile("&#39;", Pattern.LITERAL);
++    private static final Pattern LT_PATTERN = Pattern.compile("&lt;", Pattern.LITERAL);
++    private static final Pattern GT_PATTERN = Pattern.compile("&gt;", Pattern.LITERAL);
++
+     protected static String GT_URL = "http://mymemory.translated.net/api/get?q=";
+     protected static String MYMEMORYLABEL_TRANSLATION = "translation";
+     protected static String MYMEMORYLABEL_MATCHQUALITYPERCENTAGE = "match";
+@@ -106,8 +116,8 @@
+             Node tu = null;
+             String sourceSeg = "";
+             String targetSeg = "";
+-            String targetSegQueryString = XPATH_QUERY.replace("#langCode#", tLang.getLanguageCode());
+-            String sourceSegQueryString = XPATH_QUERY.replace("#langCode#", sLang.getLanguageCode());
++            String targetSegQueryString = PATTERN.matcher(XPATH_QUERY).replaceAll(tLang.getLanguageCode());
++            String sourceSegQueryString = PATTERN.matcher(XPATH_QUERY).replaceAll(sLang.getLanguageCode());
+             
+             String bestTranslation = "";
+         
+@@ -136,13 +146,13 @@
+ 	}
+ 
+ 	protected String cleanUpText(String str) {
+-	       str = str.replace("&quot;", "\"");
+-	       str = str.replace("&nbsp;", "\u00A0");
+-	       str = str.replace("&amp;", "&");
+-	       str = str.replace("&apos;", "'");
+-	       str = str.replace("&#39;", "'");
+-	       str = str.replace("&lt;", "<");
+-	       str = str.replace("&gt;", ">");
++	       str = QUOT_PATTERN.matcher(str).replaceAll("\"");
++	       str = NBSP_PATTERN.matcher(str).replaceAll("\u00A0");
++	       str = AMP_PATTERN.matcher(str).replaceAll("&");
++	       str = APOS_PATTERN.matcher(str).replaceAll("'");
++	       str = THIRTY_NINE_PATTERN.matcher(str).replaceAll("'");
++	       str = LT_PATTERN.matcher(str).replaceAll("<");
++	       str = GT_PATTERN.matcher(str).replaceAll(">");
+ 	       str = str.trim();
+ 	       
+ 		return str;
+Index: src/org/omegat/core/dictionaries/StarDict.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/core/dictionaries/StarDict.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/core/dictionaries/StarDict.java	(revision )
+@@ -40,6 +40,7 @@
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.TreeMap;
++import java.util.regex.Pattern;
+ import java.util.zip.GZIPInputStream;
+ 
+ import org.omegat.util.LFileCopy;
+@@ -52,6 +53,7 @@
+  * @author Alex Buloichik <alex73mail@gmail.com>
+  */
+ public class StarDict implements IDictionary {
++    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n", Pattern.LITERAL);
+     protected final File ifoFile;
+     protected static final String UTF8 = "UTF-8";
+     protected static final int BUFFER_SIZE = 64 * 1024;
+@@ -162,7 +164,7 @@
+      * Load acticle's text.
+      */
+     private String readArticleText(byte[] data, int off, int len) throws UnsupportedEncodingException {
+-        return new String(data, off, len, UTF8).replace("\n", "<br>");
++        return NEW_LINE_PATTERN.matcher(new String(data, off, len, UTF8)).replaceAll("<br>");
+     }
+ 
+     /**
+Index: src/org/omegat/util/xml/XMLStreamReader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/util/xml/XMLStreamReader.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/util/xml/XMLStreamReader.java	(revision )
+@@ -213,8 +213,7 @@
+      */
+     private char getNextChar() {
+         if (!m_charStack.empty()) {
+-            Character ch = m_charStack.pop();
+-            return ch.charValue();
++            return m_charStack.pop();
+         } else {
+             if (m_pos >= 0) {
+                 // string
+@@ -449,7 +448,7 @@
+ 
+                 default:
+                     err = true;
+-                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state);
++                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state));
+                 }
+                 break;
+ 
+@@ -528,7 +527,7 @@
+ 
+                 default:
+                     err = true;
+-                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state);
++                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state));
+                 }
+                 break;
+ 
+@@ -692,7 +691,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                     StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                     StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -726,7 +725,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -745,7 +744,7 @@
+              default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -763,7 +762,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -794,7 +793,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -823,7 +822,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -839,7 +838,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+@@ -901,7 +900,7 @@
+                 default:
+                     throwErrorInGetNextTag(
+                             blk,
+-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
++                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
+                 }
+                 break;
+ 
+Index: src/org/omegat/gui/editor/SegmentBuilder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/editor/SegmentBuilder.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/gui/editor/SegmentBuilder.java	(revision )
+@@ -33,6 +33,7 @@
+ import java.util.Date;
+ import java.util.Map;
+ import java.util.concurrent.atomic.AtomicLong;
++import java.util.regex.Pattern;
+ 
+ import javax.swing.text.AttributeSet;
+ import javax.swing.text.BadLocationException;
+@@ -72,6 +73,7 @@
+     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
+     private static final DateFormat dateFormat = DateFormat.getDateInstance();
+     private static final DateFormat timeFormat = DateFormat.getTimeInstance();
++    private static final Pattern PATTERN = Pattern.compile("0000", Pattern.LITERAL);
+ 
+     static AtomicLong globalVersions = new AtomicLong();
+ 
+@@ -579,7 +581,7 @@
+                         replacement,
+                         ste.getNumberOfDuplicates());
+             }
+-            text = text.replace("0000", replacement);
++            text = PATTERN.matcher(text).replaceAll(replacement);
+         }
+         
+         // trim and replace spaces to non-break spaces
+Index: src/org/omegat/util/Language.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/util/Language.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/util/Language.java	(revision )
+@@ -30,6 +30,7 @@
+ 
+ import java.util.Locale;
+ import java.util.regex.Matcher;
++import java.util.regex.Pattern;
+ 
+ /**
+  * This class is here, because the Locale has hard-coded '_' inside, and we must
+@@ -55,6 +56,7 @@
+  * @author Guido Leenders
+  */
+ public class Language implements Comparable<Object> {
++    private static final Pattern PATTERN = Pattern.compile("_", Pattern.LITERAL);
+     private Locale locale = new Locale("");
+     private String languageCode;
+     private String countryCode;
+@@ -146,7 +148,7 @@
+      * Returns a string representation as a Microsoft locale (xx-yy).
+      */
+     public String getLocaleLCID() {
+-        return getLocaleCode().toLowerCase().replace("_", "-");
++        return PATTERN.matcher(getLocaleCode().toLowerCase()).replaceAll("-");
+     }
+ 
+     /**
+Index: src/org/omegat/filters2/master/FilterMaster.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters2/master/FilterMaster.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters2/master/FilterMaster.java	(revision )
+@@ -111,8 +111,7 @@
+     static {
+         try {
+             CONFIG_CTX = JAXBContext.newInstance(Filters.class);
+-            filtersClasses = new ArrayList<Class<IFilter>>();
+-            filtersClasses.addAll((List)PluginUtils.getFilterClasses());
++            filtersClasses = new ArrayList<>((List) PluginUtils.getFilterClasses());
+         } catch (Exception ex) {
+             throw new ExceptionInInitializerError(ex);
+         }
+@@ -370,9 +369,8 @@
+      */
+     public static List<String> getSupportedEncodings() {
+         if (supportedEncodings == null) {
+-            supportedEncodings = new ArrayList<String>();
++            supportedEncodings = new ArrayList<>(Charset.availableCharsets().keySet());
+             supportedEncodings.add(AbstractFilter.ENCODING_AUTO_HUMAN);
+-            supportedEncodings.addAll(Charset.availableCharsets().keySet());
+         }
+         return supportedEncodings;
+     }
+Index: src/org/omegat/gui/editor/chartable/CharTableModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/editor/chartable/CharTableModel.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/gui/editor/chartable/CharTableModel.java	(revision )
+@@ -25,7 +25,6 @@
+ 
+ package org.omegat.gui.editor.chartable;
+ 
+-import java.awt.Font;
+ import java.awt.Point;
+ 
+ import javax.swing.table.AbstractTableModel;
+@@ -37,8 +36,7 @@
+  */
+ @SuppressWarnings("serial")
+ public class CharTableModel extends AbstractTableModel {
+-    Font font;
+-    
++
+     int columnCount = 16; 
+     
+     int glyphCount = 65535-32;
+@@ -101,7 +99,7 @@
+      * @param checkUnique check for being unique or not
+      */
+     public void appendChar(Character c, boolean checkUnique) {
+-        char cv = c.charValue();
++        char cv = c;
+         if (checkUnique) {
+             for (int i = 0; i < data.length(); i++) {
+                 if (data.charAt(i) == cv) {
+@@ -125,10 +123,10 @@
+         if (data.length() == 0) {
+             return;
+         }
+-        
++
+-        int pos1 = row1 * getColumnCount() + col1;
++        int pos1 = row1 * columnCount + col1;
+         pos1 = pos1 >= data.length() ? data.length() - 1 : pos1;
+-        int pos2 = row2 * getColumnCount() + col2;
++        int pos2 = row2 * columnCount + col2;
+         pos2 = (pos2 >= data.length()) ? data.length() - 1 : pos2;
+         pos2 = (pos2 == pos1) ? pos1+1 : pos2;
+         data.delete(pos1, pos2);
+Index: src/org/omegat/filters2/text/bundles/ResourceBundleFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters2/text/bundles/ResourceBundleFilter.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters2/text/bundles/ResourceBundleFilter.java	(revision )
+@@ -29,33 +29,20 @@
+ 
+ package org.omegat.filters2.text.bundles;
+ 
+-import java.awt.Dialog;
+-import java.io.BufferedReader;
+-import java.io.BufferedWriter;
+-import java.io.File;
+-import java.io.FileOutputStream;
+-import java.io.IOException;
+-import java.io.OutputStreamWriter;
+-import java.io.UnsupportedEncodingException;
++import org.omegat.core.data.ProtectedPart;
++import org.omegat.filters2.AbstractFilter;
++import org.omegat.filters2.FilterContext;
++import org.omegat.filters2.Instance;
++import org.omegat.util.*;
++
++import java.awt.*;
++import java.io.*;
+ import java.nio.charset.Charset;
+ import java.nio.charset.CharsetEncoder;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ 
+-import org.omegat.core.data.ProtectedPart;
+-import org.omegat.filters2.AbstractFilter;
+-import org.omegat.filters2.FilterContext;
+-import org.omegat.filters2.Instance;
+-import org.omegat.util.Log;
+-import org.omegat.util.LinebreakPreservingReader;
+-import org.omegat.util.NullBufferedWriter;
+-import org.omegat.util.OConsts;
+-import org.omegat.util.OStrings;
+-import org.omegat.util.PatternConsts;
+-import org.omegat.util.StaticUtils;
+-import org.omegat.util.StringUtil;
+-
+ /**
+  * Filter to support Java Resource Bundles - the files that are used to I18ze
+  * Java applications.
+@@ -133,8 +120,7 @@
+      * "Bundle_ru.properties"
+      */
+     @Override
+-    public BufferedWriter createWriter(File outfile, String encoding) throws UnsupportedEncodingException,
+-            IOException {
++    public BufferedWriter createWriter(File outfile, String encoding) throws IOException {
+         if (encoding != null) {
+             targetEncoding = encoding;
+         }
+@@ -163,7 +149,7 @@
+         if (ascii == null)
+             return null;
+ 
+-        StringBuffer result = new StringBuffer();
++        StringBuilder result = new StringBuilder();
+         for (int i = 0; i < ascii.length(); i++) {
+             char ch = ascii.charAt(i);
+             if (ch == '\\' && i != ascii.length() - 1) {
+@@ -209,7 +195,7 @@
+     private String toAscii(String text, boolean key) {
+         CharsetEncoder charsetEncoder = Charset.forName(targetEncoding).newEncoder();
+         
+-        StringBuffer result = new StringBuffer();
++        StringBuilder result = new StringBuilder();
+ 
+         for (int i = 0; i < text.length(); i++) {
+             char ch = text.charAt(i);
+@@ -233,7 +219,7 @@
+                 String code = Integer.toString(ch, 16);
+                 while (code.length() < 4)
+                     code = '0' + code;
+-                result.append("\\u" + code);
++                result.append("\\u").append(code);
+             }
+         }
+ 
+@@ -251,7 +237,7 @@
+      * >#1606595</a>.
+      */
+     private String removeExtraSlashes(String string) {
+-        StringBuffer result = new StringBuffer(string.length());
++        StringBuilder result = new StringBuilder(string.length());
+         for (int i = 0; i < string.length(); i++) {
+             char ch = string.charAt(i);
+             if (ch == '\\') {
+@@ -272,10 +258,10 @@
+      * Trims the string from left. Also contains some code to strip a backspace
+      * from '\ ' (non-trimmable space), but doesn't trim this space.
+      */
++    //todo move to utils
+     private String leftTrim(String s) {
+         int i;
+-        for (i = 0; i < s.length() && (s.charAt(i) == ' ' || s.charAt(i) == '\t'); i++)
+-            ;
++        for (i = 0; i < s.length() && (s.charAt(i) == ' ' || s.charAt(i) == '\t'); i++) ;
+         s = s.replaceAll("\\\\ ", " ");
+         return s.substring(i, s.length());
+     }
+@@ -284,127 +270,125 @@
+      * Doing the processing of the file...
+      */
+     @Override
+-    public void processFile(BufferedReader reader, BufferedWriter outfile, org.omegat.filters2.FilterContext fc) throws IOException {
+-        LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader); // fix for bug 1462566
++    public void processFile(BufferedReader reader, BufferedWriter outfile, FilterContext fc) throws IOException {
++        // fix for bug 1462566
++        try (LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
+-        String str;
+-        // Support to show the comments (localization notes) into the Comments panel
+-        String comments;
+-        boolean noi18n = false;
++            String str;
++            // Support to show the comments (localization notes) into the Comments panel
++            String comments;
++            boolean noi18n = false;
+ 
+-        // Parameter in the options of filter to customize the target file
+-        String removeStringsUntranslatedStr = processOptions.get(OPTION_REMOVE_STRINGS_UNTRANSLATED);
+-        // If the value is null the default is false
++            // Parameter in the options of filter to customize the target file
++            String removeStringsUntranslatedStr = processOptions.get(OPTION_REMOVE_STRINGS_UNTRANSLATED);
++            // If the value is null the default is false
+-        if ((removeStringsUntranslatedStr != null) && (removeStringsUntranslatedStr.equalsIgnoreCase("true"))) {
+-            removeStringsUntranslated = true;
+-        } else {
+-            removeStringsUntranslated = false;
+-        }
++            removeStringsUntranslated = (removeStringsUntranslatedStr != null) && (removeStringsUntranslatedStr.equalsIgnoreCase("true"));
+-        // Initialize the comments
+-        comments = null;
+-        while ((str = getNextLine(lbpr)) != null) {
++            // Initialize the comments
++            comments = null;
++            while ((str = getNextLine(lbpr)) != null) {
+ 
+-            // Variable to check if a segment is translated
+-            boolean translatedSegment = true;
++                // Variable to check if a segment is translated
++                boolean translatedSegment = true;
+ 
+-            String trimmed = str.trim();
++                String trimmed = str.trim();
+ 
+-            // skipping empty strings
+-            if (trimmed.length() == 0) {
+-                outfile.write(toAscii(str, false) + lbpr.getLinebreak());
+-                // Delete the comments
+-                comments = null;
+-                continue;
+-            }
++                // skipping empty strings
++                if (trimmed.length() == 0) {
++                    outfile.write(toAscii(str, false) + lbpr.getLinebreak());
++                    // Delete the comments
++                    comments = null;
++                    continue;
++                }
+ 
+-            // skipping comments
+-            char firstChar = trimmed.charAt(0);
+-            if (firstChar == '#' || firstChar == '!') {
+-                outfile.write(toAscii(str, false) + lbpr.getLinebreak());
+-                // Save the comments
++                // skipping comments
++                char firstChar = trimmed.charAt(0);
++                if (firstChar == '#' || firstChar == '!') {
++                    outfile.write(toAscii(str, false) + lbpr.getLinebreak());
++                    // Save the comments
+-                comments = (comments==null? str : comments + "\n" + str);
++                    comments = (comments == null ? str : comments + "\n" + str);
+-                // checking if the next string shouldn't be internationalized
++                    // checking if the next string shouldn't be internationalized
+-                if (trimmed.indexOf("NOI18N") >= 0)
++                    if (trimmed.contains("NOI18N"))
+-                    noi18n = true;
++                        noi18n = true;
+ 
+-                continue;
+-            }
++                    continue;
++                }
+ 
+-            // reading the glued lines
+-            while (str.charAt(str.length() - 1) == '\\') {
+-                String next = getNextLine(lbpr);
+-                if (next == null)
+-                    next = "";
++                // reading the glued lines
++                while (str.charAt(str.length() - 1) == '\\') {
++                    String next = getNextLine(lbpr);
++                    if (next == null)
++                        next = "";
+ 
+-                // gluing this line (w/o '\' on this line)
+-                // with next line (w/o leading spaces)
+-                str = str.substring(0, str.length() - 1) + leftTrim(next);
+-            }
++                    // gluing this line (w/o '\' on this line)
++                    // with next line (w/o leading spaces)
++                    str = str.substring(0, str.length() - 1) + leftTrim(next);
++                }
+ 
+-            // key=value pairs
+-            int equalsPos = searchEquals(str);
++                // key=value pairs
++                int equalsPos = searchEquals(str);
+ 
+-            // writing out key
+-            String key;
+-            if (equalsPos >= 0)
+-                key = str.substring(0, equalsPos).trim();
+-            else
+-                key = str.trim();
+-            key = removeExtraSlashes(key);
+-            // writing segment is delayed until verifying that the translation was made
+-            // outfile.write(toAscii(key, true));
++                // writing out key
++                String key;
++                if (equalsPos >= 0)
++                    key = str.substring(0, equalsPos).trim();
++                else
++                    key = str.trim();
++                key = removeExtraSlashes(key);
++                // writing segment is delayed until verifying that the translation was made
++                // outfile.write(toAscii(key, true));
+ 
+-            // advance if there're spaces or tabs after =
+-            if (equalsPos >= 0) {
+-                int equalsEnd = equalsPos + 1;
+-                while (equalsEnd < str.length()) {
+-                    char ch = str.charAt(equalsEnd);
+-                    if (ch != ' ' && ch != '\t')
+-                        break;
+-                    equalsEnd++;
+-                }
+-                String equals = str.substring(equalsPos, equalsEnd);
+-                // writing segment is delayed until verifying that the translation was made
+-                // outfile.write(equals);
++                // advance if there're spaces or tabs after =
++                if (equalsPos >= 0) {
++                    int equalsEnd = equalsPos + 1;
++                    while (equalsEnd < str.length()) {
++                        char ch = str.charAt(equalsEnd);
++                        if (ch != ' ' && ch != '\t')
++                            break;
++                        equalsEnd++;
++                    }
++                    String equals = str.substring(equalsPos, equalsEnd);
++                    // writing segment is delayed until verifying that the translation was made
++                    // outfile.write(equals);
+ 
+-                // value, if any
+-                String value;
+-                if (equalsEnd < str.length())
+-                    value = removeExtraSlashes(str.substring(equalsEnd));
+-                else
+-                    value = "";
++                    // value, if any
++                    String value;
++                    if (equalsEnd < str.length())
++                        value = removeExtraSlashes(str.substring(equalsEnd));
++                    else
++                        value = "";
+ 
+-                if (noi18n) {
+-                    // if we don't need to internationalize
+-                    outfile.write(toAscii(value, false));
+-                    noi18n = false;
+-                } else {
+-                    value = value.replaceAll("\\n\\n", "\n \n");
+-                    // If there is a comment, show it into the Comments panel
+-                    String trans = process(key, value, comments);
+-                    // Delete the comments
+-                    comments = null;
+-                    // Check if the segment is not translated
+-	            if ("--untranslated_yet--".equals(trans)) {
+-                        translatedSegment = false;
+-                        trans = value;
+-                    }
+-                    trans = trans.replaceAll("\\n\\s\\n", "\n\n");
+-                    trans = toAscii(trans, false);
+-                    if (trans.length() > 0 && trans.charAt(0) == ' ')
+-                        trans = '\\' + trans;
+-                    // Non-translated segments are written based on the filter options 
++                    if (noi18n) {
++                        // if we don't need to internationalize
++                        outfile.write(toAscii(value, false));
++                        noi18n = false;
++                    } else {
++                        value = value.replaceAll("\\n\\n", "\n \n");
++                        // If there is a comment, show it into the Comments panel
++                        String trans = process(key, value, comments);
++                        // Delete the comments
++                        comments = null;
++                        // Check if the segment is not translated
++                        if ("--untranslated_yet--".equals(trans)) {
++                            translatedSegment = false;
++                            trans = value;
++                        }
++                        trans = trans.replaceAll("\\n\\s\\n", "\n\n");
++                        trans = toAscii(trans, false);
++                        if (trans.length() > 0 && trans.charAt(0) == ' ')
++                            trans = '\\' + trans;
++                        // Non-translated segments are written based on the filter options
+-                    if (translatedSegment == true || removeStringsUntranslated == false) {
++                        if (translatedSegment || !removeStringsUntranslated) {
+-                        outfile.write(toAscii(key, true));
+-                        outfile.write(equals);
+-                        outfile.write(trans);
+-                        outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
+-                    }
+-                }
+-            }
+-            // This line of code is moved up to avoid blank lines
+-            // outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
+-        }
+-    }
++                            outfile.write(toAscii(key, true));
++                            outfile.write(equals);
++                            outfile.write(trans);
++                            outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
++                        }
++                    }
++                }
++                // This line of code is moved up to avoid blank lines
++                // outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
++            }
++        }
++    }
+ 
+     /**
+      * Looks for the key-value separator (=,: or ' ') in the string.
+@@ -459,7 +443,7 @@
+     }
+ 
+     @Override
+-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
++    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
+         Map<String, String> source = new HashMap<String, String>();
+         Map<String, String> translated = new HashMap<String, String>();
+ 
+Index: src/org/omegat/gui/lf/components/UIUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/lf/components/UIUtil.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/gui/lf/components/UIUtil.java	(revision )
+@@ -32,6 +32,7 @@
+     @NonNls
+     public static final String BORDER_LINE = "<hr size=1 noshade>";
+     private static final StyleSheet DEFAULT_HTML_KIT_CSS;
++    private static final Pattern AMPERSAND_PATTERN = Pattern.compile("&");
+ 
+     static {
+         // save the default JRE CSS and ..
+@@ -428,7 +429,7 @@
+     public static void setActionNameAndMnemonic(@NotNull String text, @NotNull Action action) {
+         assignMnemonic(text, action);
+ 
+-        text = text.replaceAll("&", "");
++        text = AMPERSAND_PATTERN.matcher(text).replaceAll("");
+         action.putValue(Action.NAME, text);
+     }
+     public static void assignMnemonic(@NotNull String text, @NotNull Action action) {
+@@ -1563,7 +1564,7 @@
+      * Configures composite to use for drawing text with the given graphics container.
+      * <p/>
+      * The whole idea is that <a href="http://en.wikipedia.org/wiki/X_Rendering_Extension">XRender-based</a> pipeline doesn't support
+-     * {@link java.awt.AlphaComposite#SRC} and we should use {@link java.awt.AlphaComposite#SRC_OVER} instead.
++     * {@link AlphaComposite#SRC} and we should use {@link AlphaComposite#SRC_OVER} instead.
+      *
+      * @param g target graphics container
+      */
+Index: src/org/omegat/util/TMXReader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/util/TMXReader.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/util/TMXReader.java	(revision )
+@@ -212,12 +212,12 @@
+      */
+     private void checkForUpgrades() {
+         if (!upgradeCheckComplete) {
+-            if (getCreationTool() == null || getCreationToolVersion() == null)
++            if (creationtool == null || creationtoolversion == null)
+                 return; // we can't check
+ 
+-            if (CT_OMEGAT.equals(getCreationTool())) {
+-                upgrade14X = getCreationToolVersion().compareTo(CTV_OMEGAT_1) <= 0;
+-                upgradeSentSeg = SEG_PARAGRAPH.equals(getSegType()) && isSegmentingEnabled;
++            if (CT_OMEGAT.equals(creationtool)) {
++                upgrade14X = creationtoolversion.compareTo(CTV_OMEGAT_1) <= 0;
++                upgradeSentSeg = SEG_PARAGRAPH.equals(segtype) && isSegmentingEnabled;
+             }
+             upgradeCheckComplete = true;
+         }

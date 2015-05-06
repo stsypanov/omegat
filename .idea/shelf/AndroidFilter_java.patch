@@ -1,0 +1,31 @@
+Index: src/org/omegat/filters3/xml/android/AndroidFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters3/xml/android/AndroidFilter.java	(revision ad97560180a8356b66dea2f14c552a218bc57cff)
++++ src/org/omegat/filters3/xml/android/AndroidFilter.java	(revision )
+@@ -30,6 +30,7 @@
+ import java.util.HashSet;
+ import java.util.List;
+ import java.util.Set;
++import java.util.regex.Pattern;
+ 
+ import org.omegat.core.data.ProtectedPart;
+ import org.omegat.filters2.Instance;
+@@ -45,6 +46,7 @@
+ public class AndroidFilter extends XMLFilter {
+     static final String DO_NOT_TRANSLATE = "do not translate";
+     static final String DONT_TRANSLATE = "don't translate";
++    private static final Pattern PATTERN = Pattern.compile("'", Pattern.LITERAL);
+ 
+     static Set<String> NAMED_TAGS = new HashSet<>(Arrays.asList(new String[] { "/resources/string",
+             "/resources/color", "/resources/array", "/resources/string-array", "/resources/integer-array" }));
+@@ -132,6 +134,6 @@
+                 r = e;
+             }
+         }
+-        return r.replace("'", "\\'");
++        return PATTERN.matcher(r).replaceAll("\\'");
+     }
+ }

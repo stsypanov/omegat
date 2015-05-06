@@ -1,0 +1,149 @@
+Index: ../gwtbp/src/main/java/com/db/gwtbp/BPStreamHttpClient.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../gwtbp/src/main/java/com/db/gwtbp/BPStreamHttpClient.java	(date 1433433959000)
++++ ../gwtbp/src/main/java/com/db/gwtbp/BPStreamHttpClient.java	(revision )
+@@ -2,23 +2,47 @@
+ 
+ import org.apache.commons.io.IOUtils;
+ 
+-import java.io.ByteArrayInputStream;
+-import java.io.IOException;
+-import java.io.StringWriter;
++import java.io.*;
+ import java.net.URL;
+ import java.net.URLConnection;
++import java.nio.ByteBuffer;
++import java.nio.channels.Channels;
++import java.nio.channels.ReadableByteChannel;
++import java.nio.channels.WritableByteChannel;
+ import java.nio.charset.Charset;
+ 
+-public class BPStreamHttpClient implements BPHttpClient{
++public class BPStreamHttpClient implements BPHttpClient {
+ 
+ 	@Override
+ 	public String getResponse(String url, String request) throws IOException {
+ 		URL address = new URL(url);
+ 		URLConnection connection = address.openConnection();
+ 		connection.setDoOutput(true);
+-		IOUtils.copy(new ByteArrayInputStream(request.getBytes(Charset.forName("UTF-8"))), connection.getOutputStream());
++
++		ReadableByteChannel inChannel = Channels.newChannel(new ByteArrayInputStream(request.getBytes(Charset.forName("UTF-8"))));
++		WritableByteChannel outChannel = Channels.newChannel(connection.getOutputStream());
++		fastCopy(inChannel, outChannel);
++
+ 		StringWriter writer = new StringWriter();
+-		IOUtils.copy(connection.getInputStream(), writer, "UTF-8");
++		try (InputStream inputStream = connection.getInputStream()) {
++			IOUtils.copy(inputStream, writer, "UTF-8");
++		}
+ 		return writer.toString();
++	}
++
++	public static void fastCopy(final ReadableByteChannel src, final WritableByteChannel dest) throws IOException {
++		final ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
++
++		while (src.read(buffer) != -1) {
++			buffer.flip();
++			dest.write(buffer);
++			buffer.compact();
++		}
++
++		buffer.flip();
++
++		while (buffer.hasRemaining()) {
++			dest.write(buffer);
++		}
+ 	}
+ }
+Index: ../gwtbp/src/main/java/com/db/gwtbp/BPGetHttpClient.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../gwtbp/src/main/java/com/db/gwtbp/BPGetHttpClient.java	(date 1433433959000)
++++ ../gwtbp/src/main/java/com/db/gwtbp/BPGetHttpClient.java	(revision )
+@@ -7,41 +7,56 @@
+ import java.net.URL;
+ import java.net.URLConnection;
+ import java.net.URLEncoder;
++import java.nio.ByteBuffer;
++import java.nio.channels.Channels;
++import java.nio.channels.ReadableByteChannel;
+ 
+ /**
+- /**
++ * /**
+  * http://stackoverflow.com/questions/2659952/maximum-length-of-http-get-request
+- The limit is dependent on both the server and the client used (and if applicable, also the proxy the server or the client is using).
+-
+- Most webservers have a limit of 8192 bytes (8KB), which is usually configurable somewhere in the server
+- configuration. As to the client side matter, the HTTP 1.1 specification even warns about this, here's an extract of chapter 3.2.1:
+-
+- Note: Servers ought to be cautious about depending on URI lengths above 255 bytes, because some older client
+- or proxy implementations might not properly support these lengths.
+-
+- The limit is in MSIE and Safari about 2KB, in Opera about 4KB and in Firefox about 8KB. We may thus assume that
+- 8KB is the maximum possible length and that 2KB is a more affordable length to rely on at the server side and that
+- 255 bytes is the safest length to assume that the entire URL will come in.
+-
+- If the limit is exceeded in either the browser or the server, most will just truncate the characters outside the
+- limit without any warning. Some servers however may send a HTTP 414 error. If you need to send large data, then
+- better use POST instead of GET. Its limit is much higher, but more dependent on the server used than the client.
+- Usually up to around 2GB is allowed by the average webserver. This is also configurable somewhere in the server settings.
+- The average server will display a server-specific error/exception when the POST limit is exceeded, usually as HTTP 500 error. */
++ * The limit is dependent on both the server and the client used (and if applicable, also the proxy the server or the client is using).
++ * <p/>
++ * Most webservers have a limit of 8192 bytes (8KB), which is usually configurable somewhere in the server
++ * configuration. As to the client side matter, the HTTP 1.1 specification even warns about this, here's an extract of chapter 3.2.1:
++ * <p/>
++ * Note: Servers ought to be cautious about depending on URI lengths above 255 bytes, because some older client
++ * or proxy implementations might not properly support these lengths.
++ * <p/>
++ * The limit is in MSIE and Safari about 2KB, in Opera about 4KB and in Firefox about 8KB. We may thus assume that
++ * 8KB is the maximum possible length and that 2KB is a more affordable length to rely on at the server side and that
++ * 255 bytes is the safest length to assume that the entire URL will come in.
++ * <p/>
++ * If the limit is exceeded in either the browser or the server, most will just truncate the characters outside the
++ * limit without any warning. Some servers however may send a HTTP 414 error. If you need to send large data, then
++ * better use POST instead of GET. Its limit is much higher, but more dependent on the server used than the client.
++ * Usually up to around 2GB is allowed by the average webserver. This is also configurable somewhere in the server settings.
++ * The average server will display a server-specific error/exception when the POST limit is exceeded, usually as HTTP 500 error.
++ */
+ public class BPGetHttpClient implements BPHttpClient {
+ 
+ 	@Override
+ 	public String getResponse(String url, String request) throws IOException {
+-
+-		//todo: check request length
+ 		String addressString = url + "?json=" + URLEncoder.encode(request, "UTF-8");
+ 		URL address = new URL(addressString);
+ 		onBeforeRequest(addressString);
+ 		URLConnection connection = address.openConnection();
+-		connection.setDoOutput(true);
+-		StringWriter writer = new StringWriter();
+-		IOUtils.copy(connection.getInputStream(), writer, "UTF-8");
+-		return writer.toString();
++		StringBuilder response = new StringBuilder();
++		try (ReadableByteChannel channel = Channels.newChannel(connection.getInputStream())) {
++			ByteBuffer buffer = ByteBuffer.allocate(16 * 1024);
++			int noOfBytes = 0;
++			byte[] data = null;
++
++			String line = null;
++			while ((noOfBytes = channel.read(buffer)) > 0) {
++				data = new byte[noOfBytes];
++				System.arraycopy(buffer.array(), 0, data, 0, noOfBytes);
++				buffer.clear();
++				line = new String(data);
++				response.append(line);
++			}
++		}
++		String resp = response.toString();
++		return resp;
+ 	}
+ 
+ 	protected void onBeforeRequest(String requestAddressString) {

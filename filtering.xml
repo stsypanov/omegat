@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<filteringItems>
+	<filteringItem>
+		<apply>true</apply>
+		<pattern>pattern1</pattern>
+		<example>example1</example>
+	</filteringItem>
+	<filteringItem>
+		<apply>false</apply>
+		<pattern>pattern2</pattern>
+		<example>example2</example>
+	</filteringItem>
+	<filteringItem>
+		<apply>true</apply>
+		<pattern>pattern3</pattern>
+		<example>example3</example>
+	</filteringItem>
+	<filteringItem>
+		<apply>false</apply>
+		<pattern>pattern4</pattern>
+		<example>example4</example>
+	</filteringItem>
+</filteringItems>
