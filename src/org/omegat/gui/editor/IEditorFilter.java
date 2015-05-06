@@ -36,13 +36,29 @@ import org.omegat.core.data.SourceTextEntry;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public interface IEditorFilter {
+
+    /**
+     * Returns true if the source text entry will be shown in
+     * the editor. If false the user cannot create translation
+     * for the item
+     *
+     * @param ste source text entry to be checked
+     * @return should the value be shown to user
+     */
     boolean allowed(SourceTextEntry ste);
+
+    /**
+     * Ui component controlling the behaviour of a filter.
+     *
+     * @return component with controls
+     */
 
     Component getControlComponent();
 
     /**
-     * True if editor should insert source text as empty translation even if it's not allowed by editor
-     * behavior settings.
+     * Checks if source should be treated as empty
+     *
+     * @return if source should be treated as empty
      */
     boolean isSourceAsEmptyTranslation();
 }

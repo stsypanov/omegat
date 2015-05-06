@@ -46,6 +46,18 @@ public class EntryKey implements Comparable<EntryKey> {
      */
     public static boolean IGNORE_FILE_CONTEXT = false;
 
+    /**
+     * Default constructor for test purpose
+     */
+    public EntryKey(String sourceText) {
+        id = null;
+        file = null;
+        this.sourceText = sourceText;
+        prev = null;
+        next = null;
+        path = null;
+    }
+
     public EntryKey(final String file, final String sourceText, final String id, final String prev,
             final String next, final String path) {
         this.file = file;
