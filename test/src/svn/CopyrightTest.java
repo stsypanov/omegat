@@ -82,6 +82,7 @@ public class CopyrightTest extends TestCase {
         }
     }
 
+    //todo don't pass files collection, but return it instead
     protected void list(File dir, List<File> files) {
         for (File f : dir.listFiles()) {
             String fn = f.getName();
