@@ -44,9 +44,9 @@ public class MapRule implements Serializable {
 
     /** creates an initialized MapRule */
     public MapRule(String language, String pattern, List<Rule> rules) {
-        this.setLanguage(language);
+        this.languageCode = language;
         this.setPattern(pattern);
-        this.setRules(rules);
+        this.rules = rules;
     }
 
     /** Language Name */
