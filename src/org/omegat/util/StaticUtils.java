@@ -179,13 +179,13 @@ public class StaticUtils {
      * @return a string containing the tags
      */
     public static String buildTagListForRemove(String str) {
-        String res = "";
+        StringBuilder result = new StringBuilder();
         Pattern placeholderPattern = PatternConsts.OMEGAT_TAG;
         Matcher placeholderMatcher = placeholderPattern.matcher(str);
         while (placeholderMatcher.find()) {
-            res += placeholderMatcher.group(0);
+            result.append(placeholderMatcher.group(0));
         }
-        return res;
+        return result.toString();
     }
     
     /**
@@ -307,6 +307,7 @@ public class StaticUtils {
     /**
      * Returns a list of all files under the root directory by absolute path.
      */
+    //todo don't pass files collection, but return it instead
     public static void buildFileList(List<String> lst, File rootDir, boolean recursive) {
         internalBuildFileList(lst, rootDir, recursive);
 
