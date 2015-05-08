@@ -3,6 +3,7 @@ package org.omegat.gui.dialogs;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.util.Log;
 import org.omegat.util.Preferences;
 import org.omegat.util.network.ProxyPolicy;
@@ -21,7 +22,7 @@ import java.util.Objects;
 /**
  * Created by rad1kal on 30.10.2014.
  */
-public class ProxyDialog extends JFrame {
+public class ProxyDialog extends PeroFrame {
 
 	private JLabel titleLabel;
 
@@ -130,6 +131,11 @@ public class ProxyDialog extends JFrame {
 		}
 		pack();
 		setVisible(true);
+	}
+
+	@Override
+	public String getPreferenceBaseName() {
+		return "proxy_dialogue";
 	}
 
 	private void saveProxyPreferences() {

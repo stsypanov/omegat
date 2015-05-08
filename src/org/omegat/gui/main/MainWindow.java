@@ -189,6 +189,11 @@ public class MainWindow extends PeroFrame implements IMainWindow {
         });
     }
 
+    @Override
+    public String getPreferenceBaseName() {
+        return "main_window_";
+    }
+
     /**
      * {@inheritDoc}
      */

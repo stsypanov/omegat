@@ -217,6 +217,11 @@ public class TagValidationFrame extends PeroFrame {
         super.processWindowEvent(w);
     }
 
+    @Override
+    public String getPreferenceBaseName() {
+        return "tagv_window";
+    }
+
     private void doCancel() {
         dispose();
     }
@@ -284,8 +289,8 @@ public class TagValidationFrame extends PeroFrame {
         output.append("<style type=\"text/css\">\n");
         output.append("    <!--\n");
         output.append("    body {\n");
-        output.append("            font-family: " + getFont().getName() + ";\n");
-        output.append("            font-size: " + getFont().getSize() + "pt;\n");
+        output.append("            font-family: ").append(getFont().getName()).append(";\n");
+        output.append("            font-size: ").append(getFont().getSize()).append("pt;\n");
         output.append("    }\n");
         output.append("    td {\n");
         output.append("            border: 1px solid gray;\n");
@@ -295,7 +300,7 @@ public class TagValidationFrame extends PeroFrame {
         output.append("</head>\n");
         output.append("<body>\n");
         if (message != null) {
-            output.append("<b>" + message + "</b>");
+            output.append("<b>").append(message).append("</b>");
         }
 
         output.append("<table border=\"1\" cellspacing=\"1\" cellpadding=\"2\" width=\"100%\">\n");
