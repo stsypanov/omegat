@@ -81,9 +81,6 @@ public class HelpFrame extends PeroFrame {
     private HelpFrame() {
         m_historyList = new ArrayList<>();
 
-        // set window size & position
-        loadLayoutPreferences(Preferences.HELPWINDOW_X, Preferences.HELPWINDOW_Y, Preferences.HELPWINDOW_WIDTH, Preferences.HELPWINDOW_HEIGHT);
-
         Container cp = getContentPane();
         m_helpPane = new JEditorPane();
         m_helpPane.setEditable(false);
@@ -144,6 +141,11 @@ public class HelpFrame extends PeroFrame {
 
         updateUIText();
         displayHome();
+    }
+
+    @Override
+    public String getPreferenceBaseName() {
+        return "help_window";
     }
 
     /**
@@ -328,18 +330,6 @@ public class HelpFrame extends PeroFrame {
         // Get the doc version and return it
         // (null if the version entry is not present)
         return prop.getProperty("version");
-    }
-
-    @Override
-    public void processWindowEvent(WindowEvent w) {
-        int evt = w.getID();
-        if (evt == WindowEvent.WINDOW_CLOSING || evt == WindowEvent.WINDOW_CLOSED) {
-            // save window size and position
-            saveLayoutPreferences(Preferences.HELPWINDOW_X, Preferences.HELPWINDOW_Y,
-					Preferences.HELPWINDOW_WIDTH, Preferences.HELPWINDOW_HEIGHT,
-					getX(), getY(), getWidth(), getHeight());
-        }
-        super.processWindowEvent(w);
     }
 
     private final JEditorPane m_helpPane;

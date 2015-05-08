@@ -80,6 +80,7 @@ import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.editor.mark.Mark;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -98,7 +99,7 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-public class ScriptingWindow extends JFrame {
+public class ScriptingWindow extends PeroFrame {
 
     private static final long serialVersionUID = 1L;
 
@@ -123,7 +124,6 @@ public class ScriptingWindow extends JFrame {
 
     @Override
     public void dispose() {
-        savePreferences();
         monitor.stop();
         super.dispose();
     }
@@ -157,6 +157,11 @@ public class ScriptingWindow extends JFrame {
 
         logResult(listScriptEngine().toString());
 
+    }
+
+    @Override
+    public String getPreferenceBaseName() {
+        return "script_window";
     }
 
     private List<String> getAvailableScriptExtensions() {
@@ -315,7 +320,6 @@ public class ScriptingWindow extends JFrame {
     }
 
     private void initWindowLayout() {
-        loadPreferences();
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         JPanel panelNorth = new JPanel();
@@ -438,7 +442,7 @@ public class ScriptingWindow extends JFrame {
         for (int i = 0; i < NUMBERS_OF_QUICK_SCRIPTS; i++) {
             final int index = i;
             final int scriptKey = scriptKey(index);
-            m_quickScriptButtons[i] = new JButton("" + scriptKey + "");
+            m_quickScriptButtons[i] = new JButton(String.valueOf(scriptKey));
 
             String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey, null);
 
@@ -688,39 +692,6 @@ public class ScriptingWindow extends JFrame {
             monitor.stop();
             monitor.start(m_scriptsDirectory);
         }
-    }
-
-    /**
-     * Loads the position and size of the script window
-     */
-    private void loadPreferences() {
-        // window size and position
-        try {
-            String dx = Preferences.getPreference(Preferences.SCRIPTWINDOW_X);
-            String dy = Preferences.getPreference(Preferences.SCRIPTWINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.SCRIPTWINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.SCRIPTWINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            setBounds(50, 80, 1150, 650);
-        }
-    }
-
-    /**
-     * Saves the size and position of the script window
-     */
-    private void savePreferences() {
-        // window size and position
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_WIDTH, getWidth());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_HEIGHT, getHeight());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_X, getX());
-        Preferences.setPreference(Preferences.SCRIPTWINDOW_Y, getY());
     }
 
     public HighlightPainter getPainter() {

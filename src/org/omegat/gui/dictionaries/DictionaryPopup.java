@@ -32,6 +32,11 @@ public class DictionaryPopup extends PeroFrame {
         GuiUtil.displayWindowCentered(this);
     }
 
+    @Override
+    public String getPreferenceBaseName() {
+        return "dictionary_popup";
+    }
+
     public DictionaryPopup() {
         this(OStrings.getString("find.in.dictionary.dialogue.title"));
     }
