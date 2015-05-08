@@ -103,10 +103,6 @@ public class Preferences {
     public static final String PROJECT_FILES_SHOW_ON_LOAD = "project_files_show_on_load";
 
 	// Search window size and position
-	public static final String SEARCHWINDOW_WIDTH = "search_window_width";
-	public static final String SEARCHWINDOW_HEIGHT = "search_window_height";
-	public static final String SEARCHWINDOW_X = "search_window_x";
-	public static final String SEARCHWINDOW_Y = "search_window_y";
 	public static final String SEARCHWINDOW_SEARCH_TYPE = "search_window_search_type";
 	public static final String SEARCHWINDOW_REPLACE_TYPE = "search_window_replace_type";
 	public static final String SEARCHWINDOW_CASE_SENSITIVE = "search_window_case_sensitive";
@@ -141,18 +137,6 @@ public class Preferences {
 	public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
 	public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
 	public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
-
-	// Tag validation window size and position
-	public static final String TAGVWINDOW_WIDTH = "tagv_window_width";
-	public static final String TAGVWINDOW_HEIGHT = "tagv_window_height";
-	public static final String TAGVWINDOW_X = "tagv_window_x";
-	public static final String TAGVWINDOW_Y = "tagv_window_y";
-
-	// Help window size and position
-	public static final String HELPWINDOW_WIDTH = "help_window_width";
-	public static final String HELPWINDOW_HEIGHT = "help_window_height";
-	public static final String HELPWINDOW_X = "help_window_x";
-	public static final String HELPWINDOW_Y = "help_window_y";
 
 	/** Use the TAB button to advance to the next segment */
 	public static final String USE_TAB_TO_ADVANCE = "tab_advance";
@@ -272,13 +256,6 @@ public class Preferences {
 	 * The location of the scripts
 	 */
 	public static final String SCRIPTS_DIRECTORY = "scripts_dir";
-
-
-	/** Script window */
-	public static final String SCRIPTWINDOW_WIDTH = "script_window_width";
-	public static final String SCRIPTWINDOW_HEIGHT = "script_window_height";
-	public static final String SCRIPTWINDOW_X = "script_window_x";
-	public static final String SCRIPTWINDOW_Y = "script_window_y";
 
 	/** Most recent projects list */
 	public static final String MOST_RECENT_PROJECTS_SIZE = "most_recent_projects_size";
@@ -495,7 +472,7 @@ public class Preferences {
      */
     public static String getPreferenceDefault(String key, String defaultValue) {
         String val = getPreference(key);
-        if (val.equals("")) {
+        if (StringUtil.isEmpty(val)) {
             val = defaultValue;
             setPreference(key, defaultValue);
         }

@@ -45,7 +45,13 @@ public class SearchWindowForm extends PeroFrame {
      * Creates new form SearchWindowForm
      */
     public SearchWindowForm() {
+        super();
         initComponents();
+    }
+
+    @Override
+    public String getPreferenceBaseName() {
+        return "search_window";
     }
 
     /**

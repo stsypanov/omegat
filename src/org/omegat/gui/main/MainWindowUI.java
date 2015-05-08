@@ -196,6 +196,7 @@ public class MainWindowUI {
      * larger. Assume task bar at bottom of screen. If screen size saved,
      * recover that and use instead (18may04).
      */
+    //todo use PeroFrame
     public static void loadScreenLayout(final MainWindow mainWindow) {
         int x, y, w, h;
         // main window
@@ -248,10 +249,6 @@ public class MainWindowUI {
      * Stores screen layout (width, height, position, etc).
      */
     public static void saveScreenLayout(final MainWindow mainWindow) {
-		GuiUtils.saveLayoutPreferences(Preferences.MAINWINDOW_X, Preferences.MAINWINDOW_Y,
-				Preferences.MAINWINDOW_WIDTH, Preferences.MAINWINDOW_HEIGHT,
-				mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight());
-
         File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
         try (FileOutputStream out = new FileOutputStream(uiLayoutFile)) {
             mainWindow.desktop.writeXML(out);

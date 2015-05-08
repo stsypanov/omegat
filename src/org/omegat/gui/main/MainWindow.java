@@ -59,6 +59,7 @@ import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
 import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
@@ -96,7 +97,7 @@ import com.vlsolutions.swing.docking.FloatingDialog;
  * @author Piotr Kulik
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame implements IMainWindow {
+public class MainWindow extends PeroFrame implements IMainWindow {
     public final MainWindowMenu menu;
 
     protected ProjectFilesListController m_projWin;
@@ -170,6 +171,11 @@ public class MainWindow extends JFrame implements IMainWindow {
         });
 
         updateTitle();
+    }
+
+    @Override
+    public String getPreferenceBaseName() {
+        return "main_window_";
     }
 
     /**
@@ -320,14 +326,13 @@ public class MainWindow extends JFrame implements IMainWindow {
         if (result == OmegaTFileChooser.APPROVE_OPTION) {
             String projectsource = Core.getProject().getProjectProperties().getSourceRoot();
             File sourcedir = new File(projectsource);
-            File[] selFiles = chooser.getSelectedFiles();
+            File[] selectedFiles = chooser.getSelectedFiles();
             try {
-                for (int i = 0; i < selFiles.length; i++) {
-                    File selSrc = selFiles[i];
-                    if (selSrc.isDirectory()) {
-                        List<String> files = new ArrayList<String>();
-                        StaticUtils.buildFileList(files, selSrc, true);
-                        String selSourceParent = selSrc.getParent();
+                for (File selectedFile : selectedFiles) {
+                    if (selectedFile.isDirectory()) {
+                        List<String> files = new ArrayList<>();
+                        StaticUtils.buildFileList(files, selectedFile, true);
+                        String selSourceParent = selectedFile.getParent();
                         for (String filename : files) {
                             String midName = filename.substring(selSourceParent.length());
                             File src = new File(filename);
@@ -335,8 +340,8 @@ public class MainWindow extends JFrame implements IMainWindow {
                             LFileCopy.copy(src, dest);
                         }
                     } else {
-                        File dest = new File(sourcedir, selFiles[i].getName());
-                        LFileCopy.copy(selSrc, dest);
+                        File dest = new File(sourcedir, selectedFile.getName());
+                        LFileCopy.copy(selectedFile, dest);
                     }
                 }
                 ProjectUICommands.projectReload();

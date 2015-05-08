@@ -35,6 +35,11 @@ public class ClipboardTest extends PeroFrame {
 		pack();
 	}
 
+	@Override
+	public String getPreferenceBaseName() {
+		return "clipboard_test";
+	}
+
 	private void addClipboardListener(JTextComponent component) {
 		KeyBinding.bind(component, getAction(component));
 	}
