@@ -52,6 +52,11 @@ public class SearchWindowForm extends PeroFrame {
         initComponents();
     }
 
+    @Override
+    public String getPreferenceBaseName() {
+        return "search_window";
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
