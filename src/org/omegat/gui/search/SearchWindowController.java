@@ -88,7 +88,7 @@ import org.openide.awt.Mnemonics;
  * This is a window that appears when user'd like to search for something. For
  * each new user's request new window is created. Actual search is done by
  * SearchThread.
- * 
+ *
  * @author Keith Godfrey
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  * @author Didier Briel
@@ -115,17 +115,17 @@ public class SearchWindowController {
         initialCaret = getCurrentPositionInEntryTranslationInEditor(Core.getEditor());
 
         m_dateFormat = new SimpleDateFormat(SAVED_DATE_FORMAT);
-        
+
         form.m_searchField.setModel(new DefaultComboBoxModel<>(HistoryManager.getSearchItems()));
         if (form.m_searchField.getModel().getSize() > 0) {
             form.m_searchField.setSelectedIndex(-1);
         }
-        
+
         form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
         if (form.m_replaceField.getModel().getSize() > 0) {
             form.m_replaceField.setSelectedIndex(-1);
         }
-        
+
         // box DateBox
         Calendar calendar = Calendar.getInstance();
         Date initDate = calendar.getTime();
@@ -235,7 +235,7 @@ public class SearchWindowController {
                 enableDisableAuthor();
             }
         });
-        
+
         ((MFindField) form.m_authorField).enterActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -287,7 +287,7 @@ public class SearchWindowController {
 
         // Set search and replace combo boxes' actions, undo, key handling
         configureHistoryComboBox(form.m_searchField);
-        configureHistoryComboBox(form.m_replaceField);        
+        configureHistoryComboBox(form.m_replaceField);
 
         // need to control check boxes and radio buttons manually
         //
@@ -386,14 +386,14 @@ public class SearchWindowController {
             }
         });
     }
-    
+
     private void configureHistoryComboBox(final JComboBox<String> box) {
         final JTextField field = (JTextField) box.getEditor().getEditorComponent();
         InputMap map = field.getInputMap();
-        
+
         final UndoManager undoManager = new UndoManager();
         field.getDocument().addUndoableEditListener(undoManager);
-        
+
         // Set up undo/redo handling
         KeyStroke undoKey = KeyStroke.getKeyStroke(KeyEvent.VK_Z,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false);
@@ -413,7 +413,7 @@ public class SearchWindowController {
                 }
             }
         });
-        
+
         // Close dialog with Esc key
         map.put(KeyStroke.getKeyStroke("ESCAPE"), new AbstractAction() {
             @Override
@@ -425,7 +425,7 @@ public class SearchWindowController {
                 }
             }
         });
-        
+
         // Perform search on Enter key (if search field not empty)
         field.setAction(new AbstractAction() {
             @Override
@@ -450,22 +450,6 @@ public class SearchWindowController {
      * state.
      */
     private void loadPreferences() {
-        // window size and position
-        try {
-            String dx = Preferences.getPreference(Preferences.SEARCHWINDOW_X);
-            String dy = Preferences.getPreference(Preferences.SEARCHWINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            form.setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.SEARCHWINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.SEARCHWINDOW_HEIGHT);
-            int w = StaticUIUtils.correctFrameWidth(Integer.parseInt(dw));
-            int h = Integer.parseInt(dh);
-            form.setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            form.setSize(800, 700);
-        }
 
         // search dir options
         if (Preferences.isPreferenceDefault(Preferences.SEARCHWINDOW_SEARCH_FILES, false)) {
@@ -578,11 +562,6 @@ public class SearchWindowController {
      * state
      */
     private void savePreferences() {
-        // window size and position
-        Preferences.setPreference(Preferences.SEARCHWINDOW_WIDTH, form.getWidth());
-        Preferences.setPreference(Preferences.SEARCHWINDOW_HEIGHT, form.getHeight());
-        Preferences.setPreference(Preferences.SEARCHWINDOW_X, form.getX());
-        Preferences.setPreference(Preferences.SEARCHWINDOW_Y, form.getY());
 
         // search type
         if (form.m_searchExactSearchRB.isSelected()) {
@@ -661,7 +640,7 @@ public class SearchWindowController {
 
         // Search/replace history
         HistoryManager.save();
-        
+
         // need to explicitly save preferences
         // because project might not be open
         Preferences.save();
@@ -700,7 +679,7 @@ public class SearchWindowController {
                     form.m_searchField.requestFocus();
                     form.m_searchField.getEditor().selectAll();
                 } else {
-                    viewer.requestFocus();                    
+                    viewer.requestFocus();
                 }
             }
         });
@@ -744,7 +723,7 @@ public class SearchWindowController {
         replaceString = StringUtil.normalizeUnicode(replaceString);
         HistoryManager.addReplaceItem(replaceString);
         form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
-        
+
         EntryListPane viewer = (EntryListPane) form.m_viewer;
         Core.getEditor().commitAndLeave(); // Otherwise, the current segment being edited is lost
         Core.getEditor()
@@ -757,7 +736,7 @@ public class SearchWindowController {
         replaceString = StringUtil.normalizeUnicode(replaceString);
         HistoryManager.addReplaceItem(replaceString);
         form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
-        
+
         EntryListPane viewer = (EntryListPane) form.m_viewer;
         Core.getEditor().commitAndDeactivate(); // Otherwise, the current segment being edited is lost
         int count = viewer.getEntryList().size();
@@ -783,7 +762,7 @@ public class SearchWindowController {
 
         String queryString = form.m_searchField.getEditor().getItem().toString();
         queryString = StringUtil.normalizeUnicode(queryString);
-        
+
         HistoryManager.addSearchItem(queryString);
         form.m_searchField.setModel(new DefaultComboBoxModel<>(HistoryManager.getSearchItems()));
         form.m_searchField.requestFocus();
@@ -913,7 +892,7 @@ public class SearchWindowController {
     /**
      * Make Search window visible on screen, with optional initial query (may be
      * null).
-     * 
+     *
      * @param query
      *            Initial query string (may be empty or null)
      */
@@ -1032,7 +1011,7 @@ public class SearchWindowController {
 
         form.m_excludeOrphans.setSelected(Preferences.isPreference(Preferences.SEARCHWINDOW_EXCLUDE_ORPHANS));
         form.m_fullHalfWidthInsensitive.setSelected(Preferences.isPreference(Preferences.SEARCHWINDOW_FULLHALFWIDTH_INSENSITIVE));
-        
+
         // if advanced options are enabled (e.g. author/date search),
         // let the user see them anyway. This is important because
         // search results will be affected by these settings
@@ -1052,7 +1031,7 @@ public class SearchWindowController {
 
     /**
      * Set enabled/disabled component and all his children.
-     * 
+     *
      * @param component
      * @param enabled
      */
@@ -1106,7 +1085,7 @@ public class SearchWindowController {
 
     /**
      * Display message dialog with the error as message
-     * 
+     *
      * @param ex
      *            exception to show
      * @param errorKey
