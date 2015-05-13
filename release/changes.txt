@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------
  OmegaT 3.4 update 1
 ----------------------------------------------------------------------
-   3 Enhancements
+   5 Enhancements
    1 Bug fix
-   1 Localisation update
+   2 Localisation updates
 ----------------------------------------------------------------------
 3.4 update 1 vs 3.4
 
@@ -12,10 +12,20 @@
   - Progress bar L10N improvement 
   https://sourceforge.net/p/omegat/feature-requests/1055/
 
+  - Glossary input from Search window 
+  https://sourceforge.net/p/omegat/feature-requests/747/
+
+  - Highlighting search word in target segment 
+  https://sourceforge.net/p/omegat/feature-requests/890/
+
+  Other changes:
+
   - There's an explanation message at the bottom of the Editor when
 Ctrl+Shift+O is pressed
 
   - New script to clear SVN authentication data
+
+  - New OmegaT icon on the Mac
 
   Bug fixes:
 
@@ -24,6 +34,7 @@ Ctrl+Shift+O is pressed
   Localisation updates:
 
   - Dutch localisation updated to 3.4 (Documentation, readme)
+  - Russian localisation updated to 3.4 update 1 (UI, readme, scripts)
 
 ----------------------------------------------------------------------
  OmegaT 3.4 (2015-04-20)
