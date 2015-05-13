@@ -118,7 +118,7 @@ public class MainWindowMenuHandler {
      * @author Maxym Mykhalchuk
      */
     public void projectImportMenuItemActionPerformed() {
-        mainWindow.doImportSourceFiles();
+        mainWindow.doPromptImportSourceFiles();
     }
 
     public void projectWikiImportMenuItemActionPerformed() {
