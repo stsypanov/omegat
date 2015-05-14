@@ -113,7 +113,7 @@ public class AutoCompleter {
                 new MatteBorder(1, 0, 0, 0, UIManager.getColor("OmegaTBorder.color")),
                 new EmptyBorder(5, 5, 5, 5)));
         viewLabel.setOpaque(true);
-        popup.setBorder(new MatteBorder(1, 1, 1, 1, UIManager.getColor("OmegaTBorder.color")));
+        popup.setBorder(new MatteBorder(1, 1, 1, 1, Color.BLACK));
         popup.setLayout(new BorderLayout());
         popup.add(scroll, BorderLayout.CENTER); 
         popup.add(viewLabel, BorderLayout.SOUTH);
