@@ -206,23 +206,6 @@ public class MainWindowMenuHandler {
         }
     }
 
-    /**
-     * Open the folder with translated files
-     */
-    public void openTargetFolderMenuItemActionPerformed(){
-        String targetFolder = Core.getProject().getProjectProperties().getTargetRoot();
-        File target = new File(targetFolder);
-        if (target.exists()) {
-            try {
-                Desktop.getDesktop().open(target);
-            } catch (IOException e) {
-                Log.log(Level.SEVERE, "failed to open target folder", e);
-            }
-        } else {
-            Log.log("failed to open target folder: the folder does not exists");
-        }
-    }
-
     /** Edits project's properties */
     public void projectEditMenuItemActionPerformed() {
         ProjectUICommands.projectEditProperties();
