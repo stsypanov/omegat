@@ -144,7 +144,6 @@ public class MainWindow extends PeroFrame implements IMainWindow {
         MainWindowUI.createMainComponents(this, m_font);
 
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
-        pack();
         getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
@@ -187,6 +186,8 @@ public class MainWindow extends PeroFrame implements IMainWindow {
                 }
             }
         });
+
+        pack();
     }
 
     @Override
