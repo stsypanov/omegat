@@ -186,7 +186,7 @@ public class MainWindowUI {
         mainWindow.progressLabel = new JLabel();
         mainWindow.lengthLabel = new JLabel();
 
-        mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(11f));
+        mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(Font.PLAIN));
 
         Border border = UIManager.getBorder("OmegaTStatusArea.border");
         
