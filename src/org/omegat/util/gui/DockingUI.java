@@ -128,7 +128,7 @@ public class DockingUI {
 
     @SuppressWarnings("unused")
     private static void installClassicDesign() {
-        UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, Color.BLACK));
+        UIManager.put("OmegaTStatusArea.border", new MatteBorder(0, 0, 0, 0, Color.BLACK));
         
         UIManager.put("DockViewTitleBar.hide", getIcon("minimize.gif"));
         UIManager.put("DockViewTitleBar.hide.rollover", getIcon("minimize.rollover.gif"));
@@ -250,9 +250,9 @@ public class DockingUI {
         UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
         UIManager.put("AutoHideButton.background", standardBgColor);
         // OmegaT-defined status box in lower right
-        UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, statusAreaColor));
+        UIManager.put("OmegaTStatusArea.border", new MatteBorder(0, 0, 0, 0, statusAreaColor));
         // Lowermost section margins
-        UIManager.put("OmegaTMainWindowBottomMargin.border", new EmptyBorder(0, 2 * outside, outside, 2 * outside));
+        UIManager.put("OmegaTMainWindowBottomMargin.border", new EmptyBorder(0, 2 * outside, 0, 2 * outside));
         
         UIManager.put("OmegaTEditorFilter.border", new MatteBorder(1, 1, 0, 1, borderColor));
         
