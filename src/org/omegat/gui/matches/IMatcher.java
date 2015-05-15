@@ -50,7 +50,15 @@ public interface IMatcher {
      *            Must be called from UI thread only.
      */
     void setActiveMatch(int index);
-    
+
+    /**
+     * Attempt to convert &numbers when inserting a fuzzy match
+     *
+     * @param source text to be translated taken from the current entry
+     * @param sourceMatch text of fuzzy matching entry
+     * @param targetMatch translated text taken from of fuzzy matching entry
+     * @return
+     */
     String substituteNumbers(String source, String sourceMatch, String targetMatch);
 
     /**
