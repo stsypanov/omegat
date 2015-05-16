@@ -46,6 +46,8 @@ import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.StringUtil;
+import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -101,7 +103,7 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
     public void forceLoad() {
         startSearchThread(currentlyProcessedEntry, true);
     }
-    
+
     @Override
     protected void startSearchThread(SourceTextEntry newEntry) {
         startSearchThread(newEntry, false);
@@ -122,14 +124,14 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
     protected void setFoundResult(final SourceTextEntry se, final MachineTranslationInfo data) {
         UIThreadsUtil.mustBeSwingThread();
 
-        if (data != null && data.result != null) {
+        if (data != null && StringUtil.notEmpty(data.result)) {
             if (displayed == null) {
                 displayed = data.result;
             }
             setText(getText() + data.result + "\n<" + data.translatorName + ">\n\n");
         }
     }
-    
+
     @Override
     public void clear() {
         super.clear();
@@ -165,7 +167,7 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
             String result = getTranslation(source, target);
             return result == null ? null : new MachineTranslationInfo(translator.getName(), result);
         }
-        
+
         private String getTranslation(Language source, Language target) throws Exception {
             if (!force) {
                 if (!Preferences.isPreferenceDefault(Preferences.MT_AUTO_FETCH, true)) {
