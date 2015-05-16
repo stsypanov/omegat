@@ -161,9 +161,33 @@ public class DragTargetOverlay {
             this.info = info;
         }
         
+        private void verifyDrag(DropTargetDragEvent dtde) {
+            if (dtde.isDataFlavorSupported(info.getDataFlavor())
+                    && (dtde.getSourceActions() & info.getDnDAction()) != 0) {
+                dtde.acceptDrag(info.getDnDAction());
+            } else {
+                dtde.rejectDrag();
+            }
+        }
+        
+        @Override
+        public void dragEnter(DropTargetDragEvent dtde) {
+            verifyDrag(dtde);
+        }
+        
+        @Override
+        public void dragOver(DropTargetDragEvent dtde) {
+            verifyDrag(dtde);
+        }
+        
+        @Override
+        public void dropActionChanged(DropTargetDragEvent dtde) {
+            verifyDrag(dtde);
+        }
+        
         @Override
         public void drop(DropTargetDropEvent dtde) {
-            dtde.acceptDrop(DnDConstants.ACTION_COPY);
+            dtde.acceptDrop(info.getDnDAction());
             Transferable transferable = dtde.getTransferable();
             boolean success = false;
             try {
@@ -191,6 +215,7 @@ public class DragTargetOverlay {
     
     public interface IDropInfo {
         public DataFlavor getDataFlavor();
+        public int getDnDAction();
         public boolean canAcceptDrop();
         public Component getComponentToOverlay();
         public String getOverlayMessage();
@@ -211,6 +236,11 @@ public class DragTargetOverlay {
             return DataFlavor.javaFileListFlavor;
         }
         
+        @Override
+        public int getDnDAction() {
+            return DnDConstants.ACTION_COPY;
+        }
+        
         private List<File> filterFiles(List<File> files) {
             List<File> filtered = new ArrayList<File>(files.size());
             for (File file : files) {
@@ -223,15 +253,21 @@ public class DragTargetOverlay {
         
         @Override
         public boolean handleDroppedObject(Object dropped) {
-            return handleFiles((List<File>) dropped);
+            return handleFiles(filterFiles((List<File>) dropped));
         };
 
-        protected boolean handleFiles(List<File> files) {
-            files = filterFiles(files);
+        protected boolean handleFiles(final List<File> files) {
             if (files.isEmpty()) {
                 return false;
             }
-            mw.importFiles(getImportDestination(), files.toArray(new File[0]), doReset);
+            // The import might take a long time if there are collision dialogs.
+            // Invoke later so we can return successfully right away.
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    mw.importFiles(getImportDestination(), files.toArray(new File[0]), doReset);
+                }
+            });
             return true;
         }
         

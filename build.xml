@@ -115,7 +115,8 @@
                     scripts/properties/spellcheck.properties
                     scripts/properties/svn_cleanup_selected.properties
                     scripts/properties/search_replace.properties
-                    script/properties/replace_strip_tags.properties" />
+                    script/properties/replace_strip_tags.properties
+                    release/mac-specific/OmegaT.app/Contents/Resources/en.lproj/Localizable.strings" />
         </copy>
         <copy file="release/readme.txt"
               tofile="${l10n.min.dir}/source/readme.utf8"
@@ -298,7 +299,7 @@ Custom strings from release\win32-specific must be added manually to the languag
 
         <zip destfile="dist2/OmegaT_${distversion}${beta}_Mac.zip">
             <zipfileset dir="dist" excludes="OmegaT OmegaT-JRE linux-install.sh omegat.kaptn OmegaT.exe OmegaT.bat OmegaT.iss OmegaT-JRE.iss OmegaT.l4J.ini l10n-project" prefix="OmegaT.app/Contents/Java"/>
-            <zipfileset dir="release/mac-specific/" excludes="OmegaT.app/Contents/Info.plist,OmegaT.app/Contents/MacOS/JavaAppLauncher,Configuration.properties"/>
+            <zipfileset dir="release/mac-specific/" excludes="OmegaT.app/Contents/Info.plist,OmegaT.app/Contents/MacOS/JavaAppLauncher,Configuration.properties,Mac-Licenses.txt"/>
             <zipfileset dir="build/" includes="Info.plist" prefix="OmegaT.app/Contents/"/>
             <zipfileset dir="release/mac-specific/" includes="OmegaT.app/Contents/MacOS/JavaAppLauncher" filemode="755"/>
             <zipfileset dir="../jre-mac-root/" excludes="bin/" prefix="OmegaT.app/Contents/Plugins/jre/"/>
@@ -331,8 +332,10 @@ Custom strings from release\win32-specific must be added manually to the languag
         		icon="images/OmegaT.icns"/>
             <plistentry key="JVMRuntime" value="jre"/>
         </bundleapp>
-        <copy file="release/mac-specific/Configuration.properties"
-              todir="release/mac-specific/OmegaT.app/Contents/Resources" />
+        <copy todir="release/mac-specific/OmegaT.app/Contents/Resources">
+            <fileset dir="release/mac-specific"
+                     includes="Configuration.properties,Mac-Licenses.txt" />
+        </copy>
     </target>
     
     <target name="check-win" depends="init">

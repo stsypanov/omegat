@@ -90,7 +90,6 @@ public class SegmentationCustomizer extends PeroDialog implements ListSelectionL
         });
 
         initComponents();
-        hintTextArea.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
 
         getRootPane().setDefaultButton(okButton);
 
@@ -411,6 +410,7 @@ public class SegmentationCustomizer extends PeroDialog implements ListSelectionL
         hintTextArea.setLineWrap(true);
         hintTextArea.setText(OStrings.getString("GUI_SEGMENTATION_NOTE")); // NOI18N
         hintTextArea.setWrapStyleWord(true);
+        hintTextArea.setOpaque(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
