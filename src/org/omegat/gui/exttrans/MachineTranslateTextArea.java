@@ -42,6 +42,7 @@ import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -108,7 +109,7 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
     protected void setFoundResult(final SourceTextEntry se, final MachineTranslationInfo data) {
         UIThreadsUtil.mustBeSwingThread();
 
-        if (data != null && data.result != null) {
+        if (data != null && StringUtil.notEmpty(data.result)) {
             if (displayed == null) {
                 displayed = data.result;
             }
