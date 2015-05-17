@@ -26,15 +26,22 @@
 
 package org.omegat.gui.editor.filter;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import org.omegat.util.OStrings;
+import org.openide.awt.Mnemonics;
+
+import java.awt.Dimension;
 
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
-public class FilterBarSearch extends javax.swing.JPanel {
+public class FilterBarSearch extends JPanel {
 
     /**
      * Creates new form FilterBarSearch
@@ -56,20 +63,24 @@ public class FilterBarSearch extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
-        btnRemoveFilter = new javax.swing.JButton();
-        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+        filler1 = new Box.Filler(new Dimension(0, 0), new Dimension(0, 0), new Dimension(32767, 0));
+        removeFilterButton = new JButton();
+        filler2 = new Box.Filler(new Dimension(0, 0), new Dimension(0, 0), new Dimension(32767, 0));
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         add(filler1);
 
-        org.openide.awt.Mnemonics.setLocalizedText(btnRemoveFilter, OStrings.getString("BUTTON_FILTER_REMOVE_FILTER")); // NOI18N
-        add(btnRemoveFilter);
+        Mnemonics.setLocalizedText(removeFilterButton, OStrings.getString("BUTTON_FILTER_REMOVE_FILTER")); // NOI18N
+        add(removeFilterButton);
         add(filler2);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    javax.swing.JButton btnRemoveFilter;
-    javax.swing.Box.Filler filler1;
-    javax.swing.Box.Filler filler2;
+    private JButton removeFilterButton;
+    private Box.Filler filler1;
+    private Box.Filler filler2;
     // End of variables declaration//GEN-END:variables
+
+    public JButton getRemoveFilterButton() {
+        return removeFilterButton;
+    }
 }
