@@ -52,6 +52,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -65,16 +66,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JComponent;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.Timer;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -108,6 +100,8 @@ import org.omegat.gui.main.DockablePanel;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.gui.main.MainWindowUI;
 import org.omegat.gui.main.ProjectUICommands;
+import org.omegat.gui.search.QuickSearchController;
+import org.omegat.gui.search.QuickSearchPanel;
 import org.omegat.gui.tagvalidation.ITagValidation;
 import org.omegat.help.Help;
 import org.omegat.util.Language;
@@ -151,6 +145,7 @@ public class EditorController implements IEditor {
 
     /** Local logger. */
     private static final Logger LOGGER = Logger.getLogger(EditorController.class.getName());
+    private QuickSearchController quickSearchController;
 
     private static final double PAGE_LOAD_THRESHOLD = 0.25;
 
@@ -250,6 +245,7 @@ public class EditorController implements IEditor {
                 case CLOSE:
                     m_docSegList = null;
                     history.clear();
+                    quickSearchController.hide();
                     removeFilter();
                     markerController.removeAll();
                     showType = SHOW_TYPE.INTRO;
@@ -302,6 +298,7 @@ public class EditorController implements IEditor {
                 LOGGER.log(Level.SEVERE, "Uncatched exception in thread [" + t.getName() + "]", e);
             }
         });
+        initActionMap();
 
         EditorPopups.init(this);
 
@@ -348,10 +345,25 @@ public class EditorController implements IEditor {
         });
     }
 
+    private void initActionMap() {
+        InputMap im = editor.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap am = editor.getActionMap();
+        String key = "editFindInCurrentFileMenuItem";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, true);
+        im.put(keyStroke, key);
+        am.put(key, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                quickSearchController.show();
+            }
+        });
+    }
+
     private void createUI() {
         pane = new DockablePanel("EDITOR", " ", false);
         pane.setComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
         pane.setMinimumSize(new Dimension(100, 100));
+        pane.setBorder(UIManager.getBorder("OmegaTDockablePanel.border"));
         pane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -374,6 +386,10 @@ public class EditorController implements IEditor {
 
         pane.setLayout(new BorderLayout());
         pane.add(scrollPane, BorderLayout.CENTER);
+
+        QuickSearchPanel searchPanel = new QuickSearchPanel();
+        quickSearchController = new QuickSearchController(searchPanel, this);
+        pane.add(searchPanel, BorderLayout.NORTH);
 
         Core.getMainWindow().addDockable(pane);
 
