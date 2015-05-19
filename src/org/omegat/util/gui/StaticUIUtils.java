@@ -132,7 +132,13 @@ public class StaticUIUtils {
         pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ESC_KEYSTROKE, "ESCAPE");
         pane.getActionMap().put("ESCAPE", action);
     }
-    
+
+    public static void setEscapeAction(JComponent pane, Action action) {
+        // Handle escape key to close the window
+        pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ESC_KEYSTROKE, "ESCAPE");
+        pane.getActionMap().put("ESCAPE", action);
+    }
+
     /**
      * Truncate the supplied text so that it fits within the width (minus margin) 
      * of the supplied component. Truncation is achieved by replacing a chunk from
@@ -235,7 +241,7 @@ public class StaticUIUtils {
      * <a href="https://bugs.openjdk.java.net/browse/JDK-8065739">JDK-8065739
      * </a>, a Java bug specific to Java 1.8 on OS X whereby a frame too close
      * to the width of the screen will warp to one corner with tiny dimensions.
-     * 
+     *
      * @param width
      *            Proposed window width
      * @return A safe window width
@@ -252,7 +258,7 @@ public class StaticUIUtils {
 
     /**
      * Toggle the enabled property of an entire hierarchy of components.
-     * 
+     *
      * @param parent
      *            The parent component, which will also be toggled
      * @param isEnabled
