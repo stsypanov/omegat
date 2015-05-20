@@ -445,7 +445,15 @@ public class ProjectProperties {
         }
         return returnValue;
     }
-    
+
+    public String getBaseFilteringItems() {
+        return baseFilteringItems;
+    }
+
+    public void setBaseFilteringItems(String baseFilteringItems) {
+        this.baseFilteringItems = baseFilteringItems;
+    }
+
     /**
      * Verify project and print any problems.
      */
@@ -513,6 +521,7 @@ public class ProjectProperties {
     private String projectName;
     private final List<String> sourceRootExcludes = new ArrayList<String>();
     private List<RepositoryDefinition> repositories;
+    private String baseFilteringItems;
 
     private Language sourceLanguage;
     private Language targetLanguage;
@@ -557,7 +566,7 @@ public class ProjectProperties {
         /**
          * path is directory(or file) as declared in the omegat.project, but not __DEFAULT__. I.e. caller can
          * send something like "/some/project/source", or "source", or "source/".
-         * 
+         *
          * Absolute paths from Windows will be treated as relative on Linux/MacOS, and vice versa.
          */
         public void setRelativeOrAbsolute(String path) {
