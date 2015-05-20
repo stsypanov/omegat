@@ -1,7 +1,11 @@
-package org.omegat.filters;
+package org.omegat.filters.base;
 
+import gen.core.project.ProjectFileStorageTest;
+import org.junit.Before;
 import org.junit.Test;
+import org.omegat.core.Core;
 import org.omegat.core.data.EntryKey;
+import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.editor.filter.BaseFilter;
 
@@ -12,8 +16,9 @@ import static org.junit.Assert.assertFalse;
  * <p/>
  * Created by stsypanov on 05.05.2015.
  */
-public class BaseFilterTest {
-	public static final BaseFilter filter = new BaseFilter();
+public class BaseFilterTest extends ProjectFileStorageTest {
+	protected ProjectProperties projectProperties;
+	protected  BaseFilter filter;
 
 	public static final String[] dates = {
 			"19.02.1990",
@@ -34,6 +39,12 @@ public class BaseFilterTest {
 			"sieger_116@mail.ru",
 			"sergei.tsypanov@yandex.ru"
 	};
+
+	@Before
+	public void setUp() throws Exception {
+		projectProperties = getProjectProperties();
+		filter = new BaseFilter(projectProperties);
+	}
 
 	@Test
 	public void testDates() throws Exception {

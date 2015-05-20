@@ -411,8 +411,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsSaveOptionsMenuItem = createMenuItem("MW_OPTIONSMENU_SAVE"));
         optionsMenu.add(optionsViewOptionsMenuLoginItem = createMenuItem("MW_OPTIONSMENU_LOGIN"));
         optionsMenu.add(optionsRestoreGUIMenuItem = createMenuItem("MW_OPTIONSMENU_RESTORE_GUI"));
-
         optionsMenu.add(new JSeparator());
+        optionsMenu.add(baseFilteringMenuItem = createMenuItem("MW_OPTIONSMENU_BASE_FILTERING"));
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
@@ -702,6 +702,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsColorsSelectionMenuItem;
     JMenu optionsMenu;
     JMenuItem optionsRestoreGUIMenuItem;
+    private JMenuItem baseFilteringMenuItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;
     JMenuItem optionsSpellCheckMenuItem;

@@ -542,7 +542,7 @@ public class EditorController implements IEditor {
         }
 
         Document3 doc = new Document3(this);
-        entriesFilter = new BaseFilter();
+        entriesFilter = new BaseFilter(Core.getProject());
 
         ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<>(file.entries.size());
         for (int i = 0; i < file.entries.size(); i++) {

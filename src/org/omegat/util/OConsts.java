@@ -100,6 +100,10 @@ public class OConsts {
     public static final String DEFAULT_INTERNAL = "omegat";
     /** Project subfolder for translation memories with other languages as alternative sources. */
     public static final String DEFAULT_OTHERLANG = "tmx2source";
+    /**
+     * File for base filtering items. See BaseFilter.java
+     */
+    public static final String FILTERING_ITEMS_FILE_NAME = "baseFilteringItems.xml";
 
     /**
      * Glossary files extensions

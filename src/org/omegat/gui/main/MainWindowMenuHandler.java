@@ -49,6 +49,7 @@ import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.dialogs.*;
+import org.omegat.gui.dialogs.filter.BaseFilteringDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
@@ -855,6 +856,10 @@ public class MainWindowMenuHandler {
      */
     public void optionsRestoreGUIMenuItemActionPerformed() {
         MainWindowUI.resetDesktopLayout(mainWindow);
+    }
+
+    public void baseFilteringMenuItemActionPerformed(){
+        new BaseFilteringDialog(mainWindow);
     }
 
     /**

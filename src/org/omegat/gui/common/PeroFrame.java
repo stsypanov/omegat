@@ -1,6 +1,7 @@
 package org.omegat.gui.common;
 
 import org.omegat.util.gui.GuiUtils;
+import org.omegat.util.gui.StaticUIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +37,7 @@ public abstract class PeroFrame extends JFrame {
 
 	public void init(){
 		GuiUtils.setOmegatIcons(this);
+		StaticUIUtils.setEscapeClosable(this);
 		loadLayoutPreferences();
 	}
 
