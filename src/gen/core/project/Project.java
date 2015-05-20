@@ -13,9 +13,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -77,6 +77,8 @@ public class Project {
     protected String glossaryFile;
     @XmlElement(name = "dictionary_dir", required = true)
     protected String dictionaryDir;
+    @XmlElement(name = "base_filtering_items")
+    protected String baseFilteringItems;
     @XmlElement(name = "source_lang", required = true)
     protected String sourceLang;
     @XmlElement(name = "target_lang", required = true)
@@ -99,11 +101,11 @@ public class Project {
 
     /**
      * Gets the value of the sourceDir property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSourceDir() {
         return sourceDir;
@@ -111,11 +113,11 @@ public class Project {
 
     /**
      * Sets the value of the sourceDir property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSourceDir(String value) {
         this.sourceDir = value;
@@ -123,11 +125,11 @@ public class Project {
 
     /**
      * Gets the value of the sourceDirExcludes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Masks }
-     *     
+     *
      */
     public Masks getSourceDirExcludes() {
         return sourceDirExcludes;
@@ -135,11 +137,11 @@ public class Project {
 
     /**
      * Sets the value of the sourceDirExcludes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Masks }
-     *     
+     *
      */
     public void setSourceDirExcludes(Masks value) {
         this.sourceDirExcludes = value;
@@ -147,11 +149,11 @@ public class Project {
 
     /**
      * Gets the value of the targetDir property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetDir() {
         return targetDir;
@@ -159,11 +161,11 @@ public class Project {
 
     /**
      * Sets the value of the targetDir property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetDir(String value) {
         this.targetDir = value;
@@ -171,11 +173,11 @@ public class Project {
 
     /**
      * Gets the value of the tmDir property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTmDir() {
         return tmDir;
@@ -183,11 +185,11 @@ public class Project {
 
     /**
      * Sets the value of the tmDir property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTmDir(String value) {
         this.tmDir = value;
@@ -195,11 +197,11 @@ public class Project {
 
     /**
      * Gets the value of the glossaryDir property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGlossaryDir() {
         return glossaryDir;
@@ -207,11 +209,11 @@ public class Project {
 
     /**
      * Sets the value of the glossaryDir property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGlossaryDir(String value) {
         this.glossaryDir = value;
@@ -219,11 +221,11 @@ public class Project {
 
     /**
      * Gets the value of the glossaryFile property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGlossaryFile() {
         return glossaryFile;
@@ -231,11 +233,11 @@ public class Project {
 
     /**
      * Sets the value of the glossaryFile property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGlossaryFile(String value) {
         this.glossaryFile = value;
@@ -243,11 +245,11 @@ public class Project {
 
     /**
      * Gets the value of the dictionaryDir property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDictionaryDir() {
         return dictionaryDir;
@@ -255,23 +257,47 @@ public class Project {
 
     /**
      * Sets the value of the dictionaryDir property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDictionaryDir(String value) {
         this.dictionaryDir = value;
     }
 
     /**
-     * Gets the value of the sourceLang property.
-     * 
+     * Gets the value of the dictionaryDir property.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
+     */
+    public String getBaseFilteringItems() {
+        return baseFilteringItems;
+    }
+
+    /**
+     * Sets the value of the dictionaryDir property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setBaseFilteringItems(String baseFilteringItems) {
+        this.baseFilteringItems = baseFilteringItems;
+    }
+
+    /**
+     * Gets the value of the sourceLang property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getSourceLang() {
         return sourceLang;
@@ -279,11 +305,11 @@ public class Project {
 
     /**
      * Sets the value of the sourceLang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSourceLang(String value) {
         this.sourceLang = value;
@@ -291,11 +317,11 @@ public class Project {
 
     /**
      * Gets the value of the targetLang property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetLang() {
         return targetLang;
@@ -303,11 +329,11 @@ public class Project {
 
     /**
      * Sets the value of the targetLang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetLang(String value) {
         this.targetLang = value;
@@ -315,11 +341,11 @@ public class Project {
 
     /**
      * Gets the value of the sourceTok property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSourceTok() {
         return sourceTok;
@@ -327,11 +353,11 @@ public class Project {
 
     /**
      * Sets the value of the sourceTok property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSourceTok(String value) {
         this.sourceTok = value;
@@ -339,11 +365,11 @@ public class Project {
 
     /**
      * Gets the value of the targetTok property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetTok() {
         return targetTok;
@@ -351,11 +377,11 @@ public class Project {
 
     /**
      * Sets the value of the targetTok property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetTok(String value) {
         this.targetTok = value;
@@ -363,11 +389,11 @@ public class Project {
 
     /**
      * Gets the value of the sentenceSeg property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isSentenceSeg() {
         return sentenceSeg;
@@ -375,11 +401,11 @@ public class Project {
 
     /**
      * Sets the value of the sentenceSeg property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setSentenceSeg(Boolean value) {
         this.sentenceSeg = value;
@@ -387,11 +413,11 @@ public class Project {
 
     /**
      * Gets the value of the supportDefaultTranslations property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isSupportDefaultTranslations() {
         return supportDefaultTranslations;
@@ -399,11 +425,11 @@ public class Project {
 
     /**
      * Sets the value of the supportDefaultTranslations property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setSupportDefaultTranslations(Boolean value) {
         this.supportDefaultTranslations = value;
@@ -411,11 +437,11 @@ public class Project {
 
     /**
      * Gets the value of the removeTags property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isRemoveTags() {
         return removeTags;
@@ -423,11 +449,11 @@ public class Project {
 
     /**
      * Sets the value of the removeTags property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setRemoveTags(Boolean value) {
         this.removeTags = value;
@@ -435,11 +461,11 @@ public class Project {
 
     /**
      * Gets the value of the externalCommand property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getExternalCommand() {
         return externalCommand;
@@ -447,11 +473,11 @@ public class Project {
 
     /**
      * Sets the value of the externalCommand property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setExternalCommand(String value) {
         this.externalCommand = value;
@@ -483,11 +509,11 @@ public class Project {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -495,11 +521,11 @@ public class Project {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;

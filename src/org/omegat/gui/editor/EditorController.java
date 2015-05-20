@@ -757,7 +757,7 @@ public class EditorController implements IEditor {
         }
 
         Document3 doc = new Document3(this);
-        entriesFilter = new BaseFilter();
+        entriesFilter = new BaseFilter(Core.getProject());
 
         // Clamp displayedSegment to actually available entries.
         displayedEntryIndex = Math.max(0, Math.min(file.entries.size() - 1, displayedEntryIndex));

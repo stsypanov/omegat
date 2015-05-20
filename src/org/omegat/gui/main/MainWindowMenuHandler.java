@@ -79,6 +79,8 @@ import org.omegat.gui.dialogs.TeamOptionsDialog;
 import org.omegat.gui.dialogs.UserPassDialog;
 import org.omegat.gui.dialogs.ViewOptionsDialog;
 import org.omegat.gui.dialogs.WorkflowOptionsDialog;
+import org.omegat.gui.dialogs.*;
+import org.omegat.gui.dialogs.filter.BaseFilteringDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
@@ -1092,6 +1094,10 @@ public class MainWindowMenuHandler {
 
     public void optionsRepositoriesCredentialsItemActionPerformed() {
         RepositoriesCredentialsController.show();
+    }
+
+    public void baseFilteringMenuItemActionPerformed(){
+        new BaseFilteringDialog(mainWindow);
     }
 
     /**

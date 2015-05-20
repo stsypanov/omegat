@@ -123,10 +123,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         invokeAction(action, evt.getModifiers());
     }
-    
+
     /**
      * Code for dispatching events from components to event handlers.
-     * 
+     *
      * @param action ActionCommand of triggering menu item
      * @param modifiers Modifier key flags (can be zero)
      */
@@ -235,7 +235,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectMenu.add(new JSeparator());
         projectMenu.add(projectEditMenuItem = createMenuItem("MW_PROJECTMENU_EDIT"));
         projectMenu.add(viewFileListMenuItem = createMenuItem("TF_MENU_FILE_PROJWIN"));
-        projectMenu.add(projectAccessProjectFilesMenu = createMenu("TF_MENU_FILE_ACCESS_PROJECT_FILES")); 
+        projectMenu.add(projectAccessProjectFilesMenu = createMenu("TF_MENU_FILE_ACCESS_PROJECT_FILES"));
         projectAccessProjectFilesMenu.add(projectAccessRootMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_ROOT"));
         projectAccessProjectFilesMenu.add(projectAccessDictionaryMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_DICTIONARY"));
         projectAccessProjectFilesMenu.add(projectAccessGlossaryMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_GLOSSARY"));
@@ -245,8 +245,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectAccessProjectFilesMenu.add(new JSeparator());
         projectAccessProjectFilesMenu.add(projectAccessCurrentSourceDocumentMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_CURRENT_SOURCE_DOCUMENT"));
         projectAccessProjectFilesMenu.add(projectAccessCurrentTargetDocumentMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_CURRENT_TARGET_DOCUMENT"));
-        projectAccessProjectFilesMenu.add(projectAccessWriteableGlossaryMenuItem = 
-                createMenuItem("TF_MENU_FILE_ACCESS_WRITEABLE_GLOSSARY"));       
+        projectAccessProjectFilesMenu.add(projectAccessWriteableGlossaryMenuItem =
+                createMenuItem("TF_MENU_FILE_ACCESS_WRITEABLE_GLOSSARY"));
         projectAccessProjectFilesMenu.addMenuListener(new MenuListener() {
             @Override
             public void menuSelected(MenuEvent e) {
@@ -375,7 +375,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         viewMarkLanguageCheckerCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_LANGUAGE_TOOLS.getColor()));
         viewMarkFontFallbackCheckBoxMenuItem.setIcon(MainMenuIcons.newTextIcon(UIManager.getColor("Label.foreground"),
                 new Font("Serif", Font.ITALIC, 16), 'F'));
-        
+
         toolsMenu.add(toolsValidateTagsMenuItem = createMenuItem("TF_MENU_TOOLS_VALIDATE"));
         toolsMenu.add(toolsSingleValidateTagsMenuItem = createMenuItem("TF_MENU_TOOLS_SINGLE_VALIDATE"));
         toolsMenu.add(toolsShowStatisticsStandardMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_STANDARD"));
@@ -387,11 +387,11 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsTabAdvanceCheckBoxMenuItem = createCheckboxMenuItem("TF_MENU_DISPLAY_ADVANCE"));
         optionsMenu.add(optionsAlwaysConfirmQuitCheckBoxMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_ALWAYS_CONFIRM_QUIT"));
         optionsMenu.add(optionsMachineTranslateMenu = createMenu("TF_OPTIONSMENU_MACHINETRANSLATE"));
-        
+
         optionsMachineTranslateMenu.add(optionsMTAutoFetchCheckboxMenuItem = createCheckboxMenuItem("MT_AUTO_FETCH"));
         optionsMachineTranslateMenu.add(optionsMTOnlyUntranslatedCheckboxMenuItem = createCheckboxMenuItem("MT_ONLY_UNTRANSLATED"));
         optionsMachineTranslateMenu.addSeparator();
-        
+
         optionsMenu.add(optionsGlossaryMenu = createMenu("TF_OPTIONSMENU_GLOSSARY"));
 
         optionsGlossaryMenu.add(optionsGlossaryTBXDisplayContextCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_TBX_DISPLAY_CONTEXT"));
@@ -403,7 +403,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         optionsMenu.add(optionsDictionaryMenu= createMenu("TF_OPTIONSMENU_DICTIONARY"));
         optionsDictionaryMenu.add(optionsDictionaryFuzzyMatchingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_DICTIONARY_FUZZY"));
-        
+
         optionsMenu.add(optionsTransTipsMenu = createMenu("TF_OPTIONSMENU_TRANSTIPS"));
         optionsTransTipsMenu.add(optionsTransTipsEnableMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_ENABLE"));
         optionsTransTipsMenu.add(optionsTransTipsExactMatchMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_EXACTMATCH"));
@@ -431,6 +431,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsAccessConfigDirMenuItem = createMenuItem("MW_OPTIONSMENU_ACCESS_CONFIG_DIR"));
         optionsMenu.add(optionsRepositoriesCredentialsItem = createMenuItem("TEAM_REPOSITORIES_DIALOG"));
         optionsMenu.add(new JSeparator());
+        optionsMenu.add(baseFilteringMenuItem = createMenuItem("MW_OPTIONSMENU_BASE_FILTERING"));
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
@@ -667,7 +668,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         if (Core.getParams().containsKey(CLIParameters.NO_TEAM)) {
         	projectTeamNewMenuItem.setEnabled(false);
         }
-        
+
     }
 
     public JMenu getMachineTranslationMenu() {
@@ -758,6 +759,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsRestoreGUIMenuItem;
     JMenuItem optionsAccessConfigDirMenuItem;
     JMenuItem optionsRepositoriesCredentialsItem;
+    JMenuItem baseFilteringMenuItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;
     JMenuItem optionsSpellCheckMenuItem;
@@ -804,7 +806,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem projectSaveMenuItem;
     JMenuItem projectWikiImportMenuItem;
     JMenu projectAccessProjectFilesMenu;
-    JMenuItem projectAccessRootMenuItem;    
+    JMenuItem projectAccessRootMenuItem;
     JMenuItem projectAccessDictionaryMenuItem;
     JMenuItem projectAccessGlossaryMenuItem;
     JMenuItem projectAccessSourceMenuItem;
