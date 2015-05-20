@@ -78,6 +78,7 @@ public class ProjectProperties {
         setWriteableGlossary(projectRoot + OConsts.DEFAULT_GLOSSARY + File.separator + OConsts.DEFAULT_W_GLOSSARY);
         setTMRoot(projectRoot + OConsts.DEFAULT_TM + File.separator);
         setDictRoot(projectRoot + OConsts.DEFAULT_DICT + File.separator);
+        baseFilteringItems = projectRoot + OConsts.FILTERING_ITEMS_FILE_NAME;
 
         sentenceSegmentingOn = true;
         supportDefaultTranslations = true;
@@ -371,7 +372,15 @@ public class ProjectProperties {
         }
         return returnValue;
     }
-    
+
+    public String getBaseFilteringItems() {
+        return baseFilteringItems;
+    }
+
+    public void setBaseFilteringItems(String baseFilteringItems) {
+        this.baseFilteringItems = baseFilteringItems;
+    }
+
     /**
      * Verify project and print any problems.
      */
@@ -471,6 +480,7 @@ public class ProjectProperties {
     private String writeableGlossaryFile;
     private String tmRoot;
     private String dictRoot;
+    private String baseFilteringItems;
 
     private Language sourceLanguage;
     private Language targetLanguage;
