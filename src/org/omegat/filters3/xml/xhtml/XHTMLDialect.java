@@ -145,8 +145,8 @@ public class XHTMLDialect extends DefaultXMLDialect {
 
         // Prepare set of attributes that indicate that a tag should be intact
         String ignoreTagsString = options.getIgnoreTags();
-        ignoreTagsAttributes = new HashMap<>();
         String[] ignoreTagsAttributesStringarray = ignoreTagsString.split(",");
+        ignoreTagsAttributes = new HashMap<>(ignoreTagsAttributesStringarray.length);
         for (String anIgnoreTagsAttributesStringarray : ignoreTagsAttributesStringarray) {
             String keyvalue = anIgnoreTagsAttributesStringarray.trim().toUpperCase();
             ignoreTagsAttributes.put(keyvalue, "");

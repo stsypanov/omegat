@@ -35,10 +35,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.TextLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.swing.JLayeredPane;
@@ -237,9 +234,10 @@ public abstract class AlphabeticalMarkers extends JPanel {
     }
 
     private static List<Marker> createMarkers(Map<Integer, Point> map) {
-        List<Marker> list = new ArrayList<Marker>();
+        Set<Entry<Integer, Point>> entries = map.entrySet();
+        List<Marker> list = new ArrayList<>(entries.size());
         char title = FIRST_TITLE_LETTER;
-        for (Entry<Integer, Point> entry : map.entrySet()) {
+        for (Entry<Integer, Point> entry : entries) {
             Marker marker = new Marker();
             marker.segmentNumber = entry.getKey();
             marker.location = entry.getValue();

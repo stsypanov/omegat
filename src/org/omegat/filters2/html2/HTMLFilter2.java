@@ -165,8 +165,8 @@ public class HTMLFilter2 extends AbstractFilter {
 
         // Prepare set of attributes that indicate not to translate a tag
         String ignoreTagString = options.getIgnoreTags();
-        ignoreTagsAttributes = new HashMap<>();
         String[] ignoreTagsAttributesStringarray = ignoreTagString.split(",");
+        ignoreTagsAttributes = new HashMap<>(ignoreTagsAttributesStringarray.length);
         for (String anIgnoreTagsAttributesStringarray : ignoreTagsAttributesStringarray) {
             String keyvalue = anIgnoreTagsAttributesStringarray.trim().toUpperCase();
             ignoreTagsAttributes.put(keyvalue, "");
