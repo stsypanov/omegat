@@ -3,5 +3,4 @@ dist
 build
 dist2
 manifest.mf
-*.iml
 /nbproject/private/

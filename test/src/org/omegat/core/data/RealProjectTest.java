@@ -29,19 +29,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.omegat.core.Core;
 import org.omegat.tokenizer.DefaultTokenizer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 /**
- * Tests for RealProject classs.
+ * Tests for RealProject class.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class RealProjectTest extends TestCase {
+public class RealProjectTest {
     ProjectTMX tmx;
     RealProjectWithTMXAccess project;
     IProject.FileInfo fi;
