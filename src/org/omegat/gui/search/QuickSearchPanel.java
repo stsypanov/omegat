@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  */
 public class QuickSearchPanel extends JPanel {
 
-    private final JTextField textField;
+    private final JComboBox<String> textField;
     private final JButton closeButton;
     private final JCheckBox matchCaseCheckBox;
     private final JCheckBox regexCheckBox;
@@ -19,8 +19,9 @@ public class QuickSearchPanel extends JPanel {
     public QuickSearchPanel() {
         super();
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        textField = new JTextField(50);
+        textField = new JComboBox<>();
         textField.setBorder(new EmptyBorder(0, 0, 0, 0));
+        textField.setEditable(true);
         closeButton = new JButton("x");
 
         matchCaseCheckBox = new JCheckBox("Match case");
@@ -48,10 +49,10 @@ public class QuickSearchPanel extends JPanel {
     }
 
     public String getText() {
-        return textField.getText();
+        return textField.getEditor().getItem().toString();
     }
 
-    public JTextField getTextField() {
+    public JComboBox<String> getTextField() {
         return textField;
     }
 

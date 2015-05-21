@@ -8,34 +8,22 @@ import java.awt.*;
 public class WordSearcher {
     protected JTextComponent comp;
     protected Highlighter.HighlightPainter painter;
-    private Highlighter highlighter;
+    protected Highlighter highlighter;
 
     public WordSearcher(JTextComponent comp) {
         this.comp = comp;
         this.painter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
     }
 
-    // Search for a word and return the offset of the
-    // first occurrence. Highlights are added for all
-    // occurrences found.
     public int search(String word) {
         int firstOffset = -1;
         highlighter = comp.getHighlighter();
-//
-//        // Remove any existing highlights for last word
-//        Highlighter.Highlight[] highlights = highlighter.getHighlights();
-//        for (Highlighter.Highlight h : highlights) {
-//            if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-//                highlighter.removeHighlight(h);
-//            }
-//        }
         highlighter.removeAllHighlights();
 
         if (word == null || word.equals("")) {
             return -1;
         }
 
-        // Look for the word we are given - insensitive search
         String content;
         try {
             Document d = comp.getDocument();
@@ -65,7 +53,9 @@ public class WordSearcher {
         return firstOffset;
     }
 
-    public void removeAllHighlight(){
-        highlighter.removeAllHighlights();
+    public void removeAllHighlight() {
+        if (highlighter != null) {
+            highlighter.removeAllHighlights();
+        }
     }
 }
