@@ -121,6 +121,9 @@ import org.xml.sax.SAXParseException;
 public class RealProject implements IProject {
     private static final Logger LOGGER = Logger.getLogger(RealProject.class.getName());
 
+    //pattern for TMX file names in XX_XX.tmx format
+    private static final Pattern TMX_PATTERN = Pattern.compile("[A-Z]{2}([-_][A-Z]{2})?\\.tmx");
+
     protected final ProjectProperties m_config;
     
     private final IRemoteRepository repository;
@@ -456,6 +459,7 @@ public class RealProject implements IProject {
             try {
                 lockChannel.close();
             } catch (Throwable ex) {
+                Log.log(ex);
             }
             lockChannel = null;
             return false;
@@ -1300,7 +1304,7 @@ public class RealProject implements IProject {
         final File tmOtherLanguagesRoot = new File(m_config.getTMOtherLangRoot());
         tmOtherLanguagesMonitor = new DirectoryMonitor(tmOtherLanguagesRoot, new DirectoryMonitor.Callback() {
             public void fileChanged(File file) {
-                if (!file.getName().matches("[A-Z]{2}([-_][A-Z]{2})?\\.tmx")) {
+                if (!TMX_PATTERN.matcher(file.getName()).matches()) {
                     // not a TMX file in XX_XX.tmx format
                     return;
                 }
