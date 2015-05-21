@@ -44,6 +44,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
@@ -380,21 +381,31 @@ public class EditorController implements IEditor {
             return DataFlavor.javaFileListFlavor;
         }
         @Override
+        public int getDnDAction() {
+            return DnDConstants.ACTION_COPY;
+        }
+        @Override
         public boolean handleDroppedObject(Object dropped) {
-            List<File> files = (List<File>) dropped;
+            final List<File> files = (List<File>) dropped;
             if (Core.getProject().isProjectLoaded()) {
-                mw.importFiles(Core.getProject().getProjectProperties().getSourceRoot(),
-                        files.toArray(new File[0]));
+                // The import might take a long time if there are collision dialogs.
+                // Invoke later so we can return successfully right away.
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        mw.importFiles(Core.getProject().getProjectProperties().getSourceRoot(),
+                                files.toArray(new File[0]));
+                    }
+                });
                 return true;
             }
 
             File firstFile = files.get(0); // Ignore others
+            if (firstFile.getName().equals(OConsts.FILE_PROJECT)) {
+                firstFile = firstFile.getParentFile();
+            }
             if (StaticUtils.isProjectDir(firstFile)) {
                 ProjectUICommands.projectOpen(firstFile);
-                return true;
-            }
-            if (StaticUtils.isProjectDir(firstFile.getParentFile())) {
-                ProjectUICommands.projectOpen(firstFile.getParentFile());
                 return true;
             }
             return false;
@@ -1924,8 +1935,8 @@ public class EditorController implements IEditor {
                     .setComponentOrientation(EditorUtils.isRTL(language) ? ComponentOrientation.RIGHT_TO_LEFT
                             : ComponentOrientation.LEFT_TO_RIGHT);
             introPane.setEditable(false);
-            introPane.setPage(HelpFrame.getHelpFileURL(language, OConsts.HELP_INSTANT_START));
             DragTargetOverlay.apply(introPane, dropInfo);
+            introPane.setPage(HelpFrame.getHelpFileURL(language, OConsts.HELP_INSTANT_START));
         } catch (IOException e) {
             // editorScroller.setViewportView(editor);
         }
