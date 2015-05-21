@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
 
 /**
  * Created by Сергей on 17.05.2015.
@@ -51,7 +52,7 @@ public class QuickSearchController {
                     try {
                         controller.getEditor().scrollRectToVisible(controller.getEditor().modelToView(offset));
                     } catch (BadLocationException ex) {
-                        Log.severe("QuickSearchController.keyReleased()", ex);
+                        Log.log(Level.SEVERE, "QuickSearchController.keyReleased()", ex);
                     }
                 } else if (!text.isEmpty()) {
                     highlightTextFieldOnWrongInput(searchPanel);
