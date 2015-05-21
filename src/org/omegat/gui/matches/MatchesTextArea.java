@@ -265,7 +265,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         }
 
         // Substitute new numbers in the target match
-        String finalString = "";
+        StringBuilder finalString = new StringBuilder();
         int pos = -1;
         boolean replaced;
         for (Token oneToken : targetMatchStrTokensAll) {
@@ -273,16 +273,16 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             replaced = false;
             for (int numberRank = 0; numberRank < matchingNumbers.size(); numberRank++){
                 if (matchingNumbers.get(numberRank) == pos) {
-                    finalString += sourceNumbers.get(numberRank);
+                    finalString.append(sourceNumbers.get(numberRank));
                     replaced = true;
                 }
             }
             if (!replaced) {// No subtitution was done
-                finalString += oneToken.getTextFromString(targetMatch);
+                finalString.append(oneToken.getTextFromString(targetMatch));
             }
         }
 
-        return finalString;
+        return finalString.toString();
     }
 
     /**
@@ -293,6 +293,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
      */
     private List<String> getNumberList(Token[] strTokenAll, String text) {
         List<String> numberList = new ArrayList<>();
+        //todo detect numbers with regexp, not with exception
         for (Token oneToken : strTokenAll) {
             try {
                 Integer.parseInt(oneToken.getTextFromString(text));
