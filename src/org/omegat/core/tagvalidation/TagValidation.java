@@ -99,13 +99,12 @@ public class TagValidation {
             String printfVariable = printfMatcher.group(0);
             String argumentswapspecifier = printfMatcher.group(1);
             if (argumentswapspecifier != null && argumentswapspecifier.endsWith("$")) {
-                String normalized = "" + argumentswapspecifier.substring(0, argumentswapspecifier.length() - 1)
-                        + printfVariable.substring(printfVariable.length() - 1, printfVariable.length());
+                String normalized = argumentswapspecifier.substring(0, argumentswapspecifier.length() - 1) +
+                        printfVariable.substring(printfVariable.length() - 1, printfVariable.length());
                 nameMapping.put(normalized, printfVariable);
 
             } else {
-                String normalized = "" + index
-                        + printfVariable.substring(printfVariable.length() - 1, printfVariable.length());
+                String normalized = index + printfVariable.substring(printfVariable.length() - 1, printfVariable.length());
                 nameMapping.put(normalized, printfVariable);
                 index++;
             }
