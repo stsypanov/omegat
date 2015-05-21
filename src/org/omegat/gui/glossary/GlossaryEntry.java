@@ -83,7 +83,7 @@ public class GlossaryEntry {
             if (i > 0 && m_loc[i].equals(m_loc[i - 1])) continue;
             list.add(m_loc[i]);
         }
-        return list.toArray(new String[0]);
+        return list.toArray(new String[list.size()]);
     }
 
     /**
@@ -117,7 +117,7 @@ public class GlossaryEntry {
         result.text.append(m_src);
         result.text.append(" = ");
         
-        StringBuffer comments = new StringBuffer();
+        StringBuilder comments = new StringBuilder();
         
         int commentIndex = 0;
         for (int i = 0; i < m_loc.length; i++) {
