@@ -223,11 +223,14 @@ public class ProjectFilesListController {
                     break;
                 case LOAD:
                 case CREATE:
-                    buildDisplay(Core.getProject().getProjectFiles());
+                    List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+                    buildDisplay(projectFiles);
                     if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
                         break;
                     }
-                    list.setVisible(true);
+                    if (projectFiles.isEmpty() || projectFiles.size() > 1){
+                        list.setVisible(true);
+                    }
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -843,7 +846,7 @@ public class ProjectFilesListController {
         list.statLabel.setFont(font);
     }
 
-    class Sorter extends RowSorter<IProject.FileInfo> {
+    private class Sorter extends RowSorter<IProject.FileInfo> {
         private final List<IProject.FileInfo> files;
         private SortKey sortKey = new SortKey(0, SortOrder.UNSORTED);
         private Integer[] modelToView;
