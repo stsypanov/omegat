@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 3.4 update 1
 ----------------------------------------------------------------------
-   8 Enhancements
+  10 Enhancements
    2 Bug fixes
    3 Localisation updates
 ----------------------------------------------------------------------
@@ -21,9 +21,13 @@
   - Drag and drop to open project 
   https://sourceforge.net/p/omegat/feature-requests/113/
 
-  Other changes:
+  - Drag and drop to add files to project
+  https://sourceforge.net/p/omegat/feature-requests/1091/
 
-  - Drag and drop in respective panes to add source/glossary/tm files
+  - Add confirmation for the button Reset all colours
+  https://sourceforge.net/p/omegat/feature-requests/1085/
+
+  Other changes:
 
   - There's an explanation message at the bottom of the Editor when
 Ctrl+Shift+O is pressed
@@ -37,6 +41,9 @@ in the Search result window just like in the Editor
 
   - Alternatively to specifiy a project folder on the command line,
 it is now also possible to specify the path of an omegat.project file
+
+  - In the QA - Check rules script (check_rules.groovy), it is now
+possible to check linguistic (LangageTool) issues
 
   Bug fixes:
 
@@ -125,8 +132,8 @@ of "foo\.\scripts"
  OmegaT 3.1.9 update 2
 ----------------------------------------------------------------------
    1 Enhancement
-   2 Bug fixes
-   1 Localisation update
+   3 Bug fixes
+   2 Localisation updates
 ----------------------------------------------------------------------
 3.1.9 update 2 vs. 3.1.9 update 1
 
@@ -142,9 +149,13 @@ entered as "CSV"
   - Too many duplicate segments in the popup menu
   https://sourceforge.net/p/omegat/bugs/744/
 
+  - There was a compatibility issue with the Okapi plugin with the 
+XML/ITS and Doxygen filter
+
   Localisation updates:
 
  - Brazilian Portuguese localisation updated to 3.0.7 (UI, documentation, readme)
+ - Japanese localisation updated to 3.1.9 update 1 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 1 (2015-04-15)
