@@ -144,11 +144,6 @@ public class Preferences {
     public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
     public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
 
-	// Search history
-	public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
-	public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
-	public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
-
 	// Tag validation window size and position
 	public static final String TAGVWINDOW_WIDTH = "tagv_window_width";
 	public static final String TAGVWINDOW_HEIGHT = "tagv_window_height";
