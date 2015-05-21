@@ -141,13 +141,13 @@ public class ProjectFilesListController {
     private Sorter currentSorter;
 
     private TableFilterPanel filterPanel;
-    
+
     private Font defaultFont;
     
     public ProjectFilesListController(MainWindow parent) {
 
         list = new ProjectFilesList();
-        
+
         if (Platform.isMacOSX()) {
             OSXIntegration.enableFullScreen(list);
         }
@@ -249,11 +249,14 @@ public class ProjectFilesListController {
                     break;
                 case LOAD:
                 case CREATE:
-                    buildDisplay(Core.getProject().getProjectFiles());
+                    List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+                    buildDisplay(projectFiles);
                     if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
                         break;
                     }
-                    list.setVisible(true);
+                    if (projectFiles.isEmpty() || projectFiles.size() > 1){
+                        list.setVisible(true);
+                    }
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
