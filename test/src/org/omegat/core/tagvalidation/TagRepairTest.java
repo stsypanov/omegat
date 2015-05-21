@@ -25,13 +25,16 @@
 
 package org.omegat.core.tagvalidation;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertEquals;
 
 /**
  * @author Aaron Madlon-Kay
  */
-public class TagRepairTest extends TestCase {
+public class TagRepairTest {
 
+    @Test
     public void testRepairTags() {
         
         // Fix extraneous

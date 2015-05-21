@@ -29,19 +29,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.tagvalidation.ErrorReport.TagError;
 import org.omegat.util.Preferences;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Aaron Madlon-Kay
  */
-public class TagValidationTest extends TestCase {
+public class TagValidationTest {
     
+    @Test
     public void testOrderedTagValidation() {
         
         // No errors
@@ -101,6 +103,7 @@ public class TagValidationTest extends TestCase {
         assertTrue(report.srcErrors.isEmpty());
     }
     
+    @Test
     public void testUnorderedTagValidation() {
         // No errors
         String[] srcTags = {"a", "b", "c", "d"};
@@ -135,6 +138,7 @@ public class TagValidationTest extends TestCase {
         assertTrue(report.transErrors.get("e") == TagError.EXTRANEOUS);
     }
     
+    @Test
     public void testPrintfTagValidation() {
         
         // No error
@@ -158,7 +162,8 @@ public class TagValidationTest extends TestCase {
         assertTrue(report.transErrors.get("%s") == TagError.UNSPECIFIED);
         assertTrue(report.transErrors.get("%d") == TagError.UNSPECIFIED);
     }
-    
+
+    @Test
     public void testRemovePattern() {
         Preferences.setPreference(Preferences.CHECK_REMOVE_PATTERN, "foo");
         
@@ -175,6 +180,7 @@ public class TagValidationTest extends TestCase {
         assertTrue(report.transErrors.get("foo") == TagError.EXTRANEOUS);
     }
     
+    @Test
     public void testCustomTagPattern() {
         Preferences.setPreference(Preferences.CHECK_CUSTOM_PATTERN, "fo+");
         

@@ -25,14 +25,19 @@
 
 package org.omegat.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Tests for (some) static utility methods.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class StringUtilTest extends TestCase {
+public class StringUtilTest {
+
+    @Test
     public void testIsSubstringAfter() {
         assertFalse(StringUtil.isSubstringAfter("123456", 5, "67"));
         assertTrue(StringUtil.isSubstringAfter("123456", 5, "6"));
@@ -41,6 +46,7 @@ public class StringUtilTest extends TestCase {
         assertTrue(StringUtil.isSubstringAfter("123456", 1, "23"));
     }
 
+    @Test
     public void testIsSubstringBefore() {
         assertFalse(StringUtil.isSubstringBefore("123456", 1, "01"));
         assertTrue(StringUtil.isSubstringBefore("123456", 1, "1"));

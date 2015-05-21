@@ -27,8 +27,6 @@ package org.omegat.languagetools;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.Belarusian;
@@ -38,10 +36,14 @@ import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.UppercaseSentenceStartRule;
 import org.languagetool.rules.patterns.PatternRule;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class LanguageToolTest extends TestCase {
+public class LanguageToolTest {
+
     @Test
     public void testExecute() throws Exception {
         JLanguageTool lt = new JLanguageTool(new Belarusian());

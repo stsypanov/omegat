@@ -29,17 +29,20 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.omegat.core.data.TMXEntry.ExternalLinked;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Tests for merge in team project.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class MergeTest extends TestCase {
+public class MergeTest {
+
     @Test
     public void testTimeTruncate() throws Exception {
         // Time should be truncated(not rounded!) to 1 second

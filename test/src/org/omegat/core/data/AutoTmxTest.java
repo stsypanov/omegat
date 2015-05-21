@@ -28,18 +28,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.omegat.core.Core;
 import org.omegat.tokenizer.LuceneFrenchTokenizer;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Tests for tm/auto/ tmx loading with replace translations.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class AutoTmxTest extends TestCase {
+public class AutoTmxTest {
     RealProject p;
 
     @Test

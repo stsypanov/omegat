@@ -24,11 +24,14 @@
  **************************************************************************/
 package org.omegat.util.editor;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.omegat.gui.editor.EditorUtils;
 
-public class EditorUtilsTest extends TestCase {
+import static junit.framework.TestCase.assertEquals;
+
+public class EditorUtilsTest {
+
+    @Test
     public void testRemoveDirectionChars() {
         assertEquals("|", EditorUtils.removeDirectionChars("|"));
         assertEquals("", EditorUtils.removeDirectionChars("\u202A"));

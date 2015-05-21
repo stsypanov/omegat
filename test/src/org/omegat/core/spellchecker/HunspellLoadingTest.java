@@ -27,19 +27,23 @@ package org.omegat.core.spellchecker;
 
 import java.io.File;
 
+import org.junit.Test;
 import org.omegat.util.OConsts;
-
-import junit.framework.TestCase;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Test for hunspell loading for current platform.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class HunspellLoadingTest extends TestCase {
+public class HunspellLoadingTest {
+
+    @Test
     public void testWin32() throws Exception {
         String baseHunspellLib = SpellCheckerHunspell.getBaseHunspellLibraryName();
         String libraryPath = new File(OConsts.NATIVE_LIBRARY_DIR,
@@ -57,7 +61,5 @@ public class HunspellLoadingTest extends TestCase {
                 SpellCheckerHunspell.prepareString("tzzest", encoding)));
 
         hunspell.Hunspell_destroy(pHunspell);
-
-        pHunspell = null;
     }
 }
