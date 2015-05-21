@@ -34,6 +34,16 @@
 
 package org.omegat.gui.main;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.text.JTextComponent;
+
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;

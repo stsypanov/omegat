@@ -26,15 +26,11 @@
 
 package org.omegat.gui.editor.autocompleter;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -113,7 +109,7 @@ public class AutoCompleter {
                 new MatteBorder(1, 0, 0, 0, UIManager.getColor("OmegaTBorder.color")),
                 new EmptyBorder(5, 5, 5, 5)));
         viewLabel.setOpaque(true);
-        popup.setBorder(new MatteBorder(1, 1, 1, 1, UIManager.getColor("OmegaTBorder.color")));
+        popup.setBorder(new MatteBorder(1, 1, 1, 1, Color.BLACK));
         popup.setLayout(new BorderLayout());
         popup.add(scroll, BorderLayout.CENTER); 
         popup.add(viewLabel, BorderLayout.SOUTH);

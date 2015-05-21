@@ -44,8 +44,11 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,14 +60,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -95,6 +91,8 @@ import org.omegat.gui.main.DockablePanel;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.gui.main.MainWindowUI;
 import org.omegat.gui.main.ProjectUICommands;
+import org.omegat.gui.search.QuickSearchController;
+import org.omegat.gui.search.QuickSearchPanel;
 import org.omegat.gui.tagvalidation.ITagValidation;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
@@ -138,6 +136,7 @@ public class EditorController implements IEditor {
 
     /** Local logger. */
     private static final Logger LOGGER = Logger.getLogger(EditorController.class.getName());
+    private QuickSearchController quickSearchController;
 
     /** Some predefined translations that OmegaT can assign by popup. */
     enum ForceTranslation {
@@ -232,6 +231,7 @@ public class EditorController implements IEditor {
                     break;
                 case CLOSE:
                     history.clear();
+                    quickSearchController.hide();
                     removeFilter();
                     markerController.removeAll();
                     showType = SHOW_TYPE.INTRO;
@@ -284,14 +284,30 @@ public class EditorController implements IEditor {
                 LOGGER.log(Level.SEVERE, "Uncatched exception in thread [" + t.getName() + "]", e);
             }
         });
-        
+        initActionMap();
+
         EditorPopups.init(this);
+    }
+
+    private void initActionMap() {
+        InputMap im = editor.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap am = editor.getActionMap();
+        String key = "editFindInCurrentFileMenuItem";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, true);
+        im.put(keyStroke, key);
+        am.put(key, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                quickSearchController.show();
+            }
+        });
     }
 
     private void createUI() {
         pane = new DockablePanel("EDITOR", " ", false);
         pane.setComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
         pane.setMinimumSize(new Dimension(100, 100));
+        pane.setBorder(UIManager.getBorder("OmegaTDockablePanel.border"));
         pane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -312,6 +328,10 @@ public class EditorController implements IEditor {
 
         pane.setLayout(new BorderLayout());
         pane.add(scrollPane, BorderLayout.CENTER);
+
+        QuickSearchPanel searchPanel = new QuickSearchPanel();
+        quickSearchController = new QuickSearchController(searchPanel, this);
+        pane.add(searchPanel, BorderLayout.NORTH);
 
         Core.getMainWindow().addDockable(pane);
 
@@ -380,21 +400,31 @@ public class EditorController implements IEditor {
             return DataFlavor.javaFileListFlavor;
         }
         @Override
+        public int getDnDAction() {
+            return DnDConstants.ACTION_COPY;
+        }
+        @Override
         public boolean handleDroppedObject(Object dropped) {
-            List<File> files = (List<File>) dropped;
+            final List<File> files = (List<File>) dropped;
             if (Core.getProject().isProjectLoaded()) {
-                mw.importFiles(Core.getProject().getProjectProperties().getSourceRoot(),
-                        files.toArray(new File[0]));
+                // The import might take a long time if there are collision dialogs.
+                // Invoke later so we can return successfully right away.
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        mw.importFiles(Core.getProject().getProjectProperties().getSourceRoot(),
+                                files.toArray(new File[0]));
+                    }
+                });
                 return true;
             }
 
             File firstFile = files.get(0); // Ignore others
+            if (firstFile.getName().equals(OConsts.FILE_PROJECT)) {
+                firstFile = firstFile.getParentFile();
+            }
             if (StaticUtils.isProjectDir(firstFile)) {
                 ProjectUICommands.projectOpen(firstFile);
-                return true;
-            }
-            if (StaticUtils.isProjectDir(firstFile.getParentFile())) {
-                ProjectUICommands.projectOpen(firstFile.getParentFile());
                 return true;
             }
             return false;
@@ -1924,8 +1954,8 @@ public class EditorController implements IEditor {
                     .setComponentOrientation(EditorUtils.isRTL(language) ? ComponentOrientation.RIGHT_TO_LEFT
                             : ComponentOrientation.LEFT_TO_RIGHT);
             introPane.setEditable(false);
-            introPane.setPage(HelpFrame.getHelpFileURL(language, OConsts.HELP_INSTANT_START));
             DragTargetOverlay.apply(introPane, dropInfo);
+            introPane.setPage(HelpFrame.getHelpFileURL(language, OConsts.HELP_INSTANT_START));
         } catch (IOException e) {
             // editorScroller.setViewportView(editor);
         }
@@ -2202,6 +2232,14 @@ public class EditorController implements IEditor {
         } finally {
             timer.cancel();
         }
+    }
+
+    public Document3 getDocument(){
+        return editor.getOmDocument();
+    }
+
+    public EditorTextArea3 getEditor() {
+        return editor;
     }
 
     public AlphabeticalMarkers getAlphabeticalMarkers() {
