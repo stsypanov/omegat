@@ -63,13 +63,13 @@ public class QuickSearchController {
 
     private void highlightTextFieldOnWrongInput(QuickSearchPanel searchPanel) {
         searchPanel.getTextField().setBackground(new Color(188, 58, 58));
-        searchPanel.getTextField().setForeground(Color.WHITE);
+        searchPanel.getTextField().getEditor().getEditorComponent().setForeground(Color.WHITE);
         ((JTextField) searchPanel.getTextField().getEditor().getEditorComponent()).setCaretColor(Color.WHITE);
     }
 
     private void revertSearchFieldHighlight(QuickSearchPanel searchPanel) {
         searchPanel.getTextField().setBackground(Color.WHITE);
-        searchPanel.getTextField().setForeground(Color.BLACK);
+        searchPanel.getTextField().getEditor().getEditorComponent().setForeground(Color.BLACK);
         ((JTextField) searchPanel.getTextField().getEditor().getEditorComponent()).setCaretColor(Color.BLACK);
     }
 
