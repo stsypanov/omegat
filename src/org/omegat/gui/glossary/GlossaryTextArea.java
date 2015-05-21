@@ -38,13 +38,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -56,7 +55,6 @@ import javax.swing.text.StyledDocument;
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.StringEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.dialogs.CreateGlossaryEntry;
 import org.omegat.gui.editor.EditorUtils;
@@ -93,15 +91,9 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     private static final AttributeSet PRIORITY_ATTRIBUTES = Styles.createAttributeSet(null, null, true, null);
 
     /**
-     * Currently processed entry. Used to detect if user moved into new entry. In this case, new find should
-     * be started.
-     */
-    protected StringEntry processedEntry;
-
-    /**
      * Holds the current GlossaryEntries for the TransTips
      */
-    protected static List<GlossaryEntry> nowEntries;
+    protected List<GlossaryEntry> nowEntries;
 
     /**
      * popupmenu
@@ -113,6 +105,8 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     /** Creates new form MatchGlossaryPane */
     public GlossaryTextArea(final MainWindow mw) {
         super(true);
+
+        nowEntries = new ArrayList<>();
 
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Glossary");
         final DockableScrollPane scrollPane = new DockableScrollPane("GLOSSARY", title, this, true);
@@ -134,9 +128,9 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         });
         popup.add(menuItem);
 
-        addMouseListener(mouseListener);
+        addMouseListener(new PopupListener(this));
 
-        Core.getEditor().registerPopupMenuConstructors(300, new TransTipsPopup());
+        Core.getEditor().registerPopupMenuConstructors(300, new TransTipsPopup(this));
         
         DragTargetOverlay.apply(this, new FileDropInfo(mw, false) {
             @Override
@@ -246,16 +240,15 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         return nowEntries;
     }
 
-    /**
-     * MouseListener for the GlossaryTextArea.
-     */
-    protected MouseListener mouseListener = new PopupListener(this);
+    public List<GlossaryEntry> getNowEntries() {
+        return nowEntries;
+    }
 
     /**
      * MoueAdapter that knows the GlossaryTextArea. If there is text selected in the Glossary it will be inserted in
      * the Editor upon a right-click. Else a popup is shown to allow to add an entry.
      */
-    class PopupListener extends MouseAdapter {
+    private static class PopupListener extends MouseAdapter {
 
         private GlossaryTextArea glossaryTextArea;
 
@@ -270,10 +263,10 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
                 String selTxt = glossaryTextArea.getSelectedText();
                 if (selTxt == null) {
                     if (Core.getProject().isProjectLoaded()) {
-                        popup.show(glossaryTextArea, e.getX(), e.getY());
+                        glossaryTextArea.popup.show(glossaryTextArea, e.getX(), e.getY());
                     }
                 } else {
-                    insertTerm(selTxt);
+                    glossaryTextArea.insertTerm(selTxt);
                 }
             }
         }
