@@ -25,23 +25,8 @@
 
 package org.omegat.core.data;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import junit.framework.Assert;
 import junit.framework.TestCase;
-
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.omegat.core.Core;
@@ -54,6 +39,11 @@ import org.omegat.filters2.ITranslateCallback;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.text.TextFilter;
 import org.omegat.util.ByteUtils;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Base methods for TMX compliance tests.
@@ -71,8 +61,7 @@ public abstract class TmxComplianceBase extends TestCase {
         Core.setFilterMaster(new FilterMaster(FilterMaster.createDefaultFiltersConfig()));
 
         outFile = new File("build/testdata/" + getClass().getSimpleName() + "-" + getName() + ".out");
-        outFile.getParentFile().mkdirs();
-        if (outFile.exists()) {
+        if (outFile.getParentFile().mkdirs() && outFile.exists()) {
             if (!outFile.delete()) {
                 throw new IOException("Can't remove " + outFile.getAbsolutePath());
             }
@@ -85,26 +74,19 @@ public abstract class TmxComplianceBase extends TestCase {
         List<String> lines1 = readTextFile(f1, charset1);
         List<String> lines2 = readTextFile(f2, charset2);
 
-        Assert.assertEquals(lines1.size(), lines2.size());
+        assertEquals(lines1.size(), lines2.size());
         for (int i = 0; i < lines1.size(); i++) {
-            Assert.assertEquals(lines1.get(i), lines2.get(i));
+            assertEquals(lines1.get(i), lines2.get(i));
         }
     }
 
     protected List<String> readTextFile(File f, String charset) throws Exception {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset));
+        try(BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset))) {
 
-        ByteUtils.checkByteOrderMark(rd);
+            ByteUtils.checkByteOrderMark(rd);
 
-        List<String> result = new ArrayList<String>();
-        String s;
-        while ((s = rd.readLine()) != null) {
-            result.add(s);
+            return IOUtils.readLines(rd);
         }
-
-        rd.close();
-
-        return result;
     }
 
     protected void translateAndCheckTextUsingTmx(String fileTextIn, String inCharset, String fileTMX,
@@ -137,7 +119,7 @@ public abstract class TmxComplianceBase extends TestCase {
             protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
                     String prevSegment, String nextSegment, String path) {
                 TMXEntry e = tmx.getDefaultTranslation(segmentSource);
-                Assert.assertNotNull(e);
+                assertNotNull(e);
                 return e.translation;
             }
             @Override
@@ -196,24 +178,24 @@ public abstract class TmxComplianceBase extends TestCase {
     }
 
     protected Set<String> readTmxSegments(File tmx) throws Exception {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(tmx), "UTF-8"));
-        String s;
-        Set<String> entries = new TreeSet<String>();
-        while ((s = rd.readLine()) != null) {
-            Matcher m = RE_SEG.matcher(s);
-            if (m.find()) {
-                entries.add(m.group(1));
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(tmx), "UTF-8"))) {
+            String s;
+            Set<String> entries = new TreeSet<>();
+            while ((s = rd.readLine()) != null) {
+                Matcher m = RE_SEG.matcher(s);
+                if (m.find()) {
+                    entries.add(m.group(1));
+                }
             }
+            return entries;
         }
-        rd.close();
-        return entries;
     }
 
     protected void compareTMX(File orig, File created, int segmentsCount) throws Exception {
         Set<String> tmxOrig = readTmxSegments(orig);
         Set<String> tmxCreated = readTmxSegments(created);
-        Assert.assertEquals(segmentsCount, tmxCreated.size());
-        Assert.assertEquals(tmxOrig.size(), tmxCreated.size());
+        assertEquals(segmentsCount, tmxCreated.size());
+        assertEquals(tmxOrig.size(), tmxCreated.size());
 
         List<String> listOrig = new ArrayList<String>(tmxOrig);
         List<String> listCreated = new ArrayList<String>(tmxCreated);

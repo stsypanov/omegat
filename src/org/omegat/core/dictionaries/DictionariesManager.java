@@ -34,13 +34,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.gui.dictionaries.DictionariesTextArea;
 import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.FileUtil;
@@ -122,10 +119,8 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), OConsts.UTF8))) {
             synchronized (ignoreWords) {
                 ignoreWords.clear();
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    ignoreWords.add(line.trim());
-                }
+                List<String> strings = IOUtils.readLines(rd);
+                ignoreWords.addAll(strings);
             }
         }
     }

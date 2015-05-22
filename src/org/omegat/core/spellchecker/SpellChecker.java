@@ -31,7 +31,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.SourceTextEntry;
@@ -147,10 +147,8 @@ public class SpellChecker implements ISpellChecker {
             if (new File(dictionaryName).exists()) {
                 try {
                     checker = new SpellCheckerHunspell(language, dictionaryName, affixName);
-                } catch (Exception ex) {
+                } catch (Exception | Error ex) {
                     Log.log("Error loading hunspell: " + ex.getMessage());
-                } catch (Error err) {
-                    Log.log("Error loading hunspell: " + err.getMessage());
                 }
                 if (checker == null) {
                     try {
@@ -199,25 +197,11 @@ public class SpellChecker implements ISpellChecker {
      * fill the word list (ignore or learned) with contents from the disk
      */
     private void fillWordList(String filename, List<String> list) {
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8));
-
-            String thisLine;
-            while ((thisLine = br.readLine()) != null) {
-                list.add(thisLine);
-            }
-        } catch (FileNotFoundException ex) {
-            // discard this
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8))) {
+            List<String> strings = IOUtils.readLines(br);
+            list.addAll(strings);
         } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-            } catch (IOException ex) {
-                // so now what?
-            }
+            Log.log(ex);
         }
     }
 
@@ -227,23 +211,16 @@ public class SpellChecker implements ISpellChecker {
     private void dumpWordList(List<String> list, String filename) {
         if (filename == null)
             return;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8));
+
+         //todo test
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8))) {
 
             for (String text : list) {
                 bw.write(text);
                 bw.newLine();
             }
         } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException ex) {
-                Log.log(ex);
-            }
+            Log.log(ex);
         }
     }
 
@@ -254,11 +231,11 @@ public class SpellChecker implements ISpellChecker {
     public boolean isCorrect(String word) {
         //check if spellchecker is already initialized. If not, skip checking
         //to prevent nullPointerErrors.
-        if (checker==null) 
+        if (checker==null)
             return true;
 
         word = normalize(word);
-        
+
         // check in cache first
         synchronized (this) {
             if (incorrectWordsCache.contains(word)) {
@@ -293,7 +270,7 @@ public class SpellChecker implements ISpellChecker {
      */
     public List<String> suggest(String word) {
         if (isCorrect(word)) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return checker.suggest(normalize(word));

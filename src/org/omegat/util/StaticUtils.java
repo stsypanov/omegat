@@ -31,35 +31,26 @@
 
 package org.omegat.util;
 
-import java.awt.GraphicsEnvironment;
+import org.apache.commons.io.IOUtils;
+import org.omegat.core.data.ProtectedPart;
+import org.omegat.core.statistics.StatisticsSettings;
+import org.omegat.util.Platform.OsType;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.Collator;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.omegat.core.data.ProtectedPart;
-import org.omegat.core.statistics.StatisticsSettings;
-import org.omegat.util.Platform.OsType;
 
 /**
  * Static functions taken from CommandThread to reduce file size.
@@ -998,92 +989,51 @@ public class StaticUtils {
      * dowload a file from the internet
      */
     public static String downloadFileToString(String urlString) throws IOException {
-        URLConnection urlConn;
-        InputStream in;
-
         URL url = new URL(urlString);
-        urlConn = url.openConnection();
+        URLConnection urlConn = url.openConnection();
         //don't wait forever. 10 seconds should be enough.
         urlConn.setConnectTimeout(10000);
-        in = urlConn.getInputStream();
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            LFileCopy.copy(in, out);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
-                // munch this
-            }
-        }
-        return new String(out.toByteArray(), "UTF-8");
+        return IOUtils.toString(urlConn.getInputStream(), OConsts.UTF8);
     }
 
     /**
      * Download a file to the disk
      */
-    public static void downloadFileToDisk(String address, String filename) throws MalformedURLException {
-        URLConnection urlConn;
-        InputStream in = null;
-        OutputStream out = null;
+    public static void downloadFileToDisk(String address, String filename) throws IOException {
+        final URL url = new URL(address);
+        final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        Log.log("install dictionary from " + url +
+                " with response code " + urlConn.getResponseCode() +
+                " and message " + urlConn.getResponseMessage());
         try {
-            URL url = new URL(address);
-            urlConn = url.openConnection();
-            in = urlConn.getInputStream();
-            out = new BufferedOutputStream(new FileOutputStream(filename));
-
-            byte[] byteBuffer = new byte[1024];
-
-            int numRead;
-            while ((numRead = in.read(byteBuffer)) != -1) {
-                out.write(byteBuffer, 0, numRead);
-            }
+            IOUtils.copy(urlConn.getInputStream(), new BufferedOutputStream(new FileOutputStream(filename)));
         } catch (IOException ex) {
             Log.logErrorRB("IO exception");
-            Log.log(ex);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                // munch this
-            }
+            Log.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
         }
     }
 
     public static void extractFileFromJar(String archive, List<String> filenames, String destination)
             throws IOException {
         // open the jar (zip) file
-        JarFile jar = new JarFile(archive);
+        try (JarFile jar = new JarFile(archive)) {
 
-        // parse the entries
-        Enumeration<JarEntry> entryEnum = jar.entries();
-        while (entryEnum.hasMoreElements()) {
-            JarEntry file = entryEnum.nextElement();
-            if (filenames.contains(file.getName())) {
-                // match found
-                File f = new File(destination + File.separator + file.getName());
-                InputStream in = jar.getInputStream(file);
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(f));
-
-                byte[] byteBuffer = new byte[1024];
-
-                int numRead;
-                while ((numRead = in.read(byteBuffer)) != -1) {
-                    out.write(byteBuffer, 0, numRead);
+            // parse the entries
+            Enumeration<JarEntry> entryEnum = jar.entries();
+            while (entryEnum.hasMoreElements()) {
+                JarEntry file = entryEnum.nextElement();
+                if (filenames.contains(file.getName())) {
+                    // match found
+                    File f = new File(destination + File.separator + file.getName());
+                    try {
+                        IOUtils.copy(jar.getInputStream(file), new BufferedOutputStream(new FileOutputStream(f)));
+                    } catch (IOException e){
+                        Log.log(Level.SEVERE, e.getLocalizedMessage(), e);
+                    }
                 }
-
-                in.close();
-                out.close();
             }
         }
-        jar.close();
     }
 
     /**

@@ -63,6 +63,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.lucene.util.Version;
 import org.madlonkay.supertmxmerge.StmProperties;
 import org.madlonkay.supertmxmerge.SuperTmxMerge;
@@ -1576,17 +1577,14 @@ public class RealProject implements IProject {
     @Override
     public List<String> getSourceFilesOrder() {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))){
-            List<String> result = new ArrayList<>();
-            String s;
-            while ((s = rd.readLine()) != null) {
-                result.add(s);
-            }
-            rd.close();
-            return result;
+        List<String> result;
+        try {
+            result = IOUtils.readLines(new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")));
         } catch (Exception ex) {
-            return null;
+            Log.log(ex);
+            result = null;
         }
+        return result;
     }
 
     @Override
