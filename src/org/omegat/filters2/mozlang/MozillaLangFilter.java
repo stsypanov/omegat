@@ -165,10 +165,9 @@ public class MozillaLangFilter extends AbstractFilter {
             // invisible to OmegaT
             s = s.trim();
 
-            Matcher m;
-
             switch (state) {
             case WAIT_SOURCE:
+                Matcher m;
                 if ((m = PATTERN_SOURCE.matcher(s)).matches()) {
                     source.append(m.group(1));
                     state = READ_STATE.WAIT_TARGET;
