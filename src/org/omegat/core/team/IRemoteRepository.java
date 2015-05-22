@@ -26,7 +26,6 @@ package org.omegat.core.team;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,7 +71,7 @@ public interface IRemoteRepository {
      * Update full project from remote repository.
      * PRE: no local changes if you don't want conflicts
      */
-    void updateFullProject() throws NetworkException, Exception;
+    void updateFullProject() throws Exception;
 
     /**
      * Initial project checkout.
@@ -94,7 +93,7 @@ public interface IRemoteRepository {
      * NB: Due to the nature of some VCS, it is possible that more files than the given files are updated to the head revision.
      * PRE: no local changes in files (except the given files), if you don't want conflicts.
      */
-    void download(File[] files) throws NetworkException, Exception;
+    void download(File[] files) throws Exception;
 
     /**
      * Undo all local changes
@@ -117,13 +116,13 @@ public interface IRemoteRepository {
      * 
      * 2. Somebody changed other segments in repository.
      */
-    void upload(File file, String commitMessage) throws NetworkException, Exception;
+    void upload(File file, String commitMessage) throws Exception;
 
     /**
      * Credentials are not provided or not correct. Should trigger credentials-prompt
      */
     @SuppressWarnings("serial")
-    public static class AuthenticationException extends Exception {
+    class AuthenticationException extends Exception {
         public AuthenticationException(Exception ex) {
             super(ex);
         }
@@ -133,7 +132,7 @@ public interface IRemoteRepository {
      *
      */
     @SuppressWarnings("serial")
-	public static class BadRepositoryException extends Exception {
+    class BadRepositoryException extends Exception {
         public BadRepositoryException(String message) {
             super(message);
         }
@@ -143,13 +142,13 @@ public interface IRemoteRepository {
      * Network problems. E.g. no internet available.
      */
     @SuppressWarnings("serial")
-    public static class NetworkException extends Exception {
+    class NetworkException extends Exception {
         public NetworkException(Throwable ex) {
             super(ex);
         }
     }
     
-    public static class Credentials {
+    class Credentials {
         public String username = null;
         public char[] password = null;
         public boolean saveAsPlainText = false;
@@ -172,17 +171,14 @@ public interface IRemoteRepository {
         private static final String PKEY_PASSWORD = "password";
         private static final String PKEY_FINGERPRINT = "RSAkeyfingerprint";
         
-        public static Credentials fromFile(File file) throws FileNotFoundException, IOException {
+        public static Credentials fromFile(File file) throws IOException {
             Credentials result = new Credentials();
             if (!file.canRead()) {
                 throw new IOException("Insufficient permissions to read file: " + file);
             }
             Properties p = new Properties();
-            InputStream stream = new FileInputStream(file);
-            try {
+            try (InputStream stream = new FileInputStream(file)) {
                 p.load(stream);
-            } finally {
-                stream.close();
             }
             result.username = p.getProperty(PKEY_USERNAME);
             result.password = p.getProperty(PKEY_PASSWORD).toCharArray();
@@ -194,7 +190,7 @@ public interface IRemoteRepository {
         /**
          * Saves username, password and fingerprint (if known) to plain text file.
          */
-        public void saveToPlainTextFile(File file) throws FileNotFoundException, IOException {
+        public void saveToPlainTextFile(File file) throws IOException {
             Properties p = new Properties();
             p.setProperty(PKEY_USERNAME, username);
             p.setProperty(PKEY_PASSWORD, String.valueOf(password));
@@ -204,11 +200,8 @@ public interface IRemoteRepository {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            OutputStream stream = new FileOutputStream(file);
-            try {
+            try (OutputStream stream = new FileOutputStream(file)) {
                 p.store(stream, "Remote access credentials for OmegaT project");
-            } finally {
-                stream.close();
             }
         }
         

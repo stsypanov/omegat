@@ -39,6 +39,7 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.gui.comments.ICommentProvider;
+import org.omegat.util.Log;
 import org.omegat.util.Token;
 
 /**
@@ -235,14 +236,13 @@ public abstract class BaseTokenizer implements ITokenizer {
 
         List<Token> result = new ArrayList<>(64);
 
-        final TokenStream in = getTokenStream(strOrig, stemsAllowed, stopWordsAllowed);
-        in.addAttribute(CharTermAttribute.class);
-        in.addAttribute(OffsetAttribute.class);
-        
-        CharTermAttribute cattr = in.getAttribute(CharTermAttribute.class);
-        OffsetAttribute off = in.getAttribute(OffsetAttribute.class);
+        try (final TokenStream in = getTokenStream(strOrig, stemsAllowed, stopWordsAllowed)) {
+            in.addAttribute(CharTermAttribute.class);
+            in.addAttribute(OffsetAttribute.class);
 
-        try {
+            CharTermAttribute cattr = in.getAttribute(CharTermAttribute.class);
+            OffsetAttribute off = in.getAttribute(OffsetAttribute.class);
+
             in.reset();
             while (in.incrementToken()) {
                 String tokenText = cattr.toString();
@@ -255,15 +255,12 @@ public abstract class BaseTokenizer implements ITokenizer {
                     }
                 }
                 if (tokenText != null) {
-                    result.add(new Token(tokenText, off.startOffset(), off
-                            .endOffset()
-                            - off.startOffset()));
+                    result.add(new Token(tokenText, off.startOffset(), off.endOffset() - off.startOffset()));
                 }
             }
             in.end();
-            in.close();
         } catch (IOException ex) {
-            // shouldn't happen
+            Log.log(ex);
         }
         return result.toArray(new Token[result.size()]);
     }

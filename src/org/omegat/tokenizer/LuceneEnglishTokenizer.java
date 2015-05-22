@@ -36,6 +36,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.omegat.core.Core;
+import org.omegat.util.OConsts;
 
 /**
  * @author Aaron Madlon-Kay
@@ -46,24 +47,18 @@ public class LuceneEnglishTokenizer extends BaseTokenizer {
 
     static {
         // Load stopwords
-        try {
-            try (InputStream in = LuceneEnglishTokenizer.class
-                    .getResourceAsStream("StopList_en.txt")) {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(
-                        in, "UTF-8"));
-                String s;
-                while ((s = rd.readLine()) != null) {
-                    s = s.trim();
-                    if (s.length() == 0 || s.startsWith("#")) {
-                        continue;
-                    }
-                    STOP_WORDS.add(s);
+        try (InputStream in = LuceneEnglishTokenizer.class.getResourceAsStream("StopList_en.txt");
+             BufferedReader rd = new BufferedReader(new InputStreamReader(in, OConsts.UTF8))) {
+            String s;
+            while ((s = rd.readLine()) != null) {
+                s = s.trim();
+                if (s.length() == 0 || s.startsWith("#")) {
+                    continue;
                 }
+                STOP_WORDS.add(s);
             }
         } catch (Exception ex) {
-            throw new ExceptionInInitializerError(
-                    "Error load stopwords in SnowballEnglishTokenizer: "
-                            + ex.getMessage());
+            throw new ExceptionInInitializerError("Error load stopwords in SnowballEnglishTokenizer: " + ex.getMessage());
         }
     }
 

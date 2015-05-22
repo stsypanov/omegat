@@ -348,8 +348,7 @@ public abstract class AbstractFilter implements IFilter {
      * @throws IOException
      *             If any I/O Error occurs upon writer creation
      */
-    protected BufferedWriter createWriter(File outFile, String outEncoding)
-            throws UnsupportedEncodingException, IOException {
+    protected BufferedWriter createWriter(File outFile, String outEncoding) throws IOException {
         OutputStreamWriter osw;
         if (outEncoding == null)
             osw = new OutputStreamWriter(new FileOutputStream(outFile));
@@ -419,9 +418,8 @@ public abstract class AbstractFilter implements IFilter {
     protected void processFile(File inFile, File outFile, FilterContext fc) throws IOException,
             TranslationException {
         String encoding = getInputEncoding(fc, inFile);
-        BufferedReader reader = createReader(inFile, encoding);
         inEncodingLastParsedFile = encoding == null ? Charset.defaultCharset().name() : encoding;
-        try {
+        try (BufferedReader reader = createReader(inFile, encoding)) {
             BufferedWriter writer;
 
             if (outFile != null) {
@@ -436,8 +434,6 @@ public abstract class AbstractFilter implements IFilter {
             } finally {
                 writer.close();
             }
-        } finally {
-            reader.close();
         }
     }
     

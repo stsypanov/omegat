@@ -122,15 +122,10 @@ public class Statistics {
      * @param data
      */
     public static void writeStat(String filename, String text) {
-        try {
-            OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8);
-            try {
-                out.write(DateFormat.getInstance().format(new Date()) + "\n");
-                out.write(text);
-                out.flush();
-            } finally {
-                out.close();
-            }
+        try (OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8)) {
+            out.write(DateFormat.getInstance().format(new Date()) + "\n");
+            out.write(text);
+            out.flush();
         } catch (Exception ex) {
             Log.log(ex);
         }

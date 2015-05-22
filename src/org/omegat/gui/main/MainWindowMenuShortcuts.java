@@ -99,26 +99,18 @@ public class MainWindowMenuShortcuts {
      * 
      * @return shortcuts list
      */
-    private static final Properties loadPredefinedShortcuts() {
+    private static Properties loadPredefinedShortcuts() {
         Properties shortcuts = new Properties();
         String name = MainWindowMenuShortcuts.class.getPackage().getName().replace('.', '/')
                 + "/MainMenuShortcuts";
         name += Platform.isMacOSX() ? ".mac.properties" : ".properties";
 
-        File userShortcuts = new File(StaticUtils.getConfigDir(), "MainMenuShortcuts.properties");
-        try {
-            InputStream in = MainWindowMenuShortcuts.class.getClassLoader().getResourceAsStream(name);
-            try {
-                shortcuts.load(in);
-            } finally {
-                in.close();
-            }
+        try (InputStream in = MainWindowMenuShortcuts.class.getClassLoader().getResourceAsStream(name)) {
+            File userShortcuts = new File(StaticUtils.getConfigDir(), "MainMenuShortcuts.properties");
+            shortcuts.load(in);
             if (userShortcuts.exists()) {
-                InputStream us = new FileInputStream(userShortcuts);
-                try {
+                try (InputStream us = new FileInputStream(userShortcuts)) {
                     shortcuts.load(us);
-                } finally {
-                    us.close();
                 }
             }
         } catch (IOException ex) {
