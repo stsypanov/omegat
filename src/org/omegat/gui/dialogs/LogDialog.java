@@ -28,10 +28,12 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
 import java.io.File;
+import java.util.logging.Level;
 
+import org.apache.commons.io.FileUtils;
 import org.omegat.gui.common.PeroDialog;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
+import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
@@ -103,9 +105,10 @@ public class LogDialog extends PeroDialog {
         File logLocation = new File (Log.getLogFilePath());
         try {
             setTitle(OStrings.getString("LOGDIALOG_TITLE") + " "+ Log.getLogFileName());
-            logTextPane.setText(FileUtil.readTextFile(logLocation));
+            logTextPane.setText(FileUtils.readFileToString(logLocation, OConsts.UTF8));
         } catch (Exception e) {
-            // We'll get an empty page
+            logTextPane.setText("Cannot read log: " + e.getLocalizedMessage());
+            Log.log(Level.SEVERE, "Cannot read log", e);
         }
         
         scroll.setViewportView(logTextPane);
