@@ -1,15 +1,9 @@
 package org.omegat.gui.clipboard;
 
 import org.omegat.gui.common.PeroFrame;
-import org.omegat.util.Log;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,13 +12,11 @@ import java.awt.event.KeyEvent;
  * Time: 11:18
  */
 public class ClipboardTest extends PeroFrame {
-	private JFrame owner;
 	private static final String TEXT = "Use this text for clipboard test." +
 			"Just place a caret within the text and press Ctrl+Shift+V";
 
 	public ClipboardTest() throws HeadlessException {
 		super("clipboard test");
-		owner = this;
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 		setPreferredSize(new Dimension(600, 400));
