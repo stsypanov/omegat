@@ -1,11 +1,11 @@
 ----------------------------------------------------------------------
- OmegaT 3.4 update 1
+ OmegaT 3.5
 ----------------------------------------------------------------------
-  11 Enhancements
-   2 Bug fixes
+  14 Enhancements
+   3 Bug fixes
    4 Localisation updates
 ----------------------------------------------------------------------
-3.4 update 1 vs 3.4
+3.5 vs 3.4
 
   Implemented requests:
 
@@ -30,15 +30,15 @@
   - Option to remove "fuzziness" from glossary 
   https://sourceforge.net/p/omegat/feature-requests/1033/
 
+  - Better Mac OS X integration
+  https://sourceforge.net/p/omegat/feature-requests/1092/
+
   Other changes:
 
   - There's an explanation message at the bottom of the Editor when
 Ctrl+Shift+O is pressed
 
   - New script to clear SVN authentication data
-
-  - Better OS X integration: Full-screen support, drag-and-drop
-to program icon, main window proxy icon and modification marker
 
   - New OmegaT icon on the Mac
 
@@ -51,6 +51,17 @@ it is now also possible to specify the path of an omegat.project file
   - In the QA - Check rules script (check_rules.groovy), it is now
 possible to check linguistic (LangageTool) issues
 
+  - There's now a "Save as" button in Help > Log
+
+  - Read parameters from config file on startup, specified with 
+--config-file=path/to/file
+
+  - There are two new search options at the bottom of the Search window.
+"Auto-sync with Editor". If checked, the Editor will go automatically to the 
+segment where the cursor is located in the search window.
+"Back to the initial segment on close". If checked, the Editor will go back 
+to the segment being current before the Search window was opened.
+
   Bug fixes:
 
   - Panel header title was white under Windows 7 with a classic theme
@@ -58,12 +69,14 @@ possible to check linguistic (LangageTool) issues
   - Script files could be locked 
   https://sourceforge.net/p/omegat/bugs/749/
 
+  - In statistics, scrollbars could cover table content
+
   Localisation updates:
 
   - Dutch localisation updated to 3.4 update 1 (UI, documentation, readme)
   - Russian localisation updated to 3.4 update 1 (UI, readme, scripts)
   - Belarusian localisation updated to 3.4 update 1 (UI)
-  - Japanese localisation updated to 3.4 update 1 (UI, documentation, scripts)
+  - Japanese localisation updated to 3.5 (UI, documentation, scripts)
 
 ----------------------------------------------------------------------
  OmegaT 3.4 (2015-04-20)
@@ -97,6 +110,9 @@ possible to check linguistic (LangageTool) issues
   - Improve fuzzy match difference granularity in Chinese
   https://sourceforge.net/p/omegat/feature-requests/1077/
 
+  - Add option to ignore custom tags in statistics
+  https://sourceforge.net/p/omegat/feature-requests/937/
+
   Other changes:
 
   - New XML Spreadsheet 2003 filter. This allows translating Excel document
@@ -109,12 +125,6 @@ is "Workbook".
 are displayed in bold
 
   - New "Trafficlight" theme in the Switch Colour Theme script
-
-  - Options > Tag Validation was renamed to Tag Processing. In that dialog, 
-there's now an option to decide whether protected text (from the XLIFF filter)
-and custom tags should be counted in statistics. The option is on by default.
-In previous versions, protected text was not counted in the statistics, so
-the option has to be disabled to get the same value as before.
 
   - The font selected in Options > Fonts can be applied now also to statistics
 
@@ -141,15 +151,19 @@ of "foo\.\scripts"
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 2
 ----------------------------------------------------------------------
-   1 Enhancement
-   3 Bug fixes
-   2 Localisation updates
+   2 Enhancements
+   2 Bug fixes
+   1 Localisation update
 ----------------------------------------------------------------------
 3.1.9 update 2 vs. 3.1.9 update 1
 
   Implemented requests:
 
   - Updated LanguageTool to 2.2
+
+  - *.strings (Mac OS X localisation format) was added to the Key=value 
+filter. That's only a partial solution, as " and ; characters remain
+in the translatable text, and have to be preserved by the translator.
 
   Bug fixes:
 
@@ -159,13 +173,9 @@ entered as "CSV"
   - Too many duplicate segments in the popup menu
   https://sourceforge.net/p/omegat/bugs/744/
 
-  - There was a compatibility issue with the Okapi plugin with the 
-XML/ITS and Doxygen filter
-
   Localisation updates:
 
  - Brazilian Portuguese localisation updated to 3.0.7 (UI, documentation, readme)
- - Japanese localisation updated to 3.1.9 update 1 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 1 (2015-04-15)

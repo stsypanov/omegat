@@ -31,6 +31,8 @@ import org.omegat.filters2.AbstractAlignmentFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.util.LinebreakPreservingReader;
+import org.omegat.util.NullBufferedWriter;
+import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 
 import java.io.BufferedReader;
@@ -60,7 +62,9 @@ public class INIFilter extends AbstractAlignmentFilter {
     }
 
     public Instance[] getDefaultInstances() {
-        return new Instance[] { new Instance("*.ini"), new Instance("*.lng"), };
+        return new Instance[] { new Instance("*.ini"), 
+                                new Instance("*.lng"), 
+                                new Instance("*.strings", OConsts.UTF8, OConsts.UTF8) };
     }
 
     /**
