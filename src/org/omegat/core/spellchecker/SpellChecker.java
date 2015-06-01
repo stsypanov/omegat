@@ -198,6 +198,7 @@ public class SpellChecker implements ISpellChecker {
      */
     private void fillWordList(String filename, List<String> list) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8))) {
+            //todo use NIO
             List<String> strings = IOUtils.readLines(br);
             list.addAll(strings);
         } catch (IOException ex) {
