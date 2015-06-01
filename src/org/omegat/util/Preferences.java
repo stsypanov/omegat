@@ -12,7 +12,7 @@
                     Aaron Madlon-Kay
                2013 Aaron Madlon-Kay, Zoltan Bartko
                2014 Piotr Kulik, Aaron Madlon-Kay
-               2015 Aaron Madlon-Kay
+               2015 Aaron Madlon-Kay, Yu Tang, Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -73,17 +73,19 @@ public class Preferences {
     public static final String FILE_PREFERENCES = OStrings.BRANDING.isEmpty() ? "omegat.prefs"
             : "omegat-" + OStrings.BRANDING + ".prefs";
 
-	// preference names
-	public static final String SOURCE_LOCALE = "source_lang";
-	public static final String TARGET_LOCALE = "target_lang";
-	public static final String CURRENT_FOLDER = "current_folder";
-	public static final String SOURCE_FOLDER = "source_folder";
-	public static final String TARGET_FOLDER = "target_folder";
-	public static final String TM_FOLDER = "tm_folder";
-	public static final String DICT_FOLDER = "dict_folder";
-	public static final String GLOSSARY_FOLDER = "glossary_folder";
-	public static final String GLOSSARY_FILE = "glossary_file";
-	public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
+    // preference names
+    public static final String SOURCE_LOCALE = "source_lang";
+    public static final String TARGET_LOCALE = "target_lang";
+    public static final String CURRENT_FOLDER = "current_folder";
+    public static final String SOURCE_FOLDER = "source_folder";
+    public static final String TARGET_FOLDER = "target_folder";
+    public static final String TM_FOLDER = "tm_folder";
+    public static final String DICT_FOLDER = "dict_folder";
+    public static final String GLOSSARY_FOLDER = "glossary_folder";
+    public static final String GLOSSARY_FILE = "glossary_file";
+    public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
+    public static final String GLOSSARY_NOT_EXACT_MATCH="glossary_not_exact_match";
+    public static final String GLOSSARY_STEMMING="glossary_stemming";
 
 	public static final String MAINWINDOW_WIDTH = "screen_width";
 	public static final String MAINWINDOW_HEIGHT = "screen_height";
@@ -102,45 +104,47 @@ public class Preferences {
     // Currently not exposed in UI.
     public static final String PROJECT_FILES_SHOW_ON_LOAD = "project_files_show_on_load";
 
-	// Search window size and position
-	public static final String SEARCHWINDOW_WIDTH = "search_window_width";
-	public static final String SEARCHWINDOW_HEIGHT = "search_window_height";
-	public static final String SEARCHWINDOW_X = "search_window_x";
-	public static final String SEARCHWINDOW_Y = "search_window_y";
-	public static final String SEARCHWINDOW_SEARCH_TYPE = "search_window_search_type";
-	public static final String SEARCHWINDOW_REPLACE_TYPE = "search_window_replace_type";
-	public static final String SEARCHWINDOW_CASE_SENSITIVE = "search_window_case_sensitive";
-	public static final String SEARCHWINDOW_SPACE_MATCH_NBSP = "search_window_space_match_nbsp";
-	public static final String SEARCHWINDOW_CASE_SENSITIVE_REPLACE = "search_window_case_sensitive_replace";
-	public static final String SEARCHWINDOW_SPACE_MATCH_NBSP_REPLACE = "search_window_space_match_nbsp_replace";
-	public static final String SEARCHWINDOW_REPLACE_UNTRANSLATED = "search_window_replace_untranslated";
-	public static final String SEARCHWINDOW_SEARCH_SOURCE = "search_window_search_source";
-	public static final String SEARCHWINDOW_SEARCH_TRANSLATION = "search_window_search_translation";
-	public static final String SEARCHWINDOW_SEARCH_STATE = "search_window_search_state";
-	public static final String SEARCHWINDOW_SEARCH_NOTES = "search_window_search_notes";
-	public static final String SEARCHWINDOW_SEARCH_COMMENTS = "search_window_search_comments";
-	public static final String SEARCHWINDOW_REG_EXPRESSIONS = "search_window_reg_expressions";
-	public static final String SEARCHWINDOW_GLOSSARY_SEARCH = "search_window_glossary_search";
-	public static final String SEARCHWINDOW_MEMORY_SEARCH = "search_window_memory_search";
-	public static final String SEARCHWINDOW_TM_SEARCH = "search_window_tm_search";
-	public static final String SEARCHWINDOW_ALL_RESULTS = "search_window_all_results";
-	public static final String SEARCHWINDOW_FILE_NAMES = "search_window_file_names";
-	public static final String SEARCHWINDOW_ADVANCED_VISIBLE = "search_window_advanced_visible";
-	public static final String SEARCHWINDOW_SEARCH_AUTHOR = "search_window_search_author";
-	public static final String SEARCHWINDOW_AUTHOR_NAME = "search_window_author_name";
-	public static final String SEARCHWINDOW_DATE_FROM = "search_window_date_from";
-	public static final String SEARCHWINDOW_DATE_FROM_VALUE = "search_window_date_from_value";
-	public static final String SEARCHWINDOW_DATE_TO = "search_window_date_to";
-	public static final String SEARCHWINDOW_DATE_TO_VALUE = "search_window_date_to_value";
-	public static final String SEARCHWINDOW_NUMBER_OF_RESULTS = "search_window_number_of_results";
-	public static final String SEARCHWINDOW_DIR = "search_window_dir";
-	public static final String SEARCHWINDOW_SEARCH_FILES = "search_window_search_files";
-	public static final String SEARCHWINDOW_RECURSIVE = "search_window_search_recursive";
+    // Search window size and position
+    public static final String SEARCHWINDOW_WIDTH = "search_window_width";
+    public static final String SEARCHWINDOW_HEIGHT = "search_window_height";
+    public static final String SEARCHWINDOW_X = "search_window_x";
+    public static final String SEARCHWINDOW_Y = "search_window_y";
+    public static final String SEARCHWINDOW_SEARCH_TYPE = "search_window_search_type";
+    public static final String SEARCHWINDOW_REPLACE_TYPE = "search_window_replace_type";
+    public static final String SEARCHWINDOW_CASE_SENSITIVE = "search_window_case_sensitive";
+    public static final String SEARCHWINDOW_SPACE_MATCH_NBSP = "search_window_space_match_nbsp";
+    public static final String SEARCHWINDOW_CASE_SENSITIVE_REPLACE = "search_window_case_sensitive_replace";
+    public static final String SEARCHWINDOW_SPACE_MATCH_NBSP_REPLACE = "search_window_space_match_nbsp_replace";
+    public static final String SEARCHWINDOW_REPLACE_UNTRANSLATED = "search_window_replace_untranslated";
+    public static final String SEARCHWINDOW_SEARCH_SOURCE = "search_window_search_source";
+    public static final String SEARCHWINDOW_SEARCH_TRANSLATION = "search_window_search_translation";
+    public static final String SEARCHWINDOW_SEARCH_STATE = "search_window_search_state";
+    public static final String SEARCHWINDOW_SEARCH_NOTES = "search_window_search_notes";
+    public static final String SEARCHWINDOW_SEARCH_COMMENTS = "search_window_search_comments";
+    public static final String SEARCHWINDOW_REG_EXPRESSIONS = "search_window_reg_expressions";
+    public static final String SEARCHWINDOW_GLOSSARY_SEARCH = "search_window_glossary_search";
+    public static final String SEARCHWINDOW_MEMORY_SEARCH = "search_window_memory_search";
+    public static final String SEARCHWINDOW_TM_SEARCH = "search_window_tm_search";
+    public static final String SEARCHWINDOW_ALL_RESULTS = "search_window_all_results";
+    public static final String SEARCHWINDOW_FILE_NAMES = "search_window_file_names";
+    public static final String SEARCHWINDOW_ADVANCED_VISIBLE = "search_window_advanced_visible";
+    public static final String SEARCHWINDOW_SEARCH_AUTHOR = "search_window_search_author";
+    public static final String SEARCHWINDOW_AUTHOR_NAME = "search_window_author_name";
+    public static final String SEARCHWINDOW_DATE_FROM = "search_window_date_from";
+    public static final String SEARCHWINDOW_DATE_FROM_VALUE = "search_window_date_from_value";
+    public static final String SEARCHWINDOW_DATE_TO = "search_window_date_to";
+    public static final String SEARCHWINDOW_DATE_TO_VALUE = "search_window_date_to_value";
+    public static final String SEARCHWINDOW_NUMBER_OF_RESULTS = "search_window_number_of_results";
+    public static final String SEARCHWINDOW_DIR = "search_window_dir";
+    public static final String SEARCHWINDOW_SEARCH_FILES = "search_window_search_files";
+    public static final String SEARCHWINDOW_RECURSIVE = "search_window_search_recursive";
+    public static final String SEARCHWINDOW_AUTO_SYNC = "search_window_auto_sync";
+    public static final String SEARCHWINDOW_BACK_TO_INITIAL_SEGMENT = "search_window_back_to_initial_segment";
 
-	// Search history
-	public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
-	public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
-	public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
+    // Search history
+    public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
+    public static final String SEARCHWINDOW_SEARCH_HISTORY_ITEM_PREFIX = "search_window_search_history_item_";
+    public static final String SEARCHWINDOW_REPLACE_HISTORY_ITEM_PREFIX = "search_window_replace_history_item_";
 
 	// Tag validation window size and position
 	public static final String TAGVWINDOW_WIDTH = "tagv_window_width";

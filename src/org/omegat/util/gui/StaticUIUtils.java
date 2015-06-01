@@ -121,6 +121,12 @@ public class StaticUIUtils {
         pane.getActionMap().put("ESCAPE", action);
     }
 
+    public static void setEscapeAction(JComponent pane, Action action) {
+        // Handle escape key to close the window
+        pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ESC_KEYSTROKE, "ESCAPE");
+        pane.getActionMap().put("ESCAPE", action);
+    }
+
     private final static char TRUNCATE_CHAR = '\u2026';
     
     /**

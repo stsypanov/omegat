@@ -67,6 +67,7 @@ import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.Log;
 import org.omegat.util.Platform;
+import org.omegat.util.Log;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;

@@ -9,7 +9,7 @@
                2010 Alex Buloichik
                2012 Jean-Christophe Helary
                2013 Aaron Madlon-Kay, Alex Buloichik
-               2015 Yu Tang
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -38,7 +38,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -56,7 +55,6 @@ import javax.swing.text.StyledDocument;
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.StringEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.dialogs.CreateGlossaryEntry;
 import org.omegat.gui.editor.EditorUtils;
@@ -68,7 +66,8 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
-import org.omegat.util.gui.ProjectFileDragImporter;
+import org.omegat.util.gui.DragTargetOverlay;
+import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -92,15 +91,9 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     private static final AttributeSet PRIORITY_ATTRIBUTES = Styles.createAttributeSet(null, null, true, null);
 
     /**
-     * Currently processed entry. Used to detect if user moved into new entry. In this case, new find should
-     * be started.
-     */
-    protected StringEntry processedEntry;
-
-    /**
      * Holds the current GlossaryEntries for the TransTips
      */
-    protected static List<GlossaryEntry> nowEntries;
+    protected List<GlossaryEntry> nowEntries;
 
     /**
      * popupmenu
@@ -113,8 +106,11 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     public GlossaryTextArea(final MainWindow mw) {
         super(true);
 
+        nowEntries = new ArrayList<>();
+
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Glossary");
-        Core.getMainWindow().addDockable(new DockableScrollPane("GLOSSARY", title, this, true));
+        final DockableScrollPane scrollPane = new DockableScrollPane("GLOSSARY", title, this, true);
+        Core.getMainWindow().addDockable(scrollPane);
 
         setEditable(false);
         AlwaysVisibleCaret.apply(this);
@@ -132,21 +128,33 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         });
         popup.add(menuItem);
 
-        addMouseListener(mouseListener);
+        addMouseListener(new PopupListener(this));
 
-        Core.getEditor().registerPopupMenuConstructors(300, new TransTipsPopup());
+        Core.getEditor().registerPopupMenuConstructors(300, new TransTipsPopup(this));
         
-        setTransferHandler(new ProjectFileDragImporter(mw, this, false) {
+        DragTargetOverlay.apply(this, new FileDropInfo(mw, false) {
             @Override
-            protected String getDestination() {
+            public boolean canAcceptDrop() {
+                return Core.getProject().isProjectLoaded();
+            }
+            @Override
+            public String getOverlayMessage() {
+                return OStrings.getString("DND_ADD_GLOSSARY_FILE");
+            }
+            @Override
+            public String getImportDestination() {
                 return Core.getProject().getProjectProperties().getGlossaryRoot();
             }
             @Override
-            protected boolean accept(File pathname) {
+            public boolean acceptFile(File pathname) {
                 String name = pathname.getName().toLowerCase();
                 return name.endsWith(OConsts.EXT_CSV_UTF8) || name.endsWith(OConsts.EXT_TBX)
                         || name.endsWith(OConsts.EXT_TSV_DEF) || name.endsWith(OConsts.EXT_TSV_TXT)
                         || name.endsWith(OConsts.EXT_TSV_UTF8);
+            }
+            @Override
+            public Component getComponentToOverlay() {
+                return scrollPane;
             }
         });
     }
@@ -194,12 +202,11 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         UIThreadsUtil.mustBeSwingThread();
 
         if (entries == null) {
-            nowEntries = new ArrayList<>();
-            setText("");
+            clear();
             return;
         }
 
-        nowEntries = entries;
+        nowEntries.addAll(entries);
 
         // If the TransTips is enabled then underline all the matched glossary
         // entries
@@ -225,6 +232,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
 
     /** Clears up the pane. */
     public void clear() {
+        nowEntries.clear();
         setText("");
     }
 
@@ -232,16 +240,15 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         return nowEntries;
     }
 
-    /**
-     * MouseListener for the GlossaryTextArea.
-     */
-    protected MouseListener mouseListener = new PopupListener(this);
+    public List<GlossaryEntry> getNowEntries() {
+        return nowEntries;
+    }
 
     /**
      * MoueAdapter that knows the GlossaryTextArea. If there is text selected in the Glossary it will be inserted in
      * the Editor upon a right-click. Else a popup is shown to allow to add an entry.
      */
-    class PopupListener extends MouseAdapter {
+    private static class PopupListener extends MouseAdapter {
 
         private GlossaryTextArea glossaryTextArea;
 
@@ -256,10 +263,10 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
                 String selTxt = glossaryTextArea.getSelectedText();
                 if (selTxt == null) {
                     if (Core.getProject().isProjectLoaded()) {
-                        popup.show(glossaryTextArea, e.getX(), e.getY());
+                        glossaryTextArea.popup.show(glossaryTextArea, e.getX(), e.getY());
                     }
                 } else {
-                    insertTerm(selTxt);
+                    glossaryTextArea.insertTerm(selTxt);
                 }
             }
         }

@@ -12,7 +12,7 @@
                2012 Wildrich Fourie, Guido Leenders, Didier Briel
                2013 Zoltan Bartko, Didier Briel, Yu Tang
                2014 Aaron Madlon-Kay
-               2015 Yu Tang, Aaron Madlon-Kay
+               2015 Yu Tang, Aaron Madlon-Kay, Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -33,6 +33,16 @@
  **************************************************************************/
 
 package org.omegat.gui.main;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
@@ -676,6 +686,23 @@ public class MainWindowMenuHandler {
 
         Core.getGlossaryManager().forceReloadTBX();
     }
+    
+    public void optionsGlossaryExactMatchCheckBoxMenuItemActionPerformed() {
+        Preferences.setPreference(Preferences.GLOSSARY_NOT_EXACT_MATCH,
+                mainWindow.menu.optionsGlossaryExactMatchCheckBoxMenuItem.isSelected());
+        Preferences.save();
+        Core.getGlossaryManager().forceUpdateGlossary();
+
+    }
+    
+    public void optionsGlossaryStemmingCheckBoxMenuItemActionPerformed() {
+        Preferences.setPreference(Preferences.GLOSSARY_STEMMING,
+                mainWindow.menu.optionsGlossaryStemmingCheckBoxMenuItem.isSelected());
+        Preferences.save();
+        Core.getGlossaryManager().forceUpdateGlossary();
+
+    }
+
 
     /**
      * Displays the font dialog to allow selecting the font for source, target text (in main window) and for

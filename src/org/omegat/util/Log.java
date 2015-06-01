@@ -320,4 +320,8 @@ public class Log {
     public static void log(Level level, String message, Throwable e) {
         LOGGER.log(level, message, e);
     }
+
+    public static void severe(String message, Throwable e) {
+        log(Level.SEVERE, message, e);
+    }
 }

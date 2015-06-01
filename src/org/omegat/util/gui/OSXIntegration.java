@@ -25,6 +25,7 @@
 
 package org.omegat.util.gui;
 
+import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
@@ -33,13 +34,18 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 
+import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
+import org.omegat.core.events.IProjectEventListener;
 import org.omegat.gui.main.ProjectUICommands;
 import org.omegat.util.Log;
+import org.omegat.util.OConsts;
 import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
 
 /**
  * This class uses reflection to set Mac OS X-specific integration hooks.
@@ -64,15 +70,20 @@ public class OSXIntegration {
             Class<?> strategyClass = Class.forName("com.apple.eawt.QuitStrategy");
             Method setQuitStrategy = getAppClass().getDeclaredMethod("setQuitStrategy", strategyClass);
             setQuitStrategy.invoke(getApp(), strategyClass.getField("CLOSE_ALL_WINDOWS").get(null));
+            
             // Prevent sudden termination:
             //   app.disableSuddenTermination();
             Method disableTerm = getAppClass().getDeclaredMethod("disableSuddenTermination");
             disableTerm.invoke(getApp());
 
-            // Register to find out when app finishes loading...
+            // Register to find out when app finishes loading so we can
+            // 1. Set up full-screen support, and...
             CoreEvents.registerApplicationEventListener(appListener);
-            // So that the open file handler can defer opening a project until the GUI is ready.
+            // 2. The open file handler can defer opening a project until the GUI is ready.
             setOpenFilesHandler(openFilesHandler);
+            
+            // Register listener to update the main window's proxy icon and modified indicators.
+            CoreEvents.registerProjectChangeListener(projectListener);
         } catch (Exception ex) {
             Log.log(ex);
         }
@@ -88,6 +99,17 @@ public class OSXIntegration {
                 }
                 doAfterLoad.clear();
             }
+            try {
+                // Enable full-screen mode:
+                //   FullScreenUtilities.setWindowCanFullScreen(java.awt.Window, boolean)
+                Class<?> utilClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+                Method setWindowCanFullScreen = utilClass.getMethod("setWindowCanFullScreen",
+                        new Class<?>[] { java.awt.Window.class, Boolean.TYPE });
+                Window window = Core.getMainWindow().getApplicationFrame();
+                setWindowCanFullScreen.invoke(utilClass, window, true);
+            } catch (Exception ex) {
+                Log.log(ex);
+            }
         }
         @Override
         public void onApplicationShutdown() {
@@ -97,14 +119,22 @@ public class OSXIntegration {
     
     private static final IOpenFilesHandler openFilesHandler = new IOpenFilesHandler() {
         @Override
-        public void openFiles(final List<File> files) {
+        public void openFiles(List<File> files) {
             if (files.isEmpty()) {
                 return;
             }
+            File firstFile = files.get(0); // Ignore others
+            if (firstFile.getName().equals(OConsts.FILE_PROJECT)) {
+                firstFile = firstFile.getParentFile();
+            }
+            if (!StaticUtils.isProjectDir(firstFile)) {
+                return;
+            }
+            final File projDir = firstFile;
             Runnable openProject = new Runnable() {
                 @Override
                 public void run() {
-                    ProjectUICommands.projectOpen(files.get(0).getParentFile());
+                    ProjectUICommands.projectOpen(projDir, true);
                 }
             };
             if (guiLoaded) {
@@ -113,6 +143,28 @@ public class OSXIntegration {
                 synchronized (doAfterLoad) {
                     doAfterLoad.add(openProject);
                 }
+            }
+        }
+    };
+    
+    private static final IProjectEventListener projectListener = new IProjectEventListener() {
+        @Override
+        public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+            JRootPane rootPane = Core.getMainWindow().getApplicationFrame().getRootPane();
+            switch (eventType) {
+            case LOAD:
+                String projDir = Core.getProject().getProjectProperties().getProjectRoot();
+                setProxyIcon(rootPane, new File(projDir));
+                break;
+            case CLOSE:
+                setProxyIcon(rootPane, null);
+                break;
+            case MODIFIED:
+                setModifiedIndicator(rootPane, true);
+                break;
+            case SAVE:
+                setModifiedIndicator(rootPane, false);
+                break;
             }
         }
     };
@@ -215,6 +267,14 @@ public class OSXIntegration {
         }
     }
 
+    public static void setProxyIcon(JRootPane rootPane, File file) {
+        rootPane.putClientProperty("Window.documentFile", file);
+    }
+    
+    public static void setModifiedIndicator(JRootPane rootPane, boolean isModified) {
+        rootPane.putClientProperty("Window.documentModified", isModified);
+    }
+    
     public interface IOpenFilesHandler {
         public void openFiles(List<File> files);
     }

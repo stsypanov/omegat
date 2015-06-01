@@ -141,7 +141,10 @@ public class Main {
                     params.put("resource-bundle", arg.substring(16));
                 } else {
                     File f = new File(arg);
-                    if (f.exists() && f.isDirectory()) {
+                    if (f.getName().equals(OConsts.FILE_PROJECT)) {
+                        f = f.getParentFile();
+                    }
+                    if (StaticUtils.isProjectDir(f)) {
                         projectLocation = f;
                     }
                 }
@@ -356,16 +359,16 @@ public class Main {
     }
 
     protected static void setNimbusLaF(){
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Log.log(e);
-        }
+//        try {
+//            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (Exception e) {
+//            Log.log(e);
+//        }
     }
 
 

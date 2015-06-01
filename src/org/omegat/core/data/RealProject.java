@@ -269,7 +269,7 @@ public class RealProject implements IProject {
             }
 
             loadTranslations();
-            m_modifiedFlag = true;
+            setProjectModified(true);
             saveProject(false);
 
             allProjectEntries = Collections.unmodifiableList(allProjectEntries);
@@ -354,7 +354,7 @@ public class RealProject implements IProject {
             // Project Loaded...
             Core.getMainWindow().showStatusMessageRB(null);
 
-            m_modifiedFlag = false;
+            setProjectModified(false);
         } catch (Exception e) {
             Log.logErrorRB(e, "TF_LOAD_ERROR");
             Core.getMainWindow().displayErrorRB(e, "TF_LOAD_ERROR");
@@ -689,7 +689,7 @@ public class RealProject implements IProject {
                         rebaseProject();
                     }
 
-                    m_modifiedFlag = false;
+                    setProjectModified(false);
                 } catch (KnownException ex) {
                     throw ex;
                 } catch (Exception e) {
@@ -1373,6 +1373,13 @@ public class RealProject implements IProject {
         return m_modifiedFlag;
     }
 
+    private void setProjectModified(boolean isModified) {
+        m_modifiedFlag = isModified;
+        if (isModified) {
+            CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.MODIFIED);
+        }
+    }
+    
     @Override
     public void setTranslation(final SourceTextEntry entry, final PrepareTMXEntry trans, boolean defaultTranslation, TMXEntry.ExternalLinked externalLinked) {
         if (trans == null) {
@@ -1411,7 +1418,7 @@ public class RealProject implements IProject {
             newTrEntry = new TMXEntry(trans, defaultTranslation, externalLinked);
         }
 
-        m_modifiedFlag = true;
+        setProjectModified(true);
 
         projectTMX.setTranslation(entry, newTrEntry, defaultTranslation);
 
@@ -1446,7 +1453,7 @@ public class RealProject implements IProject {
             projectTMX.setTranslation(entry, new TMXEntry(en, true, null), true);
         }
 
-        m_modifiedFlag = true;
+        setProjectModified(true);
     }
 
     public void iterateByDefaultTranslations(DefaultTranslationsIterator it) {

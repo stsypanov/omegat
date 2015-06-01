@@ -48,6 +48,12 @@ import org.omegat.util.Preferences;
  * @author Aaron Madlon-Kay
  */
 public class TransTipsPopup implements IPopupMenuConstructor {
+    private GlossaryTextArea glossaryTextArea;
+
+    public TransTipsPopup(GlossaryTextArea glossaryTextArea) {
+        this.glossaryTextArea = glossaryTextArea;
+    }
+
     public void addItems(final JPopupMenu menu, JTextComponent comp, final int mousepos,
             boolean isInActiveEntry, boolean isInActiveTranslation, SegmentBuilder sb) {
         if (!Preferences.isPreference(Preferences.TRANSTIPS)) {
@@ -83,7 +89,7 @@ public class TransTipsPopup implements IPopupMenuConstructor {
                 }
             }
         };
-        for (GlossaryEntry ge : GlossaryTextArea.nowEntries) {
+        for (GlossaryEntry ge : glossaryTextArea.getNowEntries()) {
             TransTips.search(sb.getSourceText(), ge, callback);
         }
 	    menu.addSeparator();

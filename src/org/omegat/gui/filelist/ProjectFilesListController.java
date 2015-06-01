@@ -30,11 +30,7 @@
 
 package org.omegat.gui.filelist;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -94,7 +90,8 @@ import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
-import org.omegat.util.gui.ProjectFileDragImporter;
+import org.omegat.util.gui.DragTargetOverlay;
+import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.TableColumnSizer;
 import org.omegat.util.gui.DataTableStyling;
@@ -143,10 +140,27 @@ public class ProjectFilesListController {
             }
         });
         
-        list.tableFiles.setTransferHandler(new ProjectFileDragImporter(m_parent, list.tableFiles, true) {
+        DragTargetOverlay.apply(list.tableFiles, new FileDropInfo(m_parent, true) {
             @Override
-            protected String getDestination() {
+            public String getImportDestination() {
                 return Core.getProject().getProjectProperties().getSourceRoot();
+            }
+            @Override
+            public boolean canAcceptDrop() {
+                return Core.getProject().isProjectLoaded();
+            }
+
+            @Override
+            public String getOverlayMessage() {
+                return OStrings.getString("DND_ADD_SOURCE_FILE");
+            }
+            @Override
+            public boolean acceptFile(File path) {
+                return true;
+            }
+            @Override
+            public Component getComponentToOverlay() {
+                return list.tablesInnerPanel;
             }
         });
         
@@ -209,11 +223,14 @@ public class ProjectFilesListController {
                     break;
                 case LOAD:
                 case CREATE:
-                    buildDisplay(Core.getProject().getProjectFiles());
+                    List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+                    buildDisplay(projectFiles);
                     if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
                         break;
                     }
-                    list.setVisible(true);
+                    if (projectFiles.isEmpty() || projectFiles.size() > 1){
+                        list.setVisible(true);
+                    }
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -829,7 +846,7 @@ public class ProjectFilesListController {
         list.statLabel.setFont(font);
     }
 
-    class Sorter extends RowSorter<IProject.FileInfo> {
+    private class Sorter extends RowSorter<IProject.FileInfo> {
         private final List<IProject.FileInfo> files;
         private SortKey sortKey = new SortKey(0, SortOrder.UNSORTED);
         private Integer[] modelToView;
