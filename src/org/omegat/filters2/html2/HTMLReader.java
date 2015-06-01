@@ -34,6 +34,7 @@ import java.io.Reader;
 import java.util.regex.Matcher;
 
 import org.omegat.filters2.AbstractReader;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.PatternConsts;
 
@@ -130,6 +131,7 @@ public class HTMLReader extends AbstractReader {
             try {
                 isr = new InputStreamReader(is, encoding);
             } catch (Exception e) {
+                Log.log(e);
             }
 
         // if there's no reader yet, try the default encoding
@@ -138,6 +140,7 @@ public class HTMLReader extends AbstractReader {
                 isr = new InputStreamReader(is, defaultEncoding);
                 encoding = defaultEncoding;
             } catch (Exception e) {
+                Log.log(e);
             }
 
         // just create one without an encoding and cross fingers
