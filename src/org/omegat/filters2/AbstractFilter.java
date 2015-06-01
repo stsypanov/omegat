@@ -325,8 +325,7 @@ public abstract class AbstractFilter implements IFilter {
      * @throws IOException
      *             If any I/O Error occurs upon reader creation
      */
-    protected BufferedReader createReader(File inFile, String inEncoding)
-            throws UnsupportedEncodingException, IOException {
+    protected BufferedReader createReader(File inFile, String inEncoding) throws IOException {
         InputStreamReader isr;
         if (inEncoding == null)
             isr = new InputStreamReader(new FileInputStream(inFile));
@@ -502,14 +501,11 @@ public abstract class AbstractFilter implements IFilter {
         entryAlignCallback = callback;
         processOptions = config;
 
-        BufferedReader readerIn = createReader(inFile, fc.getInEncoding());
-        BufferedReader readerOut = createReader(outFile, fc.getOutEncoding());
 
-        try {
+
+        try (BufferedReader readerIn = createReader(inFile, fc.getInEncoding());
+             BufferedReader readerOut = createReader(outFile, fc.getOutEncoding())){
             alignFile(readerIn, readerOut, fc);
-        } finally {
-            readerIn.close();
-            readerOut.close();
         }
     }
 
