@@ -92,6 +92,7 @@ public abstract class TmxComplianceBase extends TestCase {
     }
 
     protected List<String> readTextFile(File f, String charset) throws Exception {
+        //todo use utils to read file
         BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset));
 
         ByteUtils.checkByteOrderMark(rd);

@@ -119,6 +119,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
      * Load ignored words from 'ignore.txt' file.
      */
     protected void loadIgnoreWords(final File f) throws IOException {
+        //todo use utils to read file
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), OConsts.UTF8))) {
             synchronized (ignoreWords) {
                 ignoreWords.clear();

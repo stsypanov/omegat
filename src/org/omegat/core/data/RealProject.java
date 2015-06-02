@@ -1582,6 +1582,7 @@ public class RealProject implements IProject {
 
     @Override
     public List<String> getSourceFilesOrder() {
+        //todo use utils to read file
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))){
             List<String> result = new ArrayList<>();

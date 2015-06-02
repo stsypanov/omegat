@@ -199,6 +199,7 @@ public class SpellChecker implements ISpellChecker {
      * fill the word list (ignore or learned) with contents from the disk
      */
     private void fillWordList(String filename, List<String> list) {
+        //todo use utils to read file
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8));
