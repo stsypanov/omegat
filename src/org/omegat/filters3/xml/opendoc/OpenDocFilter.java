@@ -63,8 +63,7 @@ public class OpenDocFilter extends AbstractFilter {
 
     /** Returns true if it's OpenDocument file. */
     public boolean isFileSupported(File inFile, Map<String, String> config, FilterContext fc) {
-        try {
-            ZipFile file = new ZipFile(inFile);
+        try (ZipFile file = new ZipFile(inFile)){
             Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
@@ -73,8 +72,8 @@ public class OpenDocFilter extends AbstractFilter {
                     return true;
                 }
             }
-            file.close();
         } catch (IOException e) {
+            Log.log(e);
         }
         return false;
     }
