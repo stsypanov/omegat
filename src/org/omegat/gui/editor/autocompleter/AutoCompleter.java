@@ -56,7 +56,7 @@ import org.omegat.util.StaticUtils;
  * @author Zoltan Bartko <bartkozoltan@bartkozoltan.com>
  * @author Aaron Madlon-Kay
  */
-public class AutoCompleter {    
+public class AutoCompleter implements IAutoCompleter {    
     
     private final static int GO_NEXT_KEY = KeyEvent.VK_RIGHT;
     private final static int GO_PREV_KEY = KeyEvent.VK_LEFT;
@@ -68,8 +68,6 @@ public class AutoCompleter {
     private EditorTextArea3 editor; 
     
     boolean onMac = Platform.isMacOSX();
-    
-    private boolean visible = false;
     
     public final static int pageRowCount = 10;
     
@@ -99,10 +97,10 @@ public class AutoCompleter {
         scroll.getHorizontalScrollBar().setFocusable(false); 
         
         // add any views here
-        views.add(new GlossaryAutoCompleterView(this));
-        views.add(new AutotextAutoCompleterView(this));
-        views.add(new TagAutoCompleterView(this));
-        views.add(new CharTableAutoCompleterView(this));
+        addView(new GlossaryAutoCompleterView());
+        addView(new AutotextAutoCompleterView());
+        addView(new TagAutoCompleterView());
+        addView(new CharTableAutoCompleterView());
 
         viewLabel = new JLabel();
         viewLabel.setBorder(new CompoundBorder(
@@ -115,6 +113,12 @@ public class AutoCompleter {
         popup.add(viewLabel, BorderLayout.SOUTH);
         selectNextView();
     } 
+
+    @Override
+    public void addView(AbstractAutoCompleterView view) {
+        view.setParent(this);
+        views.add(view);
+    }
 
     public EditorTextArea3 getEditor() {
         return editor;
@@ -134,17 +138,15 @@ public class AutoCompleter {
                 return false;
             }
 
-            visible = true;
-
-            if (!popup.isVisible()) {
-                updatePopup();
-            }
+            setVisible(true);
+            
             return true;
         }
-
-        if (visible) {
-            if (views.get(currentView).processKeys(e, popup.isVisible()))
+        
+        if (isVisible()) {
+            if (getCurrentView().processKeys(e)) {
                 return true;
+            }
             
             if ((StaticUtils.isKey(e, KeyEvent.VK_ENTER, 0))) {
                 doSelection();
@@ -158,22 +160,18 @@ public class AutoCompleter {
             }
 
             if ((StaticUtils.isKey(e, KeyEvent.VK_ESCAPE, 0))) {
-                hidePopup();
+                setVisible(false);
                 return true;
             }
             
             if (StaticUtils.isKey(e, GO_PREV_KEY, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
-                if (popup.isVisible()) {
-                    selectPreviousView();
-                }
+                selectPreviousView();
                 return true;
             }
             
             if ((!onMac && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
                     || StaticUtils.isKey(e, GO_NEXT_KEY, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
-                if (popup.isVisible()) {
-                    selectNextView();
-                }
+                selectNextView();
                 return true;
             }
         }
@@ -183,17 +181,13 @@ public class AutoCompleter {
     }
     
     public void doSelection() {
+        acceptedListItem(getSelectedValue());
+        if (getCurrentView().shouldCloseOnSelection()) {
+            setVisible(false);
+        }
     	popup.setVisible(false); 
         acceptedListItem(getSelectedValue());
         visible = false;
-    }
-
-    /**
-     * hide the popup
-     */
-    public void hidePopup() {
-        visible = false;
-        popup.setVisible(false);
     }
     
     /**
@@ -207,15 +201,21 @@ public class AutoCompleter {
     /**
      * Show the popup list.
      */
-    public void updatePopup() { 
-        if (!isVisible()) {
+    public void updatePopup() {
+        updatePopup(false);
+    }
+    
+    public void updatePopup(boolean force) { 
+        if (!force && !isVisible()) {
             return;
         }
         
-        if (editor.isEnabled() && updateViewData() && views.get(currentView).getRowCount() != 0) {
+        AbstractAutoCompleterView view = getCurrentView();
+        
+        if (editor.isEnabled() && view.updateViewData() && view.getRowCount() != 0) {
             scroll.setPreferredSize(new Dimension(
-                    Math.min(views.get(currentView).getPreferredWidth(), MAX_POPUP_WIDTH),
-                    Math.max(views.get(currentView).getPreferredHeight(), MIN_VIEWPORT_HEIGHT)));
+                    Math.min(view.getPreferredWidth(), MAX_POPUP_WIDTH),
+                    Math.max(view.getPreferredHeight(), MIN_VIEWPORT_HEIGHT)));
             popup.validate();
             popup.pack();
             Point p = getDisplayPoint();
@@ -236,22 +236,12 @@ public class AutoCompleter {
         try {
             int pos = Math.min(editor.getCaret().getDot(), editor.getCaret().getMark());
             x = editor.getUI().modelToView(editor, pos).x;
-            y = editor.getUI().modelToView(editor, editor.getCaret().getDot()).y
-                    + fontSize;
+            y = editor.getUI().modelToView(editor, editor.getCaret().getDot()).y + fontSize;
         } catch(BadLocationException e) {
             // this should never happen!!!
             Log.log(e);
         }
         return new Point(x, y);
-    }
-    
-    /**
-     * Update the data of the list based on the text at/before the caret position
-     * @return 
-     */
-    private boolean updateViewData() {
-        AbstractAutoCompleterView currentACView = views.get(currentView);
-        return currentACView.updateViewData();
     }
 
     /**
@@ -301,7 +291,7 @@ public class AutoCompleter {
     private void updateViewLabel() {
         StringBuilder sb = new StringBuilder("<html>");
         sb.append("<b>");
-        sb.append(views.get(currentView).getName());
+        sb.append(getCurrentView().getName());
         sb.append("</b>");
         
         if (views.size() != 1) {
@@ -327,6 +317,10 @@ public class AutoCompleter {
         viewLabel.setText(sb.toString());
     }
 
+    private AbstractAutoCompleterView getCurrentView() {
+        return views.get(currentView);
+    }
+    
     /** go to the next view */
     private void selectNextView() {
         currentView = nextViewNumber();
@@ -335,7 +329,7 @@ public class AutoCompleter {
 
     /** activate the current view */
     private void activateView() {
-        scroll.setViewportView(views.get(currentView).getViewContent());
+        scroll.setViewportView(getCurrentView().getViewContent());
         updateViewLabel();
         updatePopup();
     }
@@ -346,18 +340,13 @@ public class AutoCompleter {
         activateView();
     }
 
-    /**
-     * @return the autoCompleterVisible
-     */
     public boolean isVisible() {
-        return visible;
+        return popup.isVisible();
     }
 
-    /**
-     * @param autoCompleterVisible the autoCompleterVisible to set
-     */
-    public void setVisible(boolean autoCompleterVisible) {
-         this.visible = autoCompleterVisible;
+    public void setVisible(boolean isVisible) {
+        updatePopup(isVisible);
+        popup.setVisible(isVisible);
     }
     
     /** 

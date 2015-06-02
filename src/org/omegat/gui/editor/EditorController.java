@@ -82,6 +82,7 @@ import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
+import org.omegat.gui.editor.autocompleter.IAutoCompleter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromTMMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -759,7 +760,7 @@ public class EditorController implements IEditor {
             CoreEvents.fireEntryNewFile(Core.getProject().getProjectFiles().get(displayedFileIndex).filePath);
         }
 
-        editor.autoCompleter.hidePopup();
+        editor.autoCompleter.setVisible(false);
         editor.repaint();
 
         // fire event about new segment activated
@@ -2183,7 +2184,7 @@ public class EditorController implements IEditor {
 
     @Override
     public void windowDeactivated() {
-        editor.autoCompleter.hidePopup();
+        editor.autoCompleter.setVisible(false);
     }
 
     /**
@@ -2344,5 +2345,10 @@ public class EditorController implements IEditor {
         public void cancel() {
             this.isCanceled = true;
         }
+    }
+
+    @Override
+    public IAutoCompleter getAutoCompleter() {
+        return editor.autoCompleter;
     }
 }

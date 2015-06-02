@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2013 Zoltan Bartko, Aaron Madlon-Kay
-               2014 Aaron Madlon-Kay
+               2014-2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -51,8 +51,8 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
      */
     private static JTable table;
     
-    public AutoCompleterTableView(String name, AutoCompleter completer) {
-        super(name,completer);
+    public AutoCompleterTableView(String name) {
+        super(name);
         getTable().changeSelection(0, 0, false, false);
     }
     
@@ -70,22 +70,24 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
             table.setCellSelectionEnabled(true);
             table.setFocusable(false);
             table.setTableHeader(null);
-            table.addMouseListener(new MouseAdapter() {
-            	@Override
-            	public void mouseClicked(MouseEvent e) {
-            		if (e.getClickCount() == 2) {
-            			Point p = e.getPoint();
-            			int r = table.rowAtPoint(p);
-            			int c = table.columnAtPoint(p);
-            			if (table.getSelectedRow() == r && table.getSelectedColumn() == c) {
-            				completer.doSelection();
-            			}
-            		}
-            	}
-			});
+            table.addMouseListener(mouseAdapter);
         }
         return table;
     }
+    
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                Point p = e.getPoint();
+                int r = table.rowAtPoint(p);
+                int c = table.columnAtPoint(p);
+                if (table.getSelectedRow() == r && table.getSelectedColumn() == c) {
+                    completer.doSelection();
+                }
+            }
+        }
+    };
     
     @Override
     public Component getViewContent() {
@@ -101,79 +103,59 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
     }
     
     @Override
-    public boolean processKeys(KeyEvent e, boolean visible) {
+    public boolean processKeys(KeyEvent e) {
         
         if (StaticUtils.isKey(e, KeyEvent.VK_UP, 0)) {
             // process key UP
-            if (visible) {
-                selectPreviousPossibleValueUp();
-            }
+            selectPreviousPossibleValueUp();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_LEFT, 0)) {
             // process key LEFT
-            if (visible) {
-                selectPreviousPossibleValueLeft();
-            }
+            selectPreviousPossibleValueLeft();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_DOWN, 0)) {
             // process key DOWN
-            if (visible) {
-                selectNextPossibleValueDown();
-            }
+            selectNextPossibleValueDown();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_RIGHT, 0)) {
             // process key RIGHT
-            if (visible) {
-                selectNextPossibleValueRight();
-            }
+            selectNextPossibleValueRight();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_UP, 0)) {
-            if (visible) {
-                selectPreviousPossibleValueByPage();
-            }
+            selectPreviousPossibleValueByPage();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_DOWN, 0)) {
-            if (visible) {
-                selectNextPossibleValueByPage();
-            }
+            selectNextPossibleValueByPage();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_HOME, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
-            if (visible) {
-                selectFirstPossibleValue();
-            }
+            selectFirstPossibleValue();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_END, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
-            if (visible) {
-                selectLastPossibleValue();
-            }
+            selectLastPossibleValue();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_HOME, 0)) {
-            if (visible) {
-                selectFirstPossibleValueInLine();
-            }
+            selectFirstPossibleValueInLine();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_END, 0)) {
-            if (visible) {
-                selectLastPossibleValueInLine();
-            }
+            selectLastPossibleValueInLine();
             return true;
         }
         
