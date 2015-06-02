@@ -47,7 +47,7 @@ public class PeroFileUtilTest extends LFileCopyTest {
 
         assertFalse(renameTo.exists());
 
-        FileUtil.rename(renameFrom, renameTo);
+        PeroFileUtils.rename(renameFrom, renameTo);
 
         assertEquals(renameTo.getAbsolutePath(), renameTo.getAbsolutePath());
 
@@ -61,8 +61,8 @@ public class PeroFileUtilTest extends LFileCopyTest {
     public void testWriteScriptFile() throws Exception {
         String script = "javascript";
         String scriptName = "script.js";
-        File file = FileUtil.writeScriptFile(script, scriptName);
-        String fromFile = FileUtil.readTextFile(file);
+        File file = PeroFileUtils.writeScriptFile(script, scriptName);
+        String fromFile = PeroFileUtils.readTextFile(file);
         assertEquals(script, fromFile);
 
     }
@@ -74,7 +74,7 @@ public class PeroFileUtilTest extends LFileCopyTest {
 
     @Test
     public void testReadTextFile() throws Exception {
-        String s = FileUtil.readTextFile(new File(UTIL_PARENT, TEXT_FILE_NAME));
+        String s = PeroFileUtils.readTextFile(new File(UTIL_PARENT, TEXT_FILE_NAME));
         assertEquals("text file", s);
     }
 
@@ -82,7 +82,7 @@ public class PeroFileUtilTest extends LFileCopyTest {
     public void testFindFiles() throws Exception {
         assertTrue(PARENT_DIR.exists());
         final String suffix = ".tmx";
-        List<File> files = FileUtil.findFiles(PARENT_DIR, new FileFilter() {
+        List<File> files = PeroFileUtils.findFiles(PARENT_DIR, new FileFilter() {
             @Override
             public boolean accept(File pathname) {
 
@@ -100,7 +100,7 @@ public class PeroFileUtilTest extends LFileCopyTest {
     @Test
     public void testComputeRelativePath() throws Exception {
 
-        String relativePath = FileUtil.computeRelativePath(UTIL_PARENT_DIR, TEXT_FILE);
+        String relativePath = PeroFileUtils.computeRelativePath(UTIL_PARENT_DIR, TEXT_FILE);
         assertEquals(TEXT_FILE_NAME, relativePath);
 
         relativePath = FilenameUtils.getName(TEXT_FILE.getPath());
