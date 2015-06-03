@@ -114,29 +114,24 @@ public class GlossaryReaderTSV {
         } else if (isUTF16LE(file)) {
             encoding = OConsts.UTF16LE;
         }
-        Writer wr = new OutputStreamWriter(new FileOutputStream(file, true), encoding);
-        wr.append(newEntry.getSrcText()).append('\t').append(newEntry.getLocText());
-        if (!StringUtil.isEmpty(newEntry.getCommentText())) {
-            wr.append('\t').append(newEntry.getCommentText());
+        try(Writer wr = new OutputStreamWriter(new FileOutputStream(file, true), encoding)) {
+            wr.append(newEntry.getSrcText()).append('\t').append(newEntry.getLocText());
+            if (!StringUtil.isEmpty(newEntry.getCommentText())) {
+                wr.append('\t').append(newEntry.getCommentText());
+            }
+            wr.append(System.getProperty("line.separator"));
         }
-        wr.append(System.getProperty("line.separator"));
-        wr.close();
     }
 
     private static boolean isUTF16LE(final File file) throws IOException {
-        FileInputStream stream = null;
         boolean ret = false;
-        try {
-            stream = new FileInputStream(file);
+        try (FileInputStream stream = new FileInputStream(file)){
+
             byte[] bytes = new byte[2];
 
             // BOM (byte order mark) detection
             if (stream.read(bytes, 0, 2) == 2 && bytes[0] == (byte) 0xFF && bytes[1] == (byte) 0xFE) {
                 ret = true;
-            }
-        } finally {
-            if (stream != null) {
-                stream.close();
             }
         }
         return ret;

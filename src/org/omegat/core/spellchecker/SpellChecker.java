@@ -199,26 +199,14 @@ public class SpellChecker implements ISpellChecker {
      * fill the word list (ignore or learned) with contents from the disk
      */
     private void fillWordList(String filename, List<String> list) {
-        //todo use utils to read file
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8));
-
+        //todo use utils
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8))){
             String thisLine;
             while ((thisLine = br.readLine()) != null) {
                 list.add(thisLine);
             }
-        } catch (FileNotFoundException ex) {
-            // discard this
         } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-            } catch (IOException ex) {
-                // so now what?
-            }
+            Log.log(ex);
         }
     }
 
@@ -228,23 +216,14 @@ public class SpellChecker implements ISpellChecker {
     private void dumpWordList(List<String> list, String filename) {
         if (filename == null)
             return;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8));
 
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8))){
             for (String text : list) {
                 bw.write(text);
                 bw.newLine();
             }
         } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException ex) {
-                Log.log(ex);
-            }
+            Log.log(ex);
         }
     }
 

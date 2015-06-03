@@ -155,14 +155,10 @@ public class FileUtil {
     }
 
     public static String readScriptFile(File file) {
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))){
-
-            try (StringWriter out = new StringWriter()){
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8));
+             StringWriter out = new StringWriter()){
                 LFileCopy.copy(rd, out);
                 return out.toString().replace(System.getProperty("line.separator"), "\n");
-            } finally {
-                rd.close();
-            }
         } catch (Exception ex) {
             Log.log(ex);
             return null;
@@ -173,14 +169,10 @@ public class FileUtil {
      * Read file as UTF-8 text.
      */
     public static String readTextFile(File file) throws IOException {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8));
-
-        try {
-            StringWriter out = new StringWriter();
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8));
+             StringWriter out = new StringWriter()){
             LFileCopy.copy(rd, out);
             return out.toString();
-        } finally {
-            rd.close();
         }
     }
 
@@ -288,15 +280,10 @@ public class FileUtil {
             return HelpFrame.errorHaiku();
         }
 
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8));
-            try {
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8))){
                 StringWriter out = new StringWriter();
                 LFileCopy.copy(rd, out);
                 return out.toString();
-            } finally {
-                rd.close();
-            }
         } catch (IOException ex) {
             return HelpFrame.errorHaiku();
         }

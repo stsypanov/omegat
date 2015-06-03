@@ -156,8 +156,7 @@ public abstract class XMLFilter extends AbstractFilter implements Translator {
     @Override
     public void processFile(File inFile, File outFile, FilterContext fc) throws IOException,
             TranslationException {
-        try {
-            BufferedReader inReader = createReader(inFile, fc.getInEncoding());
+        try (BufferedReader inReader = createReader(inFile, fc.getInEncoding())){
             inEncodingLastParsedFile = this.encoding;
             targetLanguage = fc.getTargetLang();
             InputSource source = new InputSource(inReader);
@@ -167,7 +166,6 @@ public abstract class XMLFilter extends AbstractFilter implements Translator {
             parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
             parser.setProperty("http://xml.org/sax/properties/declaration-handler", handler);
             parser.parse(source, handler);
-            inReader.close();
         } catch (ParserConfigurationException e) {
             throw new TranslationException(e.getLocalizedMessage());
         } catch (SAXException e) {

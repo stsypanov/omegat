@@ -48,10 +48,10 @@ public class GlossaryReaderCSV {
     protected static final char SEPARATOR = ',';
 
     public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), OConsts.UTF8);
 
         List<GlossaryEntry> result = new ArrayList<>();
-        try (BufferedReader in = new BufferedReader(reader)) {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), OConsts.UTF8);
+             BufferedReader in = new BufferedReader(reader)) {
             // BOM (byte order mark) bugfix
             ByteUtils.checkByteOrderMark(in);
 
