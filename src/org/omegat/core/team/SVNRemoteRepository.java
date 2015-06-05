@@ -30,6 +30,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.omegat.core.Core;
@@ -95,6 +96,7 @@ public class SVNRemoteRepository implements IRemoteRepository {
         try {
             status = ourClientManager.getStatusClient().doStatus(file, false);
         } catch (SVNException e) {
+            Log.log(Level.SEVERE, "failed to get status of repository", e);
             if (e.getErrorMessage().getErrorCode().getCode()==155007) {
                 //file is outside repository, so not under version control.
                 return false;
