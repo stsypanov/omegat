@@ -37,10 +37,7 @@ import java.util.regex.Pattern;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
-import org.omegat.util.LinebreakPreservingReader;
-import org.omegat.util.NullBufferedWriter;
-import org.omegat.util.OStrings;
-import org.omegat.util.StringUtil;
+import org.omegat.util.*;
 
 /**
  * Filter to support language files for ILIAS. The files are a kind of UTF8 encoded text where the lines look like
@@ -87,48 +84,47 @@ public class ILIASFilter extends AbstractFilter {
      */
     @Override
     public void processFile(BufferedReader reader, BufferedWriter outfile, FilterContext fc) throws IOException {
-        LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader); // fix
-                                                                                // for
-                                                                                // bug
-                                                                                // 1462566
-        String line;
+        // fix for bug 1462566
+        try (LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
+
+            String line;
         /*
          * ILIAS strings look like module_name#:#identifier#:#string to translate
          * The file usually begins from some text that does not match the pattern
          */
 
-        while ((line = lbpr.readLine()) != null) {
-                      
-            String trimmed = line.trim();
+            while ((line = lbpr.readLine()) != null) {
 
-            // skipping empty strings
-            if (trimmed.isEmpty()) {
-                outfile.write(line + lbpr.getLinebreak());
-                continue;
+                String trimmed = line.trim();
+
+                // skipping empty strings
+                if (trimmed.length() == 0) {
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
+                }
+
+                Matcher mat = patternText.matcher(line);
+                if (!mat.matches()) {
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
+                }
+                String key = mat.group(1) + "#:#" + mat.group(2);
+                String value = mat.group(3);
+
+                if (value.isEmpty()) { // If original text is empty, the translated is empty too
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
+                }
+
+                // writing out: "module_name#:#identifier#:#"
+                outfile.write(key + "#:#");
+
+                String trans = process(key, value);
+
+                outfile.write(trans); // Translation
+                outfile.write(lbpr.getLinebreak());
             }
-
-            Matcher mat = patternText.matcher(line);
-            if (!mat.matches()) {
-                outfile.write(line + lbpr.getLinebreak());
-                continue;
-            }
-            String key = mat.group(1) + "#:#" + mat.group(2);
-            String value = mat.group(3);
-
-            if(value.isEmpty()) { // If original text is empty, the translated is empty too
-                outfile.write(line + lbpr.getLinebreak()); 
-                continue;                
-            }
-
-            // writing out: "module_name#:#identifier#:#"
-            outfile.write(key + "#:#");
-
-            String trans = process(key, value);
-                        
-            outfile.write(trans); // Translation
-            outfile.write(lbpr.getLinebreak()); 
         }
-        lbpr.close();
     }
 
     @Override
@@ -137,13 +133,13 @@ public class ILIASFilter extends AbstractFilter {
         boolean textFound = false;
         final int MAX_LINES_TO_CHECK = 128;
 
-        try {
+        try (LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
             String line;
             int more = MAX_LINES_TO_CHECK + 1;
-            LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader);
+
             while ((line = lbpr.readLine()) != null && --more > 0) {
                 line = line.trim();
-                if (line.isEmpty()) {
+                if (line.length() == 0) {
                     continue;
                 }
                 markFound = patternMark.matcher(line).matches();
@@ -153,6 +149,7 @@ public class ILIASFilter extends AbstractFilter {
                 textFound = patternText.matcher(line).matches();
             }
         } catch (IOException e) {
+            Log.log(e);
             return false;
         }
         return markFound & !textFound;
@@ -160,7 +157,7 @@ public class ILIASFilter extends AbstractFilter {
 
 
     @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
+    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
         Map<String, String> source = new HashMap<String, String>();
         Map<String, String> translated = new HashMap<String, String>();
 
