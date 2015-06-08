@@ -1,9 +1,27 @@
 ----------------------------------------------------------------------
- OmegaT 3.5
+ OmegaT 3.5 update 1
 ----------------------------------------------------------------------
-  15 Enhancements
+   1 Enhancement
+   0 Bug fix
+   1 Localisation update
+----------------------------------------------------------------------
+3.5 update 1 vs 3.5
+
+  Implemented requests:
+  
+  - Drag and drop within the segment 
+  https://sourceforge.net/p/omegat/feature-requests/401/
+
+  Localisation updates:
+  - Dutch localisation updated to 3.5 (UI, documentation, readme)
+
+
+----------------------------------------------------------------------
+ OmegaT 3.5 (2015-06-05)
+----------------------------------------------------------------------
+  18 Enhancements
    4 Bug fixes
-   6 Localisation updates
+   5 Localisation updates
 ----------------------------------------------------------------------
 3.5 vs 3.4
 
@@ -156,6 +174,7 @@ of "foo\.\scripts"
 
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 2
+ OmegaT 3.1.9 update 2 (2015-06-03)
 ----------------------------------------------------------------------
    2 Enhancements
    2 Bug fixes

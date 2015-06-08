@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2013 Zoltan Bartko, Aaron Madlon-Kay
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.omegat.core.Core;
 import org.omegat.gui.editor.autocompleter.AutoCompleterItem;
@@ -49,39 +51,81 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
     }
 
     @Override
-    public List<AutoCompleterItem> computeListData(String prevText) {
+    public List<AutoCompleterItem> computeListData(String prevText, boolean contextualOnly) {
         String wordChunk = getLastToken(prevText);
         
-        List<AutoCompleterItem> result = new ArrayList<>();
-        boolean capitalize = (wordChunk.length() > 0) ?
-                (Preferences.isPreference(Preferences.AC_GLOSSARY_CAPITALIZE))
-                    && Character.isUpperCase(wordChunk.charAt(0)) 
-                : false;
-        
+        List<AutoCompleterItem> result = new ArrayList<AutoCompleterItem>();
         List<GlossaryEntry> entries = Core.getGlossary().getDisplayedEntries();
-        for (GlossaryEntry entry : entries) {
-            for (String s : entry.getLocTerms(true)) {
-                if (s.toLowerCase().startsWith(wordChunk.toLowerCase())) {
-                   if (capitalize) {
-                        s = s.substring(0,1).toUpperCase() + s.substring(1);
-                    }
-                    result.add(new AutoCompleterItem(s, new String[] { entry.getSrcText() }, wordChunk.length()));
-                }
-            }
-        }
+        
+        // Get contextual results
+        fillMatchingTerms(result, entries, wordChunk);
         
         if (!Core.getProject().getProjectProperties().getTargetLanguage().isSpaceDelimited()
-                && result.size() == 0) {
-            for (GlossaryEntry entry : entries) {
-                for (String s : entry.getLocTerms(true)) {
-                    result.add(new AutoCompleterItem(s, new String[] { entry.getSrcText() }, 0));
-                }
-            }
+                && result.isEmpty() && !contextualOnly) {
+            // Get non-contextual results only if called for
+            fillMatchingTerms(result, entries, null);
         }
         
         Collections.sort(result, new GlossaryComparator(entries));
         
         return result;
+    }
+    
+    /**
+     * Fill provided result list with AutCompleterItems matching the provided wordChunk.
+     * If the wordChunk is null, all available items will be added. However if the wordChunk is
+     * empty ("") then no items will be added.
+     * @param result
+     * @param glossary
+     * @param context
+     */
+    private void fillMatchingTerms(List<AutoCompleterItem> result, List<GlossaryEntry> glossary, String context) {
+        if ("".equals(context)) {
+            // Context is present but empty--we consider no terms to match.
+            return;
+        }
+        
+        boolean shouldCapitalize = context != null && Character.isUpperCase(context.codePointAt(0));
+        
+        for (GlossaryEntry entry : glossary) {
+            for (String term : entry.getLocTerms(true)) {
+                if (!termMatchesChunk(term, context)) {
+                    continue;
+                }
+                String payload = shouldCapitalize ? capitalize(term) : term;
+                if (Core.getProject().getProjectProperties().getTargetLanguage().isSpaceDelimited()) {
+                    payload += " ";
+                }
+                int length = context == null ? 0 : context.length();
+                result.add(new AutoCompleterItem(payload, new String[] { entry.getSrcText() }, length));
+            }
+        }
+    }
+    
+    private boolean termMatchesChunk(String term, String context) {
+        if (context == null) {
+            // Consider null context to match everything
+            return true;
+        }
+        if (term.equals(context) || term.equals(capitalize(context))) {
+            // Consider a term to NOT match if it is identical to the context (it is already present)
+            return false;
+        }
+        return toLowerCase(term).startsWith(toLowerCase(context));
+    }
+    
+    private Locale getTargetLocale() {
+        return Core.getProject().getProjectProperties().getTargetLanguage().getLocale();
+    }
+    
+    private String toLowerCase(String text) {
+        return text.toLowerCase(getTargetLocale());
+    }
+    
+    private String capitalize(String text) {
+        int secondCP = text.offsetByCodePoints(0, 1);
+        return text.substring(0, secondCP).toUpperCase(getTargetLocale()) +
+                text.substring(secondCP);
     }
 
     @Override

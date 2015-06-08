@@ -48,7 +48,9 @@ import org.omegat.gui.glossary.GlossaryAutoCompleterView;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Platform;
+import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * The controller part of the auto-completer
@@ -70,6 +72,8 @@ public class AutoCompleter implements IAutoCompleter {
     boolean onMac = Platform.isMacOSX();
     
     public final static int pageRowCount = 10;
+    
+    private boolean didPopUpAutomatically = false;
     
     /**
      * a list of the views associated with this auto-completer
@@ -212,7 +216,7 @@ public class AutoCompleter implements IAutoCompleter {
         
         AbstractAutoCompleterView view = getCurrentView();
         
-        if (editor.isEnabled() && view.updateViewData() && view.getRowCount() != 0) {
+        if (editor.isEnabled() && view.updateViewData()) {
             scroll.setPreferredSize(new Dimension(
                     Math.min(view.getPreferredWidth(), MAX_POPUP_WIDTH),
                     Math.max(view.getPreferredHeight(), MIN_VIEWPORT_HEIGHT)));
@@ -255,15 +259,18 @@ public class AutoCompleter implements IAutoCompleter {
 
         int offset = editor.getCaretPosition();
 
-        if (editor.getSelectionStart() == editor.getSelectionEnd()) {
+        String selection = editor.getSelectedText();
+
+        if (StringUtil.isEmpty(selection)) {
             editor.setSelectionStart(offset - selected.replacementLength);
             editor.setSelectionEnd(offset);
         }
-        String selection = editor.getSelectedText();
         editor.replaceSelection(selected.payload);
+        
         if (selected.cursorAdjust != 0) {
             editor.getCaret().setDot(editor.getCaretPosition() + selected.cursorAdjust);
         }
+        
         if (selected.keepSelection) {
             editor.replaceSelection(selection);
         }
@@ -317,27 +324,27 @@ public class AutoCompleter implements IAutoCompleter {
         viewLabel.setText(sb.toString());
     }
 
-    private AbstractAutoCompleterView getCurrentView() {
+    public AbstractAutoCompleterView getCurrentView() {
         return views.get(currentView);
     }
     
     /** go to the next view */
     private void selectNextView() {
         currentView = nextViewNumber();
-        activateView();
+        activateView(false);
     }
 
     /** activate the current view */
-    private void activateView() {
+    private void activateView(boolean force) {
         scroll.setViewportView(getCurrentView().getViewContent());
         updateViewLabel();
-        updatePopup();
+        updatePopup(force);
     }
     
     /** select the previous view */
     private void selectPreviousView() {
         currentView = prevViewNumber();
-        activateView();
+        activateView(false);
     }
 
     public boolean isVisible() {
@@ -347,6 +354,9 @@ public class AutoCompleter implements IAutoCompleter {
     public void setVisible(boolean isVisible) {
         updatePopup(isVisible);
         popup.setVisible(isVisible);
+        if (!isVisible) {
+            didPopUpAutomatically = false;
+        }
     }
     
     /** 
@@ -357,5 +367,33 @@ public class AutoCompleter implements IAutoCompleter {
      */
     public String keyText(int base, int modifier) {
          return KeyEvent.getKeyModifiersText(modifier) + '+' + KeyEvent.getKeyText(base);
+    }
+    
+    public void textDidChange() {
+        if (isVisible() && !didPopUpAutomatically) {
+            updatePopup();
+            return;
+        }
+        if (!Preferences.isPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY)) {
+            return;
+        }
+        
+        // Cycle through each view, stopping and showing it if it has some relevant content.
+        int i = currentView;
+        while (true) {
+            if (views.get(i).shouldPopUp()) {
+                currentView = i;
+                activateView(true);
+                didPopUpAutomatically = true;
+                return;
+            }
+            i = (i + 1) % views.size();
+            if (i == currentView) {
+                // We made it full circle with no results.
+                break;
+            }
+        }
+        // If we get here, no views had relevant content, so we close the popup.
+        setVisible(false);
     }
 }

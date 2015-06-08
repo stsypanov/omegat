@@ -47,6 +47,7 @@ public class SearchWindowForm extends PeroFrame {
      */
     public SearchWindowForm() {
         initComponents();
+        m_viewer.setDragEnabled(true);
     }
 
     /**

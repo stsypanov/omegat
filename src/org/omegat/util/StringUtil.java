@@ -4,12 +4,13 @@
  glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
- 2007 Didier Briel and Tiago Saboga
- 2007 Zoltan Bartko - bartkozoltan@bartkozoltan.com
- 2008 Andrzej Sawula
- 2010-2013 Alex Buloichik
- Home page: http://www.omegat.org/
- Support center: http://groups.yahoo.com/group/OmegaT/
+               2007 Didier Briel and Tiago Saboga
+               2007 Zoltan Bartko - bartkozoltan@bartkozoltan.com
+               2008 Andrzej Sawula
+               2010-2013 Alex Buloichik
+               2015 Zoltan Bartko, Aaron Madlon-Kay
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -28,6 +29,8 @@
  **************************************************************************/
 package org.omegat.util;
 
+import java.util.Locale;
+
 /**
  * Utilities for string processing.
  *
@@ -40,50 +43,159 @@ package org.omegat.util;
  */
 public class StringUtil {
 
-	/**
-	 * Check if string is empty, i.e. null or length==0
-	 */
-	public static boolean isEmpty(final String str) {
-		return str == null || str.length() == 0;
-	}
+    /**
+     * Check if string is empty, i.e. null or length==0
+     */
+    public static boolean isEmpty(final String str) {
+        return str == null || str.isEmpty();
+    }
 
-	public static boolean notEmpty(String str) {
-		return !isEmpty(str);
-	}
+    /**
+     * Check if string is not empty
+     */
+    public static boolean notEmpty(String str) {
+        return !isEmpty(str);
+    }
+    
+    /**
+     * Returns true if the input has at least one letter and
+     * all letters are lower case.
+     */
+    public static boolean isLowerCase(final String input) {
+        if (input.isEmpty()) {
+            return false;
+        }
+        boolean hasLetters = false;
+        for (int i = 0, cp; i < input.length(); i += Character.charCount(cp)) {
+            cp = input.codePointAt(i);
+            if (Character.isLetter(cp)) {
+                hasLetters = true;
+                if (!Character.isLowerCase(cp)) {
+                    return false;
+                }
+            }
+        }
+        return hasLetters;
+    }
 
-	/**
-	 * Returns true if the input is lowercase.
-	 */
-	public static boolean isLowerCase(final String input) {
-		for (int i = 0; i < input.length(); i++) {
-			char current = input.charAt(i);
-			if (Character.isLetter(current) && !Character.isLowerCase(current))
-				return false;
-		}
-		return true;
-	}
+    /**
+     * Returns true if the input is upper case.
+     */
+    public static boolean isUpperCase(final String input) {
+        if (input.isEmpty()) {
+            return false;
+        }
+        boolean hasLetters = false;
+        for (int i = 0, cp; i < input.length(); i += Character.charCount(cp)) {
+            cp = input.codePointAt(i);
+            if (Character.isLetter(cp)) {
+                hasLetters = true;
+                if (!Character.isUpperCase(cp)) {
+                    return false;
+                }
+            }
+        }
+        return hasLetters;
+    }
 
-	/**
-	 * Returns true if the input is upper case.
-	 */
-	public static boolean isUpperCase(final String input) {
-		for (int i = 0; i < input.length(); i++) {
-			char current = input.charAt(i);
-			if (Character.isLetter(current) && !Character.isUpperCase(current))
-				return false;
-		}
-		return true;
-	}
+    /**
+     * Returns true if the input has both upper case and lower case letters, but
+     * is not title case.
+     */
+    public static boolean isMixedCase(final String input) {
+        if (input.isEmpty() || input.codePointCount(0, input.length()) < 2) {
+            return false;
+        }
+        boolean hasUpper = false;
+        boolean hasLower = false;
+        for (int i = 0, cp; i < input.length(); i += Character.charCount(cp)) {
+            cp = input.codePointAt(i);
+            if (Character.isLetter(cp)) {
+                // Don't count the first cp as upper to allow for title case
+                if (Character.isUpperCase(cp) && i > 0) {
+                    hasUpper = true;
+                } else if (Character.isLowerCase(cp)) {
+                    hasLower = true;
+                }
+                if (hasUpper && hasLower) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Returns true if the input is title case.
-	 */
-	public static boolean isTitleCase(final String input) {
-		if (input.length() > 1)
-			return Character.isTitleCase(input.charAt(0)) && isLowerCase(input.substring(1));
-		else
-			return Character.isTitleCase(input.charAt(0));
-	}
+    /**
+     * Returns true if the input is title case, meaning the first character is UpperCase or
+     * TitleCase* and the rest of the string (if present) is LowerCase.
+     * <p>
+     * *There are exotic characters that are neither UpperCase nor LowerCase, but are TitleCase:
+     * e.g. LATIN CAPITAL LETTER L WITH SMALL LETTER J (U+01C8)<br>
+     * These are handled correctly.
+     */
+    public static boolean isTitleCase(final String input) {
+        if (input.length() > 1)
+            return Character.isTitleCase(input.charAt(0)) && isLowerCase(input.substring(1));
+        else
+            return Character.isTitleCase(input.charAt(0));
+    }
+
+    /**
+     * Returns true if the input consists only of whitespace characters
+     * (including non-breaking characters that are false according to
+     * {@link Character#isWhitespace(int)}).
+     */
+    public static boolean isWhiteSpace(final String input) {
+        if (input.isEmpty()) {
+            return false;
+        }
+        for (int i = 0, cp; i < input.length(); i += Character.charCount(cp)) {
+            cp = input.codePointAt(i);
+            if (!isWhiteSpace(cp)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Returns true if the input is a whitespace character
+     * (including non-breaking characters that are false according to
+     * {@link Character#isWhitespace(int)}).
+     */
+    public static boolean isWhiteSpace(int codePoint) {
+        return Character.isWhitespace(codePoint)
+                || codePoint == '\u00A0'
+                || codePoint == '\u2007'
+                || codePoint == '\u202F';
+    }
+    
+    /**
+     * Convert text to title case according to the supplied locale.
+     */
+    public static String toTitleCase(String text, Locale locale) {
+        if (text.isEmpty()) {
+            return text;
+        }
+        int firstTitleCase = Character.toTitleCase(text.codePointAt(0));
+        int remainderOffset = text.offsetByCodePoints(0, 1);
+        String first = Character.isTitleCase(firstTitleCase)
+                    ? String.valueOf(Character.toChars(firstTitleCase))
+                    : text.substring(0, remainderOffset).toUpperCase(locale);
+        return first + text.substring(remainderOffset).toLowerCase(locale);
+    }
+    
+    /**
+     * Returns first not null object from list, or null if all values is null.
+     */
+    public static <T> T nvl(T... values) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                return values[i];
+            }
+        }
+        return null;
+    }
 
 	/**
 	 * Returns first not null object from list, or null if all values is null.
@@ -137,16 +249,25 @@ public class StringUtil {
 		}
 	}
 
-	/**
-	 * Extracts first N chars from string.
-	 */
-	public static String firstN(String str, int len) {
-		if (str.length() < len) {
-			return str;
-		} else {
-			return str.substring(0, len) + "...";
-		}
-	}
+    /**
+     * Extracts first N chars from string.
+     */
+    public static String firstN(String str, int len) {
+        if (str.length() < len) {
+            return str;
+        } else {
+            return str.substring(0, len) + "...";
+        }
+    }
+    
+    /**
+     * Returns first letter in lowercase. Usually used for create tag shortcuts.
+     * Does not support non-BMP Unicode characters.
+     */
+    public static char getFirstLetterLowercase(CharSequence s) {
+        if (s == null) {
+            return 0;
+    }
 
 	/**
 	 * Returns first letter in lowercase. Usually used for create tag shortcuts.

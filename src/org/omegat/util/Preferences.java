@@ -320,8 +320,15 @@ public class Preferences {
 	/** Proxy options: Password for proxy  access */
 	public static final String PROXY_PASSWORD = "proxy_password";
 
-	/** Automatic save interval in seconds */
-	public static final String AUTO_SAVE_INTERVAL = "auto_save_interval";
+    public static final String AC_SHOW_SUGGESTIONS_AUTOMATICALLY = "ac_show_suggestions_automatically";
+    
+    /** glossary auto-completion */
+    public static final String AC_GLOSSARY_SHOW_SOURCE = "ac_glossary_show_source";
+    public static final String AC_GLOSSARY_SHOW_TARGET_BEFORE_SOURCE = "ac_glossary_show_target_before_source";
+    public static final String AC_GLOSSARY_SORT_BY_SOURCE = "ac_glossary_sort_by_source";
+    public static final String AC_GLOSSARY_SORT_BY_LENGTH = "ac_glossary_sort_by_length";
+    public static final String AC_GLOSSARY_SORT_ALPHABETICALLY = "ac_glossary_sort_alphabetically";
+    public static final String AC_GLOSSARY_CAPITALIZE = "ac_glossary_capitalize";
 
 	/** Default number of seconds to auto save project */
 	public static final String AUTO_SAVE_DEFAULT = "180";
@@ -468,7 +475,8 @@ public class Preferences {
      * Returns the boolean value of some preference out of OmegaT's preferences
      * file, if it exists.
      * <p>
-     * If the key is not found, returns the default value provided.
+     * If the key is not found, returns the default value provided and sets the
+     * preference to the default value.
      * 
      * @param key
      *            name of the key to look up, usually OConsts.PREF_...
@@ -479,6 +487,7 @@ public class Preferences {
     public static boolean isPreferenceDefault(String key, boolean defaultValue) {
         String val = getPreference(key);
         if (StringUtil.isEmpty(val)) {
+            setPreference(key, defaultValue);
             return defaultValue;
         }
         return "true".equals(val);
