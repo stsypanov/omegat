@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -46,6 +47,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.errors.NoRemoteRepositoryException;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.Ref;
@@ -64,7 +66,6 @@ import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.DockingUI;
 
 /**
  * GIT repository connection implementation.
@@ -84,9 +85,9 @@ public class GITRemoteRepository implements IRemoteRepository {
     protected static String LOCAL_BRANCH = "master";
     protected static String REMOTE_BRANCH = "origin/master";
     protected static String REMOTE = "origin";
-    boolean readOnly;
+    protected boolean readOnly;
 
-    File localDirectory;
+    protected File localDirectory;
     protected Repository repository;
 
     private MyCredentialsProvider myCredentialsProvider;
@@ -106,7 +107,9 @@ public class GITRemoteRepository implements IRemoteRepository {
             //The git repo uses the canonical path for some actions, and if c: != C: then an error is raised.
             //if we make it canonical already here, then we don't have that problem.
             localDirectory  = localDirectory.getCanonicalFile();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            Log.log(e);
+        }
 
         this.localDirectory = localDirectory;
         CredentialsProvider prevProvider = CredentialsProvider.getDefault();
@@ -130,10 +133,10 @@ public class GITRemoteRepository implements IRemoteRepository {
             c.call();
         } catch (InvalidRemoteException e) {
             if (localDirectory.exists()) {
-                deleteDirectory(localDirectory);
+                FileUtils.deleteDirectory(localDirectory);
             }
             Throwable cause = e.getCause();
-            if (cause != null && cause instanceof org.eclipse.jgit.errors.NoRemoteRepositoryException) {
+            if (cause != null && cause instanceof NoRemoteRepositoryException) {
                 BadRepositoryException bre = new BadRepositoryException(cause.getLocalizedMessage());
                 bre.initCause(e);
                 throw bre;
@@ -163,20 +166,6 @@ public class GITRemoteRepository implements IRemoteRepository {
         myCredentialsProvider.saveCredentials();
         Log.logInfoRB("GIT_FINISH", "clone");
     }
-
-    static public boolean deleteDirectory(File path) {
-        if( path.exists() ) {
-          File[] files = path.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        return( path.delete() );
-      }
 
     public boolean isChanged(File file) throws Exception {
         Log.logInfoRB("GIT_START", "status");
@@ -336,7 +325,7 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    private void checkAndThrowException(Exception ex) throws NetworkException, Exception {
+    private void checkAndThrowException(Exception ex) throws Exception {
         if (ex instanceof TransportException) {
             throw new NetworkException(ex);
         } else {
@@ -360,11 +349,11 @@ public class GITRemoteRepository implements IRemoteRepository {
 
     static ProgressMonitor gitProgress = new ProgressMonitor() {
         public void update(int completed) {
-            System.out.println("update: " + completed);
+            Log.log("update: " + completed);
         }
 
         public void start(int totalTasks) {
-            System.out.println("start: " + totalTasks);
+            Log.log("start: " + totalTasks);
         }
 
         public boolean isCancelled() {
@@ -372,11 +361,11 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
 
         public void endTask() {
-            System.out.println("endTask");
+            Log.log("endTask");
         }
 
         public void beginTask(String title, int totalWork) {
-            System.out.println("beginTask: " + title + " total: " + totalWork);
+            Log.log("beginTask: " + title + " total: " + totalWork);
         }
     };
 
@@ -426,8 +415,6 @@ public class GITRemoteRepository implements IRemoteRepository {
             }
             try {
                 credentials.saveToPlainTextFile(credentialsFile);
-            } catch (FileNotFoundException e) {
-                Core.getMainWindow().displayErrorRB(e, "TEAM_ERROR_SAVE_CREDENTIALS", null, "TF_ERROR");
             } catch (IOException e) {
                 Core.getMainWindow().displayErrorRB(e, "TEAM_ERROR_SAVE_CREDENTIALS", null, "TF_ERROR");
             }
@@ -613,7 +600,11 @@ public class GITRemoteRepository implements IRemoteRepository {
             // Happens if the URL is a Subversion URL like svn://...
             return false;
         } finally {
-            FileUtil.deleteTree(temp);
+            try {
+                FileUtils.deleteDirectory(temp);
+            } catch (IOException e) {
+                Log.log(e);
+            }
         }
     }
 
