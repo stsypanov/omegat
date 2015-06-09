@@ -135,7 +135,7 @@ public class AutoCompleter implements IAutoCompleter {
      */
     public boolean processKeys(KeyEvent e) {
 
-        if (!visible && ((!onMac && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
+        if (!isVisible() && ((!onMac && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
                 || (onMac && StaticUtils.isKey(e, KeyEvent.VK_ESCAPE, 0)))) {
 
             if (!editor.isInActiveTranslation(editor.getCaretPosition())) {
@@ -189,9 +189,6 @@ public class AutoCompleter implements IAutoCompleter {
         if (getCurrentView().shouldCloseOnSelection()) {
             setVisible(false);
         }
-    	popup.setVisible(false); 
-        acceptedListItem(getSelectedValue());
-        visible = false;
     }
     
     /**

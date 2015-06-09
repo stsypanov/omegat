@@ -27,11 +27,12 @@ package org.omegat.util;
 
 import java.util.Locale;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for (some) static utility methods.
@@ -49,6 +50,7 @@ public class StringUtilTest {
         assertTrue(StringUtil.isSubstringAfter("123456", 1, "23"));
     }
 
+    @Test
     public void testIsTitleCase() {
         assertFalse(StringUtil.isTitleCase("foobar"));
         assertFalse(StringUtil.isTitleCase("fooBar"));
@@ -70,6 +72,7 @@ public class StringUtilTest {
         assertTrue(StringUtil.isSubstringBefore("123456", 5, "45"));
     }
     
+    @Test
     public void testUnicodeNonBMP() {
         // MATHEMATICAL BOLD CAPITAL A (U+1D400)
         String test = "\uD835\uDC00";
@@ -102,6 +105,7 @@ public class StringUtilTest {
         assertFalse(StringUtil.isTitleCase(test));
     }
     
+    @Test
     public void testEmptyStringCase() {
         String test = null;
         try {
@@ -136,6 +140,7 @@ public class StringUtilTest {
         assertEquals("", StringUtil.toTitleCase("", Locale.ENGLISH));
     }
     
+    @Test
     public void testIsWhiteSpace() {
         try {
             assertFalse(StringUtil.isWhiteSpace(null));
@@ -153,6 +158,7 @@ public class StringUtilTest {
         assertTrue(StringUtil.isWhiteSpace("\u00a0\u2007\u202f"));
     }
     
+    @Test
     public void testIsMixedCase() {
         assertTrue(StringUtil.isMixedCase("ABc"));
         assertTrue(StringUtil.isMixedCase("aBc"));
@@ -162,6 +168,7 @@ public class StringUtilTest {
         assertTrue(StringUtil.isMixedCase(" {ABc"));
     }
     
+    @Test
     public void testNonWordCase() {
         String test = "{";
         assertFalse(StringUtil.isLowerCase(test));
@@ -170,6 +177,7 @@ public class StringUtilTest {
         assertFalse(StringUtil.isMixedCase(test));
     }
     
+    @Test
     public void testToTitleCase() {
         Locale locale = Locale.ENGLISH;
         assertEquals("Abc", StringUtil.toTitleCase("abc", locale));

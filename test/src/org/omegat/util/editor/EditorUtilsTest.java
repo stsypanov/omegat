@@ -27,8 +27,7 @@ package org.omegat.util.editor;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.core.data.ProjectProperties;
@@ -38,6 +37,8 @@ import org.omegat.gui.editor.IEditor.CHANGE_CASE_TO;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.tokenizer.LuceneEnglishTokenizer;
 import org.omegat.util.Language;
+
+import static org.junit.Assert.assertEquals;
 
 public class EditorUtilsTest {
     
@@ -51,8 +52,8 @@ public class EditorUtilsTest {
         assertEquals("zz", EditorUtils.removeDirectionChars("zz"));
     }
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Core.setProject(new NotLoadedProject() {
             @Override
             public ITokenizer getTargetTokenizer() {

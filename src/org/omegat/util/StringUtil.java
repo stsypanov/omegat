@@ -137,7 +137,7 @@ public class StringUtil {
         if (input.length() > 1)
             return Character.isTitleCase(input.charAt(0)) && isLowerCase(input.substring(1));
         else
-            return Character.isTitleCase(input.charAt(0));
+            return notEmpty(input) && Character.isTitleCase(input.charAt(0));
     }
 
     /**
@@ -185,18 +185,6 @@ public class StringUtil {
         return first + text.substring(remainderOffset).toLowerCase(locale);
     }
     
-    /**
-     * Returns first not null object from list, or null if all values is null.
-     */
-    public static <T> T nvl(T... values) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != null) {
-                return values[i];
-            }
-        }
-        return null;
-    }
-
 	/**
 	 * Returns first not null object from list, or null if all values is null.
 	 */
@@ -225,14 +213,8 @@ public class StringUtil {
 	 * Compare two values, which could be null.
 	 */
 	public static <T> boolean equalsWithNulls(T v1, T v2) {
-		if (v1 == null && v2 == null) {
-			return true;
-		} else if (v1 != null && v2 != null) {
-			return v1.equals(v2);
-		} else {
-			return false;
-		}
-	}
+        return v1 == null && v2 == null || v1 != null && v2 != null && v1.equals(v2);
+    }
 
 	/**
 	 * Compare two values, which could be null.
@@ -240,9 +222,9 @@ public class StringUtil {
 	public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
 		if (v1 == null && v2 == null) {
 			return 0;
-		} else if (v1 == null && v2 != null) {
+		} else if (v1 == null) {
 			return -1;
-		} else if (v1 != null && v2 == null) {
+		} else if (v2 == null) {
 			return 1;
 		} else {
 			return v1.compareTo(v2);
@@ -264,15 +246,7 @@ public class StringUtil {
      * Returns first letter in lowercase. Usually used for create tag shortcuts.
      * Does not support non-BMP Unicode characters.
      */
-    public static char getFirstLetterLowercase(CharSequence s) {
-        if (s == null) {
-            return 0;
-    }
-
-	/**
-	 * Returns first letter in lowercase. Usually used for create tag shortcuts.
-	 */
-	public static char getFirstLetterLowercase(CharSequence s) {
+   	public static char getFirstLetterLowercase(CharSequence s) {
 		if (s == null) {
 			return 0;
 		}
