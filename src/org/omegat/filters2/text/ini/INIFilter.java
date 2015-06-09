@@ -31,7 +31,6 @@ import org.omegat.filters2.AbstractAlignmentFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.util.LinebreakPreservingReader;
-import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 
@@ -70,10 +69,10 @@ public class INIFilter extends AbstractAlignmentFilter {
     /**
      * Trims the string from left.
      */
+    //todo move to utils
     private String leftTrim(String s) {
         int i;
-        for (i = 0; i < s.length() && (s.charAt(i) == ' ' || s.charAt(i) == '\t'); i++)
-            ;
+        for (i = 0; i < s.length() && (s.charAt(i) == ' ' || s.charAt(i) == '\t'); i++);
         return s.substring(i, s.length());
     }
 
@@ -82,59 +81,60 @@ public class INIFilter extends AbstractAlignmentFilter {
      */
     @Override
     public void processFile(BufferedReader reader, BufferedWriter outfile, FilterContext fc) throws IOException {
-        LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader); // fix for bug 1462566
-        String str;
-        String group = null;
+        // fix for bug 1462566
+        try(LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
+            String str;
+            String group = null;
 
-        while ((str = lbpr.readLine()) != null) {
-            String trimmed = str.trim();
+            while ((str = lbpr.readLine()) != null) {
+                String trimmed = str.trim();
 
-            // skipping empty strings and comments
-            if (trimmed.length() == 0 || trimmed.charAt(0) == '#' || trimmed.charAt(0) == ';') {
-                // outfile.write(str+"\n");
-                outfile.write(str + lbpr.getLinebreak()); // fix for bug 1462566
-                continue;
-            }
-
-            if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
-                // group name
-                group = trimmed.substring(1, trimmed.length() - 1);
-            }
-
-            // key=value pairs
-            int equalsPos = str.indexOf('=');
-
-            // if there's no separator, assume it's a key w/o a value
-            if (equalsPos == -1)
-                equalsPos = str.length() - 1;
-
-            // advance if there're spaces after =
-            while ((equalsPos + 1) < str.length() && str.charAt(equalsPos + 1) == ' ')
-                equalsPos++;
-
-            // writing out everything before = (and = itself)
-            outfile.write(str.substring(0, equalsPos + 1));
-
-            String key = (group != null ? group + '/' : "") + str.substring(0, equalsPos).trim();
-            String value = str.substring(equalsPos + 1);
-
-            value = leftTrim(value);
-
-            if (entryAlignCallback != null) {
-                align.put(key, value);
-            } else if (entryParseCallback != null) {
-                entryParseCallback.addEntry(key, value, null, false, null, null, this, null);
-            } else if (entryTranslateCallback != null) {
-                String trans = entryTranslateCallback.getTranslation(key, value, null);
-                if (trans == null) {
-                    trans = value;
+                // skipping empty strings and comments
+                if (trimmed.length() == 0 || trimmed.charAt(0) == '#' || trimmed.charAt(0) == ';') {
+                    // outfile.write(str+"\n");
+                    outfile.write(str + lbpr.getLinebreak()); // fix for bug 1462566
+                    continue;
                 }
-                outfile.write(trans);
 
-                // outfile.write("\n");
-                outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
+                if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+                    // group name
+                    group = trimmed.substring(1, trimmed.length() - 1);
+                }
+
+                // key=value pairs
+                int equalsPos = str.indexOf('=');
+
+                // if there's no separator, assume it's a key w/o a value
+                if (equalsPos == -1)
+                    equalsPos = str.length() - 1;
+
+                // advance if there're spaces after =
+                while ((equalsPos + 1) < str.length() && str.charAt(equalsPos + 1) == ' ')
+                    equalsPos++;
+
+                // writing out everything before = (and = itself)
+                outfile.write(str.substring(0, equalsPos + 1));
+
+                String key = (group != null ? group + '/' : "") + str.substring(0, equalsPos).trim();
+                String value = str.substring(equalsPos + 1);
+
+                value = leftTrim(value);
+
+                if (entryAlignCallback != null) {
+                    align.put(key, value);
+                } else if (entryParseCallback != null) {
+                    entryParseCallback.addEntry(key, value, null, false, null, null, this, null);
+                } else if (entryTranslateCallback != null) {
+                    String trans = entryTranslateCallback.getTranslation(key, value, null);
+                    if (trans == null) {
+                        trans = value;
+                    }
+                    outfile.write(trans);
+
+                    // outfile.write("\n");
+                    outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
+                }
             }
         }
-        lbpr.close();
     }
 }

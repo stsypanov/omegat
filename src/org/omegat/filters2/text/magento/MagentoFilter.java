@@ -68,11 +68,10 @@ public class MagentoFilter extends AbstractAlignmentFilter {
      */
     @Override
     public void processFile(BufferedReader reader, BufferedWriter outfile, FilterContext fc) throws IOException {
-        LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader); // fix
-                                                                                // for
-                                                                                // bug
-                                                                                // 1462566
-        String line;
+        // fix for bug 1462566
+        try (LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
+
+            String line;
         /*
          * Magento CSV looks like "string in the code","translation to display"
          * The pattern below successfully handles cases like:
@@ -82,51 +81,51 @@ public class MagentoFilter extends AbstractAlignmentFilter {
          * The pattern splits it like
          * "Use "",""" (key for translation) and ""","" will be used" (value for translation)
          */
-        Pattern splitter = Pattern.compile(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-        
-        while ((line = lbpr.readLine()) != null) {
-            
-            /**
-             * Some lines in Magento locale CSV may look like:
-             * "first, second
-             * third","first, second, third"
-             * It is unknown, if these lines are valid or not, so I inserted a quick workaround.
-             */
-            String contLine;
-            // Continue reading until the line ends with ", or end of file
-            while (!line.endsWith("\"") && (contLine = lbpr.readLine()) != null ) {
-                line += lbpr.getLinebreak() + contLine; // Preserve linebreaks
-            }
-            
-            String trimmed = line.trim();
+            Pattern splitter = Pattern.compile(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
-            // skipping empty strings
-            if (trimmed.length() == 0) {
-                outfile.write(line + lbpr.getLinebreak());
-                continue;
-            }
-            
-            String[] result = splitter.split(trimmed);
-            if(result.length < 2 ) { // Guard for malformed rows
-                outfile.write(line + lbpr.getLinebreak()); 
-                continue;                
-            }
-            String key = result[0];
-            String value = result[1];
-            
-            // Remove ""
-            key = key.substring(1, key.length() - 1); 
-            value = value.substring(1, value.length() - 1); 
-            
-            // writing out: "string in the code","
-            outfile.write("\"" + key + "\",\"");
+            while ((line = lbpr.readLine()) != null) {
 
-            String trans = process(key, value);
-                        
-            outfile.write(trans + "\""); // Translation and closing "
-            outfile.write(lbpr.getLinebreak()); 
+                /**
+                 * Some lines in Magento locale CSV may look like:
+                 * "first, second
+                 * third","first, second, third"
+                 * It is unknown, if these lines are valid or not, so I inserted a quick workaround.
+                 */
+                String contLine;
+                // Continue reading until the line ends with ", or end of file
+                while (!line.endsWith("\"") && (contLine = lbpr.readLine()) != null) {
+                    line += lbpr.getLinebreak() + contLine; // Preserve linebreaks
+                }
+
+                String trimmed = line.trim();
+
+                // skipping empty strings
+                if (trimmed.length() == 0) {
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
+                }
+
+                String[] result = splitter.split(trimmed);
+                if (result.length < 2) { // Guard for malformed rows
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
+                }
+                String key = result[0];
+                String value = result[1];
+
+                // Remove ""
+                key = key.substring(1, key.length() - 1);
+                value = value.substring(1, value.length() - 1);
+
+                // writing out: "string in the code","
+                outfile.write("\"" + key + "\",\"");
+
+                String trans = process(key, value);
+
+                outfile.write(trans + "\""); // Translation and closing "
+                outfile.write(lbpr.getLinebreak());
+            }
         }
-        lbpr.close();
     }
 
     /**

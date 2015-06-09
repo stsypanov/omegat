@@ -43,6 +43,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
@@ -141,10 +142,9 @@ public class OpenXMLFilter extends AbstractFilter {
     /** Returns true if it's an Open XML file. */
     @Override
     public boolean isFileSupported(File inFile, Map<String, String> config, FilterContext fc) {
-        try {
-            defineDOCUMENTSOptions(config); // Define the documents to read
-
-            ZipFile file = new ZipFile(inFile);
+        // Define the documents to read
+        defineDOCUMENTSOptions(config);
+        try (ZipFile file = new ZipFile(inFile)){
             Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
@@ -158,6 +158,7 @@ public class OpenXMLFilter extends AbstractFilter {
             }
             file.close();
         } catch (IOException e) {
+            Log.log(e);
         }
         return false;
     }
@@ -212,118 +213,116 @@ public class OpenXMLFilter extends AbstractFilter {
             TranslationException {
         defineDOCUMENTSOptions(processOptions); // Define the documents to read
 
-        ZipFile zipfile = new ZipFile(inFile);
-        ZipOutputStream zipout = null;
-        if (outFile != null)
-            zipout = new ZipOutputStream(new FileOutputStream(outFile));
-        Enumeration<? extends ZipEntry> unsortedZipcontents = zipfile.entries();
-        List<? extends ZipEntry> filelist = Collections.list(unsortedZipcontents);
-        Collections.sort(filelist, new Comparator<ZipEntry>() {
-            // Sort filenames, because zipfile.entries give a random order
-            // We use a simplified natural sort, to have slide1, slide2 ...
-            // slide10
-            // instead of slide1, slide10, slide 2
-            // We also order files arbitrarily, to have, for instance
-            // documents.xml before comments.xml
-            @Override
-            public int compare(ZipEntry z1, ZipEntry z2) {
-                String s1 = z1.getName();
-                String s2 = z2.getName();
-                String[] words1 = s1.split("\\d+\\.");
-                String[] words2 = s2.split("\\d+\\.");
-                // Digits at the end and same text
-                if ((words1.length > 1 && words2.length > 1) && // Digits
-                        (words1[0].equals(words2[0]))) {        // Same text
-                    int number1 = 0;
-                    int number2 = 0;
-                    Matcher getDigits = DIGITS.matcher(s1);
-                    if (getDigits.find())
-                        number1 = Integer.parseInt(getDigits.group(1));
-                    getDigits = DIGITS.matcher(s2);
-                    if (getDigits.find())
-                        number2 = Integer.parseInt(getDigits.group(1));
-                    if (number1 > number2)
-                        return 1;
-                    else if (number1 < number2)
-                        return -1;
-                    else
-                        return 0;
-                } else {
-                    String shortname1 = removePath(words1[0]);
-                    shortname1 = removeXML(shortname1);
-                    String shortname2 = removePath(words2[0]);
-                    shortname2 = removeXML(shortname2);
-
-                    // Specific case for Excel
-                    // because "comments" is present twice in DOCUMENTS
-                    if (shortname1.contains("sharedStrings") || shortname2.contains("sharedStrings")) {
-                        if (shortname2.contains("sharedStrings"))
-                            return 1; // sharedStrings must be first
-                        else
+        try (ZipFile zipfile = new ZipFile(inFile)) {
+            ZipOutputStream zipout = null;
+            if (outFile != null)
+                zipout = new ZipOutputStream(new FileOutputStream(outFile));
+            Enumeration<? extends ZipEntry> unsortedZipcontents = zipfile.entries();
+            List<? extends ZipEntry> filelist = Collections.list(unsortedZipcontents);
+            Collections.sort(filelist, new Comparator<ZipEntry>() {
+                // Sort filenames, because zipfile.entries give a random order
+                // We use a simplified natural sort, to have slide1, slide2 ...
+                // slide10
+                // instead of slide1, slide10, slide 2
+                // We also order files arbitrarily, to have, for instance
+                // documents.xml before comments.xml
+                @Override
+                public int compare(ZipEntry z1, ZipEntry z2) {
+                    String s1 = z1.getName();
+                    String s2 = z2.getName();
+                    String[] words1 = s1.split("\\d+\\.");
+                    String[] words2 = s2.split("\\d+\\.");
+                    // Digits at the end and same text
+                    if ((words1.length > 1 && words2.length > 1) && // Digits
+                            (words1[0].equals(words2[0]))) {        // Same text
+                        int number1 = 0;
+                        int number2 = 0;
+                        Matcher getDigits = DIGITS.matcher(s1);
+                        if (getDigits.find())
+                            number1 = Integer.parseInt(getDigits.group(1));
+                        getDigits = DIGITS.matcher(s2);
+                        if (getDigits.find())
+                            number2 = Integer.parseInt(getDigits.group(1));
+                        if (number1 > number2)
+                            return 1;
+                        else if (number1 < number2)
                             return -1;
+                        else
+                            return 0;
+                    } else {
+                        String shortname1 = removePath(words1[0]);
+                        shortname1 = removeXML(shortname1);
+                        String shortname2 = removePath(words2[0]);
+                        shortname2 = removeXML(shortname2);
+
+                        // Specific case for Excel
+                        // because "comments" is present twice in DOCUMENTS
+                        if (shortname1.contains("sharedStrings") || shortname2.contains("sharedStrings")) {
+                            if (shortname2.contains("sharedStrings"))
+                                return 1; // sharedStrings must be first
+                            else
+                                return -1;
+                        }
+
+                        int index1 = DOCUMENTS.indexOf(shortname1);
+                        int index2 = DOCUMENTS.indexOf(shortname2);
+
+                        if (index1 > index2)
+                            return 1;
+                        else if (index1 < index2)
+                            return -1;
+                        else { // Documents were not in DOCUMENTS, we keep the normal order
+                            return s1.compareTo(s2);
+                        }
+                    }
+                }
+            });
+            Enumeration<? extends ZipEntry> zipcontents = Collections.enumeration(filelist);
+
+            while (zipcontents.hasMoreElements()) {
+                ZipEntry zipentry = zipcontents.nextElement();
+                String shortname = zipentry.getName();
+                shortname = removePath(shortname);
+                Matcher filematch = TRANSLATABLE.matcher(shortname);
+                if (filematch.matches()) {
+                    File tmpin = tmp();
+                    LFileCopy.copy(zipfile.getInputStream(zipentry), tmpin);
+                    File tmpout = null;
+                    if (zipout != null)
+                        tmpout = tmp();
+
+                    try {
+                        createXMLFilter().processFile(tmpin, tmpout, fc);
+                    } catch (Exception e) {
+                        zipfile.close();
+                        Log.log(e);
+                        throw new TranslationException(e.getLocalizedMessage() + "\n"
+                                + OStrings.getString("OpenXML_ERROR_IN_FILE") + inFile, e);
                     }
 
-                    int index1 = DOCUMENTS.indexOf(shortname1);
-                    int index2 = DOCUMENTS.indexOf(shortname2);
-
-                    if (index1 > index2)
-                        return 1;
-                    else if (index1 < index2)
-                        return -1;
-                    else { // Documents were not in DOCUMENTS, we keep the normal order
-                        return s1.compareTo(s2);
+                    if (zipout != null) {
+                        ZipEntry outEntry = new ZipEntry(zipentry.getName());
+                        zipout.putNextEntry(outEntry);
+                        LFileCopy.copy(tmpout, zipout);
+                        zipout.closeEntry();
                     }
-                }
-            }
-        });
-        Enumeration<? extends ZipEntry> zipcontents = Collections.enumeration(filelist);
+                    if (!tmpin.delete())
+                        tmpin.deleteOnExit();
+                    if (tmpout != null) {
+                        if (!tmpout.delete())
+                            tmpout.deleteOnExit();
+                    }
+                } else {
+                    if (zipout != null) {
+                        ZipEntry outEntry = new ZipEntry(zipentry.getName());
+                        zipout.putNextEntry(outEntry);
 
-        while (zipcontents.hasMoreElements()) {
-            ZipEntry zipentry = zipcontents.nextElement();
-            String shortname = zipentry.getName();
-            shortname = removePath(shortname);
-            Matcher filematch = TRANSLATABLE.matcher(shortname);
-            if (filematch.matches()) {
-                File tmpin = tmp();
-                LFileCopy.copy(zipfile.getInputStream(zipentry), tmpin);
-                File tmpout = null;
-                if (zipout != null)
-                    tmpout = tmp();
-
-                try {
-                    createXMLFilter().processFile(tmpin, tmpout, fc);
-                } catch (Exception e) {
-                    zipfile.close();
-                    Log.log(e);
-                    throw new TranslationException(e.getLocalizedMessage() + "\n"
-                            + OStrings.getString("OpenXML_ERROR_IN_FILE") + inFile, e);
-                }
-
-                if (zipout != null) {
-                    ZipEntry outEntry = new ZipEntry(zipentry.getName());
-                    zipout.putNextEntry(outEntry);
-                    LFileCopy.copy(tmpout, zipout);
-                    zipout.closeEntry();
-                }
-                if (!tmpin.delete())
-                    tmpin.deleteOnExit();
-                if (tmpout != null) {
-                    if (!tmpout.delete())
-                        tmpout.deleteOnExit();
-                }
-            } else {
-                if (zipout != null) {
-                    ZipEntry outEntry = new ZipEntry(zipentry.getName());
-                    zipout.putNextEntry(outEntry);
-
-                    LFileCopy.copy(zipfile.getInputStream(zipentry), zipout);
-                    zipout.closeEntry();
+                        IOUtils.copy(zipfile.getInputStream(zipentry), zipout);
+                        zipout.closeEntry();
+                    }
                 }
             }
         }
-        if (zipout != null)
-            zipout.close();
-        zipfile.close();
     }
 
     /** Human-readable Open XML filter name. */

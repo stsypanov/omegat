@@ -46,6 +46,8 @@ import org.omegat.util.OStrings;
  * @author Volker Berlin
  */
 public class DokuWikiFilter extends AbstractFilter {
+    private static final Pattern DOUBLE_WHITESPACE_PATTERN = Pattern.compile("  ", Pattern.LITERAL);
+
     private Pattern codeTag = Pattern.compile("\\<code|\\<file|\\<html|\\<php|\\/\\*");
 
     @Override
@@ -83,7 +85,6 @@ public class DokuWikiFilter extends AbstractFilter {
                     return true;
                 }
             }
-            lbpr.close();
         } catch (IOException e) {
             Log.log(e);
         }
@@ -95,96 +96,95 @@ public class DokuWikiFilter extends AbstractFilter {
      */
     @Override
     public void processFile(BufferedReader reader, BufferedWriter outfile, FilterContext fc) throws IOException {
-        LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader); // fix
-                                                                                // for
-                                                                                // bug
-                                                                                // 1462566
-        String line;
-        StringBuilder text = new StringBuilder();
+        // fix for bug 1462566
+        try (LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
+            String line;
+            StringBuilder text = new StringBuilder();
 
-        while ((line = lbpr.readLine()) != null) {
-            String trimmed = line.trim();
+            while ((line = lbpr.readLine()) != null) {
+                String trimmed = line.trim();
 
-            // skipping empty strings
-            if (trimmed.length() == 0) {
-                writeTranslate(outfile, text, lbpr);
-                outfile.write(line + lbpr.getLinebreak());
-                continue;
-            }
-
-            // heading like "=== Abc ==="
-            int headingLevel = getHeadingLevel(trimmed);
-            if (headingLevel > 0) {
-                writeTranslate(outfile, text, lbpr);
-                String header = trimmed.substring(headingLevel, trimmed.length() - headingLevel).trim();
-                if (header.length() > 0) {
-                    String trans = processEntry(header);
-                    line = line.replace(header, trans);
+                // skipping empty strings
+                if (trimmed.length() == 0) {
+                    writeTranslate(outfile, text, lbpr);
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
                 }
-                outfile.write(line + lbpr.getLinebreak());
-                continue;
-            }
 
-            // list like "  * Abc" or "  - Abc"
-            if (line.startsWith("  *") || line.startsWith("  -")) {
-                writeTranslate(outfile, text, lbpr);
-                outfile.write(line.substring(0, 3));
-                outfile.write(' ');
-                writeTranslate(outfile, line.substring(3), lbpr);
-                continue;
-            }
-
-            // image alone like "{{any}}" or macros alone like "~~any~~"
-            if ((trimmed.startsWith("{{") && trimmed.endsWith("}}"))
-                    || (trimmed.startsWith("~~") && trimmed.endsWith("~~") && trimmed.length() > 5)) {
-                writeTranslate(outfile, text, lbpr);
-                outfile.write(line + lbpr.getLinebreak());
-                continue;
-            }
-
-            // tables
-            if (line.startsWith("|") || line.startsWith("^")) {
-                writeTranslate(outfile, text, lbpr);
-                int start = 0;
-                int braceCount = 0;
-                for (int i = 0; i < line.length(); i++) {
-                    char ch = line.charAt(i);
-                    switch (ch) {
-                    case '|':
-                    case '^':
-                        if (braceCount == 0) {
-                            String value = line.substring(start, i);
-                            if (start > 0) {
-                                outfile.write(' ');
-                                writeTranslate(outfile, value, null);
-                                outfile.write(' ');
-                            }
-                            outfile.write(ch);
-                            start = i + 1;
-                        }
-                        break;
-                    case '{':
-                        braceCount++;
-                        break;
-                    case '}':
-                        braceCount--;
-                        break;
+                // heading like "=== Abc ==="
+                int headingLevel = getHeadingLevel(trimmed);
+                if (headingLevel > 0) {
+                    writeTranslate(outfile, text, lbpr);
+                    String header = trimmed.substring(headingLevel, trimmed.length() - headingLevel).trim();
+                    if (header.length() > 0) {
+                        String trans = processEntry(header);
+                        line = line.replace(header, trans);
                     }
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
                 }
-                outfile.write(lbpr.getLinebreak());
-                continue;
-            }
 
-            // skip code fragments
-            trimmed = skipCode(outfile, text, lbpr, line);
-            if (trimmed == null) {
-                return;
-            }
+                // list like "  * Abc" or "  - Abc"
+                if (line.startsWith("  *") || line.startsWith("  -")) {
+                    writeTranslate(outfile, text, lbpr);
+                    outfile.write(line.substring(0, 3));
+                    outfile.write(' ');
+                    writeTranslate(outfile, line.substring(3), lbpr);
+                    continue;
+                }
 
-            text.append(' ');
-            text.append(trimmed);
+                // image alone like "{{any}}" or macros alone like "~~any~~"
+                if ((trimmed.startsWith("{{") && trimmed.endsWith("}}"))
+                        || (trimmed.startsWith("~~") && trimmed.endsWith("~~") && trimmed.length() > 5)) {
+                    writeTranslate(outfile, text, lbpr);
+                    outfile.write(line + lbpr.getLinebreak());
+                    continue;
+                }
+
+                // tables
+                if (line.startsWith("|") || line.startsWith("^")) {
+                    writeTranslate(outfile, text, lbpr);
+                    int start = 0;
+                    int braceCount = 0;
+                    for (int i = 0; i < line.length(); i++) {
+                        char ch = line.charAt(i);
+                        switch (ch) {
+                            case '|':
+                            case '^':
+                                if (braceCount == 0) {
+                                    String value = line.substring(start, i);
+                                    if (start > 0) {
+                                        outfile.write(' ');
+                                        writeTranslate(outfile, value, null);
+                                        outfile.write(' ');
+                                    }
+                                    outfile.write(ch);
+                                    start = i + 1;
+                                }
+                                break;
+                            case '{':
+                                braceCount++;
+                                break;
+                            case '}':
+                                braceCount--;
+                                break;
+                        }
+                    }
+                    outfile.write(lbpr.getLinebreak());
+                    continue;
+                }
+
+                // skip code fragments
+                trimmed = skipCode(outfile, text, lbpr, line);
+                if (trimmed == null) {
+                    return;
+                }
+
+                text.append(' ');
+                text.append(trimmed);
+            }
+            writeTranslate(outfile, text, lbpr);
         }
-        writeTranslate(outfile, text, lbpr);
     }
 
     /**
@@ -248,7 +248,7 @@ public class DokuWikiFilter extends AbstractFilter {
         if (value.length() > 0) {
             while (true) {
                 // reduce all spaces to a single space
-                String newValue = value.replace("  ", " ");
+                String newValue = DOUBLE_WHITESPACE_PATTERN.matcher(value).replaceAll(" ");
                 if (newValue.equals(value)) {
                     break;
                 }
