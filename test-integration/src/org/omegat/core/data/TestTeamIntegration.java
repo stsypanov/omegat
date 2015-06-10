@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.lib.Repository;
@@ -211,7 +212,7 @@ public class TestTeamIntegration {
 	 */
 	static String prepareRepo() throws Exception {
 		File tmp = new File(DIR);
-		FileUtil.deleteTree(tmp);
+		FileUtils.deleteDirectory(tmp);
 		if (tmp.exists()) {
 			throw new Exception("Impossible to delete test dir");
 		}

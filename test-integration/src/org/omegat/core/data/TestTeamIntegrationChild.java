@@ -45,6 +45,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import org.apache.commons.io.FileUtils;
 import org.madlonkay.supertmxmerge.StmProperties;
 import org.madlonkay.supertmxmerge.SuperTmxMerge;
 import org.madlonkay.supertmxmerge.data.ITuv;
@@ -64,7 +65,6 @@ import org.omegat.gui.editor.IPopupMenuConstructor;
 import org.omegat.gui.editor.mark.Mark;
 import org.omegat.gui.main.IMainMenu;
 import org.omegat.gui.main.IMainWindow;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -114,7 +114,7 @@ public class TestTeamIntegrationChild {
 			Preferences.setPreference(Preferences.TEAM_AUTHOR, source);
 
 			// get initial project
-			FileUtil.deleteTree(new File(dir));
+			FileUtils.deleteDirectory(new File(dir));
 
 			IRemoteRepository repository = TestTeamIntegration.createRepo(repo, dir);
 			repository.checkoutFullProject(repo);
