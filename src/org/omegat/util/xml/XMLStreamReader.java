@@ -213,8 +213,7 @@ public class XMLStreamReader {
      */
     private char getNextChar() {
         if (!m_charStack.empty()) {
-            Character ch = m_charStack.pop();
-            return ch.charValue();
+            return m_charStack.pop();
         } else {
             if (m_pos >= 0) {
                 // string
@@ -449,7 +448,7 @@ public class XMLStreamReader {
 
                 default:
                     err = true;
-                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state);
+                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state));
                 }
                 break;
 
@@ -528,7 +527,7 @@ public class XMLStreamReader {
 
                 default:
                     err = true;
-                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state);
+                    msg = StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state));
                 }
                 break;
 
@@ -692,7 +691,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                     StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                     StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -726,7 +725,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -745,7 +744,7 @@ public class XMLStreamReader {
              default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -763,7 +762,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -794,7 +793,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -823,7 +822,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -839,7 +838,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 
@@ -901,7 +900,7 @@ public class XMLStreamReader {
                 default:
                     throwErrorInGetNextTag(
                             blk,
-                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), "" + c, "" + state));
+                            StaticUtils.format(OStrings.getString("XSR_ERROR_UNEXPECTED_CHAR"), String.valueOf(c), String.valueOf(state)));
                 }
                 break;
 

@@ -1179,7 +1179,7 @@ public class FilterVisitor extends NodeVisitor {
                             // escape special regexp characters
                             regexp = "\\" + x;
                         } else
-                            regexp = "" + x;
+                            regexp = String.valueOf(x);
                         String replacement = "&#" + (int) x + ';';
                         contents = contents.replaceAll(regexp, replacement);
                         break;
