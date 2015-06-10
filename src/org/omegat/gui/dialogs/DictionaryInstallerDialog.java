@@ -54,6 +54,7 @@ import org.omegat.util.gui.StaticUIUtils;
  */
 @SuppressWarnings("serial")
 public class DictionaryInstallerDialog extends JDialog {
+    private static final Logger logger = Logger.getLogger(DictionaryInstallerDialog.class.getName());
 
     /**
      * The dictionary manager in use
@@ -63,10 +64,10 @@ public class DictionaryInstallerDialog extends JDialog {
     /**
      * the list model
      */
-    private final DefaultListModel listModel = new DefaultListModel();
+    private final DefaultListModel<String> listModel = new DefaultListModel<>();
     
     private SwingWorker<List<String>, Object> loader = null;
-    private SwingWorker<Object, Object> installer = null;
+    private SwingWorker<Void, Object> installer = null;
 
     /** Creates new form DictionaryInstallerDialog */
     public DictionaryInstallerDialog(JDialog parent, DictionaryManager dicMan) throws IOException {
@@ -111,10 +112,8 @@ public class DictionaryInstallerDialog extends JDialog {
                     infoTextArea.setText(OStrings.getString("GUI_DICTIONARY_INSTALLER_TEXT_NOTHING"));
                 }
                 progressBar.setVisible(false);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DictionaryInstallerDialog.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ExecutionException ex) {
-                Logger.getLogger(DictionaryInstallerDialog.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException | ExecutionException ex) {
+                logger.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
             }
         }
     }
@@ -215,29 +214,28 @@ public class DictionaryInstallerDialog extends JDialog {
         installer.execute();
     }//GEN-LAST:event_installButtonActionPerformed
 
-    private class InstallerWorker extends SwingWorker<Object,Object> {
+    private class InstallerWorker extends SwingWorker<Void, Object> {
 
         private final Cursor HOURGLASS_CURSOR = new Cursor(Cursor.WAIT_CURSOR);
         private Cursor oldCursor;
         
         @Override
-        protected Object doInBackground() throws Exception {
+        protected Void doInBackground() throws Exception {
             progressBar.setVisible(true);
             installButton.setEnabled(false);
             closeButton.setEnabled(false);
             
             oldCursor = getCursor();
             setCursor(HOURGLASS_CURSOR);
-            Object[] selection = dictionaryList.getSelectedValues();
-            for (Object o : selection) {
-                // install the respective dictionaries
-                String item = (String) o;
-                String langCode = (item).substring(0, item.indexOf(" "));
+            List<String> selectedItems = dictionaryList.getSelectedValuesList();
+            for (String item : selectedItems) {
+                String langCode = item.substring(0, item.indexOf(" "));
                 try {
                     dicMan.installRemoteDictionary(langCode);
                     ((SpellcheckerConfigurationDialog) DictionaryInstallerDialog.this.getParent()).updateLanguageList();
-                    listModel.removeElement(o);
+                    listModel.removeElement(item);
                 } catch (Exception ex) {
+                    logger.log(Level.SEVERE, "ex.getLocalizedMessage()", ex);
                     setCursor(oldCursor);
                     JOptionPane.showMessageDialog(DictionaryInstallerDialog.this, ex.getLocalizedMessage(), "Error",
                             JOptionPane.ERROR_MESSAGE);
@@ -268,12 +266,12 @@ public class DictionaryInstallerDialog extends JDialog {
     }//GEN-LAST:event_closeButtonActionPerformed
 
     private void dictionaryListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_dictionaryListValueChanged
-        installButton.setEnabled(dictionaryList.getSelectedValues().length > 0);
+        installButton.setEnabled(dictionaryList.getSelectedValuesList().size() > 0);
     }//GEN-LAST:event_dictionaryListValueChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
-    private javax.swing.JList dictionaryList;
+    private javax.swing.JList<String> dictionaryList;
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JButton installButton;
     private javax.swing.JPanel jPanel1;
