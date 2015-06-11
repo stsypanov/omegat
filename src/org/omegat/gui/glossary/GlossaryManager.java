@@ -101,7 +101,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
     @Override
     public void fileChanged(File file) {
         synchronized (this) {
-            glossaries.remove(file.getName());
+            glossaries.remove(file.getPath());
         }
         if (file.exists()) {
             try {

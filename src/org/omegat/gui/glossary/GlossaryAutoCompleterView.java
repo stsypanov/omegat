@@ -33,10 +33,12 @@ import java.util.List;
 import java.util.Locale;
 
 import org.omegat.core.Core;
+import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.editor.autocompleter.AutoCompleterItem;
 import org.omegat.gui.editor.autocompleter.AutoCompleterListView;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.StringUtil;
 
 /**
  * The glossary auto-completer view.
@@ -50,9 +52,23 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
         super(OStrings.getString("AC_GLOSSARY_VIEW"));
     }
 
+    /* Users with gigantic glossaries can get too many popups, so adjust the behavior here.
+     * Only pop up if a) we have suggestions, and b) if there's more than one page of
+     * suggestions then the user should have input at least 2 characters.
+     */
+    @Override
+    public boolean shouldPopUp() {
+        String leadingText = getLeadingText();
+        List<AutoCompleterItem> entries = computeListData(leadingText, true);
+        return !entries.isEmpty()
+                && (leadingText.codePointCount(0, leadingText.length()) > 1
+                        || entries.size() <= AutoCompleter.PAGE_ROW_COUNT);
+    }
+    
     @Override
     public List<AutoCompleterItem> computeListData(String prevText, boolean contextualOnly) {
         String wordChunk = getLastToken(prevText);
+        String sortMatchTo = wordChunk;
         
         List<AutoCompleterItem> result = new ArrayList<AutoCompleterItem>();
         List<GlossaryEntry> entries = Core.getGlossary().getDisplayedEntries();
@@ -60,13 +76,13 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
         // Get contextual results
         fillMatchingTerms(result, entries, wordChunk);
         
-        if (!Core.getProject().getProjectProperties().getTargetLanguage().isSpaceDelimited()
-                && result.isEmpty() && !contextualOnly) {
+        if (result.isEmpty() && !contextualOnly) {
             // Get non-contextual results only if called for
             fillMatchingTerms(result, entries, null);
+            sortMatchTo = null;
         }
         
-        Collections.sort(result, new GlossaryComparator(entries));
+        Collections.sort(result, new GlossaryComparator(entries, sortMatchTo));
         
         return result;
     }
@@ -85,19 +101,17 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
             return;
         }
         
-        boolean shouldCapitalize = context != null && Character.isUpperCase(context.codePointAt(0));
-        
         for (GlossaryEntry entry : glossary) {
             for (String term : entry.getLocTerms(true)) {
                 if (!termMatchesChunk(term, context)) {
                     continue;
                 }
-                String payload = shouldCapitalize ? capitalize(term) : term;
-                if (Core.getProject().getProjectProperties().getTargetLanguage().isSpaceDelimited()) {
-                    payload += " ";
-                }
+                String payload = matchCapitalization(term, context);
                 int length = context == null ? 0 : context.length();
-                result.add(new AutoCompleterItem(payload, new String[] { entry.getSrcText() }, length));
+                AutoCompleterItem item = new AutoCompleterItem(payload, new String[] { entry.getSrcText() }, length);
+                if (!result.contains(item)) {
+                    result.add(item);
+                }
             }
         }
     }
@@ -107,11 +121,10 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
             // Consider null context to match everything
             return true;
         }
-        if (term.equals(context) || term.equals(capitalize(context))) {
-            // Consider a term to NOT match if it is identical to the context (it is already present)
-            return false;
-        }
-        return toLowerCase(term).startsWith(toLowerCase(context));
+        String lowerTerm = toLowerCase(term);
+        String lowerContext = toLowerCase(context);
+        // Consider a term to NOT match if it is the same (modulo case) as the context (i.e. it is already present)
+        return !lowerTerm.equals(lowerContext) && lowerTerm.startsWith(lowerContext);
     }
     
     private Locale getTargetLocale() {
@@ -122,10 +135,27 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
         return text.toLowerCase(getTargetLocale());
     }
     
-    private String capitalize(String text) {
-        int secondCP = text.offsetByCodePoints(0, 1);
-        return text.substring(0, secondCP).toUpperCase(getTargetLocale()) +
-                text.substring(secondCP);
+    private String toUpperCase(String text) {
+        return text.toUpperCase(getTargetLocale());
+    }
+    
+    private String matchCapitalization(String text, String matchTo) {
+        if (StringUtil.isEmpty(matchTo)) {
+            return text;
+        }
+        // If matching to upper when input is lower, turn into title case.
+        if (StringUtil.isTitleCase(matchTo) && StringUtil.isLowerCase(text)) {
+            return StringUtil.toTitleCase(text, getTargetLocale());
+        }
+        // If matching to lower when input is upper, turn into lower.
+        if (StringUtil.isLowerCase(matchTo) && StringUtil.isUpperCase(text)) {
+            return toLowerCase(text);
+        }
+        // If matching to upper (at least 2 chars), turn into upper.
+        if (StringUtil.isUpperCase(matchTo) && matchTo.codePointCount(0, matchTo.length()) > 1) {
+            return toUpperCase(text);
+        }
+        return text;
     }
 
     @Override
@@ -147,14 +177,28 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
         private boolean byLength = Preferences.isPreference(Preferences.AC_GLOSSARY_SORT_BY_LENGTH);
         private boolean alphabetically = Preferences.isPreference(Preferences.AC_GLOSSARY_SORT_ALPHABETICALLY);
         
-        private List<GlossaryEntry> entries;
+        private final List<GlossaryEntry> entries;
+        private final String matchTo;
         
-        public GlossaryComparator(List<GlossaryEntry> entries) {
+        public GlossaryComparator(List<GlossaryEntry> entries, String matchTo) {
             this.entries = entries;
+            this.matchTo = matchTo;
         }
         
         @Override
         public int compare(AutoCompleterItem o1, AutoCompleterItem o2) {
+            
+            // If one of the payloads starts with the exact matchTo string, prioritize that one.
+            if (!StringUtil.isEmpty(matchTo)) {
+                boolean o1Matches = o1.payload.startsWith(matchTo);
+                boolean o2Matches = o2.payload.startsWith(matchTo);
+                if (o1Matches && !o2Matches) {
+                    return -1;
+                }
+                if (!o1Matches && o2Matches) {
+                    return 1;
+                }
+            }
             
             // Sort alphabetically by source term
             if (bySource) {

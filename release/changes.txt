@@ -1,20 +1,35 @@
 ----------------------------------------------------------------------
- OmegaT 3.5 update 1
+ OmegaT 3.5 update 1 (2015-06-11)
 ----------------------------------------------------------------------
-   1 Enhancement
-   0 Bug fix
-   1 Localisation update
+   3 Enhancements
+   2 Bug fixes
+   3 Localisation updates
 ----------------------------------------------------------------------
 3.5 update 1 vs 3.5
 
   Implemented requests:
-  
+
   - Drag and drop within the segment 
   https://sourceforge.net/p/omegat/feature-requests/401/
 
-  Localisation updates:
-  - Dutch localisation updated to 3.5 (UI, documentation, readme)
+  - Auto-completion option: Show relevant suggestions automatically
+  https://sourceforge.net/p/omegat/feature-requests/1097/
 
+  - Glossary view auto-completion improvements 
+  https://sourceforge.net/p/omegat/feature-requests/1098/
+
+  Bug fixes:
+
+  - The writeable glossary was not working propertly if it was not
+at the root of the glossary folder
+
+  - It was not possible to have two glossaries with the same name 
+in different sub-folders
+
+  Localisation updates:
+  - Dutch localisation updated to 3.5 (UI, documentation, scripts, readme)
+  - Interlingua localisation updated to 3.5 (UI, scripts, readme)
+  - Italian localisation updated to 3.5 (UI, scripts)
 
 ----------------------------------------------------------------------
  OmegaT 3.5 (2015-06-05)
