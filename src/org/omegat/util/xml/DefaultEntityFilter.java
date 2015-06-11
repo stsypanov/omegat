@@ -313,7 +313,7 @@ public class DefaultEntityFilter {
         if (s != null) {
             return "&" + s + ";";
         } else
-            return "" + c;
+            return String.valueOf(c);
     }
 
     /**
@@ -330,6 +330,6 @@ public class DefaultEntityFilter {
                 return 0;
             }
         } else
-            return c.charValue();
+            return c;
     }
 }
