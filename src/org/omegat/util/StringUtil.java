@@ -139,6 +139,12 @@ public class StringUtil {
         else
             return notEmpty(input) && Character.isTitleCase(input.charAt(0));
     }
+    
+    public static boolean isTitleCase(int codePoint) {
+        // True if is actual title case, or if is upper case and has no separate title case variant.
+        return Character.isTitleCase(codePoint) ||
+                (Character.isUpperCase(codePoint) && Character.toTitleCase(codePoint) == codePoint);
+    }
 
     /**
      * Returns true if the input consists only of whitespace characters
@@ -179,6 +185,8 @@ public class StringUtil {
         }
         int firstTitleCase = Character.toTitleCase(text.codePointAt(0));
         int remainderOffset = text.offsetByCodePoints(0, 1);
+        // If the first codepoint has an actual title case variant (rare), use that.
+        // Otherwise convert first codepoint to upper case according to locale.
         String first = Character.isTitleCase(firstTitleCase)
                     ? String.valueOf(Character.toChars(firstTitleCase))
                     : text.substring(0, remainderOffset).toUpperCase(locale);

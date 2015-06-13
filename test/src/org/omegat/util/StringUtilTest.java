@@ -61,6 +61,13 @@ public class StringUtilTest {
         // LATIN CAPITAL LETTER L WITH SMALL LETTER J (U+01C8)
         assertTrue(StringUtil.isTitleCase("\u01C8bcd"));
         assertFalse(StringUtil.isTitleCase("a\u01C8bcd"));
+        
+        // LATIN CAPITAL LETTER L WITH SMALL LETTER J (U+01C8)
+        assertTrue(StringUtil.isTitleCase("\u01c8"));
+        // LATIN CAPITAL LETTER LJ (U+01C7)
+        assertFalse(StringUtil.isTitleCase("\u01c7"));
+        // LATIN SMALL LETTER LJ (U+01C9)
+        assertFalse(StringUtil.isTitleCase("\u01c9"));
     }
     
     @Test
@@ -153,8 +160,8 @@ public class StringUtilTest {
         assertFalse(StringUtil.isWhiteSpace(" a "));
         // SPACE (U+0020) + IDEOGRAPHIC SPACE (U+3000)
         assertTrue(StringUtil.isWhiteSpace(" \u3000"));
-        // We considered whitespace but Character.isWhiteSpace(int) doesn't:
-        // NO-BREAK SPACE (U+00A0) + FIGURE SPaCE (U+2007) + NARROW NO-BREAK SPACE (U+202F)
+        // We consider whitespace but Character.isWhiteSpace(int) doesn't:
+        // NO-BREAK SPACE (U+00A0) + FIGURE SPACE (U+2007) + NARROW NO-BREAK SPACE (U+202F)
         assertTrue(StringUtil.isWhiteSpace("\u00a0\u2007\u202f"));
     }
     
