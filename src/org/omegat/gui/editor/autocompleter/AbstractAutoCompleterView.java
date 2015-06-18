@@ -28,7 +28,6 @@ package org.omegat.gui.editor.autocompleter;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 import javax.swing.text.BadLocationException;
 
@@ -137,7 +136,7 @@ abstract public class AbstractAutoCompleterView {
      * @return a modified row count.
      */
     protected int getModifiedRowCount() {
-        return Math.min(getRowCount(), AutoCompleter.PAGE_ROW_COUNT);
+        return Math.min(getRowCount() + 1, AutoCompleter.PAGE_ROW_COUNT);
     }
 
     /**

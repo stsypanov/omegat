@@ -38,9 +38,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
@@ -64,7 +62,6 @@ import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.util.FileUtil;
-import org.omegat.util.LFileCopy;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -162,7 +159,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 
         CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
             public void onApplicationStartup() {
-                MainWindowUI.loadScreenLayout(MainWindow.this);
+                MainWindowUI.initializeScreenLayout(MainWindow.this);
 
                 DockingUI.removeUnusedMenuSeparators(menu.getOptionsMenu().getPopupMenu());
             }
@@ -171,6 +168,8 @@ public class MainWindow extends JFrame implements IMainWindow {
             }
         });
 
+        MainWindowUI.handlePerProjectLayouts(this);
+        
         updateTitle();
         pack();
     }
