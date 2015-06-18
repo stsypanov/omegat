@@ -37,12 +37,14 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 
+import org.omegat.core.Core;
 import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.gui.editor.TagAutoCompleterView;
 import org.omegat.gui.editor.autotext.AutotextAutoCompleterView;
@@ -51,7 +53,9 @@ import org.omegat.gui.glossary.GlossaryAutoCompleterView;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Platform;
+import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * The controller part of the auto-completer
@@ -72,7 +76,9 @@ public class AutoCompleter implements IAutoCompleter {
     
     boolean onMac = Platform.isMacOSX();
     
-    public final static int pageRowCount = 10;
+    public final static int PAGE_ROW_COUNT = 10;
+    
+    private boolean didPopUpAutomatically = false;
     
     /**
      * a list of the views associated with this auto-completer
@@ -141,6 +147,7 @@ public class AutoCompleter implements IAutoCompleter {
                 return false;
             }
 
+            updatePopup();
             setVisible(true);
             
             return true;
@@ -202,28 +209,15 @@ public class AutoCompleter implements IAutoCompleter {
      * Show the popup list.
      */
     public void updatePopup() {
-        updatePopup(false);
-    }
-    
-    public void updatePopup(boolean force) { 
-        if (!force && !isVisible()) {
-            return;
-        }
-        
         AbstractAutoCompleterView view = getCurrentView();
         
-        if (editor.isEnabled() && view.updateViewData() && view.getRowCount() != 0) {
+        if (editor.isEnabled() && view.updateViewData()) {
             scroll.setPreferredSize(new Dimension(
                     Math.min(view.getPreferredWidth(), MAX_POPUP_WIDTH),
                     Math.max(view.getPreferredHeight(), MIN_VIEWPORT_HEIGHT)));
             popup.validate();
             popup.pack();
-            Point p = getDisplayPoint();
-            popup.show(editor, p.x, p.y);
-        } else {
-            popup.setVisible(false);
         }
-        editor.requestFocus(); 
     }
     
     /**
@@ -255,15 +249,18 @@ public class AutoCompleter implements IAutoCompleter {
 
         int offset = editor.getCaretPosition();
 
-        if (editor.getSelectionStart() == editor.getSelectionEnd()) {
+        String selection = editor.getSelectedText();
+
+        if (StringUtil.isEmpty(selection)) {
             editor.setSelectionStart(offset - selected.replacementLength);
             editor.setSelectionEnd(offset);
         }
-        String selection = editor.getSelectedText();
         editor.replaceSelection(selected.payload);
+        
         if (selected.cursorAdjust != 0) {
             editor.getCaret().setDot(editor.getCaretPosition() + selected.cursorAdjust);
         }
+        
         if (selected.keepSelection) {
             editor.replaceSelection(selection);
         }
@@ -317,7 +314,7 @@ public class AutoCompleter implements IAutoCompleter {
         viewLabel.setText(sb.toString());
     }
 
-    private AbstractAutoCompleterView getCurrentView() {
+    public AbstractAutoCompleterView getCurrentView() {
         return views.get(currentView);
     }
     
@@ -331,7 +328,9 @@ public class AutoCompleter implements IAutoCompleter {
     private void activateView() {
         scroll.setViewportView(getCurrentView().getViewContent());
         updateViewLabel();
-        updatePopup();
+        if (Core.getProject().isProjectLoaded()) {
+            updatePopup();
+        }
     }
     
     /** select the previous view */
@@ -345,8 +344,19 @@ public class AutoCompleter implements IAutoCompleter {
     }
 
     public void setVisible(boolean isVisible) {
-        updatePopup(isVisible);
-        popup.setVisible(isVisible);
+        if (isVisible) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    Point p = getDisplayPoint();
+                    popup.show(editor, p.x, p.y);
+                    editor.requestFocus(); 
+                }
+            });
+        } else {
+            popup.setVisible(false);
+            didPopUpAutomatically = false;
+        }
     }
     
     /** 
@@ -357,5 +367,34 @@ public class AutoCompleter implements IAutoCompleter {
      */
     public String keyText(int base, int modifier) {
          return KeyEvent.getKeyModifiersText(modifier) + "+" + KeyEvent.getKeyText(base);
+    }
+    
+    public void textDidChange() {
+        if (isVisible() && !didPopUpAutomatically) {
+            updatePopup();
+            return;
+        }
+        if (!Preferences.isPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY)) {
+            return;
+        }
+        
+        // Cycle through each view, stopping and showing it if it has some relevant content.
+        int i = currentView;
+        while (true) {
+            if (views.get(i).shouldPopUp()) {
+                currentView = i;
+                didPopUpAutomatically = true;
+                activateView();
+                setVisible(true);
+                return;
+            }
+            i = (i + 1) % views.size();
+            if (i == currentView) {
+                // We made it full circle with no results.
+                break;
+            }
+        }
+        // If we get here, no views had relevant content, so we close the popup.
+        setVisible(false);
     }
 }

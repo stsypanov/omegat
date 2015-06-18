@@ -28,9 +28,11 @@ package org.omegat.gui.editor.autocompleter;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.util.List;
+
+import javax.swing.text.BadLocationException;
 
 import org.omegat.core.Core;
+import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.tokenizer.ITokenizer;
 
 /**
@@ -108,12 +110,6 @@ abstract public class AbstractAutoCompleterView {
     public abstract int getPreferredWidth();
     
     /**
-     * set the list or table data
-     * @param entryList the entries
-     */
-    public abstract void setData(List<AutoCompleterItem> entryList);
-    
-    /**
      * get the selected value
      * @return 
      */
@@ -140,9 +136,17 @@ abstract public class AbstractAutoCompleterView {
      * @return a modified row count.
      */
     protected int getModifiedRowCount() {
-        return Math.min(getRowCount(), AutoCompleter.pageRowCount);
+        return Math.min(getRowCount() + 1, AutoCompleter.PAGE_ROW_COUNT);
     }
 
+    /**
+     * Return true to indicate that the view has relevant contextual suggestions
+     * that merit displaying the AutoCompleter popup unprompted.
+     * 
+     * @return Whether or not the AutoCompleter should appear
+     */
+    public abstract boolean shouldPopUp();
+    
     /**
      * Indicates whether or not the AutoCompleter should close by default when the
      * user confirms a selection. Override and return false to keep the popup open.
@@ -151,5 +155,16 @@ abstract public class AbstractAutoCompleterView {
      */
     public boolean shouldCloseOnSelection() {
         return true;
+    }
+    
+    protected String getLeadingText() {
+        try {
+            EditorTextArea3 editor = completer.getEditor();
+            int offset = editor.getCaretPosition();
+            int translationStart = editor.getOmDocument().getTranslationStart();
+            return editor.getDocument().getText(translationStart, offset - translationStart);
+        } catch (BadLocationException e) {
+            return "";
+        }
     }
 }

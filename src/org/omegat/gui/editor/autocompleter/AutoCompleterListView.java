@@ -40,9 +40,7 @@ import javax.swing.JScrollBar;
 import javax.swing.ListModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
 
-import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
@@ -179,8 +177,7 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
         return width;
     };
     
-    @Override
-    public void setData(List<AutoCompleterItem> entryList) {
+    protected void setData(List<AutoCompleterItem> entryList) {
         getList().setListData(entryList.toArray());
         if (!entryList.isEmpty()) {
             getList().setSelectedIndex(0);
@@ -202,25 +199,18 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
     @Override
     public boolean updateViewData() {
-        EditorTextArea3 editor = completer.getEditor();
-        try {
-            int offset = editor.getCaretPosition();
-            int translationStart = editor.getOmDocument().getTranslationStart();
-            
-            String prevText = editor.getDocument().getText(translationStart, offset - translationStart);
-            
-            List<AutoCompleterItem> entryList = computeListData(prevText);
-            
-            if (entryList.isEmpty()) {
-                entryList.add(NO_SUGGESTIONS);
-            }
-            setData(entryList);
-            
-            return !entryList.isEmpty();
-        } catch (BadLocationException ex) {
-            // what now?
-            return false;
+        List<AutoCompleterItem> entryList = computeListData(getLeadingText(), false);    
+        if (entryList.isEmpty()) {
+            entryList.add(NO_SUGGESTIONS);
         }
+        setData(entryList);
+        
+        return !entryList.isEmpty();
+    }
+    
+    @Override
+    public boolean shouldPopUp() {
+        return !computeListData(getLeadingText(), true).isEmpty();
     }
     
     protected String getLastToken(String text) {
@@ -231,7 +221,7 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
         if (tokens.length != 0) {
             Token lastToken = tokens[tokens.length - 1];
             String lastString = text.substring(lastToken.getOffset()).trim();
-            if (lastString.length() > 0) {
+            if (!lastString.isEmpty()) {
                 token = lastString;
             }
         }
@@ -243,7 +233,7 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
      * @param prevText the text in the editing field up to the cursor location
      * @return a list of AutoCompleterItems.
      */
-    public abstract List<AutoCompleterItem> computeListData(String prevText);
+    public abstract List<AutoCompleterItem> computeListData(String prevText, boolean contextualOnly);
     
     /**
      * Each view should determine how to print a view item.
@@ -264,7 +254,9 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
             if (value == NO_SUGGESTIONS) {
                 setText(((AutoCompleterItem)value).payload);
             } else {
-                setText(itemToString((AutoCompleterItem)value));
+                AutoCompleterListView aclView = (AutoCompleterListView) completer.getCurrentView();
+                AutoCompleterItem acItem = (AutoCompleterItem) value;
+                setText(aclView.itemToString(acItem));
             }
             if (isSelected) {
                 setBackground(list.getSelectionBackground());

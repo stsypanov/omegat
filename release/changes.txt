@@ -1,9 +1,56 @@
 ----------------------------------------------------------------------
- OmegaT 3.5
+ OmegaT 3.5 update 2
 ----------------------------------------------------------------------
-  15 Enhancements
+   0 Enhancement
+   1 Bug fix
+   0 Localisation update
+----------------------------------------------------------------------
+3.5 update 2 vs 3.5 update 1
+
+  Bug fixes:
+
+  - Shift + F3 doesn't cycle case for single characters 
+  https://sourceforge.net/p/omegat/bugs/750/
+
+----------------------------------------------------------------------
+ OmegaT 3.5 update 1 (2015-06-11)
+----------------------------------------------------------------------
+   3 Enhancements
+   2 Bug fixes
+   3 Localisation updates
+----------------------------------------------------------------------
+3.5 update 1 vs 3.5
+
+  Implemented requests:
+
+  - Drag and drop within the segment 
+  https://sourceforge.net/p/omegat/feature-requests/401/
+
+  - Auto-completion option: Show relevant suggestions automatically
+  https://sourceforge.net/p/omegat/feature-requests/1097/
+
+  - Glossary view auto-completion improvements 
+  https://sourceforge.net/p/omegat/feature-requests/1098/
+
+  Bug fixes:
+
+  - The writeable glossary was not working propertly if it was not
+at the root of the glossary folder
+
+  - It was not possible to have two glossaries with the same name 
+in different sub-folders
+
+  Localisation updates:
+  - Dutch localisation updated to 3.5 (UI, documentation, scripts, readme)
+  - Interlingua localisation updated to 3.5 (UI, scripts, readme)
+  - Italian localisation updated to 3.5 (UI, scripts)
+
+----------------------------------------------------------------------
+ OmegaT 3.5 (2015-06-05)
+----------------------------------------------------------------------
+  18 Enhancements
    4 Bug fixes
-   6 Localisation updates
+   5 Localisation updates
 ----------------------------------------------------------------------
 3.5 vs 3.4
 
@@ -156,6 +203,7 @@ of "foo\.\scripts"
 
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 2
+ OmegaT 3.1.9 update 2 (2015-06-03)
 ----------------------------------------------------------------------
    2 Enhancements
    2 Bug fixes

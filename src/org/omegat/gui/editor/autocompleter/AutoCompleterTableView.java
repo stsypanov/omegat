@@ -32,7 +32,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.JTable;
 
@@ -224,7 +223,7 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
         int size = getTable().getModel().getRowCount();
         setSelection(new Point(
                 p.x,
-                Math.min(p.y + AutoCompleter.pageRowCount, size - 1)));
+                Math.min(p.y + AutoCompleter.PAGE_ROW_COUNT, size - 1)));
     }
 
     /** 
@@ -260,7 +259,7 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
         
         setSelection(new Point(
                 p.x,
-                Math.max(p.y - AutoCompleter.pageRowCount, 0)));
+                Math.max(p.y - AutoCompleter.PAGE_ROW_COUNT, 0)));
     }
 
     @Override
@@ -286,10 +285,5 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
             return new AutoCompleterItem(selection.toString(), null, 0);
         }
         return new AutoCompleterItem((String) selection, null, 0);
-    }
-    
-    @Override
-    public void setData(List<AutoCompleterItem> entryList) {
-        
     }
 }
