@@ -33,6 +33,7 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -72,6 +73,7 @@ public class SegmentBuilder {
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
     private static final DateFormat dateFormat = DateFormat.getDateInstance();
     private static final DateFormat timeFormat = DateFormat.getTimeInstance();
+    private static final Pattern PATTERN = Pattern.compile("0000", Pattern.LITERAL);
 
     static AtomicLong globalVersions = new AtomicLong();
 
@@ -579,7 +581,7 @@ public class SegmentBuilder {
                         replacement,
                         ste.getNumberOfDuplicates());
             }
-            text = text.replace("0000", replacement);
+            text = PATTERN.matcher(text).replaceAll(replacement);
         }
         
         // trim and replace spaces to non-break spaces

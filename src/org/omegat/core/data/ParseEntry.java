@@ -32,9 +32,6 @@
 
 package org.omegat.core.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.omegat.core.Core;
 import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.segmentation.Rule;
@@ -45,6 +42,10 @@ import org.omegat.util.Language;
 import org.omegat.util.PatternConsts;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Process one entry on parse source file.
@@ -58,6 +59,7 @@ import org.omegat.util.StringUtil;
  */
 public abstract class ParseEntry implements IParseCallback {
 
+    private static final Pattern CARET_RETURN_PATTERN = Pattern.compile("\r", Pattern.LITERAL);
     private final ProjectProperties m_config;
     
     /** Cached segments. */
@@ -311,7 +313,7 @@ public abstract class ParseEntry implements IParseCallback {
             r = r.replace("\r\n", "\n");
         per.cr = r.indexOf("\r") > 0;
         if (per.cr)
-            r = r.replace("\r", "\n");
+            r = CARET_RETURN_PATTERN.matcher(r).replaceAll("\n");
 
         if(removeTags) {
             r = PatternConsts.OMEGAT_TAG.matcher(r).replaceAll("");

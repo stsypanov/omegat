@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 
 import org.omegat.core.Core;
 import org.omegat.tokenizer.DefaultTokenizer;
@@ -62,9 +63,11 @@ import org.omegat.util.StaticUtils;
  */
 public final class PluginUtils {
 
+    private static final Pattern EMPTY_LINE_PATTERN = Pattern.compile("\\s+");
+
     enum PLUGIN_TYPE {
         FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
-    };
+    }
 
     protected static URLClassLoader pluginsClassLoader;
     protected static List<Class<?>> loadedPlugins = new ArrayList<Class<?>>();
@@ -261,7 +264,7 @@ public final class PluginUtils {
             throws ClassNotFoundException {
         String pluginClasses = m.getMainAttributes().getValue("OmegaT-Plugins");
         if (pluginClasses != null) {
-            for (String clazz : pluginClasses.split("\\s+")) {
+            for (String clazz : EMPTY_LINE_PATTERN.split(pluginClasses)) {
                 if (clazz.trim().isEmpty()) {
                     continue;
                 }

@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.omegat.util.LFileCopy;
@@ -52,6 +53,7 @@ import org.omegat.util.LFileCopy;
  * @author Alex Buloichik <alex73mail@gmail.com>
  */
 public class StarDict implements IDictionary {
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n", Pattern.LITERAL);
     protected final File ifoFile;
     protected static final String UTF8 = "UTF-8";
     protected static final int BUFFER_SIZE = 64 * 1024;
@@ -162,7 +164,7 @@ public class StarDict implements IDictionary {
      * Load acticle's text.
      */
     private String readArticleText(byte[] data, int off, int len) throws UnsupportedEncodingException {
-        return new String(data, off, len, UTF8).replace("\n", "<br>");
+        return NEW_LINE_PATTERN.matcher(new String(data, off, len, UTF8)).replaceAll("<br>");
     }
 
     /**

@@ -32,6 +32,7 @@ public class UIUtil {
     @NonNls
     public static final String BORDER_LINE = "<hr size=1 noshade>";
     private static final StyleSheet DEFAULT_HTML_KIT_CSS;
+    private static final Pattern AMPERSAND_PATTERN = Pattern.compile("&");
 
     static {
         // save the default JRE CSS and ..
@@ -428,7 +429,7 @@ public class UIUtil {
     public static void setActionNameAndMnemonic(@NotNull String text, @NotNull Action action) {
         assignMnemonic(text, action);
 
-        text = text.replaceAll("&", "");
+        text = AMPERSAND_PATTERN.matcher(text).replaceAll("");
         action.putValue(Action.NAME, text);
     }
     public static void assignMnemonic(@NotNull String text, @NotNull Action action) {
@@ -1563,7 +1564,7 @@ public class UIUtil {
      * Configures composite to use for drawing text with the given graphics container.
      * <p/>
      * The whole idea is that <a href="http://en.wikipedia.org/wiki/X_Rendering_Extension">XRender-based</a> pipeline doesn't support
-     * {@link java.awt.AlphaComposite#SRC} and we should use {@link java.awt.AlphaComposite#SRC_OVER} instead.
+     * {@link AlphaComposite#SRC} and we should use {@link AlphaComposite#SRC_OVER} instead.
      *
      * @param g target graphics container
      */

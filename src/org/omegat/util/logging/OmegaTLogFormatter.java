@@ -35,6 +35,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
+import java.util.regex.Pattern;
 
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
@@ -47,6 +48,7 @@ import org.omegat.util.StaticUtils;
  */
 public class OmegaTLogFormatter extends Formatter {
 
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\r|\n");
     protected static String lineMark;
 
     protected static String lineSeparator = System.getProperty("line.separator");
@@ -144,7 +146,7 @@ public class OmegaTLogFormatter extends Formatter {
         } else {
             message = StaticUtils.format(format, record.getParameters());
         }
-        String[] lines = message.split("\r|\n");
+        String[] lines = NEW_LINE_PATTERN.split(message);
         for (String line : lines) {
             appendFormattedLine(result, record, line, false);
         }

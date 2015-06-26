@@ -30,6 +30,7 @@ package org.omegat.util;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is here, because the Locale has hard-coded '_' inside, and we must
@@ -55,6 +56,7 @@ import java.util.regex.Matcher;
  * @author Guido Leenders
  */
 public class Language implements Comparable<Object> {
+    private static final Pattern PATTERN = Pattern.compile("_", Pattern.LITERAL);
     private Locale locale = new Locale("");
     private String languageCode;
     private String countryCode;
@@ -146,7 +148,7 @@ public class Language implements Comparable<Object> {
      * Returns a string representation as a Microsoft locale (xx-yy).
      */
     public String getLocaleLCID() {
-        return getLocaleCode().toLowerCase().replace("_", "-");
+        return PATTERN.matcher(getLocaleCode().toLowerCase()).replaceAll("-");
     }
 
     /**
