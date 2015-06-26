@@ -12,7 +12,6 @@
 	<classpathentry exported="true" kind="lib" path="test/lib/hamcrest-core-1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="test/lib/xmlunit-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pdfbox-app-1.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jgit-2.1.0.201209190230-r.jar"/>
 	<classpathentry kind="lib" path="lib/jsch-0.1.49.jar"/>
 	<classpathentry kind="lib" path="lib/sequence-library-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.4.jar"/>
@@ -50,5 +49,6 @@
 	<classpathentry kind="lib" path="lib/annotations.jar"/>
 	<classpathentry kind="lib" path="lib/vldocking-3.0.5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.7.1.201504261725-r.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
