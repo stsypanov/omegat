@@ -91,7 +91,7 @@ public class ResourceBundleFilter extends AbstractFilter {
     /**
      * If true, will remove non-translated segments in the target files
      */
-    public static boolean removeStringsUntranslated = false;
+    private boolean removeStringsUntranslated = false;
 
     @Override
     public String getFileFormatName() {
@@ -290,13 +290,11 @@ public class ResourceBundleFilter extends AbstractFilter {
             String comments;
             boolean noi18n = false;
 
-            // Parameter in the options of filter to customize the target file
-            String removeStringsUntranslatedStr = processOptions.get(OPTION_REMOVE_STRINGS_UNTRANSLATED);
-            // If the value is null the default is false
-            removeStringsUntranslated = (removeStringsUntranslatedStr != null) && (removeStringsUntranslatedStr.equalsIgnoreCase("true"));
-            // Initialize the comments
-            comments = null;
-            while ((str = getNextLine(lbpr)) != null) {
+        // Parameter in the options of filter to customize the target file
+        removeStringsUntranslated = processOptions != null && "true".equalsIgnoreCase(processOptions.get(OPTION_REMOVE_STRINGS_UNTRANSLATED));
+        // Initialize the comments
+        comments = null;
+        while ((str = getNextLine(lbpr)) != null) {
 
                 // Variable to check if a segment is translated
                 boolean translatedSegment = true;

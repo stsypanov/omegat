@@ -1,14 +1,22 @@
 ----------------------------------------------------------------------
  OmegaT 3.5 update 2
 ----------------------------------------------------------------------
-   3 Enhancements
-   2 Bug fixes
+   5 Enhancements
+   4 Bug fixes
    1 Localisation update
 ----------------------------------------------------------------------
 3.5 update 2 vs 3.5 update 1
 
+  Implemented requests:
+
   - Glossary adding term dialog - set focus on any GUI element 
   https://sourceforge.net/p/omegat/feature-requests/1014/
+
+  - Allow bundling of Hunspell spelling dictionaries in OmegaT.jar
+  https://sourceforge.net/p/omegat/feature-requests/1101/
+
+  - Allow per-project main window layouts
+  https://sourceforge.net/p/omegat/feature-requests/1102/
 
   Other changes:
 
@@ -23,7 +31,15 @@
 
   - The Japanese tokenizer was not removing tags
 
+  - When the auto-completer was changing the first letter of a phrase
+from lower-case to upper-case, it was turning the phrase to title-case
+
+  - The Mac package contained two folders with the same name except the 
+case. Depending on the zip application, it was difficult to unpack it 
+correctly.
+
   Localisation updates:
+
   - Norwegian localisation created (UI, Instant Start, scripts, readme)
 
 ----------------------------------------------------------------------
@@ -216,7 +232,19 @@ of "foo\.\scripts"
   - Japanese localisation updated to 3.4 (UI, readme)
 
 ----------------------------------------------------------------------
- OmegaT 3.1.9 update 2
+ OmegaT 3.1.9 update 3
+----------------------------------------------------------------------
+   0 Enhancement
+   0 Bug fix
+   1 Localisation update
+----------------------------------------------------------------------
+3.1.9 update 2 vs. 3.1.9 update 1
+
+  Localisation updates:
+
+  - New Norwegian localisation (UI, Instant start, scripts, readme)
+
+----------------------------------------------------------------------
  OmegaT 3.1.9 update 2 (2015-06-03)
 ----------------------------------------------------------------------
    2 Enhancements
