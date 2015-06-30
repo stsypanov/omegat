@@ -33,9 +33,9 @@ public class BaseFilter implements IEditorFilter {
 	private static final JPanel controlComponentStub = new JPanel();
 	private static final Map<Pattern, Boolean> PATTERNS = new HashMap<>();
 
-//	private static final Pattern NUMBER_PATTERN = Pattern.compile("^(?:(\\d+(?:[\\.,]\\d+)?)(?:\\|)?)+");
-//	private static final Pattern DATE_PATTERN = Pattern.compile("(0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|[1-9]|0[1-9]|1[012])[- /.](19|20)\\d\\d");
-//	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[-\\w.]+@([A-z0-9][-A-z0-9]+\\.)+[A-z]{2,4}$");
+	private static final Pattern NUMBER_PATTERN = Pattern.compile("^(?:(\\d+(?:[\\.,]\\d+)?)(?:\\|)?)+");
+	private static final Pattern DATE_PATTERN = Pattern.compile("(0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|[1-9]|0[1-9]|1[012])[- /.](19|20)\\d\\d");
+	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[-\\w.]+@([A-z0-9][-A-z0-9]+\\.)+[A-z]{2,4}$");
 	//todo check if this is correctly compiled when reading from XML
 	private static final Pattern URL_PATTERN = Pattern.compile("((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)");
 
@@ -62,13 +62,14 @@ public class BaseFilter implements IEditorFilter {
 		filteringItemsLoaded = fileLoaded;
 	}
 
-	private void load(String baseFilteringItems) throws IOException, JAXBException {
+	//todo consider case when there is no file with filters
+    private void load(String baseFilteringItems) throws IOException, JAXBException {
 		File filteringItems = new File(baseFilteringItems);
 		if (filteringItems.exists()) {
 			BaseFilteringParser<BaseFilteringItems> parser = new BaseFilteringParser<>();
 			BaseFilteringItems items = parser.getObject(filteringItems, BaseFilteringItems.class);
 			for (BaseFilteringItem item : items.getFilteringItems()) {
-				String pattern = item.getPattern();
+				String pattern = item.getPattern().replaceAll("\\\\+", "\\\\");
 				Pattern p = Pattern.compile(pattern);
 				PATTERNS.put(p, item.isApply());
 			}
@@ -80,9 +81,9 @@ public class BaseFilter implements IEditorFilter {
 
 	@Override
 	public boolean allowed(SourceTextEntry ste) {
-		boolean allowed = false;
+		boolean allowed = true;
 		if (!filteringItemsLoaded){
-			allowed = true;
+			allowed = false;
 		} else {
 			for (Map.Entry<Pattern, Boolean> entry : PATTERNS.entrySet()){
 				Boolean applied = entry.getValue();
@@ -90,7 +91,10 @@ public class BaseFilter implements IEditorFilter {
 					EntryKey key = ste.getKey();
 					String sourceText = key.sourceText;
 					Pattern pattern = entry.getKey();
-					allowed = pattern.matcher(sourceText).matches();
+					allowed = !pattern.matcher(sourceText).matches();
+                    if (!allowed){
+                        break;
+                    }
 				}
 			}
 		}
