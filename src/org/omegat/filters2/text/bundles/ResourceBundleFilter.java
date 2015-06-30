@@ -133,8 +133,7 @@ public class ResourceBundleFilter extends AbstractFilter {
      * "Bundle_ru.properties"
      */
     @Override
-    public BufferedWriter createWriter(File outfile, String encoding) throws UnsupportedEncodingException,
-            IOException {
+    public BufferedWriter createWriter(File outfile, String encoding) throws IOException {
         if (encoding != null) {
             targetEncoding = encoding;
         }
@@ -163,7 +162,7 @@ public class ResourceBundleFilter extends AbstractFilter {
         if (ascii == null)
             return null;
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < ascii.length(); i++) {
             char ch = ascii.charAt(i);
             if (ch == '\\' && i != ascii.length() - 1) {
@@ -209,7 +208,7 @@ public class ResourceBundleFilter extends AbstractFilter {
     private String toAscii(String text, boolean key) {
         CharsetEncoder charsetEncoder = Charset.forName(targetEncoding).newEncoder();
         
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
@@ -233,7 +232,7 @@ public class ResourceBundleFilter extends AbstractFilter {
                 String code = Integer.toString(ch, 16);
                 while (code.length() < 4)
                     code = '0' + code;
-                result.append("\\u" + code);
+                result.append("\\u").append(code);
             }
         }
 
@@ -251,7 +250,7 @@ public class ResourceBundleFilter extends AbstractFilter {
      * >#1606595</a>.
      */
     private String removeExtraSlashes(String string) {
-        StringBuffer result = new StringBuffer(string.length());
+        StringBuilder result = new StringBuilder(string.length());
         for (int i = 0; i < string.length(); i++) {
             char ch = string.charAt(i);
             if (ch == '\\') {
@@ -274,8 +273,7 @@ public class ResourceBundleFilter extends AbstractFilter {
      */
     private String leftTrim(String s) {
         int i;
-        for (i = 0; i < s.length() && (s.charAt(i) == ' ' || s.charAt(i) == '\t'); i++)
-            ;
+        for (i = 0; i < s.length() && (s.charAt(i) == ' ' || s.charAt(i) == '\t'); i++);
         s = s.replaceAll("\\\\ ", " ");
         return s.substring(i, s.length());
     }
@@ -284,125 +282,123 @@ public class ResourceBundleFilter extends AbstractFilter {
      * Doing the processing of the file...
      */
     @Override
-    public void processFile(BufferedReader reader, BufferedWriter outfile, org.omegat.filters2.FilterContext fc) throws IOException {
-        LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader); // fix for bug 1462566
-        String str;
-        // Support to show the comments (localization notes) into the Comments panel
-        String comments;
-        boolean noi18n = false;
+    public void processFile(BufferedReader reader, BufferedWriter outfile, FilterContext fc) throws IOException {
+        // fix for bug 1462566
+        try (LinebreakPreservingReader lbpr = new LinebreakPreservingReader(reader)) {
+            String str;
+            // Support to show the comments (localization notes) into the Comments panel
+            String comments;
+            boolean noi18n = false;
 
-        // Parameter in the options of filter to customize the target file
-        String removeStringsUntranslatedStr = processOptions.get(OPTION_REMOVE_STRINGS_UNTRANSLATED);
-        // If the value is null the default is false
-        if ((removeStringsUntranslatedStr != null) && (removeStringsUntranslatedStr.equalsIgnoreCase("true"))) {
-            removeStringsUntranslated = true;
-        } else {
-            removeStringsUntranslated = false;
-        }
-        // Initialize the comments
-        comments = null;
-        while ((str = getNextLine(lbpr)) != null) {
+            // Parameter in the options of filter to customize the target file
+            String removeStringsUntranslatedStr = processOptions.get(OPTION_REMOVE_STRINGS_UNTRANSLATED);
+            // If the value is null the default is false
+            removeStringsUntranslated = (removeStringsUntranslatedStr != null) && (removeStringsUntranslatedStr.equalsIgnoreCase("true"));
+            // Initialize the comments
+            comments = null;
+            while ((str = getNextLine(lbpr)) != null) {
 
-            // Variable to check if a segment is translated
-            boolean translatedSegment = true;
+                // Variable to check if a segment is translated
+                boolean translatedSegment = true;
 
-            String trimmed = str.trim();
+                String trimmed = str.trim();
 
-            // skipping empty strings
-            if (trimmed.length() == 0) {
-                outfile.write(toAscii(str, false) + lbpr.getLinebreak());
-                // Delete the comments
-                comments = null;
-                continue;
-            }
-
-            // skipping comments
-            char firstChar = trimmed.charAt(0);
-            if (firstChar == '#' || firstChar == '!') {
-                outfile.write(toAscii(str, false) + lbpr.getLinebreak());
-                // Save the comments
-                comments = (comments==null? str : comments + "\n" + str);
-                // checking if the next string shouldn't be internationalized
-                if (trimmed.indexOf("NOI18N") >= 0)
-                    noi18n = true;
-
-                continue;
-            }
-
-            // reading the glued lines
-            while (str.charAt(str.length() - 1) == '\\') {
-                String next = getNextLine(lbpr);
-                if (next == null)
-                    next = "";
-
-                // gluing this line (w/o '\' on this line)
-                // with next line (w/o leading spaces)
-                str = str.substring(0, str.length() - 1) + leftTrim(next);
-            }
-
-            // key=value pairs
-            int equalsPos = searchEquals(str);
-
-            // writing out key
-            String key;
-            if (equalsPos >= 0)
-                key = str.substring(0, equalsPos).trim();
-            else
-                key = str.trim();
-            key = removeExtraSlashes(key);
-            // writing segment is delayed until verifying that the translation was made
-            // outfile.write(toAscii(key, true));
-
-            // advance if there're spaces or tabs after =
-            if (equalsPos >= 0) {
-                int equalsEnd = equalsPos + 1;
-                while (equalsEnd < str.length()) {
-                    char ch = str.charAt(equalsEnd);
-                    if (ch != ' ' && ch != '\t')
-                        break;
-                    equalsEnd++;
-                }
-                String equals = str.substring(equalsPos, equalsEnd);
-                // writing segment is delayed until verifying that the translation was made
-                // outfile.write(equals);
-
-                // value, if any
-                String value;
-                if (equalsEnd < str.length())
-                    value = removeExtraSlashes(str.substring(equalsEnd));
-                else
-                    value = "";
-
-                if (noi18n) {
-                    // if we don't need to internationalize
-                    outfile.write(toAscii(value, false));
-                    noi18n = false;
-                } else {
-                    value = value.replaceAll("\\n\\n", "\n \n");
-                    // If there is a comment, show it into the Comments panel
-                    String trans = process(key, value, comments);
+                // skipping empty strings
+                if (trimmed.length() == 0) {
+                    outfile.write(toAscii(str, false) + lbpr.getLinebreak());
                     // Delete the comments
                     comments = null;
-                    // Check if the segment is not translated
-	            if ("--untranslated_yet--".equals(trans)) {
-                        translatedSegment = false;
-                        trans = value;
+                    continue;
+                }
+
+                // skipping comments
+                char firstChar = trimmed.charAt(0);
+                if (firstChar == '#' || firstChar == '!') {
+                    outfile.write(toAscii(str, false) + lbpr.getLinebreak());
+                    // Save the comments
+                    comments = (comments == null ? str : comments + "\n" + str);
+                    // checking if the next string shouldn't be internationalized
+                    if (trimmed.contains("NOI18N"))
+                        noi18n = true;
+
+                    continue;
+                }
+
+                // reading the glued lines
+                while (str.charAt(str.length() - 1) == '\\') {
+                    String next = getNextLine(lbpr);
+                    if (next == null)
+                        next = "";
+
+                    // gluing this line (w/o '\' on this line)
+                    // with next line (w/o leading spaces)
+                    str = str.substring(0, str.length() - 1) + leftTrim(next);
+                }
+
+                // key=value pairs
+                int equalsPos = searchEquals(str);
+
+                // writing out key
+                String key;
+                if (equalsPos >= 0)
+                    key = str.substring(0, equalsPos).trim();
+                else
+                    key = str.trim();
+                key = removeExtraSlashes(key);
+                // writing segment is delayed until verifying that the translation was made
+                // outfile.write(toAscii(key, true));
+
+                // advance if there're spaces or tabs after =
+                if (equalsPos >= 0) {
+                    int equalsEnd = equalsPos + 1;
+                    while (equalsEnd < str.length()) {
+                        char ch = str.charAt(equalsEnd);
+                        if (ch != ' ' && ch != '\t')
+                            break;
+                        equalsEnd++;
                     }
-                    trans = trans.replaceAll("\\n\\s\\n", "\n\n");
-                    trans = toAscii(trans, false);
-                    if (trans.length() > 0 && trans.charAt(0) == ' ')
-                        trans = '\\' + trans;
-                    // Non-translated segments are written based on the filter options 
-                    if (translatedSegment == true || removeStringsUntranslated == false) {
-                        outfile.write(toAscii(key, true));
-                        outfile.write(equals);
-                        outfile.write(trans);
-                        outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
+                    String equals = str.substring(equalsPos, equalsEnd);
+                    // writing segment is delayed until verifying that the translation was made
+                    // outfile.write(equals);
+
+                    // value, if any
+                    String value;
+                    if (equalsEnd < str.length())
+                        value = removeExtraSlashes(str.substring(equalsEnd));
+                    else
+                        value = "";
+
+                    if (noi18n) {
+                        // if we don't need to internationalize
+                        outfile.write(toAscii(value, false));
+                        noi18n = false;
+                    } else {
+                        value = value.replaceAll("\\n\\n", "\n \n");
+                        // If there is a comment, show it into the Comments panel
+                        String trans = process(key, value, comments);
+                        // Delete the comments
+                        comments = null;
+                        // Check if the segment is not translated
+                        if ("--untranslated_yet--".equals(trans)) {
+                            translatedSegment = false;
+                            trans = value;
+                        }
+                        trans = trans.replaceAll("\\n\\s\\n", "\n\n");
+                        trans = toAscii(trans, false);
+                        if (trans.length() > 0 && trans.charAt(0) == ' ')
+                            trans = '\\' + trans;
+                        // Non-translated segments are written based on the filter options
+                        if (translatedSegment || !removeStringsUntranslated) {
+                            outfile.write(toAscii(key, true));
+                            outfile.write(equals);
+                            outfile.write(trans);
+                            outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
+                        }
                     }
                 }
+                // This line of code is moved up to avoid blank lines
+                // outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
             }
-            // This line of code is moved up to avoid blank lines
-            // outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
         }
     }
 
@@ -459,7 +455,7 @@ public class ResourceBundleFilter extends AbstractFilter {
     }
 
     @Override
-    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, org.omegat.filters2.FilterContext fc) throws Exception {
+    protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile, FilterContext fc) throws Exception {
         Map<String, String> source = new HashMap<String, String>();
         Map<String, String> translated = new HashMap<String, String>();
 
