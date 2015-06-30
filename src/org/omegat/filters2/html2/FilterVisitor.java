@@ -411,8 +411,7 @@ public class FilterVisitor extends NodeVisitor {
         // detecting the first starting tag in 'befors'
         // that has its ending in the paragraph
         // all before this "first good" are simply written out
-        List<Node> all = new ArrayList<Node>();
-        all.addAll(befors);
+        List<Node> all = new ArrayList<Node>(befors);
         all.addAll(translatable);
         int firstgoodlimit = befors.size();
         int firstgood = 0;

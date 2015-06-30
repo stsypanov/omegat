@@ -111,8 +111,7 @@ public class FilterMaster {
     static {
         try {
             CONFIG_CTX = JAXBContext.newInstance(Filters.class);
-            filtersClasses = new ArrayList<Class<IFilter>>();
-            filtersClasses.addAll((List)PluginUtils.getFilterClasses());
+            filtersClasses = new ArrayList<>((List) PluginUtils.getFilterClasses());
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
         }
@@ -370,9 +369,8 @@ public class FilterMaster {
      */
     public static List<String> getSupportedEncodings() {
         if (supportedEncodings == null) {
-            supportedEncodings = new ArrayList<String>();
+            supportedEncodings = new ArrayList<>(Charset.availableCharsets().keySet());
             supportedEncodings.add(AbstractFilter.ENCODING_AUTO_HUMAN);
-            supportedEncodings.addAll(Charset.availableCharsets().keySet());
         }
         return supportedEncodings;
     }
