@@ -169,7 +169,7 @@ public class MainWindowUI {
                 didApplyPerProjectLayout = true;
                 break;
             case SAVE:
-                saveScreenLayout(mainWindow, perProjLayout);
+                saveScreenLayout(mainWindow);
             default:
             }
         }
