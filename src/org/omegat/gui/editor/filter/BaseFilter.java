@@ -82,9 +82,7 @@ public class BaseFilter implements IEditorFilter {
 	@Override
 	public boolean allowed(SourceTextEntry ste) {
 		boolean allowed = true;
-		if (!filteringItemsLoaded){
-			allowed = false;
-		} else {
+		if (filteringItemsLoaded){
 			for (Map.Entry<Pattern, Boolean> entry : PATTERNS.entrySet()){
 				Boolean applied = entry.getValue();
 				if (applied){
