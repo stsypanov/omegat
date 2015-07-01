@@ -82,7 +82,9 @@ import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
+import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.autocompleter.IAutoCompleter;
+import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromTMMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -173,7 +175,7 @@ public class EditorController implements IEditor {
     protected int displayedEntryIndex;
 
     /** Object which store history of moving by segments. */
-    private SegmentHistory history = new SegmentHistory();
+    private SegmentHistory history;
 
     protected final EditorSettings settings;
 
@@ -213,6 +215,9 @@ public class EditorController implements IEditor {
         createUI();
 
         settings = new EditorSettings(this);
+
+        history = new SegmentHistory();
+
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {

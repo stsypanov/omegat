@@ -87,6 +87,18 @@ public class SourceTextEntry {
     private final ProtectedPart[] protectedParts;
 
     /**
+     * default constructor for test purpose
+     * @param key entry key with source text
+     */
+    public SourceTextEntry(EntryKey key) {
+        this.key = key;
+        m_entryNum = 0;
+        protectedParts = new ProtectedPart[0];
+        sourceTranslation = null;
+        comment = null;
+    }
+
+    /**
      * Creates a new source text entry.
      * 
      * @param key

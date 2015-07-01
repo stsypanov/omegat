@@ -27,10 +27,13 @@ public class ClipboardTest extends PeroFrame {
 		pack();
 	}
 
+    @Override
+    public String getPreferenceBaseName() {
+        return "clipboard_test";
+    }
+
 	public static void main(String[] args) {
 		ClipboardTest test = new ClipboardTest();
 		test.setVisible(true);
 	}
-
-
 }
