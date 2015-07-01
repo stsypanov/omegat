@@ -53,6 +53,36 @@
 40. сделать своё окно выбора файлов, которое запоминало бы место, свои размеры и положение
 41. Ctrl+Shift+ стрелка для прокручивания документа, оставаясь на том же сегменте
 42. не показывать пустую запись в поле машинного перевода
+43. не вызывать машинный перевод при сохранении проекта. В данное время при сохранении проекта выполняется запрос на сервер
+44. ОКно поиска по словарю показывать в центре экрана
+
+данная ошабка возникает в том случае, когдапрограмма запускается, а экран закрыт приложением EyeLeo
+
+12637: Информация: Модуль, успешно загруженный из класса «org.omegat.tokenizer.LuceneDutchTokenizer» (PLUGIN_LOAD_OK)
+12637: Информация: Docking Framework version: 2.1.5
+12637: Ошибка: java.lang.NullPointerException
+12637: Ошибка: 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+12637: Ошибка: 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+12637: Ошибка: 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+12637: Ошибка: 	at java.lang.reflect.Method.invoke(Method.java:497)
+12637: Ошибка: 	at com.vlsolutions.swing.docking.DockingUtilities.getMouseLocation(DockingUtilities.java:339)
+12637: Ошибка: 	at com.vlsolutions.swing.docking.DockingUtilities.canUseMouseInfo(DockingUtilities.java:320)
+12637: Ошибка: 	at com.vlsolutions.swing.docking.AutoHideExpandPanel.<init>(AutoHideExpandPanel.java:113)
+12637: Ошибка: 	at com.vlsolutions.swing.docking.DockingDesktop.createAutoHideExpandPanel(DockingDesktop.java:4459)
+12637: Ошибка: 	at com.vlsolutions.swing.docking.DockingDesktop.<init>(DockingDesktop.java:164)
+12637: Ошибка: 	at com.vlsolutions.swing.docking.DockingDesktop.<init>(DockingDesktop.java:367)
+12637: Ошибка: 	at org.omegat.gui.main.MainWindowUI.initDocking(MainWindowUI.java:107)
+12637: Ошибка: 	at org.omegat.gui.main.MainWindow.<init>(MainWindow.java:147)
+12637: Ошибка: 	at org.omegat.core.Core.initializeGUI(Core.java:204)
+12637: Ошибка: 	at org.omegat.Main.runGUI(Main.java:328)
+12637: Ошибка: 	at org.omegat.Main.main(Main.java:197)
+12637: Ошибка: 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+12637: Ошибка: 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+12637: Ошибка: 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+12637: Ошибка: 	at java.lang.reflect.Method.invoke(Method.java:497)
+12637: Ошибка: 	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:140)
+
+
 
 
 
