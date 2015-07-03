@@ -143,12 +143,13 @@ public class EditorTextArea3 extends JEditorPane {
 
     private void addDictionaryAction() {
        addKeyListener(new KeyAdapter() {
+           private static final int INTERVAL = 250;
            private long lastShiftStroke;
 
            @Override
            public void keyReleased(KeyEvent e) {
                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
+                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= INTERVAL;
                    if (suits) {
                        if (dictionaryPopupController == null) {
                            dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
