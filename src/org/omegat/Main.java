@@ -307,13 +307,14 @@ public class Main {
         }
 
         try {
-            // Workaround for JDK bug 6389282 (OmegaT bug bug 1555809)
-            // it should be called before setLookAndFeel() for GTK LookandFeel
-            // Contributed by Masaki Katakai (SF: katakai)
-            UIManager.getInstalledLookAndFeels();
 
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+
             System.setProperty("swing.aatext", "true");
             
             // Override LAF with custom colors, if any (they default to the LAF attributes)
