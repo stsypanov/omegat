@@ -16,6 +16,7 @@ import java.util.List;
 public class DictionaryPopup extends PeroFrame {
     public static final int CELL_HEIGHT = 12;
     public static final int WIDTH = 400;
+    public static final int HEIGHT = 60;
 
     private JPopupMenu popupMenu;
     private JList<String> container;
@@ -24,7 +25,7 @@ public class DictionaryPopup extends PeroFrame {
 
     public DictionaryPopup(String title) throws HeadlessException {
         super(title);
-        setPreferredSize(new Dimension(WIDTH, 50));
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initComponents();
         setResizable(false);
