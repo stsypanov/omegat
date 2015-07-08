@@ -66,7 +66,7 @@ public class BaseFilter implements IEditorFilter {
     private void load(String baseFilteringItems) throws IOException, JAXBException {
 		File filteringItems = new File(baseFilteringItems);
 		if (filteringItems.exists()) {
-			BaseFilteringParser<BaseFilteringItems> parser = new BaseFilteringParser<>();
+			BaseFilteringParser parser = new BaseFilteringParser();
 			BaseFilteringItems items = parser.getObject(filteringItems, BaseFilteringItems.class);
 			for (BaseFilteringItem item : items.getFilteringItems()) {
 				String pattern = item.getPattern().replaceAll("\\\\+", "\\\\");

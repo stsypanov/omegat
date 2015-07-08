@@ -1,56 +1,131 @@
 package org.omegat.gui.dialogs.filter;
 
+import org.omegat.core.Core;
 import org.omegat.gui.common.PeroDialog;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.bind.JAXBException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Created by stsypanov on 12.05.2015.
  */
 public class BaseFilteringDialog extends PeroDialog {
+    private static BaseFilteringDialog instance;
 
-	private JTable table;
+    private JTable table;
+    private JLabel errorLabel = new JLabel();
 
-	public BaseFilteringDialog(Frame owner) {
-		super(owner, true);
-		init();
-	}
+    private BaseFilteringDialog(Frame owner) {
+        super(owner, true);
+        setTitle("Configure base items filtering");
+        init();
+    }
 
-	private void init() {
-		JLabel label = new JLabel("<html>" + OStrings.getString("MW_OPTIONSMENU_BASE_FILTERING_LABEL") + "</html>");
-		label.setHorizontalAlignment(JLabel.CENTER);
-		label.setHorizontalTextPosition(JLabel.CENTER);
+    public static BaseFilteringDialog getInstance() {
+        if (instance == null) {
+            instance = new BaseFilteringDialog(Core.getMainWindow().getApplicationFrame());
+        }
+        return instance;
+    }
 
-		table = new JTable();
+    private void init() {
+        JLabel label = new JLabel("<html>" + OStrings.getString("MW_OPTIONSMENU_BASE_FILTERING_LABEL") + "</html>");
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setHorizontalTextPosition(JLabel.CENTER);
 
-		JPanel bottomContainer = new JPanel();
 
-		JButton ok = new JButton("OK");
-		bottomContainer.add(ok);
+        table = new JTable(new DefaultTableModel());
 
-		JButton cancel = new JButton("Cancel");
-		bottomContainer.add(cancel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout(5, 5));
-		contentPane.add(label, BorderLayout.NORTH);
-		contentPane.add(table, BorderLayout.CENTER);
-		contentPane.add(bottomContainer, BorderLayout.SOUTH);
+        errorLabel.setVisible(false);
 
-		setPreferredSize(new Dimension(300, 400));
-//		setResizable(false);
-		pack();
-		setVisible(true);
-	}
+        JButton ok = new JButton("OK");
+        ok.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onOk();
+            }
+        });
 
-	public void setTableModel(AbstractTableModel model){
-		table.setModel(model);
-	}
+        JButton cancel = new JButton("Cancel");
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        });
 
-	public static void main(String[] args) {
-		new BaseFilteringDialog(null).setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-	}
+        JPanel bottomContainer = new JPanel();
+        bottomContainer.add(ok);
+        bottomContainer.add(cancel);
+
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout(5, 5));
+        contentPane.add(label, BorderLayout.NORTH);
+        contentPane.add(scrollPane, BorderLayout.CENTER);
+        contentPane.add(bottomContainer, BorderLayout.SOUTH);
+
+        setPreferredSize(new Dimension(600, 300));
+        pack();
+    }
+
+    private void onOk() {
+        BaseFilteringItems items = ((BaseFilteringModel) table.getModel()).getItems();
+        File target = new File(Core.getProject().getProjectProperties().getBaseFilteringItems());
+        try {
+            BaseFilteringParser.saveObject(target, items);
+        } catch (JAXBException e) {
+            Log.severe("failed to save base filtering items", e);
+        }
+    }
+
+    private void onCancel() {
+        dispose();
+    }
+
+
+    public void setTableModel(AbstractTableModel model) {
+        table.setModel(model);
+    }
+
+    public void showErrorMessage() {
+        errorLabel.setText("Failed to load items");
+        errorLabel.setVisible(true);
+    }
+
+    public void hideErrorMessage() {
+        errorLabel.setVisible(false);
+    }
+
+    public void adjustColumns(){
+        table.getColumnModel().getColumn(0).setMinWidth(40);
+        table.getColumnModel().getColumn(0).setMaxWidth(40);
+        table.getColumnModel().getColumn(1).setMinWidth(400);
+        table.getColumnModel().getColumn(1).setMaxWidth(400);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        hideErrorMessage();
+    }
+
+    public static void main(String[] args) {
+        BaseFilteringDialog baseFilteringDialog = new BaseFilteringDialog(null);
+        baseFilteringDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        baseFilteringDialog.setVisible(true);
+    }
 }

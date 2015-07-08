@@ -60,6 +60,7 @@ import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.dialogs.*;
+import org.omegat.gui.dialogs.filter.BaseFilteringController;
 import org.omegat.gui.dialogs.filter.BaseFilteringDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
@@ -97,6 +98,7 @@ import java.util.logging.Level;
  */
 public class MainWindowMenuHandler {
     private final MainWindow mainWindow;
+    private BaseFilteringController baseFilteringController;
 
     public MainWindowMenuHandler(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -960,7 +962,12 @@ public class MainWindowMenuHandler {
     }
 
     public void baseFilteringMenuItemActionPerformed(){
-        new BaseFilteringDialog(mainWindow);
+        if (baseFilteringController == null){
+            baseFilteringController = new BaseFilteringController(BaseFilteringDialog.getInstance());
+        }
+        baseFilteringController.loadItems();
+        baseFilteringController.adjustColumnWidth();
+        baseFilteringController.showDialog();
     }
 
     /**

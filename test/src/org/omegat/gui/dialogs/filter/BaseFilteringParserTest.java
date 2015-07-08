@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class BaseFilteringParserTest {
 	private static final Logger logger = Logger.getLogger(BaseFilteringParserTest.class.getName());
 
-	private BaseFilteringParser<BaseFilteringItems> parser = new BaseFilteringParser<>();
+	private BaseFilteringParser parser = new BaseFilteringParser();
 	private File file = new File("filtering.xml");
 	private List<BaseFilteringItem> items;
 
