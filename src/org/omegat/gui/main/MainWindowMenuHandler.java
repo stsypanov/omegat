@@ -36,6 +36,7 @@ package org.omegat.gui.main;
 
 import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -229,68 +230,113 @@ public class MainWindowMenuHandler {
         FileUtil.writeScriptFile("", OConsts.TARGET_EXPORT);
     }
 
-    public void projectRevealDictionaryMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String path = Core.getProject().getProjectProperties().getDictRoot();
-            revealFolderContents(path);
+    public void projectAccessRootMenuItemActionPerformed() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String path = Core.getProject().getProjectProperties().getProjectRoot();
+        openFile(new File(path));
     }
 
-    public void projectRevealGlossaryMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String path = Core.getProject().getProjectProperties().getGlossaryRoot();
-            revealFolderContents(path);
+    public void projectAccessDictionaryMenuItemActionPerformed() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String path = Core.getProject().getProjectProperties().getDictRoot();
+        openFile(new File(path));
     }
 
-    public void projectRevealSourceMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String path = Core.getProject().getProjectProperties().getSourceRoot();
-            revealFolderContents(path);
+    public void projectAccessGlossaryMenuItemActionPerformed() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String path = Core.getProject().getProjectProperties().getGlossaryRoot();
+        openFile(new File(path));
     }
 
-    public void projectRevealTargetMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String path = Core.getProject().getProjectProperties().getTargetRoot();
-            revealFolderContents(path);
+    public void projectAccessSourceMenuItemActionPerformed() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String path = Core.getProject().getProjectProperties().getSourceRoot();
+        openFile(new File(path));
     }
 
-    public void projectRevealTMMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String path = Core.getProject().getProjectProperties().getTMRoot();
-            revealFolderContents(path);
+    public void projectAccessTargetMenuItemActionPerformed() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String path = Core.getProject().getProjectProperties().getTargetRoot();
+        openFile(new File(path));
     }
 
-    public void projectRevealCurrentSourceDocumentMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String root = Core.getProject().getProjectProperties().getSourceRoot();
-            String path = Core.getEditor().getCurrentFile();
-            if (!StringUtil.isEmpty(path)) {
-                revealFolderContents(root + path);
-            }
+    public void projectAccessTMMenuItemActionPerformed() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String path = Core.getProject().getProjectProperties().getTMRoot();
+        openFile(new File(path));
     }
 
-    public void projectRevealCurrentTargetDocumentMenuItemActionPerformed() {
-        if (Core.getProject().isProjectLoaded()) {
-            String root = Core.getProject().getProjectProperties().getTargetRoot();
-            String path = Core.getEditor().getCurrentFile();
-            if (!StringUtil.isEmpty(path)) {
-                revealFolderContents(root + path);
-            }
+    public void projectAccessCurrentSourceDocumentMenuItemActionPerformed(int modifier) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
         }
+        String root = Core.getProject().getProjectProperties().getSourceRoot();
+        String path = Core.getEditor().getCurrentFile();
+        if (StringUtil.isEmpty(path)) {
+            return;
+        }
+        File toOpen = new File(root, path);
+        if ((modifier & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
+            toOpen = toOpen.getParentFile();
+        }
+        openFile(toOpen);
     }
 
-    private void revealFolderContents(String path) {
+    public void projectAccessCurrentTargetDocumentMenuItemActionPerformed(int modifier) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+        String root = Core.getProject().getProjectProperties().getTargetRoot();
+        String path = Core.getEditor().getCurrentTargetFile();
+        if (StringUtil.isEmpty(path)) {
+            return;
+        }
+        File toOpen = new File(root, path);
+        if ((modifier & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
+            toOpen = toOpen.getParentFile();
+        }
+        openFile(toOpen);
+    }
+
+    public void projectAccessWriteableGlossaryMenuItemActionPerformed(int modifier) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+        String path = Core.getProject().getProjectProperties().getWriteableGlossary();
+        if (StringUtil.isEmpty(path)) {
+            return;
+        }
+        File toOpen = new File(path);
+        if ((modifier & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
+            toOpen = toOpen.getParentFile();
+        }
+        openFile(toOpen);
+    }
+
+    private void openFile(File path) {
         try {
-            File file = new File(path);
-            while (!file.isDirectory()) {
-                file = file.getParentFile();
-            }
-            Desktop.getDesktop().open(file);
+            path = path.getCanonicalFile(); // Normalize file name in case it is displayed
+        } catch (Exception ex) {
+            // Ignore
+        }
+        if (!path.exists()) {
+            Core.getMainWindow().showStatusMessageRB("LFC_ERROR_FILE_DOESNT_EXIST", path);
+            return;
+        }
+        try {
+            Desktop.getDesktop().open(path);
         } catch (Exception ex) {
             Log.logErrorRB(ex, "RPF_ERROR");
             Core.getMainWindow().displayErrorRB(ex, "RPF_ERROR");
@@ -958,6 +1004,10 @@ public class MainWindowMenuHandler {
         MainWindowUI.resetDesktopLayout(mainWindow);
     }
 
+    public void optionsAccessConfigDirMenuItemActionPerformed() {
+        openFile(new File(StaticUtils.getConfigDir()));
+    }
+    
     /**
      * Show help.
      */
