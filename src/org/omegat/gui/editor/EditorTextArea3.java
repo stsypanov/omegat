@@ -666,16 +666,17 @@ public class EditorTextArea3 extends JEditorPane {
         public View create(Element elem) {
             String kind = elem.getName();
             if (kind != null) {
-                if (kind.equals(AbstractDocument.ContentElementName)) {
-                    return new ViewLabel(elem);
-                } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
-                    return new ViewParagraph(elem);
-                } else if (kind.equals(AbstractDocument.SectionElementName)) {
-                    return new BoxView(elem, View.Y_AXIS);
-                } else if (kind.equals(StyleConstants.ComponentElementName)) {
-                    return new ComponentView(elem);
-                } else if (kind.equals(StyleConstants.IconElementName)) {
-                    return new IconView(elem);
+                switch (kind) {
+                    case AbstractDocument.ContentElementName:
+                        return new ViewLabel(elem);
+                    case AbstractDocument.ParagraphElementName:
+                        return new ViewParagraph(elem);
+                    case AbstractDocument.SectionElementName:
+                        return new BoxView(elem, View.Y_AXIS);
+                    case StyleConstants.ComponentElementName:
+                        return new ComponentView(elem);
+                    case StyleConstants.IconElementName:
+                        return new IconView(elem);
                 }
             }
 
