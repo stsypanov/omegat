@@ -1,6 +1,5 @@
 package org.omegat.gui.dialogs.filter;
 
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -104,14 +103,14 @@ public class BaseFilteringModel extends AbstractTableModel {
         }
     }
 
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-
+    public void addItem() {
+        items.getFilteringItems().add(new BaseFilteringItem(false, "", ""));
+        fireTableDataChanged();
     }
 
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-
+    public void removeItem(int row) {
+        items.getFilteringItems().remove(row);
+        fireTableRowsDeleted(row, row);
     }
 
     public BaseFilteringItems getItems() {

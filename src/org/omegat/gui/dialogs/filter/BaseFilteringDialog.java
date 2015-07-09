@@ -12,6 +12,8 @@ import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 /**
@@ -43,8 +45,27 @@ public class BaseFilteringDialog extends PeroDialog {
 
 
         table = new JTable(new DefaultTableModel());
+        table.setDragEnabled(false);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoCreateRowSorter(true);
+
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.addMouseListener(new MouseAdapter() {
+
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row == -1 ){
+                        getModel().addItem();
+                        table.changeSelection(table.getRowCount() - 1, 0, false, false);
+                        table.changeSelection(table.getRowCount() - 1, table.getColumnCount() - 1, false, true);
+                    }
+                }
+            }
+        });
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -80,8 +101,12 @@ public class BaseFilteringDialog extends PeroDialog {
         pack();
     }
 
+    private BaseFilteringModel getModel() {
+        return (BaseFilteringModel) table.getModel();
+    }
+
     private void onOk() {
-        BaseFilteringItems items = ((BaseFilteringModel) table.getModel()).getItems();
+        BaseFilteringItems items = getModel().getItems();
         File target = new File(Core.getProject().getProjectProperties().getBaseFilteringItems());
         try {
             BaseFilteringParser.saveObject(target, items);
