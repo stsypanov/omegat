@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool 
-          with fuzzy matching, translation memory, keyword search, 
+ OmegaT - Computer Assisted Translation (CAT) tool
+          with fuzzy matching, translation memory, keyword search,
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
@@ -33,7 +33,7 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * Table Model for Segmentation Rules.
- * 
+ *
  * @author Maxym Mykhalchuk
  */
 @SuppressWarnings("serial")
@@ -51,6 +51,7 @@ public class SegmentationRulesModel extends AbstractModel {
         this.rules = rules;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Rule rule = rules.get(rowIndex);
         switch (columnIndex) {
@@ -64,14 +65,17 @@ public class SegmentationRulesModel extends AbstractModel {
         return null;
     }
 
+    @Override
     public int getRowCount() {
         return rules.size();
     }
 
+    @Override
     public int getColumnCount() {
         return 3;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == 0)
             return Boolean.class;
@@ -79,26 +83,28 @@ public class SegmentationRulesModel extends AbstractModel {
             return String.class;
     }
 
+    @Override
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
     }
 
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    @Override
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
         Rule rule = rules.get(rowIndex);
         switch (columnIndex) {
         case 0:
-            rule.setBreakRule(((Boolean) aValue).booleanValue());
+            rule.setBreakRule((Boolean) value);
             break;
         case 1:
             try {
-                rule.setBeforebreak((String) aValue);
+                rule.setBeforebreak((String) value);
             } catch (PatternSyntaxException pse) {
                 fireException(pse);
             }
             break;
         case 2:
             try {
-                rule.setAfterbreak((String) aValue);
+                rule.setAfterbreak((String) value);
             } catch (PatternSyntaxException pse) {
                 fireException(pse);
             }
@@ -106,6 +112,7 @@ public class SegmentationRulesModel extends AbstractModel {
         }
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
@@ -119,6 +126,7 @@ public class SegmentationRulesModel extends AbstractModel {
     }
 
     /** Removes a segmentation rule. */
+    @Override
     public void removeRow(int row) {
         rules.remove(row);
         fireTableRowsDeleted(row, row);
