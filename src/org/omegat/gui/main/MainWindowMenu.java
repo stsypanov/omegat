@@ -73,7 +73,7 @@ import org.openide.awt.Mnemonics;
 
 /**
  * Class for create main menu and handle main menu events.
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -88,14 +88,14 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
- 
+
 /**
  * Add newly created MenuItem items to
  * /src/org/omegat/gui/main/MainMenuShortcuts.properties and
  * /src/org/omegat/gui/main/MainMenuShortcuts.mac.properties
  * with the proper shortcuts if set.
  */
-  
+
 public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     private static final Logger LOGGER = Logger.getLogger(MainWindowMenu.class.getName());
 
@@ -140,7 +140,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     /**
      * Creates icon to show font marking
      * @param color color of font
-     * @return 
+     * @return
      */
     private Icon getViewMenuMarkTextIcon(final Color color) {
         return new Icon() {
@@ -162,7 +162,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Code for dispatching events from components to event handlers.
-     * 
+     *
      * @param evt
      *            event info
      */
@@ -204,7 +204,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Code for dispatching events from components to event handlers.
-     * 
+     *
      * @param evt
      *            event info
      */
@@ -276,7 +276,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectMenu.add(new JSeparator());
         projectMenu.add(projectEditMenuItem = createMenuItem("MW_PROJECTMENU_EDIT"));
         projectMenu.add(viewFileListMenuItem = createMenuItem("TF_MENU_FILE_PROJWIN"));
-        projectMenu.add(projectAccessProjectFilesMenu = createMenu("TF_MENU_FILE_ACCESS_PROJECT_FILES")); 
+        projectMenu.add(projectAccessProjectFilesMenu = createMenu("TF_MENU_FILE_ACCESS_PROJECT_FILES"));
         projectAccessProjectFilesMenu.add(projectAccessRootMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_ROOT"));
         projectAccessProjectFilesMenu.add(projectAccessDictionaryMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_DICTIONARY"));
         projectAccessProjectFilesMenu.add(projectAccessGlossaryMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_GLOSSARY"));
@@ -286,8 +286,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectAccessProjectFilesMenu.add(new JSeparator());
         projectAccessProjectFilesMenu.add(projectAccessCurrentSourceDocumentMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_CURRENT_SOURCE_DOCUMENT"));
         projectAccessProjectFilesMenu.add(projectAccessCurrentTargetDocumentMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_CURRENT_TARGET_DOCUMENT"));
-        projectAccessProjectFilesMenu.add(projectAccessWriteableGlossaryMenuItem = 
-                createMenuItem("TF_MENU_FILE_ACCESS_WRITEABLE_GLOSSARY"));       
+        projectAccessProjectFilesMenu.add(projectAccessWriteableGlossaryMenuItem =
+                createMenuItem("TF_MENU_FILE_ACCESS_WRITEABLE_GLOSSARY"));
         projectAccessProjectFilesMenu.addMenuListener(new MenuListener() {
             @Override
             public void menuSelected(MenuEvent e) {
@@ -390,7 +390,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                         "MW_VIEW_MENU_MODIFICATION_INFO_SELECTED", viewModificationInfoMenuBG));
         viewModificationInfoMenu.add(viewDisplayModificationInfoAllRadioButtonMenuItem = createRadioButtonMenuItem(
                         "MW_VIEW_MENU_MODIFICATION_INFO_ALL", viewModificationInfoMenuBG));
-        
+
         viewMarkTranslatedSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_TRANSLATED.getColor()));
         viewMarkUntranslatedSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_UNTRANSLATED.getColor()));
         viewDisplaySegmentSourceCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_SOURCE.getColor()));
@@ -443,12 +443,13 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsRestoreGUIMenuItem = createMenuItem("MW_OPTIONSMENU_RESTORE_GUI"));
         optionsMenu.add(optionsAccessConfigDirMenuItem = createMenuItem("MW_OPTIONSMENU_ACCESS_CONFIG_DIR"));
         optionsMenu.add(new JSeparator());
+        optionsMenu.add(baseFilteringMenuItem = createMenuItem("MW_OPTIONSMENU_BASE_FILTERING"));
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
         helpMenu.add(helpLastChangesMenuItem = createMenuItem("TF_MENU_HELP_LAST_CHANGES"));
         helpMenu.add(helpLogMenuItem = createMenuItem("TF_MENU_HELP_LOG"));
-        
+
         setActionCommands();
         new PropertiesShortcuts("/org/omegat/gui/main/MainMenuShortcuts.properties").bindKeyStrokes(mainMenu);
 
@@ -521,7 +522,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsGlossaryExactMatchCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_NOT_EXACT_MATCH, true));
         optionsGlossaryStemmingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
-                Preferences.GLOSSARY_STEMMING, true));        
+                Preferences.GLOSSARY_STEMMING, true));
     }
 
     /**
@@ -547,7 +548,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu instance
@@ -561,7 +562,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu item instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu item instance
@@ -575,7 +576,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu item instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu item instance
@@ -589,7 +590,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu item instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu item instance
@@ -621,7 +622,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Enable or disable items depend of project open or close.
-     * 
+     *
      * @param isProjectOpened
      *            project open status: true if opened, false if closed
      */
@@ -656,7 +657,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         if (Core.getParams().containsKey("no-team")) {
         	projectTeamNewMenuItem.setEnabled(false);
         }
-        
+
     }
 
     public JMenu getMachineTranslationMenu() {
@@ -678,7 +679,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     public JMenu getProjectMenu() {
         return projectMenu;
     }
-    
+
     public JMenuItem getProjectRecentMenuItem() {
         return projectOpenRecentMenuItem;
     }
@@ -735,6 +736,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsColorsSelectionMenuItem;
     JMenu optionsMenu;
     JMenuItem optionsRestoreGUIMenuItem;
+    JMenuItem baseFilteringMenuItem;
     JMenuItem optionsAccessConfigDirMenuItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;
@@ -776,7 +778,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem projectSaveMenuItem;
     JMenuItem projectWikiImportMenuItem;
     JMenu projectAccessProjectFilesMenu;
-    JMenuItem projectAccessRootMenuItem;    
+    JMenuItem projectAccessRootMenuItem;
     JMenuItem projectAccessDictionaryMenuItem;
     JMenuItem projectAccessGlossaryMenuItem;
     JMenuItem projectAccessSourceMenuItem;

@@ -1,0 +1,182 @@
+Index: src/org/omegat/filters2/master/PluginUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters2/master/PluginUtils.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters2/master/PluginUtils.java	(revision )
+@@ -43,6 +43,7 @@
+ import java.util.Map.Entry;
+ import java.util.jar.Attributes;
+ import java.util.jar.Manifest;
++import java.util.regex.Pattern;
+ 
+ import org.omegat.core.Core;
+ import org.omegat.tokenizer.DefaultTokenizer;
+@@ -62,9 +63,11 @@
+  */
+ public final class PluginUtils {
+ 
++    private static final Pattern EMPTY_LINE_PATTERN = Pattern.compile("\\s+");
++
+     enum PLUGIN_TYPE {
+         FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
+-    };
++    }
+ 
+     protected static URLClassLoader pluginsClassLoader;
+     protected static List<Class<?>> loadedPlugins = new ArrayList<Class<?>>();
+@@ -261,7 +264,7 @@
+             throws ClassNotFoundException {
+         String pluginClasses = m.getMainAttributes().getValue("OmegaT-Plugins");
+         if (pluginClasses != null) {
+-            for (String clazz : pluginClasses.split("\\s+")) {
++            for (String clazz : EMPTY_LINE_PATTERN.split(pluginClasses)) {
+                 if (clazz.trim().isEmpty()) {
+                     continue;
+                 }
+Index: src/org/omegat/gui/search/EntryListPane.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/search/EntryListPane.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/gui/search/EntryListPane.java	(revision )
+@@ -199,7 +199,7 @@
+                 m_stringBuf.append("---------\n");
+ 
+             if (preamble != null && !preamble.equals(""))
+-                m_stringBuf.append(preamble + "\n");
++                m_stringBuf.append(preamble).append("\n");
+             if (src != null && !src.equals("")) {
+                 m_stringBuf.append("-- ");
+                 if (srcPrefix != null) {
+Index: src/org/omegat/filters3/xml/DTD.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters3/xml/DTD.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters3/xml/DTD.java	(revision )
+@@ -80,11 +80,11 @@
+             res.append(" ");
+             res.append("PUBLIC");
+             res.append(" ");
+-            res.append("\"" + publicId + "\"");
++            res.append("\"").append(publicId).append("\"");
+         }
+         if (systemId!=null) {
+             res.append(" ");
+-            res.append("\"" + systemId + "\"");
++            res.append("\"").append(systemId).append("\"");
+         }
+ 
+         if (entities.size() > 0) {
+Index: src/org/omegat/util/logging/OmegaTLogFormatter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/util/logging/OmegaTLogFormatter.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/util/logging/OmegaTLogFormatter.java	(revision )
+@@ -35,6 +35,7 @@
+ import java.util.logging.Level;
+ import java.util.logging.LogManager;
+ import java.util.logging.LogRecord;
++import java.util.regex.Pattern;
+ 
+ import org.omegat.util.OStrings;
+ import org.omegat.util.StaticUtils;
+@@ -47,6 +48,7 @@
+  */
+ public class OmegaTLogFormatter extends Formatter {
+ 
++    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\r|\n");
+     protected static String lineMark;
+ 
+     protected static String lineSeparator = System.getProperty("line.separator");
+@@ -144,7 +146,7 @@
+         } else {
+             message = StaticUtils.format(format, record.getParameters());
+         }
+-        String[] lines = message.split("\r|\n");
++        String[] lines = NEW_LINE_PATTERN.split(message);
+         for (String line : lines) {
+             appendFormattedLine(result, record, line, false);
+         }
+Index: src/org/omegat/filters3/Tag.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/filters3/Tag.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/filters3/Tag.java	(revision )
+@@ -151,21 +151,7 @@
+             throw new RuntimeException("Shouldn't hapen!");
+         }
+ 
+-        StringBuilder buf = new StringBuilder();
+-
+-        buf.append("<");
+-        buf.append(tmxtag);
+-        buf.append(" i=\"");
+-        buf.append(index);
+-        buf.append("\">");
+-
+-        buf.append(toPartialTMX());
+-
+-        buf.append("</");
+-        buf.append(tmxtag);
+-        buf.append(">");
+-
+-        return buf.toString();
++        return "<" + tmxtag + " i=\"" + index + "\">" + toPartialTMX() + "</" + tmxtag + ">";
+     }
+ 
+     /**
+@@ -194,15 +180,16 @@
+      * &lt;strong&gt; tag should return &lt;s3&gt;.
+      */
+     public String toShortcut() {
+-        StringBuilder buf = new StringBuilder();
++        StringBuilder buf = new StringBuilder("<");
+ 
+-        buf.append('<');
+-        if (Type.END == getType())
++        if (Type.END == type) {
+             buf.append('/');
++        }
+         buf.append(getShortcut());
+-        buf.append(getIndex());
+-        if (Type.ALONE == getType())
++        buf.append(index);
++        if (Type.ALONE == type) {
+             buf.append('/');
++        }
+         buf.append('>');
+ 
+         return buf.toString();
+Index: src/org/omegat/util/xml/DefaultEntityFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/util/xml/DefaultEntityFilter.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ src/org/omegat/util/xml/DefaultEntityFilter.java	(revision )
+@@ -313,7 +313,7 @@
+         if (s != null) {
+             return "&" + s + ";";
+         } else
+-            return "" + c;
++            return String.valueOf(c);
+     }
+ 
+     /**
+@@ -330,6 +330,6 @@
+                 return 0;
+             }
+         } else
+-            return c.charValue();
++            return c;
+     }
+ }

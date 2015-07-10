@@ -52,6 +52,7 @@ public class SetSvnProperties {
         }
     }
 
+    //todo don't pass files collection, but return it instead
     protected static void list(File dir, List<String> result) {
         File[] files = dir.listFiles();
         if (files != null) {

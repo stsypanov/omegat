@@ -46,8 +46,14 @@ public class SearchWindowForm extends PeroFrame {
      * Creates new form SearchWindowForm
      */
     public SearchWindowForm() {
+        super();
         initComponents();
         m_viewer.setDragEnabled(true);
+    }
+
+    @Override
+    public String getPreferenceBaseName() {
+        return "search_window";
     }
 
     /**

@@ -84,8 +84,9 @@ public class MyMemoryMachineTranslate extends AbstractMyMemoryTranslate {
         
         // Build DOM object from the returned XML string
         InputSource source = new InputSource(new StringReader(tmxResponse));
+        //todo handle response like {"responseData":{"translatedText":"MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. VISIT HTTP:\/\/MYMEMORY.TRANSLATED.NET\/DOC\/QUOTAREACHED TO TRANSLATE MORE"},"responseDetails":"MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. VISIT HTTP:\/\/MYMEMORY.TRANSLATED.NET\/DOC\/QUOTAREACHED TO TRANSLATE MORE","responseStatus":"403","matches":""}
         Document document = factory.newDocumentBuilder().parse(source);
-        
+
         // Extract MT response and remove MT TU from XML
         // MyMemory is using hyphens instead of underscores and uppercase codes in 4-letter locale-codes
         String targetLangCode =  tLang.getLocaleCode().replace('_', '-').toUpperCase(); 

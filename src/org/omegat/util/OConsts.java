@@ -102,6 +102,10 @@ public class OConsts {
     public static final String DEFAULT_OTHERLANG = "tmx2source";
     /** Default name for spelling dictionary directory */
     public static final String SPELLING_DICT_DIR = "spelling";
+    /**
+     * File for base filtering items. See BaseFilter.java
+     */
+    public static final String FILTERING_ITEMS_FILE_NAME = "baseFilteringItems.xml";
 
     /**
      * Glossary files extensions

@@ -1,0 +1,1340 @@
+Index: test/src/org/omegat/filters/AndroidFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/AndroidFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/AndroidFilterTest.java	(revision )
+@@ -26,11 +26,15 @@
+ 
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters3.xml.android.AndroidFilter;
+ 
++import static org.junit.Assert.assertTrue;
++
+ public class AndroidFilterTest extends TestFilterBase {
+ 
++	@Test
+ 	public void testParse() throws Exception {
+ 		List<ParsedEntry> lines = parse3(new AndroidFilter(), "test/data/filters/Android/file-AndroidFilter.xml", null);
+ 		assertTrue("MyApp".equals(lines.get(0).source));
+@@ -40,10 +44,12 @@
+ 		assertTrue("T'est".equals(lines.get(2).source));
+ 	}
+ 
++	@Test
+ 	public void testTranslate() throws Exception {
+ 		translateXML(new AndroidFilter(), "test/data/filters/Android/file-AndroidFilter.xml");
+ 	}
+ 
++	@Test
+ 	public void testLoad() throws Exception {
+ 		String f = "test/data/filters/Android/file-AndroidFilter.xml";
+ 		IProject.FileInfo fi = loadSourceFiles(new AndroidFilter(), f);
+Index: test/src/org/omegat/gui/main/MainWindowMenuTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/main/MainWindowMenuTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/main/MainWindowMenuTest.java	(revision )
+@@ -30,12 +30,17 @@
+ import java.lang.reflect.Modifier;
+ import java.util.HashMap;
+ import java.util.Map;
++import java.util.Objects;
+ 
+ import javax.swing.JMenu;
+ import javax.swing.JMenuItem;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ 
++import static org.junit.Assert.assertNotNull;
++import static org.junit.Assert.assertTrue;
++
+ /**
+  * @author Alex Buloichik
+  */
+@@ -45,10 +50,12 @@
+      * 
+      * @throws Exception
+      */
++
++    @Test
+     public void testMenuActions() throws Exception {
+         int count = 0;
+ 
+-        Map<String, Method> existsMethods = new HashMap<String, Method>();
++        Map<String, Method> existsMethods = new HashMap<>();
+ 
+         for (Method m : MainWindowMenuHandler.class.getDeclaredMethods()) {
+             if (Modifier.isPublic(m.getModifiers()) && !Modifier.isStatic(m.getModifiers())) {
+@@ -59,7 +66,7 @@
+         }
+ 
+         for (Field f : MainWindowMenu.class.getDeclaredFields()) {
+-            if (JMenuItem.class.isAssignableFrom(f.getType()) && f.getType() != JMenu.class) {
++            if (JMenuItem.class.isAssignableFrom(f.getType()) && !Objects.equals(f.getType(), JMenu.class)) {
+                 count++;
+                 String actionMethodName = f.getName() + "ActionPerformed";
+                 Method m = MainWindowMenuHandler.class.getMethod(actionMethodName);
+Index: test/src/org/omegat/util/StaticUtilsTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/util/StaticUtilsTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/util/StaticUtilsTest.java	(revision )
+@@ -52,7 +52,7 @@
+     }
+ 
+     @Override
+-    protected void setUp() throws Exception
++    public void setUp() throws Exception
+     {
+     }
+ 
+Index: test/src/org/omegat/filters/DocBookFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/DocBookFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/DocBookFilterTest.java	(revision )
+@@ -27,26 +27,33 @@
+ 
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters3.xml.docbook.DocBookFilter;
+ 
++import static org.junit.Assert.assertTrue;
++
+ public class DocBookFilterTest extends TestFilterBase {
++    @Test
+     public void testParse() throws Exception {
+         List<String> lines = parse(new DocBookFilter(), "test/data/filters/docBook/file-DocBookFilter.xml");
+         boolean c = lines.contains("My String");
+         assertTrue("'My String' not defined'", c);
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         translateText(new DocBookFilter(), "test/data/filters/docBook/file-DocBookFilter.xml");
+     }
+ 
++    @Test
+     public void testParseIntroLinux() throws Exception {
+         List<String> lines = parse(new DocBookFilter(), "test/data/filters/docBook/Intro-Linux/abook.xml");
+         assertTrue("Message not exist, i.e. entities not loaded",
+                 lines.contains("Why should I use an editor?"));
+     }
+ 
++    @Test
+     public void testLoad() throws Exception {
+         String f = "test/data/filters/docBook/Intro-Linux/abook.xml";
+         IProject.FileInfo fi = loadSourceFiles(new DocBookFilter(), f);
+Index: test/src/org/omegat/gui/glossary/GlossaryReaderTBXTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/glossary/GlossaryReaderTBXTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/glossary/GlossaryReaderTBXTest.java	(revision )
+@@ -27,16 +27,21 @@
+ import java.io.File;
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.Core;
+ import org.omegat.core.TestCore;
+ import org.omegat.core.data.NotLoadedProject;
+ import org.omegat.core.data.ProjectProperties;
+ import org.omegat.util.Language;
+ 
++import static org.junit.Assert.assertEquals;
++
+ /**
+  * @author Alex Buloichik <alex73mail@gmail.com>
+  */
+ public class GlossaryReaderTBXTest extends TestCore {
++
++    @Test
+     public void testRead() throws Exception {
+         Core.setProject(new NotLoadedProject() {
+             public ProjectProperties getProjectProperties() {
+@@ -57,8 +62,7 @@
+                 }
+             }
+         });
+-        List<GlossaryEntry> g = GlossaryReaderTBX.read(new File(
+-                "test/data/glossaries/sampleTBXfile.tbx"), false);
++        List<GlossaryEntry> g = GlossaryReaderTBX.read(new File("test/data/glossaries/sampleTBXfile.tbx"), false);
+         assertEquals(1, g.size());
+         assertEquals("alpha smoothing factor", g.get(0).getSrcText());
+         assertEquals("hu translation", g.get(0).getLocText());
+Index: test/src/org/omegat/filters/XLIFFFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/XLIFFFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/XLIFFFilterTest.java	(revision )
+@@ -25,16 +25,10 @@
+ 
+ package org.omegat.filters;
+ 
+-import java.io.File;
+-import java.util.ArrayList;
+-import java.util.Arrays;
+-import java.util.List;
+-import java.util.TreeMap;
+-
++import org.apache.commons.io.FileUtils;
+ import org.junit.Test;
+ import org.omegat.core.Core;
+ import org.omegat.core.data.IProject;
+-import org.omegat.core.data.ProtectedPart;
+ import org.omegat.core.data.SourceTextEntry;
+ import org.omegat.core.statistics.StatCount;
+ import org.omegat.core.statistics.StatisticsSettings;
+@@ -42,16 +36,23 @@
+ import org.omegat.filters3.xml.xliff.XLIFFDialect;
+ import org.omegat.filters3.xml.xliff.XLIFFFilter;
+ import org.omegat.filters3.xml.xliff.XLIFFOptions;
+-import org.omegat.util.FileUtil;
++import org.omegat.util.OConsts;
+ import org.omegat.util.PatternConsts;
+ import org.omegat.util.Preferences;
+ import org.omegat.util.StaticUtils;
+ 
++import java.io.File;
++import java.util.TreeMap;
++import java.util.regex.Pattern;
++
++import static org.junit.Assert.assertEquals;
++
+ public class XLIFFFilterTest extends TestFilterBase {
++    private static final Pattern NONTRANSLATED_PATTERN = Pattern.compile("NONTRANSLATED", Pattern.LITERAL);
+     XLIFFFilter filter;
+ 
+     @Override
+-    protected void setUp() throws Exception {
++    public void setUp() throws Exception {
+         super.setUp();
+         filter = new XLIFFFilter();
+         XLIFFDialect dialect = (XLIFFDialect) filter.getDialect();
+@@ -113,11 +114,11 @@
+         filter.translateFile(inFile, outFile, new TreeMap<String, String>(), context,
+                 new ITranslateCallback() {
+                     public String getTranslation(String id, String source, String path) {
+-                        return source.replace("NONTRANSLATED", "TRANSLATED");
++                        return NONTRANSLATED_PATTERN.matcher(source).replaceAll("TRANSLATED");
+                     }
+ 
+                     public String getTranslation(String id, String source) {
+-                        return source.replace("NONTRANSLATED", "TRANSLATED");
++                        return NONTRANSLATED_PATTERN.matcher(source).replaceAll("TRANSLATED");
+                     }
+ 
+                     public void linkPrevNextSegments() {
+@@ -127,9 +128,9 @@
+                     }
+                 });
+         File trFile = new File(outFile.getPath() + "-translated");
+-        String text = FileUtil.readTextFile(inFile);
+-        text = text.replace("NONTRANSLATED", "TRANSLATED");
+-        FileUtil.writeTextFile(trFile, text);
++        String text = FileUtils.readFileToString(inFile, OConsts.UTF8);
++        text = NONTRANSLATED_PATTERN.matcher(text).replaceAll("TRANSLATED");
++        FileUtils.writeStringToFile(trFile, text, OConsts.UTF8);
+         compareXML(trFile, outFile);
+     }
+ 
+Index: test/src/org/omegat/gui/glossary/FindGlossaryThreadTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/glossary/FindGlossaryThreadTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/glossary/FindGlossaryThreadTest.java	(revision )
+@@ -28,9 +28,14 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ 
++import static org.junit.Assert.assertEquals;
++
+ public class FindGlossaryThreadTest extends TestCore {
++
++    @Test
+     public void testEntriesSort() {
+         List<GlossaryEntry> entries = new ArrayList<GlossaryEntry>();
+         entries.add(new GlossaryEntry("dog", "doggy", "cdog", false));
+Index: test/src/org/omegat/filters/ILIASFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/ILIASFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/ILIASFilterTest.java	(revision )
+@@ -32,6 +32,9 @@
+ import org.omegat.filters2.IFilter;
+ import org.omegat.filters2.text.ilias.ILIASFilter;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
+ /**
+  *
+  * @author Michael Zakharov <trapman.hunt@gmail.com>
+Index: test/src/org/omegat/util/PatternConstsTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/util/PatternConstsTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/util/PatternConstsTest.java	(revision )
+@@ -42,7 +42,7 @@
+         super(testName);
+     }
+ 
+-    protected void setUp() throws Exception
++    public void setUp() throws Exception
+     {
+     }
+ 
+Index: test/src/org/omegat/util/TMXWriterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/util/TMXWriterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/util/TMXWriterTest.java	(revision )
+@@ -44,19 +44,24 @@
+ import javax.xml.xpath.XPathFactory;
+ 
+ import org.custommonkey.xmlunit.XMLUnit;
++import org.junit.After;
++import org.junit.Test;
+ import org.omegat.core.data.ProjectProperties;
+ import org.omegat.core.data.RealProjectTest;
+ import org.omegat.filters.TestFilterBase;
+ import org.w3c.dom.Document;
+ import org.w3c.dom.Node;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
+ /**
+  * @author Alex Buloichik
+  */
+ public class TMXWriterTest extends TestFilterBase {
+ 
+     @Override
+-    protected void setUp() throws Exception {
++    public void setUp() throws Exception {
+         super.setUp();
+ 
+         XMLUnit.setControlEntityResolver(TMXReader2.TMX_DTD_RESOLVER);
+@@ -64,14 +69,13 @@
+         XMLUnit.setIgnoreWhitespace(true);
+     }
+ 
+-    @Override
+-    protected void tearDown() throws Exception {
+-        super.tearDown();
+-
++    @After
++    public void tearDown() throws Exception {
+         XMLUnit.setControlEntityResolver(null);
+         XMLUnit.setTestEntityResolver(null);
+     }
+ 
++    @Test
+     public void testWriteInvalidChars() throws Exception {
+         String in = "";
+         in += (char) 0x00;
+@@ -91,6 +95,7 @@
+         load(new ArrayList<String>(), null, false, false);
+     }
+ 
++    @Test
+     public void testLevel2write() throws Exception {
+         TMXWriter2 wr = new TMXWriter2(outFile, new Language("en-US"), new Language("be-BY"), false, true,
+                 false);
+@@ -105,6 +110,7 @@
+         compareTMX(outFile, new File("test/data/tmx/test-save-tmx14.tmx"));
+     }
+ 
++    @Test
+     public void testLevel2reads() throws Exception {
+         final List<String> sources = new ArrayList<String>();
+ 
+@@ -142,6 +148,7 @@
+         assertEquals("6<a0/>7", sources.get(3));
+     }
+ 
++    @Test
+     public void testEOLwrite() throws Exception {
+         String eol = FileUtil.LINE_SEPARATOR;
+         try {
+Index: test/data/filters/xliff/file-XLIFFFilter-statcount.xlf
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/data/filters/xliff/file-XLIFFFilter-statcount.xlf	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/data/filters/xliff/file-XLIFFFilter-statcount.xlf	(revision )
+@@ -1,11 +1,14 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<xliff xmlns="urn:oasis:names:tc:xliff:document:1.1">
+-    <file target-language="be" source-language="en" original="text.txt">
++<xliff xmlns="urn:oasis:names:tc:xliff:document:1.1" version="1.1">
++	<file target-language="be" source-language="en" original="text.txt" datatype="plaintext">
+-        <body>
++		<body>
+-            <trans-unit>
++			<trans-unit id="">
+-                <source>source</source>
++				<source>source</source>
+-                <target>first<mrk mtype="protected">mark</mrk> <mrk mtype="protected">mark2</mrk>CUSTOM</target>
++				<target>first
++					<mrk mtype="protected">mark</mrk>
++					<mrk mtype="protected">mark2</mrk>CUSTOM
++				</target>
+-            </trans-unit>
+-        </body>
+-    </file>
++			</trans-unit>
++		</body>
++	</file>
+ </xliff>
+\ No newline at end of file
+Index: test/src/org/omegat/filters/XMLSpreadsheetTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/XMLSpreadsheetTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/XMLSpreadsheetTest.java	(revision )
+@@ -27,16 +27,21 @@
+ 
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.filters3.xml.xmlspreadsheet.XMLSpreadsheetFilter;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
+ public class XMLSpreadsheetTest extends TestFilterBase {
++    @Test
+     public void testParse() throws Exception {
+-        List<String> lines = parse(new XMLSpreadsheetFilter(),
+-                "test/data/filters/XMLSpreadsheet/XMLSpreadsheet2003.xml", null);
++        List<String> lines = parse(new XMLSpreadsheetFilter(), "test/data/filters/XMLSpreadsheet/XMLSpreadsheet2003.xml", null);
+         assertTrue(lines.size()== 1);
+         assertEquals("This is a test sentence with <b>HTML tags</b> inside.", lines.get(0));
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         translateXML(new XMLSpreadsheetFilter(), "test/data/filters/XMLSpreadsheet/XMLSpreadsheet2003.xml");
+     }
+Index: test/src/org/omegat/filters/OpenXMLFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/OpenXMLFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/OpenXMLFilterTest.java	(revision )
+@@ -1,6 +1,6 @@
+ /**************************************************************************
+- OmegaT - Computer Assisted Translation (CAT) tool 
+-          with fuzzy matching, translation memory, keyword search, 
++ OmegaT - Computer Assisted Translation (CAT) tool
++          with fuzzy matching, translation memory, keyword search,
+           glossaries, and translation leveraging into updated projects.
+ 
+  Copyright (C) 2008 Alex Buloichik
+@@ -25,15 +25,19 @@
+ 
+ package org.omegat.filters;
+ 
++import org.junit.Test;
++import org.omegat.core.data.IProject;
++import org.omegat.filters3.xml.openxml.OpenXMLFilter;
++
+ import java.io.File;
+ import java.net.URL;
+ import java.util.List;
+ 
+-import org.junit.Test;
+-import org.omegat.core.data.IProject;
+-import org.omegat.filters3.xml.openxml.OpenXMLFilter;
++import static org.junit.Assert.assertEquals;
+ 
+ public class OpenXMLFilterTest extends TestFilterBase {
++
++    @Test
+     public void testParse() throws Exception {
+         List<String> entries = parse(new OpenXMLFilter(), "test/data/filters/openXML/file-OpenXMLFilter.docx");
+         assertEquals(2, entries.size());
+@@ -41,11 +45,12 @@
+         assertEquals("This is second line.", entries.get(1));
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         File in = new File("test/data/filters/openXML/file-OpenXMLFilter.docx");
+         translate(new OpenXMLFilter(), in.getPath());
+ 
+-        for (String f : new String[] { "word/document.xml" }) {
++        for (String f : new String[]{"word/document.xml"}) {
+             compareXML(new URL("jar:file:" + in.getAbsolutePath() + "!/" + f),
+                     new URL("jar:file:" + outFile.getAbsolutePath() + "!/" + f));
+         }
+Index: test/src/org/omegat/core/TestCore.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/core/TestCore.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/core/TestCore.java	(revision )
+@@ -25,30 +25,28 @@
+ 
+ package org.omegat.core;
+ 
+-import java.awt.Cursor;
+-import java.awt.Font;
+-import java.awt.HeadlessException;
+-import java.io.File;
+-
+-import javax.swing.JFrame;
+-import javax.swing.JMenu;
+-import javax.swing.JMenuItem;
+-
+-import org.custommonkey.xmlunit.XMLTestCase;
++import com.vlsolutions.swing.docking.Dockable;
++import org.apache.commons.io.FileUtils;
++import org.junit.Before;
+ import org.omegat.core.data.NotLoadedProject;
+ import org.omegat.gui.main.IMainMenu;
+ import org.omegat.gui.main.IMainWindow;
+ import org.omegat.util.RuntimePreferences;
+ 
+-import com.vlsolutions.swing.docking.Dockable;
++import javax.swing.*;
++import java.awt.*;
++import java.io.File;
++import java.io.IOException;
+ 
+ /**
+  * Core setup for unit tests.
+  * 
+  * @author Alexander_Buloichik
+  */
+-public abstract class TestCore extends XMLTestCase {
+-    protected void setUp() throws Exception {
++public abstract class TestCore {
++
++    @Before
++    public void setUp() throws Exception {
+         File configDir = new File(System.getProperty("java.io.tmpdir"), "OmegaT test config");
+         removeDir(configDir);
+ 
+Index: test/src/org/omegat/gui/glossary/GlossaryTextAreaTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/glossary/GlossaryTextAreaTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/glossary/GlossaryTextAreaTest.java	(revision )
+@@ -30,6 +30,7 @@
+ 
+ import javax.swing.SwingUtilities;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ import org.omegat.core.TestCoreInitializer;
+ import org.omegat.core.data.EntryKey;
+@@ -41,6 +42,9 @@
+ import org.omegat.gui.editor.mark.Mark;
+ import org.omegat.util.Preferences;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.fail;
++
+ /**
+  * 
+  * @author Maxym Mykhalchuk
+@@ -49,8 +53,9 @@
+     /**
+      * Testing setGlossaryEntries of org.omegat.gui.main.GlossaryTextArea.
+      */
++    @Test
+     public void testSetGlossaryEntries() throws Exception {
+-        Preferences.setPreference(org.omegat.util.Preferences.TRANSTIPS, false);
++        Preferences.setPreference(Preferences.TRANSTIPS, false);
+ 
+         final List<GlossaryEntry> entries = new ArrayList<GlossaryEntry>();
+         entries.add(new GlossaryEntry("source1", "translation1", "", false));
+@@ -70,8 +75,9 @@
+     /**
+      * Testing clear in org.omegat.gui.main.GlossaryTextArea.
+      */
++    @Test
+     public void testClear() throws Exception {
+-        Preferences.setPreference(org.omegat.util.Preferences.TRANSTIPS, false);
++        Preferences.setPreference(Preferences.TRANSTIPS, false);
+ 
+         final List<GlossaryEntry> entries = new ArrayList<GlossaryEntry>();
+         entries.add(new GlossaryEntry("source1", "translation1", "", false));
+@@ -88,7 +94,7 @@
+     }
+ 
+     @Override
+-    protected void setUp() throws Exception {
++    public void setUp() throws Exception {
+         super.setUp();
+         TestCoreInitializer.initEditor(new IEditor() {
+             public void activateEntry() {
+Index: test/src/org/omegat/util/TMXDateParserTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/util/TMXDateParserTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/util/TMXDateParserTest.java	(revision )
+@@ -44,7 +44,7 @@
+        super(testName);
+    }
+ 
+-   protected void setUp() throws Exception
++   public void setUp() throws Exception
+    {
+    }
+ 
+Index: test/src/org/omegat/filters/ResourceBundleFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/ResourceBundleFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/ResourceBundleFilterTest.java	(revision )
+@@ -25,22 +25,29 @@
+ 
+ package org.omegat.filters;
+ 
++import org.junit.Test;
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters2.IAlignCallback;
+ import org.omegat.filters2.IFilter;
+ import org.omegat.filters2.text.bundles.ResourceBundleFilter;
+ 
++import static org.junit.Assert.assertTrue;
++
+ public class ResourceBundleFilterTest extends TestFilterBase {
++
++    @Test
+     public void testParse() throws Exception {
+         parse(new ResourceBundleFilter(),
+                 "test/data/filters/resourceBundle/file-ResourceBundleFilter.properties");
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         translateText(new ResourceBundleFilter(),
+                 "test/data/filters/resourceBundle/file-ResourceBundleFilter.properties");
+     }
+ 
++    @Test
+     public void testAlign() throws Exception {
+         final AlignResult ar = new AlignResult();
+         align(new ResourceBundleFilter(), "resourceBundle/file-ResourceBundleFilter.properties",
+@@ -57,6 +64,7 @@
+         boolean found = false;
+     }
+ 
++    @Test
+     public void testLoad() throws Exception {
+         String f = "test/data/filters/resourceBundle/file-ResourceBundleFilter.properties";
+         IProject.FileInfo fi = loadSourceFiles(new ResourceBundleFilter(), f);
+Index: test/data/util/textFile.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/data/util/textFile.txt	(revision )
++++ test/data/util/textFile.txt	(revision )
+@@ -0,0 +1,1 @@
++text file
+\ No newline at end of file
+Index: test/src/org/omegat/filters/POFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/POFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/POFilterTest.java	(revision )
+@@ -29,12 +29,17 @@
+ import java.util.Map;
+ import java.util.TreeMap;
+ 
++import org.junit.Test;
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters2.po.PoFilter;
+ import org.omegat.util.OStrings;
+ import org.omegat.util.StaticUtils;
+ 
++import static groovy.util.GroovyTestCase.assertEquals;
++
+ public class POFilterTest extends TestFilterBase {
++
++    @Test
+     public void testParse() throws Exception {
+         Map<String, String> data = new TreeMap<String, String>();
+         Map<String, String> tmx = new TreeMap<String, String>();
+@@ -47,6 +52,7 @@
+         assertEquals(tmx.get("[PO-fuzzy] Delete Accounts"), "Supprimer des comptes");
+     }
+ 
++    @Test
+     public void testLoad() throws Exception {
+         String f = "test/data/filters/po/file-POFilter-multiple.po";
+         Map<String, String> options = new TreeMap<String, String>();
+@@ -71,6 +77,7 @@
+         checkMultiEnd();
+     }
+ 
++    @Test
+     public void testLoadMonolingual() throws Exception {
+         String f = "test/data/filters/po/file-POFilter-Monolingual.po";
+         PoFilter filter = new PoFilter();
+@@ -84,6 +91,7 @@
+         assertEquals("second source", parsed.get(1).source);
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         // translateText(new PoFilter(),
+         // "test/data/filters/po/file-POFilter-be.po");
+Index: test/src/org/omegat/filters/DokuWikiFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/DokuWikiFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/DokuWikiFilterTest.java	(revision )
+@@ -34,6 +34,10 @@
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters2.text.dokuwiki.DokuWikiFilter;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
+ public class DokuWikiFilterTest extends TestFilterBase {
+ 
+     @Test
+Index: test/src/org/omegat/filters/SrtFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/SrtFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/SrtFilterTest.java	(revision )
+@@ -27,10 +27,15 @@
+ 
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters2.subtitles.SrtFilter;
+ 
++import static groovy.util.GroovyTestCase.assertEquals;
++
+ public class SrtFilterTest extends TestFilterBase {
++
++    @Test
+     public void testParse() throws Exception {
+         List<String> lines = parse(new SrtFilter(), "test/data/filters/srt/file-SrtFilter.srt");
+         assertEquals(lines.size(), 3);
+@@ -39,10 +44,12 @@
+         assertEquals("Third title\nand again", lines.get(2));
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         translateText(new SrtFilter(), "test/data/filters/srt/file-SrtFilter.srt");
+     }
+ 
++    @Test
+     public void testLoad() throws Exception {
+         String f = "test/data/filters/srt/file-SrtFilter.srt";
+         IProject.FileInfo fi = loadSourceFiles(new SrtFilter(), f);
+Index: test/src/org/omegat/gui/glossary/GlossaryEntryTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/glossary/GlossaryEntryTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/glossary/GlossaryEntryTest.java	(revision )
+@@ -27,12 +27,17 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ 
++import static org.junit.Assert.assertEquals;
++
+ /**
+  * @author Martin Fleurke
+  */
+ public class GlossaryEntryTest extends TestCore {
++
++    @Test
+     public void testRead() throws Exception {
+         GlossaryEntry a = new GlossaryEntry("", "", "", false);
+         GlossaryEntry b = new GlossaryEntry("", "", "", false);
+Index: test/src/org/omegat/gui/glossary/GlossaryReaderCSVTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/glossary/GlossaryReaderCSVTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/glossary/GlossaryReaderCSVTest.java	(revision )
+@@ -27,12 +27,17 @@
+ import java.io.File;
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ 
++import static org.junit.Assert.assertEquals;
++
+ /**
+  * @author Alex Buloichik <alex73mail@gmail.com>
+  */
+-public class GlossaryReaderCSVTest extends TestCore {
++public class GlossaryReaderCSVTest {
++
++    @Test
+     public void testRead() throws Exception {
+         List<GlossaryEntry> g = GlossaryReaderCSV.read(new File(
+                 "test/data/glossaries/test.csv"), false);
+Index: test/src/org/omegat/util/LanguageTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/util/LanguageTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/util/LanguageTest.java	(revision )
+@@ -41,7 +41,7 @@
+         super(testName);
+     }
+ 
+-    protected void setUp() throws Exception
++    public void setUp() throws Exception
+     {
+     }
+ 
+Index: test/src/org/omegat/filters/LatexFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/LatexFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/LatexFilterTest.java	(revision )
+@@ -25,11 +25,13 @@
+ 
+ package org.omegat.filters;
+ 
++import org.junit.Test;
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters2.latex.LatexFilter;
+ 
+ public class LatexFilterTest extends TestFilterBase {
+ 
++    @Test
+     public void testLoad() throws Exception {
+         String f = "test/data/filters/Latex/latexexample.tex";
+         IProject.FileInfo fi = loadSourceFiles(new LatexFilter(), f);
+Index: test/src/org/omegat/filters/MagentoFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/MagentoFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/MagentoFilterTest.java	(revision )
+@@ -32,6 +32,9 @@
+ import org.omegat.filters2.IFilter;
+ import org.omegat.filters2.text.magento.MagentoFilter;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
+ /**
+  *
+  * @author Michael Zakharov <trapman.hunt@gmail.com>
+Index: test/src/org/omegat/gui/shortcuts/PropertiesShortcutsTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/shortcuts/PropertiesShortcutsTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/shortcuts/PropertiesShortcutsTest.java	(revision )
+@@ -33,11 +33,9 @@
+ import javax.swing.JMenuBar;
+ import javax.swing.JMenuItem;
+ import javax.swing.KeyStroke;
+-import org.junit.After;
+-import org.junit.AfterClass;
+-import org.junit.Before;
+-import org.junit.BeforeClass;
+-import org.junit.Test;
++
++import org.junit.*;
++
+ import static org.junit.Assert.*;
+ import org.omegat.util.LFileCopy;
+ import org.omegat.util.StaticUtils;
+@@ -62,12 +60,9 @@
+     public static void setUpClass() throws IOException {
+         // Copy user-defined properties to user config dir
+         ClassLoader classLoader = PropertiesShortcuts.class.getClassLoader();
+-        InputStream in = classLoader.getResourceAsStream("org/omegat/gui/shortcuts/test.user.properties");
+         File file = new File(StaticUtils.getConfigDir(), "test.properties");
+-        try {
++        try (InputStream in = classLoader.getResourceAsStream("org/omegat/gui/shortcuts/test.user.properties")) {
+             LFileCopy.copy(in, file);
+-        } finally {
+-            in.close();
+         }
+     }
+ 
+Index: test/src/org/omegat/filters/TestFilterBase.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/TestFilterBase.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/TestFilterBase.java	(revision )
+@@ -41,6 +41,9 @@
+ import javax.xml.xpath.XPathExpression;
+ import javax.xml.xpath.XPathFactory;
+ 
++import org.junit.Before;
++import org.junit.Rule;
++import org.junit.rules.TestName;
+ import org.omegat.core.Core;
+ import org.omegat.core.TestCore;
+ import org.omegat.core.data.EntryKey;
+@@ -64,6 +67,10 @@
+ import org.w3c.dom.Node;
+ import org.xml.sax.InputSource;
+ 
++import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.fail;
++
+ /**
+  * Base class for test filter parsing.
+  * 
+@@ -74,14 +81,19 @@
+ 
+     protected File outFile;
+ 
+-    protected void setUp() throws Exception {
++    @Rule
++    public TestName name = new TestName();
++
++    @Override
++    @Before
++    public void setUp() throws Exception {
+         super.setUp();
+ 
+         Core.initializeConsole(new TreeMap<String, String>());
+         Core.setFilterMaster(new FilterMaster(FilterMaster.createDefaultFiltersConfig()));
+         Core.setProject(new TestProject(new ProjectPropertiesTest()));
+ 
+-        outFile = new File("build/testdata/OmegaT_test-" + getClass().getName() + "-" + getName());
++        outFile = new File("build/testdata/OmegaT_test-" + getClass().getName() + "-" + name.getMethodName());
+         outFile.getParentFile().mkdirs();
+     }
+ 
+Index: test/src/org/omegat/util/TMXReaderTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/util/TMXReaderTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/util/TMXReaderTest.java	(revision )
+@@ -28,8 +28,13 @@
+ import java.util.Map;
+ import java.util.TreeMap;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertNotNull;
++import static org.junit.Assert.assertNull;
++
+ /**
+  * @author Alex Buloichik
+  */
+@@ -37,6 +42,7 @@
+     protected File outFile = new File(System.getProperty("java.io.tmpdir"), "OmegaT test - "
+             + getClass().getSimpleName());
+ 
++    @Test
+     public void testLeveL1() throws Exception {
+         final Map<String, String> tr = new TreeMap<String, String>();
+         new TMXReader2().readTMX(new File("test/data/tmx/test-level1.tmx"), new Language("en-US"),
+@@ -53,6 +59,7 @@
+         assertEquals("tr3", tr.get("lang3"));
+     }
+ 
++    @Test
+     public void testLeveL2() throws Exception {
+         final Map<String, String> tr = new TreeMap<String, String>();
+         new TMXReader2().readTMX(new File("test/data/tmx/test-level2.tmx"), new Language("en-US"),
+@@ -68,6 +75,7 @@
+         assertEquals("tr", tr.get("3 <n0>xx</n0>"));
+     }
+ 
++    @Test
+     public void testInvalidTMX() throws Exception {
+         final Map<String, String> tr = new TreeMap<String, String>();
+         new TMXReader2().readTMX(new File("test/data/tmx/invalid.tmx"), new Language("en"),
+@@ -80,6 +88,7 @@
+                 });
+     }
+     
++    @Test
+     public void testGetTuvByLang() {
+         TMXReader2.ParsedTuv tuvBE = new TMXReader2.ParsedTuv();
+         tuvBE.lang = "be";
+Index: test/src/org/omegat/languagetools/FalseFriendsTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/languagetools/FalseFriendsTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/languagetools/FalseFriendsTest.java	(revision )
+@@ -28,6 +28,7 @@
+ import java.util.List;
+ import java.util.Map;
+ 
++import org.junit.Before;
+ import org.junit.Test;
+ import org.omegat.core.Core;
+ import org.omegat.core.TestCore;
+@@ -47,11 +48,17 @@
+ import org.omegat.tokenizer.ITokenizer;
+ import org.omegat.util.Language;
+ 
++import static groovy.util.GroovyTestCase.assertEquals;
++import static org.junit.Assert.assertTrue;
++
+ /**
+  * @author Alex Buloichik (alex73mail@gmail.com)
+  */
+ public class FalseFriendsTest extends TestCore {
+-    protected void setUp() throws Exception {
++
++    @Override
++    @Before
++    public void setUp() throws Exception {
+         super.setUp();
+ 
+         final ProjectProperties props = new ProjectProperties() {
+Index: test/src/org/omegat/filters/OpenDocFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/OpenDocFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/OpenDocFilterTest.java	(revision )
+@@ -33,7 +33,10 @@
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters3.xml.opendoc.OpenDocFilter;
+ 
++import static org.junit.Assert.assertEquals;
++
+ public class OpenDocFilterTest extends TestFilterBase {
++    @Test
+     public void testParse() throws Exception {
+         List<String> entries = parse(new OpenDocFilter(), "test/data/filters/openDoc/file-OpenDocFilter.odt");
+         assertEquals(2, entries.size());
+@@ -41,6 +44,7 @@
+         assertEquals("This is second line.", entries.get(1));
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         File in = new File("test/data/filters/openDoc/file-OpenDocFilter.odt");
+         translate(new OpenDocFilter(), in.getPath());
+Index: test/src/org/omegat/filters/TextFilterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/TextFilterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/TextFilterTest.java	(revision )
+@@ -33,6 +33,8 @@
+ import org.omegat.core.data.IProject;
+ import org.omegat.filters2.text.TextFilter;
+ 
++import static org.junit.Assert.assertEquals;
++
+ public class TextFilterTest extends TestFilterBase {
+     @Test
+     public void testTextFilterParsing() throws Exception {
+@@ -40,6 +42,7 @@
+         assertEquals("First entry\r\n", entries.get(0));
+     }
+ 
++    @Test
+     public void testTranslate() throws Exception {
+         translateText(new TextFilter(), "test/data/filters/text/text1.txt");
+     }
+Index: test/src/org/omegat/core/segmentation/SegmenterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/core/segmentation/SegmenterTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/core/segmentation/SegmenterTest.java	(revision )
+@@ -1,111 +1,111 @@
+ /**************************************************************************
+- OmegaT - Computer Assisted Translation (CAT) tool 
+-          with fuzzy matching, translation memory, keyword search, 
+-          glossaries, and translation leveraging into updated projects.
+-
+- Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
+-               Home page: http://www.omegat.org/
+-               Support center: http://groups.yahoo.com/group/OmegaT/
+-
+- This file is part of OmegaT.
+-
+- OmegaT is free software: you can redistribute it and/or modify
+- it under the terms of the GNU General Public License as published by
+- the Free Software Foundation, either version 3 of the License, or
+- (at your option) any later version.
+-
+- OmegaT is distributed in the hope that it will be useful,
+- but WITHOUT ANY WARRANTY; without even the implied warranty of
+- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- GNU General Public License for more details.
+-
+- You should have received a copy of the GNU General Public License
+- along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * OmegaT - Computer Assisted Translation (CAT) tool
++ * with fuzzy matching, translation memory, keyword search,
++ * glossaries, and translation leveraging into updated projects.
++ * <p/>
++ * Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
++ * Home page: http://www.omegat.org/
++ * Support center: http://groups.yahoo.com/group/OmegaT/
++ * <p/>
++ * This file is part of OmegaT.
++ * <p/>
++ * OmegaT is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * <p/>
++ * OmegaT is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ * <p/>
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-**************************************************************************/
++ **************************************************************************/
+ 
+ package org.omegat.core.segmentation;
+ 
++import org.junit.Test;
++import org.omegat.core.TestCore;
++import org.omegat.util.Language;
++
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.regex.Pattern;
+ 
+-import junit.framework.Assert;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.fail;
+ 
+-import org.omegat.core.TestCore;
+-import org.omegat.util.Language;
+-
+ /**
+  * Tests for OmegaT segmentation.
+  *
+  * @author Maxym Mykhalchuk
+  */
+-public class SegmenterTest extends TestCore
+-{
++public class SegmenterTest extends TestCore {
+     private static final Pattern WHITESPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
+ 
+-    protected void setUp() throws Exception {
++    private static final String EN_FULLSTOP = ".";
++    private static final String JA_FULLSTOP = "\\u3002"; // Unicode escaped
++
++
++    public void setUp() throws Exception {
+         Segmenter.srx = SRX.getDefault();
+     }
+ 
+     /**
+      * Test of segment method, of class org.omegat.core.segmentation.Segmenter.
+      */
+-    public void testSegment()
+-    {
+-        List<StringBuffer> spaces = new ArrayList<StringBuffer>();
++    @Test
++    public void testSegment() {
++        List<StringBuffer> spaces = new ArrayList<>();
+-        List<String> segments = Segmenter.segment(new Language("en"),"<br7>\n\n<br5>\n\nother", spaces, new ArrayList<Rule>());
++        List<String> segments = Segmenter.segment(new Language("en"), "<br7>\n\n<br5>\n\nother", spaces, new ArrayList<Rule>());
+-        if(segments.size()!=3 || !segments.get(0).equals("<br7>") ||
++        if (segments.size() != 3 || !segments.get(0).equals("<br7>") ||
+                 !segments.get(1).equals("<br5>") ||
+                 !segments.get(2).equals("other"))
+             fail("Bug XXXXXX.");
+     }
+-    
++
+     /**
+      * Test of glue method, of class org.omegat.core.segmentation.Segmenter.
+      */
+-    public void testGlue()
+-    {
+-        List<StringBuffer> spaces = new ArrayList<StringBuffer>();
+-        List<Rule> brules = new ArrayList<Rule>();
++    @Test
++    public void testGlue() {
++        List<StringBuffer> spaces = new ArrayList<>();
++        List<Rule> brules = new ArrayList<>();
+         String oldString = "<br7>\n\n<br5>\n\nother";
+-        List<String> segments = Segmenter.segment(new Language("en"),oldString, spaces, brules);
++        List<String> segments = Segmenter.segment(new Language("en"), oldString, spaces, brules);
+-        String newString = Segmenter.glue(new Language("en"),new Language("fr"),segments, spaces, brules);
++        String newString = Segmenter.glue(new Language("en"), new Language("fr"), segments, spaces, brules);
+-        if(!newString.equals(oldString))
++        if (!newString.equals(oldString))
+             fail("Glue failed.");
+     }
+-    
++
+     /**
+      * Test of glue method for CJK, of class org.omegat.core.segmentation.Segmenter.
+      */
+-    public void testGlueCJK()
+-    {
+-        final String EN_FULLSTOP = ".";
+-        final String JA_FULLSTOP = "\\u3002"; // Unicode escaped
+-
++    @Test
++    public void testGlueCJK() {
+         // basic combination
+         final String SOURCE = "Foo. Bar.\nHere.\n\nThere.\r\nThis.\tThat.\n\tOther.";
+         final String TRANSLATED = WHITESPACE_PATTERN.matcher(SOURCE).replaceAll("").replace(EN_FULLSTOP, JA_FULLSTOP);
+         String translated = getPseudoTranslationFromEnToJa(SOURCE);
+-        Assert.assertEquals(TRANSLATED, translated);
++        assertEquals(TRANSLATED, translated);
+ 
+         // spaces after/before \n
+         final String SOURCE2 = "Foo. \n Bar.";
+         final String TRANSLATED2 = "Foo\\u3002\n Bar\\u3002";
+         translated = getPseudoTranslationFromEnToJa(SOURCE2);
+-        Assert.assertEquals(TRANSLATED2, translated);
++        assertEquals(TRANSLATED2, translated);
+ 
+         // spaces after/before \t
+         final String SOURCE3 = "Foo. \t Bar.";
+         final String TRANSLATED3 = "Foo\\u3002\t Bar\\u3002";
+         translated = getPseudoTranslationFromEnToJa(SOURCE3);
+-        Assert.assertEquals(TRANSLATED3, translated);
++        assertEquals(TRANSLATED3, translated);
+     }
+-    
++
+     private String getPseudoTranslationFromEnToJa(final String source) {
+-        final String EN_FULLSTOP = ".";
+-        final String JA_FULLSTOP = "\\u3002";
+-        List<StringBuffer> spaces = new ArrayList<StringBuffer>();
+-        List<Rule> brules = new ArrayList<Rule>();
++        List<StringBuffer> spaces = new ArrayList<>();
++        List<Rule> brules = new ArrayList<>();
+         List<String> segments = Segmenter.segment(new Language("en"), source, spaces, brules);
+ 
+         // pseudo-translation (just replace full-stop char)
+Index: test/src/org/omegat/gui/glossary/GlossaryReaderTSVTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/gui/glossary/GlossaryReaderTSVTest.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/gui/glossary/GlossaryReaderTSVTest.java	(revision )
+@@ -27,23 +27,25 @@
+ import java.io.File;
+ import java.util.List;
+ 
++import org.junit.Test;
+ import org.omegat.core.TestCore;
+ 
++import static org.junit.Assert.assertEquals;
++
+ /**
+  * @author Alex Buloichik <alex73mail@gmail.com>
+  */
+ public class GlossaryReaderTSVTest extends TestCore {
++    @Test
+     public void testRead() throws Exception {
+-        List<GlossaryEntry> g = GlossaryReaderTSV.read(new File(
+-                "test/data/glossaries/test.tab"), false);
++        List<GlossaryEntry> g = GlossaryReaderTSV.read(new File("test/data/glossaries/test.tab"), false);
+         assertEquals(2, g.size());
+         assertEquals(g.get(0).getSrcText(), "kde");
+         assertEquals(g.get(0).getLocText(), "koo moo");
+         assertEquals(g.get(1).getSrcText(), "question");
+         assertEquals(g.get(1).getLocText(), "qqqqq");
+ 
+-        g = GlossaryReaderTSV.read(new File(
+-                "test/data/glossaries/testUTF16LE.txt"), false);
++        g = GlossaryReaderTSV.read(new File("test/data/glossaries/testUTF16LE.txt"), false);
+         assertEquals(2, g.size());
+         assertEquals(g.get(0).getSrcText(), "UTF");
+         assertEquals(g.get(0).getLocText(), "Unicode Transformation Format");
+Index: test/src/org/omegat/filters/HTMLFilter2Test.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- test/src/org/omegat/filters/HTMLFilter2Test.java	(revision 7d5724afef2ecb2456bda2b46038e320484d4160)
++++ test/src/org/omegat/filters/HTMLFilter2Test.java	(revision )
+@@ -36,6 +36,8 @@
+ import org.omegat.filters2.html2.HTMLFilter2;
+ import org.omegat.util.Language;
+ 
++import static org.junit.Assert.assertEquals;
++
+ public class HTMLFilter2Test extends TestFilterBase {
+     @Test
+     public void testParse() throws Exception {

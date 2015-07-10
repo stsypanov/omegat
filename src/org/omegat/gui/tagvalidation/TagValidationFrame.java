@@ -73,12 +73,11 @@ import org.openide.awt.Mnemonics;
  */
 @SuppressWarnings("serial")
 public class TagValidationFrame extends PeroFrame {
+
     public TagValidationFrame(MainWindow parent) {
+        super();
         setTitle(OStrings.getString("TF_NOTICE_BAD_TAGS"));
 
-        // set window size & position
-        loadLayoutPreferences(Preferences.TAGVWINDOW_X, Preferences.TAGVWINDOW_Y, Preferences.TAGVWINDOW_WIDTH, Preferences.TAGVWINDOW_HEIGHT);
-        
         Action escapeAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,15 +141,8 @@ public class TagValidationFrame extends PeroFrame {
     }
 
     @Override
-    public void processWindowEvent(WindowEvent w) {
-        int evt = w.getID();
-        if (evt == WindowEvent.WINDOW_CLOSING || evt == WindowEvent.WINDOW_CLOSED) {
-            // save window size and position
-            saveLayoutPreferences(Preferences.TAGVWINDOW_X, Preferences.TAGVWINDOW_Y,
-					Preferences.TAGVWINDOW_WIDTH, Preferences.TAGVWINDOW_HEIGHT,
-					getX(), getY(), getWidth(), getHeight());
-        }
-        super.processWindowEvent(w);
+    public String getPreferenceBaseName() {
+        return "tagv_window";
     }
 
     private void doCancel() {
@@ -292,8 +284,8 @@ public class TagValidationFrame extends PeroFrame {
         output.append("<style type=\"text/css\">\n");
         output.append("    <!--\n");
         output.append("    body {\n");
-        output.append("            font-family: " + getFont().getName() + ";\n");
-        output.append("            font-size: " + getFont().getSize() + "pt;\n");
+        output.append("            font-family: ").append(getFont().getName()).append(";\n");
+        output.append("            font-size: ").append(getFont().getSize()).append("pt;\n");
         output.append("    }\n");
         output.append("    td {\n");
         output.append("            border: 1px solid gray;\n");
@@ -303,7 +295,7 @@ public class TagValidationFrame extends PeroFrame {
         output.append("</head>\n");
         output.append("<body>\n");
         if (message != null) {
-            output.append("<b>" + message + "</b>");
+            output.append("<b>").append(message).append("</b>");
         }
 
         output.append("<table border=\"1\" cellspacing=\"1\" cellpadding=\"2\" width=\"100%\">\n");

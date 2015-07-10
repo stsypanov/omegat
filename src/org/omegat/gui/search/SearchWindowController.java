@@ -484,8 +484,6 @@ public class SearchWindowController {
      * state.
      */
     private void loadPreferences() {
-        // window size and position
-        GuiUtils.loadLayoutPreferences(form, Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y, Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT);
 
         // search dir options
         if (Preferences.isPreferenceDefault(Preferences.SEARCHWINDOW_SEARCH_FILES, false)) {
@@ -598,10 +596,6 @@ public class SearchWindowController {
      * state
      */
     private void savePreferences() {
-        // window size and position
-        GuiUtils.saveLayoutPreferences(Preferences.SEARCHWINDOW_X, Preferences.SEARCHWINDOW_Y,
-                Preferences.SEARCHWINDOW_WIDTH, Preferences.SEARCHWINDOW_HEIGHT,
-				form.getX(), form.getY(), form.getWidth(), form.getHeight());
 
         // search type
         if (form.m_searchExactSearchRB.isSelected()) {

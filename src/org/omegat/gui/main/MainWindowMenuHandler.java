@@ -61,6 +61,8 @@ import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.dialogs.*;
+import org.omegat.gui.dialogs.filter.BaseFilteringController;
+import org.omegat.gui.dialogs.filter.BaseFilteringDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
@@ -81,7 +83,7 @@ import java.util.logging.Level;
 
 /**
  * Handler for main menu items.
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -97,6 +99,7 @@ import java.util.logging.Level;
  */
 public class MainWindowMenuHandler {
     private final MainWindow mainWindow;
+    private BaseFilteringController baseFilteringController;
 
     public MainWindowMenuHandler(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -125,7 +128,7 @@ public class MainWindowMenuHandler {
 
     /**
      * Imports the file/files/folder into project's source files.
-     * 
+     *
      * @author Kim Bruning
      * @author Maxym Mykhalchuk
      */
@@ -528,7 +531,7 @@ public class MainWindowMenuHandler {
     public void editSelectFuzzyNextMenuItemActionPerformed() {
         Core.getMatcher().setNextActiveMatch();
     }
-    
+
     /** Set active match to the previous one */
     public void editSelectFuzzyPrevMenuItemActionPerformed() {
         Core.getMatcher().setPrevActiveMatch();
@@ -537,7 +540,7 @@ public class MainWindowMenuHandler {
     public void editMultipleDefaultActionPerformed() {
         Core.getEditor().setAlternateTranslationForCurrentEntry(false);
     }
-    
+
     public void editMultipleAlternateActionPerformed() {
         Core.getEditor().setAlternateTranslationForCurrentEntry(true);
     }
@@ -577,7 +580,7 @@ public class MainWindowMenuHandler {
     public void gotoNextUniqueMenuItemActionPerformed() {
         Core.getEditor().nextUniqueEntry();
     }
-    
+
     public void gotoNextTranslatedMenuItemActionPerformed() {
         Core.getEditor().nextTranslatedEntry();
     }
@@ -600,7 +603,7 @@ public class MainWindowMenuHandler {
 
     /**
      * Asks the user for a segment number and then displays the segment.
-     * 
+     *
      * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public void gotoSegmentMenuItemActionPerformed() {
@@ -609,7 +612,7 @@ public class MainWindowMenuHandler {
         dialog.setVisible(true);
 
         int jumpTo = dialog.getResult();
-        
+
         if (jumpTo != -1) {
             Core.getEditor().gotoEntry(jumpTo);
         }
@@ -622,7 +625,7 @@ public class MainWindowMenuHandler {
     public void gotoHistoryForwardMenuItemActionPerformed() {
         Core.getEditor().gotoHistoryForward();
     }
-    
+
     public void gotoMatchSourceSegmentActionPerformed() {
         NearString ns = Core.getMatcher().getActiveMatch();
         if (ns != null && ns.comesFrom == MATCH_SOURCE.MEMORY) {
@@ -786,7 +789,7 @@ public class MainWindowMenuHandler {
         Preferences.setPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY,
                 mainWindow.menu.optionsAutoCompleteShowAutomaticallyItem.isSelected());
     }
-    
+
     public void optionsAutoCompleteGlossaryMenuItemActionPerformed() {
         new GlossaryAutoCompleterOptionsDialog(mainWindow).setVisible(true);
     }
@@ -806,7 +809,7 @@ public class MainWindowMenuHandler {
 
         Core.getGlossaryManager().forceReloadTBX();
     }
-    
+
     public void optionsGlossaryExactMatchCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_NOT_EXACT_MATCH,
                 mainWindow.menu.optionsGlossaryExactMatchCheckBoxMenuItem.isSelected());
@@ -814,7 +817,7 @@ public class MainWindowMenuHandler {
         Core.getGlossaryManager().forceUpdateGlossary();
 
     }
-    
+
     public void optionsGlossaryStemmingCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_STEMMING,
                 mainWindow.menu.optionsGlossaryStemmingCheckBoxMenuItem.isSelected());
@@ -845,7 +848,7 @@ public class MainWindowMenuHandler {
         dlg.setVisible(true);
     }
 
-    
+
     /**
      * Displays the filters setup dialog to allow customizing file filters in detail.
      */
@@ -931,7 +934,7 @@ public class MainWindowMenuHandler {
     public void optionsTagValidationMenuItemActionPerformed() {
         TagProcessingOptionsDialog tagProcessingOptionsDialog = new TagProcessingOptionsDialog(mainWindow);
         tagProcessingOptionsDialog.setVisible(true);
-        
+
         if (tagProcessingOptionsDialog.getReturnStatus() == TagProcessingOptionsDialog.RET_OK
                 && Core.getProject().isProjectLoaded()) {
             // Redisplay according to new view settings
@@ -1004,10 +1007,19 @@ public class MainWindowMenuHandler {
         MainWindowUI.resetDesktopLayout(mainWindow);
     }
 
+    public void baseFilteringMenuItemActionPerformed(){
+        if (baseFilteringController == null){
+            baseFilteringController = new BaseFilteringController(BaseFilteringDialog.getInstance());
+        }
+        baseFilteringController.loadItems();
+        baseFilteringController.adjustColumnWidth();
+        baseFilteringController.showDialog();
+    }
+
     public void optionsAccessConfigDirMenuItemActionPerformed() {
         openFile(new File(StaticUtils.getConfigDir()));
     }
-    
+
     /**
      * Show help.
      */

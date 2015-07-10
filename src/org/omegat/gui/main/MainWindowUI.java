@@ -70,7 +70,7 @@ import com.vlsolutions.swing.docking.event.DockableStateWillChangeListener;
 
 /**
  * Class for initialize, load/save, etc. for main window UI components.
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -85,7 +85,7 @@ import com.vlsolutions.swing.docking.event.DockableStateWillChangeListener;
 public class MainWindowUI {
     public static String UI_LAYOUT_FILE = OStrings.BRANDING.isEmpty() ? "uiLayout.xml"
             : "uiLayout-" + OStrings.BRANDING + ".xml";
-    
+
     public enum STATUS_BAR_MODE {
         DEFAULT,
         PERCENTAGE,
@@ -124,16 +124,16 @@ public class MainWindowUI {
         CoreEvents.registerProjectChangeListener(handler);
         CoreEvents.registerApplicationEventListener(handler);
     }
-    
+
     private static class PerProjectLayoutHandler implements IProjectEventListener, IApplicationEventListener {
 
         private final MainWindow mainWindow;
         private boolean didApplyPerProjectLayout = false;
-        
+
         public PerProjectLayoutHandler(MainWindow mainWindow) {
             this.mainWindow = mainWindow;
         }
-        
+
         @Override
         public void onApplicationStartup() {
         }
@@ -146,8 +146,8 @@ public class MainWindowUI {
                 loadScreenLayoutFromPreferences(mainWindow);
                 didApplyPerProjectLayout = false;
             }
-        }            
-            
+        }
+
         @Override
         public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
             if (eventType == PROJECT_CHANGE_TYPE.CLOSE && didApplyPerProjectLayout) {
@@ -169,17 +169,17 @@ public class MainWindowUI {
                 didApplyPerProjectLayout = true;
                 break;
             case SAVE:
-                saveScreenLayout(mainWindow, perProjLayout);
+                saveScreenLayout(mainWindow);
             default:
             }
         }
-        
+
         private File getPerProjectLayout() {
             return new File(Core.getProject().getProjectProperties().getProjectInternal(),
                     MainWindowUI.UI_LAYOUT_FILE);
         }
     }
-    
+
     /**
      * Create swing UI components for status panel.
      */
@@ -191,7 +191,7 @@ public class MainWindowUI {
         mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(11));
 
         Border border = UIManager.getBorder("OmegaTStatusArea.border");
-        
+
         final STATUS_BAR_MODE progressMode = STATUS_BAR_MODE.valueOf(
                 Preferences.getPreferenceEnumDefault(Preferences.SB_PROGRESS_MODE,
                         STATUS_BAR_MODE.DEFAULT).name());
@@ -253,7 +253,7 @@ public class MainWindowUI {
             statusPanel.setBackground(bgColor);
             statusPanel2.setBackground(bgColor);
         }
-        
+
         return statusPanel;
     }
 
@@ -264,6 +264,7 @@ public class MainWindowUI {
      * larger. Assume task bar at bottom of screen. If screen size saved,
      * recover that and use instead (18may04).
      */
+    //todo use PeroFrame
     public static void initializeScreenLayout(MainWindow mainWindow) {
         int x, y, w, h;
         // main window
@@ -300,7 +301,7 @@ public class MainWindowUI {
 
         loadScreenLayoutFromPreferences(mainWindow);
     }
-    
+
     /**
      * Load the main window layout from the global preferences file. Will reset to defaults
      * if global preferences are not present or if an error occurs.
@@ -325,7 +326,7 @@ public class MainWindowUI {
             Log.log(ex);
         }
     }
-    
+
     /**
      * Load the main window layout from the global preferences file. Will reset to defaults
      * if an error occurs.
@@ -346,27 +347,10 @@ public class MainWindowUI {
     /**
      * Stores main window layout (width, height, position, etc.) to global preferences.
      */
-    public static void saveScreenLayout(MainWindow mainWindow) {
-        File uiLayoutFile = new File(StaticUtils.getConfigDir(), MainWindowUI.UI_LAYOUT_FILE);
-        saveScreenLayout(mainWindow, uiLayoutFile);
-    }
-    
-    /**
-     * Stores main window layout to the specified output file.
-     */
-    private static void saveScreenLayout(MainWindow mainWindow, File uiLayoutFile) {
-        Preferences.setPreference(Preferences.MAINWINDOW_X, mainWindow.getX());
-        Preferences.setPreference(Preferences.MAINWINDOW_Y, mainWindow.getY());
-        Preferences.setPreference(Preferences.MAINWINDOW_WIDTH, mainWindow.getWidth());
-        Preferences.setPreference(Preferences.MAINWINDOW_HEIGHT, mainWindow.getHeight());
-
-        try {
-            FileOutputStream out = new FileOutputStream(uiLayoutFile);
-            try {
-                mainWindow.desktop.writeXML(out);
-            } finally {
-                out.close();
-            }
+    public static void saveScreenLayout(final MainWindow mainWindow) {
+        File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
+        try (FileOutputStream out = new FileOutputStream(uiLayoutFile)) {
+            mainWindow.desktop.writeXML(out);
         } catch (Exception ex) {
             Log.log(ex);
         }

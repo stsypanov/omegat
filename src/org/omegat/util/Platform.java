@@ -29,7 +29,7 @@ package org.omegat.util;
 /**
  * A class to retrieve some platform information.
  * 
- * @author: Zoltan Bartko bartkozoltan@bartkozoltan.com
+ * @author Zoltan Bartko bartkozoltan@bartkozoltan.com
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public final class Platform {
@@ -73,7 +73,7 @@ public final class Platform {
         return osType;
     }
 
-    public static final boolean isWebStart() {
+    public static boolean isWebStart() {
         return System.getProperty("javawebstart.version") != null;
     }
 
@@ -81,7 +81,6 @@ public final class Platform {
      * Returns true if running on Mac OS X
      */
     public static boolean isMacOSX() {
-        OsType os = getOsType();
-        return os == OsType.MAC32 || os == OsType.MAC64;
+        return osType == OsType.MAC32 || osType == OsType.MAC64;
     }
 }

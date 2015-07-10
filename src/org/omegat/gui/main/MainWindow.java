@@ -57,6 +57,7 @@ import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
 import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.dialogs.FileCollisionDialog;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.matches.IMatcher;
@@ -82,7 +83,7 @@ import com.vlsolutions.swing.docking.FloatingDialog;
 /**
  * The main window of OmegaT application (unless the application is started in
  * consoleMode).
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -96,7 +97,7 @@ import com.vlsolutions.swing.docking.FloatingDialog;
  * @author Piotr Kulik
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame implements IMainWindow {
+public class MainWindow extends PeroFrame implements IMainWindow {
     public final MainWindowMenu menu;
 
     protected ProjectFilesListController m_projWin;
@@ -145,7 +146,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
         getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
-        
+
         OmegaTIcons.setIconImages(this);
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
@@ -169,9 +170,14 @@ public class MainWindow extends JFrame implements IMainWindow {
         });
 
         MainWindowUI.handlePerProjectLayouts(this);
-        
+
         updateTitle();
         pack();
+    }
+
+    @Override
+    public String getPreferenceBaseName() {
+        return "main_window_";
     }
 
     /**
@@ -197,7 +203,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 
     /**
      * Set new font to application.
-     * 
+     *
      * @param newFont
      *            new font
      */
@@ -308,7 +314,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 
     /**
      * Imports the file/files/folder into project's source files.
-     * 
+     *
      * @author Kim Bruning
      * @author Maxym Mykhalchuk
      */
@@ -324,11 +330,11 @@ public class MainWindow extends JFrame implements IMainWindow {
             importFiles(Core.getProject().getProjectProperties().getSourceRoot(), selFiles);
         }
     }
-    
+
     public void importFiles(String destination, File[] toImport) {
         importFiles(destination, toImport, true);
     }
-    
+
     public void importFiles(String destination, File[] toImport, boolean doReload) {
         try {
             FileUtil.copyFilesTo(new File(destination), toImport, new CollisionCallback());
@@ -339,11 +345,11 @@ public class MainWindow extends JFrame implements IMainWindow {
             displayErrorRB(ioe, "MAIN_ERROR_File_Import_Failed");
         }
     }
-    
+
     private class CollisionCallback implements ICollisionCallback {
         private boolean isCanceled = false;
         private boolean yesToAll = false;
-        
+
         @Override
         public boolean shouldReplace(File file, int index, int total) {
             if (isCanceled) {
@@ -364,7 +370,7 @@ public class MainWindow extends JFrame implements IMainWindow {
             yesToAll = dialog.isApplyToAll() && dialog.shouldReplace();
             return yesToAll || dialog.shouldReplace();
         }
-        
+
         @Override
         public boolean isCanceled() {
             return isCanceled;

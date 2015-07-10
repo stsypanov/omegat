@@ -1,0 +1,284 @@
+Index: src/org/omegat/gui/glossary/GlossaryTextArea.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/glossary/GlossaryTextArea.java	(date 1430916556000)
++++ src/org/omegat/gui/glossary/GlossaryTextArea.java	(revision )
+@@ -50,16 +50,15 @@
+ import javax.swing.JMenuItem;
+ import javax.swing.JPopupMenu;
+ import javax.swing.text.AttributeSet;
+-import javax.swing.text.JTextComponent;
+ import javax.swing.text.StyledDocument;
+ 
+ import org.omegat.core.Core;
+ import org.omegat.core.data.ProjectProperties;
+ import org.omegat.core.data.SourceTextEntry;
+ import org.omegat.core.data.StringEntry;
++import org.omegat.gui.clipboard.TextUtils;
+ import org.omegat.gui.common.EntryInfoThreadPane;
+ import org.omegat.gui.dialogs.CreateGlossaryEntry;
+-import org.omegat.gui.editor.EditorUtils;
+ import org.omegat.gui.main.DockableScrollPane;
+ import org.omegat.util.Log;
+ import org.omegat.util.OStrings;
+@@ -285,14 +284,8 @@
+ 
+             @Override
+             public void windowGainedFocus(WindowEvent e) {
+-                String sel = null;
+-                Component component = parent.getMostRecentFocusOwner();
+-                if (component instanceof JTextComponent) {
+-                    sel = ((JTextComponent) component).getSelectedText();
+-                    if (!StringUtil.isEmpty(sel)) {
+-                        sel = EditorUtils.removeDirectionChars(sel);
+-                    }
+-                }
++                String sel = TextUtils.getSelectedTextFromParent(parent.getMostRecentFocusOwner());
++
+                 if (!StringUtil.isEmpty(sel)) {
+                     if (StringUtil.isEmpty(dialog.getSourceText().getText())) {
+                         dialog.getSourceText().setText(sel);
+Index: src/org/omegat/gui/dictionaries/DictionaryPopup.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/dictionaries/DictionaryPopup.java	(date 1430916556000)
++++ src/org/omegat/gui/dictionaries/DictionaryPopup.java	(revision )
+@@ -1,6 +1,7 @@
+ package org.omegat.gui.dictionaries;
+ 
+ import org.madlonkay.supertmxmerge.util.GuiUtil;
++import org.omegat.gui.clipboard.TextUtils;
+ import org.omegat.gui.common.PeroFrame;
+ import org.omegat.util.OStrings;
+ 
+@@ -21,6 +22,7 @@
+     private JList<String> container;
+     private JTextField textField;
+     private Callback<String> callback;
++    private Component parent;
+ 
+     public DictionaryPopup(String title) throws HeadlessException {
+         super(title);
+@@ -32,8 +34,9 @@
+         GuiUtil.displayWindowCentered(this);
+     }
+ 
+-    public DictionaryPopup() {
++    public DictionaryPopup(Component parent) {
+         this(OStrings.getString("find.in.dictionary.dialogue.title"));
++        this.parent = parent;
+     }
+ 
+     private void initComponents() {
+@@ -146,6 +149,11 @@
+             popupMenu.setPreferredSize(new Dimension(WIDTH, 200));
+         }
+         popupMenu.pack();
++    }
++
++    public void invoke(){
++        textField.setText(TextUtils.getSelectedTextFromParent(parent));
++        setVisible(true);
+     }
+ 
+     private static class CellRenderer extends DefaultListCellRenderer {
+Index: src/org/omegat/gui/clipboard/TextUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/clipboard/TextUtils.java	(date 1430916556000)
++++ src/org/omegat/gui/clipboard/TextUtils.java	(revision )
+@@ -1,6 +1,9 @@
+ package org.omegat.gui.clipboard;
+ 
++import org.jetbrains.annotations.Nullable;
++import org.omegat.gui.editor.EditorUtils;
+ import org.omegat.util.Log;
++import org.omegat.util.StringUtil;
+ 
+ import javax.swing.*;
+ import javax.swing.text.*;
+@@ -13,11 +16,11 @@
+  * Time: 14:44
+  */
+ public class TextUtils {
+-	/*
++	/**
+-	 *  Attempt to center the line containing the caret at the center of the
++	 * Attempt to center the line containing the caret at the center of the
+-	 *  scroll pane.
++	 * scroll pane.
+ 	 *
+-	 *  @param component the text component in the sroll pane
++	 * @param component the text component in the sroll pane
+ 	 */
+ 	public static void centerLineInScrollPane(JTextComponent component) {
+ 		Container container = SwingUtilities.getAncestorOfClass(JViewport.class, component);
+@@ -39,11 +42,11 @@
+ 		}
+ 	}
+ 
+-	/*
++	/**
+-	 *  Return the column number at the Caret position.
++	 * Return the column number at the Caret position.
+-	 *
++	 * <p/>
+-	 *  The column returned will only make sense when using a
++	 * The column returned will only make sense when using a
+-	 *  Monospaced font.
++	 * Monospaced font.
+ 	 */
+ 	public static int getColumnAtCaret(JTextComponent component) {
+ 		//  Since we assume a monospaced font we can use the width of a single
+@@ -64,8 +67,8 @@
+ 		return column + 1;
+ 	}
+ 
+-	/*
++	/**
+-	 *  Return the line number at the Caret position.
++	 * Return the line number at the Caret position.
+ 	 */
+ 	public static int getLineAtCaret(JTextComponent component) {
+ 		int caretPosition = component.getCaretPosition();
+@@ -74,16 +77,16 @@
+ 		return root.getElementIndex(caretPosition) + 1;
+ 	}
+ 
+-	/*
++	/**
+-	 *  Return the number of lines of text in the Document
++	 * Return the number of lines of text in the Document
+ 	 */
+ 	public static int getLinesCount(JTextComponent component) {
+ 		Element root = component.getDocument().getDefaultRootElement();
+ 		return root.getElementCount();
+ 	}
+ 
+-	/*
++	/**
+-	 *  Position the caret at the start of a line.
++	 * Position the caret at the start of a line.
+ 	 */
+ 	public static void gotoStartOfLine(JTextComponent component, int line) {
+ 		Element root = component.getDocument().getDefaultRootElement();
+@@ -100,8 +103,8 @@
+ 		return root.getElement(line - 1).getEndOffset();
+ 	}
+ 
+-	/*
++	/**
+-	 *  Position the caret on the first word of a line.
++	 * Position the caret on the first word of a line.
+ 	 */
+ 	public static void gotoFirstWordOnLine(JTextComponent component, int line) {
+ 		gotoStartOfLine(component, line);
+@@ -120,8 +123,8 @@
+ 		}
+ 	}
+ 
+-	/*
++	/**
+-	 *  Return the number of lines of text, including wrapped lines.
++	 * Return the number of lines of text, including wrapped lines.
+ 	 */
+ 	public static int getWrappedLines(JTextArea component) {
+ 		View view = component.getUI().getRootView(component).getView(0);
+@@ -130,8 +133,8 @@
+ 		return preferredHeight / lineHeight;
+ 	}
+ 
+-	/*
++	/**
+-	 *  Return the number of lines of text, including wrapped lines.
++	 * Return the number of lines of text, including wrapped lines.
+ 	 */
+ 	public static int getWrappedLines(JTextComponent component) {
+ 		int lines = 0;
+@@ -145,5 +148,28 @@
+ 		}
+ 
+ 		return lines;
++	}
++
++	/**
++	 * This method allows to get the text, selected e.g. in EditorTextArea and place it into invoked dialogue.
++	 * See @ref CreateGlossaryEntry.java for usage example
++	 *
++	 *
++	 * @param component component, which is the parent of the component this method invoked from
++	 * @return text, selected in parent component
++	 */
++	public static String getSelectedTextFromParent(@Nullable Component component) {
++		String selection;
++		if (component instanceof JTextComponent) {
++			selection = ((JTextComponent) component).getSelectedText();
++			if (!StringUtil.isEmpty(selection)) {
++				selection = EditorUtils.removeDirectionChars(selection);
++			} else {
++				selection = "";
++			}
++		} else {
++			selection = "";
++		}
++		return selection;
+ 	}
+ }
+Index: src/org/omegat/gui/dictionaries/DictionaryPopupController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/dictionaries/DictionaryPopupController.java	(date 1430916556000)
++++ src/org/omegat/gui/dictionaries/DictionaryPopupController.java	(revision )
+@@ -9,6 +9,9 @@
+ import java.util.List;
+ 
+ /**
++ * This is a controller for DictionaryPopup ui class and provides
++ * search functional for popup
++ *
+  * Created by stsypanov on 19.04.2015.
+  */
+ public class DictionaryPopupController {
+@@ -70,6 +73,6 @@
+     }
+ 
+     public void showPopup() {
+-        popup.setVisible(true);
++        popup.invoke();
+     }
+ }
+Index: src/org/omegat/gui/editor/EditorTextArea3.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+--- src/org/omegat/gui/editor/EditorTextArea3.java	(date 1430916556000)
++++ src/org/omegat/gui/editor/EditorTextArea3.java	(revision )
+@@ -139,6 +139,10 @@
+         setToolTipText("");
+     }
+ 
++    /**
++     * Adds action for Search in Dictionary popup invocation
++     * Pop up invoked with double Shift
++     */
+     private void addDictionaryAction() {
+        addKeyListener(new KeyAdapter() {
+            private long lastShiftStroke;
+@@ -149,7 +153,7 @@
+                    boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
+                    if (suits) {
+                        if (dictionaryPopupController == null) {
+-                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
++                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(EditorTextArea3.this), Core.getDictionariesTextArea());
+                        }
+                        dictionaryPopupController.showPopup();
+                    }

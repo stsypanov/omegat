@@ -82,7 +82,9 @@ import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
+import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.autocompleter.IAutoCompleter;
+import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromTMMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -114,10 +116,10 @@ import com.vlsolutions.swing.docking.event.DockableSelectionListener;
 
 /**
  * Class for control all editor operations.
- * 
+ *
  * You can find good description of java text editor working at
  * http://java.sun.com/products/jfc/tsc/articles/text/overview/
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -173,7 +175,7 @@ public class EditorController implements IEditor {
     protected int displayedEntryIndex;
 
     /** Object which store history of moving by segments. */
-    private SegmentHistory history = new SegmentHistory();
+    private SegmentHistory history;
 
     protected final EditorSettings settings;
 
@@ -190,7 +192,7 @@ public class EditorController implements IEditor {
     private Component entriesFilterControlComponent;
 
     private SegmentExportImport segmentExportImport;
-    
+
     /**
      * Indicates, in nanoseconds, the last time a keypress was input.
      * This is reset to -1 upon commit or entering a segment.
@@ -213,6 +215,9 @@ public class EditorController implements IEditor {
         createUI();
 
         settings = new EditorSettings(this);
+
+        history = new SegmentHistory();
+
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
@@ -318,7 +323,7 @@ public class EditorController implements IEditor {
 
         scrollPane = new JScrollPane(editor);
         Border panelBorder = UIManager.getBorder("OmegaTDockablePanel.border");
-        if (panelBorder != null) { 
+        if (panelBorder != null) {
             scrollPane.setBorder(panelBorder);
         }
         Border viewportBorder = UIManager.getBorder("OmegaTDockablePanelViewport.border");
@@ -396,21 +401,21 @@ public class EditorController implements IEditor {
     }
 
     private final IDropInfo dropInfo = new IDropInfo() {
-        
+
         @Override
         public DataFlavor getDataFlavor() {
             return DataFlavor.javaFileListFlavor;
         }
-        
+
         @Override
         public int getDnDAction() {
             return DnDConstants.ACTION_COPY;
         }
-        
+
         @Override
         public boolean handleDroppedObject(Object dropped) {
             final List<File> files = (List<File>) dropped;
-            
+
             // Only look at first file to determine intent to open project
             File firstFile = files.get(0);
             if (firstFile.getName().equals(OConsts.FILE_PROJECT)) {
@@ -421,7 +426,7 @@ public class EditorController implements IEditor {
             }
             return handleDroppedFiles(files);
         }
-        
+
         private boolean handleDroppedProject(final File projDir) {
             // Opening/closing might take a long time for team projects.
             // Invoke later so we can return successfully right away.
@@ -433,7 +438,7 @@ public class EditorController implements IEditor {
             });
             return true;
         }
-        
+
         private boolean handleDroppedFiles(final List<File> files) {
             if (!Core.getProject().isProjectLoaded()) {
                 return false;
@@ -449,28 +454,28 @@ public class EditorController implements IEditor {
             });
             return true;
         }
-        
+
         @Override
         public Component getComponentToOverlay() {
             return scrollPane;
         }
-        
+
         @Override
         public String getOverlayMessage() {
             return Core.getProject().isProjectLoaded() ? OStrings.getString("DND_ADD_SOURCE_FILE")
                     : OStrings.getString("DND_OPEN_PROJECT");
         }
-        
+
         @Override
         public boolean canAcceptDrop() {
             return true;
         }
     };
-    
+
     private void updateTitle() {
         pane.setName(StaticUIUtils.truncateToFit(title, pane, 70));
     }
-    
+
     private void setFont(final Font font) {
         this.font = font;
         this.fontb = new Font(font.getFontName(), Font.BOLD, font.getSize());
@@ -530,7 +535,7 @@ public class EditorController implements IEditor {
      */
     protected void toggleOrientation() {
         commitAndDeactivate();
-        
+
         Document3.ORIENTATION newOrientation = currentOrientation;
         switch (currentOrientation) {
         case ALL_LTR:
@@ -549,7 +554,7 @@ public class EditorController implements IEditor {
         }
         LOGGER.info("Switch document orientation from " + currentOrientation + " to " + newOrientation);
         currentOrientation = newOrientation;
-        
+
         applyOrientationToEditor();
 
         int activeSegment = displayedEntryIndex;
@@ -646,6 +651,7 @@ public class EditorController implements IEditor {
         }
 
         Document3 doc = new Document3(this);
+        entriesFilter = new BaseFilter(Core.getProject());
 
         ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<>(file.entries.size());
         for (int i = 0; i < file.entries.size(); i++) {
@@ -725,7 +731,7 @@ public class EditorController implements IEditor {
 
         // forget about old marks
         m_docSegList[displayedEntryIndex].createSegmentElement(true);
-        
+
         Core.getNotes().setNoteText(Core.getProject().getTranslationInfo(ste).note);
 
         // then add new marks
@@ -734,7 +740,7 @@ public class EditorController implements IEditor {
         editor.undoManager.reset();
 
         history.insertNew(m_docSegList[displayedEntryIndex].segmentNumberInProject);
-        
+
         setMenuEnabled();
 
         showStat();
@@ -774,10 +780,10 @@ public class EditorController implements IEditor {
 
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste);
-        
+
         dirtyTime = -1;
     }
-    
+
     private void setMenuEnabled() {
         // update history menu items
         mw.menu.gotoHistoryBackMenuItem.setEnabled(history.hasPrev());
@@ -840,13 +846,13 @@ public class EditorController implements IEditor {
 
         final int p = lookPrev;
         final int n = lookNext;
-        //scroll a little up and down and then back, in separate thread, else 
+        //scroll a little up and down and then back, in separate thread, else
         // gui is not updated!
-        // It can happen that this method is called multiple time in short 
-        // period E.g. on project reload, the first entry is activated, and 
-        // then the last active segment. In between the file can be changed. 
-        // When the first thread starts scrolling (for go to first 
-        // segment), the scrolling could be done for the wrong document, 
+        // It can happen that this method is called multiple time in short
+        // period E.g. on project reload, the first entry is activated, and
+        // then the last active segment. In between the file can be changed.
+        // When the first thread starts scrolling (for go to first
+        // segment), the scrolling could be done for the wrong document,
         // possibly causing IllegalArgumentExceptions. They can be ignored.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -899,7 +905,7 @@ public class EditorController implements IEditor {
         final MainWindowUI.STATUS_BAR_MODE progressMode =
                 Preferences.getPreferenceEnumDefault(Preferences.SB_PROGRESS_MODE,
                         MainWindowUI.STATUS_BAR_MODE.DEFAULT);
-        
+
         if (progressMode == MainWindowUI.STATUS_BAR_MODE.DEFAULT) {
             StringBuilder pMsg = new StringBuilder(1024).append(" ");
             pMsg.append(translatedInFile).append("/").append(fi.entries.size()).append(" (")
@@ -930,7 +936,7 @@ public class EditorController implements IEditor {
 
     /**
      * Go to segment at specified location.
-     * 
+     *
      * @param location
      *            location
      * @return true if segment changed, false if location inside current segment
@@ -980,7 +986,7 @@ public class EditorController implements IEditor {
      * in Workflow options dialog.
      * <p>
      * All displayed segments with the same source text updated also.
-     * 
+     *
      */
     public void commitAndDeactivate() {
         UIThreadsUtil.mustBeSwingThread();
@@ -1105,7 +1111,7 @@ public class EditorController implements IEditor {
                 }
             }.execute();
         }
-        
+
         synchronized (this) {
             notifyAll();
         }
@@ -1291,7 +1297,7 @@ public class EditorController implements IEditor {
             if (displayedFileIndex == startFileIndex && displayedEntryIndex == startEntryIndex) {
                 break; // not found
             }
-            
+
             if (!findTranslated) {
                 if (!Core.getProject().getTranslationInfo(ste).isTranslated()) {
                     break;// non-translated
@@ -1317,7 +1323,7 @@ public class EditorController implements IEditor {
 
         this.editor.setCursor(oldCursor);
     }
-    
+
     /**
      * Finds the next untranslated entry in the document.
      */
@@ -1367,7 +1373,7 @@ public class EditorController implements IEditor {
                     displayedFileIndex = 0;
                 }
                 // To get proper EntryIndex when filter active.
-                loadDocument(); 
+                loadDocument();
             }
             ste = getCurrentEntry();
 
@@ -1377,7 +1383,7 @@ public class EditorController implements IEditor {
             }
             if (displayedFileIndex == startFileIndex && displayedEntryIndex == startEntryIndex) {
                 // Found no segment with a note. Cursor remains at starting position.
-                break; 
+                break;
             }
             if (Core.getProject().getTranslationInfo(ste).hasNote()) {
                 // Non-translated.
@@ -1431,7 +1437,7 @@ public class EditorController implements IEditor {
             }
             if (displayedFileIndex == startFileIndex && displayedEntryIndex == startEntryIndex) {
                 // Found no segment with a note. Cursor remains at starting position.
-                break; 
+                break;
             }
             if (Core.getProject().getTranslationInfo(ste).hasNote()) {
                 // Non-translated.
@@ -1488,7 +1494,7 @@ public class EditorController implements IEditor {
             if (displayedFileIndex == startFileIndex && displayedEntryIndex == startEntryIndex) {
                 break; // not found
             }
-            
+
             if (ste.getDuplicate() != DUPLICATE.NEXT){
                 break;
             }
@@ -1536,8 +1542,8 @@ public class EditorController implements IEditor {
      */
     public void gotoEntry(final int entryNum) {
         gotoEntry(entryNum, CaretPosition.startOfEntry());
-    }    
-    
+    }
+
     public void gotoEntry(final int entryNum, final CaretPosition pos) {
         UIThreadsUtil.mustBeSwingThread();
 
@@ -1588,7 +1594,7 @@ public class EditorController implements IEditor {
 
     public void gotoEntry(String srcString, EntryKey key) {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         /*
          * Goto segment with contains matched source. Since it enough rarely executed code, it
          * will be better to find this segment each time, instead use additional memory storage.
@@ -1636,10 +1642,10 @@ public class EditorController implements IEditor {
         boolean doCommit = fixedEntries != null && fixedEntries.contains(getCurrentEntryNumber());
         refreshView(doCommit);
     }
-    
+
     public void refreshView(boolean doCommit) {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         if (!doCommit) {
             deactivateWithoutCommit();
         }
@@ -1651,7 +1657,7 @@ public class EditorController implements IEditor {
 
     /**
      * Change case of the selected text or if none is selected, of the current word.
-     * 
+     *
      * @param toWhat
      *            : lower, title, upper or cycle
      */
@@ -1931,10 +1937,10 @@ public class EditorController implements IEditor {
 
     /**
      * Detects the language of the instant start guide (checks if present in default locale's language).
-     * 
+     *
      * If there is no instant start guide in the default locale's language, "en" (English) is returned,
      * otherwise the acronym for the default locale's language.
-     * 
+     *
      * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     private String detectInstantStartLanguage() {
@@ -2052,7 +2058,7 @@ public class EditorController implements IEditor {
      */
     public void removeFilter() {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         entriesFilter = null;
         if (entriesFilterControlComponent != null) {
             pane.remove(entriesFilterControlComponent);
@@ -2073,7 +2079,7 @@ public class EditorController implements IEditor {
             }
         }
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -2174,7 +2180,7 @@ public class EditorController implements IEditor {
             return new CaretPosition(0);
         }
     }
-    
+
     @Override
     public void waitForCommit(int timeoutSeconds) {
         ForceCommitTimer timer;
@@ -2246,14 +2252,14 @@ public class EditorController implements IEditor {
     }
 
     private class ForceCommitTimer extends Thread {
-        
+
         private final long limit;
         private boolean isCanceled = false;
-        
+
         public ForceCommitTimer(int limit) {
             this.limit = limit * 1000000000L;
         }
-        
+
         @Override
         public void run() {
             while (!isCanceled) {
@@ -2279,7 +2285,7 @@ public class EditorController implements IEditor {
                 }
             }
         }
-        
+
         public void cancel() {
             this.isCanceled = true;
         }

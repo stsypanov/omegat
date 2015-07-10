@@ -36,16 +36,6 @@ public class GuiUtils {
 	}
 
 	public static void loadLayoutPreferences(Window window, String prefX, String prefY, String prefWidth, String prefHeight) {
-		try {
-			loadPreferences(window, prefX, prefY, prefWidth, prefHeight);
-		} catch (NumberFormatException nfe) {
-			// set default size and position
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			window.setBounds((screenSize.width - 640) / 2, (screenSize.height - 400) / 2, 640, 400);
-		}
-	}
-
-	public static void loadPreferences(Window window, String prefX, String prefY, String prefWidth, String prefHeight) {
 		int x = Integer.parseInt(Preferences.getPreference(prefX));
 		int y = Integer.parseInt(Preferences.getPreference(prefY));
 		window.setLocation(x, y);
