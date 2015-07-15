@@ -632,6 +632,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         JMenuItem[] itemsToSwitchOn = new JMenuItem[] { projectImportMenuItem, projectWikiImportMenuItem,
                 projectReloadMenuItem, projectCloseMenuItem, projectSaveMenuItem, projectEditMenuItem,
                 projectCompileMenuItem, projectSingleCompileMenuItem, projectAccessProjectFilesMenu,
+                openTargetFolderMenuItem,
 
                 editMenu, editFindInProjectMenuItem, editReplaceInProjectMenuItem, editInsertSourceMenuItem,
                 editInsertTranslationMenuItem, editTagPainterMenuItem, editOverwriteSourceMenuItem,
@@ -646,7 +647,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
                 viewFileListMenuItem, toolsValidateTagsMenuItem, toolsSingleValidateTagsMenuItem,
                 toolsShowStatisticsStandardMenuItem, toolsShowStatisticsMatchesMenuItem,
-                toolsShowStatisticsMatchesPerFileMenuItem };
+                toolsShowStatisticsMatchesPerFileMenuItem,
+
+                baseFilteringMenuItem
+        };
 
         for (JMenuItem item : itemsToSwitchOff) {
             item.setEnabled(!isProjectOpened);
