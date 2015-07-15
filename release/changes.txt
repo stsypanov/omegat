@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 3.5.1 
 ----------------------------------------------------------------------
-   5 Enhancements
+   8 Enhancements
    4 Bug fixes
    1 Localisation update
 ----------------------------------------------------------------------
@@ -18,11 +18,22 @@
   - Allow per-project main window layouts
   https://sourceforge.net/p/omegat/feature-requests/1102/
 
+  - Access Project Contents
+  https://sourceforge.net/p/omegat/feature-requests/1110/
+
   Other changes:
 
   - Team projects: Git library updated to 3.7.1
 
   - Use full text search for glossary hits when language is not space-delimited
+
+  - In the Option menu, Access Configuration Folder allows accessing
+directly the configuration folder
+
+  - The encoding of glossaries is now determined automatically. That means
+you can now have a .tab or .csv glossary in UTF-16 LE and a .txt glossary in 
+Windows 1252. Of course, the encoding must be compatible with both the 
+languages contained, so Unicode is recommanded.
 
   Bug fixes:
 
@@ -232,13 +243,34 @@ of "foo\.\scripts"
   - Japanese localisation updated to 3.4 (UI, readme)
 
 ----------------------------------------------------------------------
- OmegaT 3.1.9 update 3
+ OmegaT 3.1.9 update 4 
 ----------------------------------------------------------------------
    0 Enhancement
-   0 Bug fix
+   1 Bug fix
+   0 Localisation update
+----------------------------------------------------------------------
+3.1.9 update 4 vs. 3.1.9 update 3
+
+  Bug fixes:
+
+  Mac: With the included JRE, it was not possible to launch scripts
+opening files or folders
+
+----------------------------------------------------------------------
+ OmegaT 3.1.9 update 3 (2015-07-10)
+----------------------------------------------------------------------
+   0 Enhancement
+   1 Bug fix
    1 Localisation update
 ----------------------------------------------------------------------
-3.1.9 update 2 vs. 3.1.9 update 1
+3.1.9 update 3 vs. 3.1.9 update 2
+
+  Bug fixes:
+
+  - When a segment contained only protected text, and that the
+translation contained text, an error occurred when trying to create
+the translated document, resulting in the translated document being 
+empty
 
   Localisation updates:
 

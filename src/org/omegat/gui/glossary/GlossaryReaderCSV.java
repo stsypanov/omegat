@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2010 Alex Buloichik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -33,7 +34,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.omegat.util.ByteUtils;
+import org.omegat.filters2.EncodingDetector;
 import org.omegat.util.OConsts;
 
 /**
@@ -42,18 +43,24 @@ import org.omegat.util.OConsts;
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
  * @author Alex Buloichik <alex73mail@gmail.com>
+ * @author Aaron Madlon-Kay
  */
 public class GlossaryReaderCSV {
     /** Fields separator. Can be dependent of regional options. */
     protected static final char SEPARATOR = ',';
 
     public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
+        String encoding = EncodingDetector.detectEncodingDefault(file, OConsts.UTF8);
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
 
-        List<GlossaryEntry> result = new ArrayList<>();
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), OConsts.UTF8);
-             BufferedReader in = new BufferedReader(reader)) {
+        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
+        BufferedReader in = new BufferedReader(reader);
+        try {
             // BOM (byte order mark) bugfix
-            ByteUtils.checkByteOrderMark(in);
+            in.mark(1);
+            int ch = in.read();
+            if (ch != 0xFEFF)
+                in.reset();
 
             for (String s = in.readLine(); s != null; s = in.readLine()) {
                 // skip lines that start with '#'
@@ -73,13 +80,15 @@ public class GlossaryReaderCSV {
                     comment = tokens[2];
                 result.add(new GlossaryEntry(tokens[0], tokens[1], comment, priorityGlossary));
             }
+        } finally {
+            in.close();
         }
 
         return result;
     }
 
     private static String[] parseLine(String line) {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
         StringBuilder w = new StringBuilder();
         boolean fopened = false; // field opened by "
         for (int i = 0; i < line.length(); i++) {

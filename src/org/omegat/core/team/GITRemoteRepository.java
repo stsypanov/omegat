@@ -134,7 +134,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             }
             Throwable cause = e.getCause();
             if (cause != null && cause instanceof org.eclipse.jgit.errors.NoRemoteRepositoryException) {
-                BadRepositoryException bre = new BadRepositoryException(cause.getLocalizedMessage());
+                BadRepositoryException bre = new BadRepositoryException(((org.eclipse.jgit.errors.NoRemoteRepositoryException)cause).getLocalizedMessage());
                 bre.initCause(e);
                 throw bre;
             }
@@ -167,13 +167,14 @@ public class GITRemoteRepository implements IRemoteRepository {
     static public boolean deleteDirectory(File path) {
         if( path.exists() ) {
           File[] files = path.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else {
-                    file.delete();
-                }
-            }
+          for(int i=0; i<files.length; i++) {
+             if(files[i].isDirectory()) {
+               deleteDirectory(files[i]);
+             }
+             else {
+               files[i].delete();
+             }
+          }
         }
         return( path.delete() );
       }
@@ -211,7 +212,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             return;
         }
         myCredentialsProvider.setCredentials(credentials);
-        readOnly = credentials.readOnly;
+        setReadOnly(credentials.readOnly);
     }
 
     public void setReadOnly(boolean value) {
@@ -241,7 +242,7 @@ public class GITRemoteRepository implements IRemoteRepository {
 
     public void restoreBase(File[] files) throws Exception {
         String baseRevisionId = getBaseRevisionId(files[0]);
-        Log.logDebug(LOGGER, "GIT restore base {0} for {1}", baseRevisionId, files);
+        Log.logDebug(LOGGER, "GIT restore base {0} for {1}", baseRevisionId, (Object) files);
         //undo local changes of specific file.
         CheckoutCommand checkoutCommand = new Git(repository).checkout();
         for (File f: files) {
@@ -264,10 +265,14 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    public void updateFullProject() throws  Exception {
+    public void updateFullProject() throws NetworkException, Exception {
         Log.logInfoRB("GIT_START", "pull");
         try {
-            prepare();
+            new Git(repository).fetch().call();
+            new Git(repository).checkout().setName(REMOTE_BRANCH).call();
+            new Git(repository).branchDelete().setBranchNames(LOCAL_BRANCH).setForce(true).call();
+            new Git(repository).checkout().setStartPoint(REMOTE_BRANCH).setCreateBranch(true)
+                    .setName(LOCAL_BRANCH).setForce(true).call();
             new Git(repository).submoduleUpdate().call();
             Log.logInfoRB("GIT_FINISH", "pull");
         } catch (Exception ex) {
@@ -276,10 +281,14 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    public void download(File[] files) throws  Exception {
+    public void download(File[] files) throws NetworkException, Exception {
         Log.logInfoRB("GIT_START", "download");
         try {
-            prepare();
+            new Git(repository).fetch().call();
+            new Git(repository).checkout().setName(REMOTE_BRANCH).call();
+            new Git(repository).branchDelete().setBranchNames(LOCAL_BRANCH).setForce(true).call();
+            new Git(repository).checkout().setStartPoint(REMOTE_BRANCH).setCreateBranch(true)
+                    .setName(LOCAL_BRANCH).setForce(true).call();
             Log.logInfoRB("GIT_FINISH", "download");
         } catch (Exception ex) {
             Log.logErrorRB("GIT_ERROR", "download", ex.getMessage());
@@ -287,15 +296,7 @@ public class GITRemoteRepository implements IRemoteRepository {
         }
     }
 
-    private void prepare() throws GitAPIException {
-        new Git(repository).fetch().call();
-        new Git(repository).checkout().setName(REMOTE_BRANCH).call();
-        new Git(repository).branchDelete().setBranchNames(LOCAL_BRANCH).setForce(true).call();
-        new Git(repository).checkout().setStartPoint(REMOTE_BRANCH).setCreateBranch(true)
-                .setName(LOCAL_BRANCH).setForce(true).call();
-    }
-
-    public void upload(File file, String commitMessage) throws  Exception {
+    public void upload(File file, String commitMessage) throws NetworkException, Exception {
         if (readOnly) {
             // read-only - upload disabled
             Log.logInfoRB("GIT_READONLY");
@@ -416,7 +417,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             } catch (FileNotFoundException ex) {
                 credentials = new Credentials();
             } catch (IOException ex) {
-                Log.log(ex);
+                ex.printStackTrace();
             }
         }
         
@@ -535,15 +536,13 @@ public class GITRemoteRepository implements IRemoteRepository {
             TeamUserPassDialog userPassDialog = new TeamUserPassDialog(Core.getMainWindow().getApplicationFrame());
             userPassDialog.descriptionTextArea.setText(OStrings.getString(credentials.username==null ? "TEAM_USERPASS_FIRST" : "TEAM_USERPASS_WRONG"));
             //if username is already available in uri, then we will not be asked for an username, so we cannot change it.
-            if (usernameInUri != null && !usernameInUri.isEmpty()) {
-                userPassDialog.userText.setText(usernameInUri);
-                userPassDialog.userText.setEditable(false);
-                userPassDialog.userText.setEnabled(false);
+            if (!StringUtil.isEmpty(usernameInUri)) {
+                userPassDialog.setFixedUsername(usernameInUri);
             }
             userPassDialog.setVisible(true);
             if (userPassDialog.getReturnStatus() == TeamUserPassDialog.RET_OK) {
                 credentials.username = userPassDialog.userText.getText();
-                credentials.password = userPassDialog.passwordField.getPassword();
+                credentials.password = userPassDialog.getPasswordCopy();
                 credentials.readOnly = userPassDialog.cbReadOnly.isSelected();
                 if (gitRemoteRepository != null) {
                     gitRemoteRepository.setReadOnly(credentials.readOnly);
