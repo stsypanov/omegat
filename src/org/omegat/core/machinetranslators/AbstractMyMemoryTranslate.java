@@ -153,15 +153,14 @@ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
 	 * @return
 	 */
 	private int getLevensteinDistance(String text, String sourceSeg) {
-            int dist;
-            LevenshteinDistance leven = new LevenshteinDistance(); 
+        LevenshteinDistance leven = new LevenshteinDistance();
             ITokenizer srcTokenizer = Core.getProject().getSourceTokenizer();
 
             Token[] textTokenArray = srcTokenizer.tokenizeAllExactly(text);
             Token[] sourceSegTokenArray = srcTokenizer.tokenizeAllExactly(sourceSeg);
-            
-            dist = leven.compute(textTokenArray, sourceSegTokenArray);
-            return dist;
+
+        int dist = leven.compute(textTokenArray, sourceSegTokenArray);
+        return dist;
 	}
     
 
