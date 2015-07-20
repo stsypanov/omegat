@@ -60,7 +60,6 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.clipboard.ClipboardUtils;
-import org.omegat.gui.dictionaries.DictionaryPopup;
 import org.omegat.gui.dictionaries.DictionaryPopupController;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
@@ -92,7 +91,7 @@ public class EditorTextArea3 extends JEditorPane {
 
     protected String currentWord;
 
-    protected AutoCompleter autoCompleter = new AutoCompleter(this);
+    protected AutoCompleter autoCompleter;
     private DictionaryPopupController dictionaryPopupController;
 
     public EditorTextArea3(EditorController controller) {
@@ -151,10 +150,7 @@ public class EditorTextArea3 extends JEditorPane {
                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                    boolean suits = System.currentTimeMillis() - lastShiftStroke <= INTERVAL;
                    if (suits) {
-                       if (dictionaryPopupController == null) {
-                           dictionaryPopupController = new DictionaryPopupController(new DictionaryPopup(), Core.getDictionariesTextArea());
-                       }
-                       dictionaryPopupController.showPopup();
+
                    }
                    lastShiftStroke = System.currentTimeMillis();
                }
@@ -188,7 +184,7 @@ public class EditorTextArea3 extends JEditorPane {
     protected MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            autoCompleter.setVisible(false);
+            getAutoCompleter().setVisible(false);
             
             // where is the mouse
             int mousepos = viewToModel(e.getPoint());
@@ -279,7 +275,7 @@ public class EditorTextArea3 extends JEditorPane {
         Document3 doc = getOmDocument();
 
         // non-standard processing
-        if (autoCompleter.processKeys(e)) {
+        if (getAutoCompleter().processKeys(e)) {
             // The AutoCompleter needs special treatment.
             processed = true;
         } else if (StaticUtils.isKey(e, KeyEvent.VK_CONTEXT_MENU, 0)
@@ -599,7 +595,7 @@ public class EditorTextArea3 extends JEditorPane {
                 setCaretPosition(end);
             }
         }
-        autoCompleter.updatePopup();
+        getAutoCompleter().updatePopup();
     }
 
     /**
@@ -658,6 +654,13 @@ public class EditorTextArea3 extends JEditorPane {
         int pos = viewToModel(event.getPoint());
         int s = controller.getSegmentIndexAtLocation(pos);
         return controller.markerController.getToolTips(s, pos);
+    }
+
+    public AutoCompleter getAutoCompleter(){
+        if (autoCompleter ==null){
+            autoCompleter = new AutoCompleter(this);
+        }
+        return autoCompleter;
     }
 
     /**

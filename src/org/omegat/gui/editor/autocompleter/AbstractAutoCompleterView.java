@@ -34,6 +34,7 @@ import javax.swing.text.BadLocationException;
 import org.omegat.core.Core;
 import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.tokenizer.ITokenizer;
+import org.omegat.util.Log;
 
 /**
  * An abstract auto-completer view.
@@ -164,7 +165,16 @@ abstract public class AbstractAutoCompleterView {
             int translationStart = editor.getOmDocument().getTranslationStart();
             return editor.getDocument().getText(translationStart, offset - translationStart);
         } catch (BadLocationException e) {
+            Log.log(e);
             return "";
         }
+    }
+
+    /**
+     * Override this method if you want to do some specific action before popup is shown.
+     * E.e. in  DictionaryAutoCompleterView the cursor is placed into search field
+     */
+    public void onShow(){
+
     }
 }

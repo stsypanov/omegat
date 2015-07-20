@@ -313,7 +313,6 @@ public class EditorController implements IEditor {
         pane = new DockablePanel("EDITOR", " ", false);
         pane.setComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
         pane.setMinimumSize(new Dimension(100, 100));
-        pane.setBorder(UIManager.getBorder("OmegaTDockablePanel.border"));
         pane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -322,14 +321,6 @@ public class EditorController implements IEditor {
         });
 
         scrollPane = new JScrollPane(editor);
-        Border panelBorder = UIManager.getBorder("OmegaTDockablePanel.border");
-        if (panelBorder != null) {
-            scrollPane.setBorder(panelBorder);
-        }
-        Border viewportBorder = UIManager.getBorder("OmegaTDockablePanelViewport.border");
-        if (viewportBorder != null) {
-            scrollPane.setViewportBorder(viewportBorder);
-        }
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         pane.setLayout(new BorderLayout());
@@ -2128,7 +2119,9 @@ public class EditorController implements IEditor {
 
     @Override
     public void windowDeactivated() {
-        editor.autoCompleter.setVisible(false);
+        if (editor.autoCompleter != null) {
+            editor.autoCompleter.setVisible(false);
+        }
     }
 
     /**
