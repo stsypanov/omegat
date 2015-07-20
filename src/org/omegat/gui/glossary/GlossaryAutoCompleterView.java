@@ -181,7 +181,7 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
         }
     }
 
-    static class GlossaryComparator implements Comparator<AutoCompleterItem> {
+    private static class GlossaryComparator implements Comparator<AutoCompleterItem> {
         
         private boolean bySource = Preferences.isPreference(Preferences.AC_GLOSSARY_SORT_BY_SOURCE);
         private boolean byLength = Preferences.isPreference(Preferences.AC_GLOSSARY_SORT_BY_LENGTH);
