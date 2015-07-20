@@ -35,6 +35,7 @@ import org.omegat.core.Core;
 import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Language;
+import org.omegat.util.Log;
 
 /**
  * An abstract auto-completer view.
@@ -179,10 +180,18 @@ abstract public class AbstractAutoCompleterView {
     /**
      * Indicates whether the view should be considered "on" or "off". When off, the view will not be shown in
      * any circumstances (whether automatically or manually).
-     * 
+     *
      * @return
      */
     protected boolean isEnabled() {
         return true;
+    }
+
+    /**
+     * Override this method if you want to do some specific action before popup is shown.
+     * E.e. in  DictionaryAutoCompleterView the cursor is placed into search field
+     */
+    public void onShow(){
+
     }
 }
