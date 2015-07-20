@@ -122,10 +122,10 @@ import com.vlsolutions.swing.docking.event.DockableSelectionListener;
 
 /**
  * Class for control all editor operations.
- * 
+ *
  * You can find good description of java text editor working at
  * http://java.sun.com/products/jfc/tsc/articles/text/overview/
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -205,7 +205,7 @@ public class EditorController implements IEditor {
     private Component entriesFilterControlComponent;
 
     private SegmentExportImport segmentExportImport;
-    
+
     /**
      * Previous translations. Used for optimistic locking.
      */
@@ -363,7 +363,6 @@ public class EditorController implements IEditor {
         pane = new DockablePanel("EDITOR", " ", false);
         pane.setComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
         pane.setMinimumSize(new Dimension(100, 100));
-        pane.setBorder(UIManager.getBorder("OmegaTDockablePanel.border"));
         pane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -373,7 +372,7 @@ public class EditorController implements IEditor {
 
         scrollPane = new JScrollPane(editor);
         Border panelBorder = UIManager.getBorder("OmegaTDockablePanel.border");
-        if (panelBorder != null) { 
+        if (panelBorder != null) {
             scrollPane.setBorder(panelBorder);
         }
         Border viewportBorder = UIManager.getBorder("OmegaTDockablePanelViewport.border");
@@ -584,7 +583,7 @@ public class EditorController implements IEditor {
     private void updateTitle() {
         pane.setName(StaticUIUtils.truncateToFit(title, pane, 70));
     }
-    
+
     private void setFont(final Font font) {
         this.font = font;
         editor.setFont(font);
@@ -640,7 +639,7 @@ public class EditorController implements IEditor {
      */
     protected void toggleOrientation() {
         commitAndDeactivate();
-        
+
         Document3.ORIENTATION newOrientation = currentOrientation;
         switch (currentOrientation) {
         case ALL_LTR:
@@ -659,7 +658,7 @@ public class EditorController implements IEditor {
         }
         LOGGER.info("Switch document orientation from " + currentOrientation + " to " + newOrientation);
         currentOrientation = newOrientation;
-        
+
         applyOrientationToEditor();
 
         loadDocument();
@@ -872,7 +871,7 @@ public class EditorController implements IEditor {
         editor.undoManager.reset();
 
         history.insertNew(builder.segmentNumberInProject);
-        
+
         setMenuEnabled();
 
         showStat();
@@ -1030,7 +1029,7 @@ public class EditorController implements IEditor {
         final MainWindowUI.STATUS_BAR_MODE progressMode =
                 Preferences.getPreferenceEnumDefault(Preferences.SB_PROGRESS_MODE,
                         MainWindowUI.STATUS_BAR_MODE.DEFAULT);
-        
+
         if (progressMode == MainWindowUI.STATUS_BAR_MODE.DEFAULT) {
             StringBuilder pMsg = new StringBuilder(1024).append(" ");
             pMsg.append(translatedInFile).append("/").append(fi.entries.size()).append(" (")
@@ -1061,7 +1060,7 @@ public class EditorController implements IEditor {
 
     /**
      * Go to segment at specified location.
-     * 
+     *
      * @param location
      *            location
      * @return true if segment changed, false if location inside current segment
@@ -1112,7 +1111,7 @@ public class EditorController implements IEditor {
      * in Workflow options dialog.
      * <p>
      * All displayed segments with the same source text updated also.
-     * 
+     *
      */
     public void commitAndDeactivate() {
         UIThreadsUtil.mustBeSwingThread();
@@ -1419,7 +1418,7 @@ public class EditorController implements IEditor {
             }
         });
     }
-    
+
     /**
      * Finds the next untranslated entry in the document.
      */
@@ -1523,8 +1522,8 @@ public class EditorController implements IEditor {
      */
     public void gotoEntry(final int entryNum) {
         gotoEntry(entryNum, CaretPosition.startOfEntry());
-    }    
-    
+    }
+
     public void gotoEntry(final int entryNum, final CaretPosition pos) {
         UIThreadsUtil.mustBeSwingThread();
 
@@ -1575,7 +1574,7 @@ public class EditorController implements IEditor {
 
     public void gotoEntry(String srcString, EntryKey key) {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         /*
          * Goto segment with contains matched source. Since it enough rarely executed code, it
          * will be better to find this segment each time, instead use additional memory storage.
@@ -1623,10 +1622,10 @@ public class EditorController implements IEditor {
         boolean doCommit = fixedEntries != null && fixedEntries.contains(getCurrentEntryNumber());
         refreshView(doCommit);
     }
-    
+
     public void refreshView(boolean doCommit) {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         if (!doCommit) {
             deactivateWithoutCommit();
         }
@@ -1638,7 +1637,7 @@ public class EditorController implements IEditor {
 
     /**
      * Change case of the selected text or if none is selected, of the current word.
-     * 
+     *
      * @param toWhat
      *            : lower, title, upper or cycle
      */
@@ -1947,7 +1946,7 @@ public class EditorController implements IEditor {
 
     /**
      * Detects the language of the instant start guide (checks if present in default locale's language).
-     * 
+     *
      * If there is no instant start guide in the default locale's language, "en" (English) is returned,
      * otherwise the acronym for the default locale's language.
      */
@@ -2082,7 +2081,7 @@ public class EditorController implements IEditor {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -2125,7 +2124,9 @@ public class EditorController implements IEditor {
 
     @Override
     public void windowDeactivated() {
-        editor.autoCompleter.setVisible(false);
+        if (editor.autoCompleter != null) {
+            editor.autoCompleter.setVisible(false);
+        }
     }
 
     /**

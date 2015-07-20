@@ -38,12 +38,12 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 
+import org.omegat.core.Core;
+import org.omegat.gui.dictionaries.DictionaryPopupController;
 import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.gui.editor.TagAutoCompleterView;
 import org.omegat.gui.editor.autotext.AutotextAutoCompleterView;
@@ -65,7 +65,7 @@ import org.omegat.util.StringUtil;
 public class AutoCompleter implements IAutoCompleter {    
     
     private final static boolean ON_MAC = Platform.isMacOSX();
-    
+
     // On OS X: Esc (matches system word autocomplete; Cmd+Space conflicts with IME)
     // Otherwise: Ctrl+Space (matches input assist in some IDEs, etc.)
     private final static int TRIGGER_KEY = ON_MAC ? KeyEvent.VK_ESCAPE : KeyEvent.VK_SPACE;
@@ -81,10 +81,10 @@ public class AutoCompleter implements IAutoCompleter {
     private final static int MIN_VIEWPORT_HEIGHT = 50;
     private final static int MAX_POPUP_WIDTH = 500;
     
-    JPopupMenu popup = new JPopupMenu(); 
-    private EditorTextArea3 editor; 
+    private JPopupMenu popup;
+    private EditorTextArea3 editor;
     
-    
+
     public final static int PAGE_ROW_COUNT = 10;
     
     boolean didPopUpAutomatically = false;
@@ -115,21 +115,26 @@ public class AutoCompleter implements IAutoCompleter {
         scroll.getHorizontalScrollBar().setFocusable(false); 
         
         // add any views here
+        DictionaryAutoCompleterView dictionaryAutoCompleterView = new DictionaryAutoCompleterView();
+        new DictionaryPopupController(dictionaryAutoCompleterView, Core.getDictionariesTextArea());
+
+        views = new ArrayList<>(5);
+        addView(dictionaryAutoCompleterView);
         addView(new GlossaryAutoCompleterView());
         addView(new AutotextAutoCompleterView());
         addView(new TagAutoCompleterView());
         addView(new CharTableAutoCompleterView());
 
         viewLabel = new JLabel();
-        viewLabel.setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, UIManager.getColor("OmegaTBorder.color")),
-                new EmptyBorder(5, 5, 5, 5)));
         viewLabel.setOpaque(true);
-        popup.setBorder(new MatteBorder(1, 1, 1, 1, UIManager.getColor("OmegaTBorder.color")));
+
+        popup = new JPopupMenu();
+        popup.setBorder(new MatteBorder(1, 1, 1, 1, Color.BLACK));
         popup.setLayout(new BorderLayout());
         popup.add(scroll, BorderLayout.CENTER); 
         popup.add(viewLabel, BorderLayout.SOUTH);
-    } 
+        selectNextView();
+    }
 
     @Override
     public void addView(AbstractAutoCompleterView view) {
@@ -147,8 +152,9 @@ public class AutoCompleter implements IAutoCompleter {
      * @return true if a key has been processed, false if otherwise.
      */
     public boolean processKeys(KeyEvent e) {
-        
-        if (!isVisible() && StaticUtils.isKey(e, TRIGGER_KEY, TRIGGER_KEY_MASK)) {
+
+        if (!isVisible() && ((!Platform.isMacOSX() && StaticUtils.isKey(e, KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK))
+                || (Platform.isMacOSX() && StaticUtils.isKey(e, KeyEvent.VK_ESCAPE, 0)))) {
 
             if (!editor.isInActiveTranslation(editor.getCaretPosition())) {
                 return false;
@@ -238,6 +244,7 @@ public class AutoCompleter implements IAutoCompleter {
             Point p = getDisplayPoint();
             popup.show(editor, p.x, p.y);
         }
+        view.onShow();
     }
     
     /**
@@ -318,8 +325,7 @@ public class AutoCompleter implements IAutoCompleter {
      * Update the view label
      */
     private void updateViewLabel() {
-        StringBuilder sb = new StringBuilder("<html>");
-        sb.append("<b>");
+        StringBuilder sb = new StringBuilder("<html><b>");
         sb.append(getCurrentView().getName());
         sb.append("</b>");
         
@@ -392,7 +398,7 @@ public class AutoCompleter implements IAutoCompleter {
                 public void run() {
                     Point p = getDisplayPoint();
                     popup.show(editor, p.x, p.y);
-                    editor.requestFocus(); 
+                    editor.requestFocus();
                 }
             });
         } else {
@@ -405,7 +411,7 @@ public class AutoCompleter implements IAutoCompleter {
         return currentView != -1 || selectNextView();
     }
 
-    /** 
+    /**
      * get the key text
      * @param base
      * @param modifier
