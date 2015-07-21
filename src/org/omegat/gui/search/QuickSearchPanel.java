@@ -2,7 +2,6 @@ package org.omegat.gui.search;
 
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -20,7 +19,6 @@ public class QuickSearchPanel extends JPanel {
         super();
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         textField = new JComboBox<>();
-        textField.setBorder(new EmptyBorder(0, 0, 0, 0));
         textField.setEditable(true);
         closeButton = new JButton("x");
 
