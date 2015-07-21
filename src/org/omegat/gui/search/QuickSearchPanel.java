@@ -2,16 +2,13 @@ package org.omegat.gui.search;
 
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-/**
- * Created by Сергей on 17.05.2015.
- */
+
 public class QuickSearchPanel extends JPanel {
 
-    private final JTextField textField;
+    private final JComboBox<String> textField;
     private final JButton closeButton;
     private final JCheckBox matchCaseCheckBox;
     private final JCheckBox regexCheckBox;
@@ -19,8 +16,8 @@ public class QuickSearchPanel extends JPanel {
     public QuickSearchPanel() {
         super();
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        textField = new JTextField(50);
-        textField.setBorder(new EmptyBorder(0, 0, 0, 0));
+        textField = new JComboBox<>();
+        textField.setEditable(true);
         closeButton = new JButton("x");
 
         matchCaseCheckBox = new JCheckBox("Match case");
