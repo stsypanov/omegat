@@ -380,11 +380,7 @@ public class ProjectUICommands {
             protected void done() {
                 try {
                     get();
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            Core.getEditor().requestFocus();
-                        }
-                    });
+                    Core.getEditor().requestFocus();
                 } catch (Exception ex) {
                     Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
                     Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
@@ -419,14 +415,8 @@ public class ProjectUICommands {
             protected void done() {
                 try {
                     get();
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            // activate entry later - after project will be
-                            // loaded
-                            Core.getEditor().gotoEntry(previousCurEntryNum);
-                            Core.getEditor().requestFocus();
-                        }
-                    });
+                    Core.getEditor().gotoEntry(previousCurEntryNum);
+                    Core.getEditor().requestFocus();
                 } catch (Exception ex) {
                     processSwingWorkerException(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
                 }
