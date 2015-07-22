@@ -76,12 +76,10 @@ public class OStrings {
      */
     public static void loadBundle(String filename) {
         boolean loaded = false;
-        try {
+        try (FileInputStream in = new FileInputStream(filename)) {
             // Load the resource bundle
-            FileInputStream in = new FileInputStream(filename);
             bundle = new PropertyResourceBundle(in);
             loaded = true;
-            in.close();
         } catch (FileNotFoundException exception) {
             System.err.println("Resource bundle file not found: " + filename);
         } catch (IOException exception) {
@@ -111,7 +109,7 @@ public class OStrings {
                 getString("version-update-template"), new Object[] { VERSION, UPDATE }) : StaticUtils.format(
                 getString("version-template"), new Object[] { VERSION, UPDATE });
         if (!BRANDING.isEmpty()) {
-            result += " " + BRANDING;
+            result += ' ' + BRANDING;
         }
         return result;
     }

@@ -46,7 +46,7 @@ public class FileUtilTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         base = FileUtil.createTempDir();
-        System.out.println("Base: " + base.getAbsolutePath());
+        System.err.println("Base: " + base.getAbsolutePath());
     }
 
     @Override
@@ -148,10 +148,11 @@ public class FileUtilTest extends TestCase {
             FileUtil.copyFilesTo(targetFile, sourceDir.listFiles(), null);
             fail("copyFilesTo should fail when target dir is a file.");
         } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
     
-    private abstract class CountingCallback implements ICollisionCallback {
+    private abstract static class CountingCallback implements ICollisionCallback {
         int calledTimes = 0;
     }
     
@@ -169,9 +170,9 @@ public class FileUtilTest extends TestCase {
         if (!dir.isDirectory()) {
             assertTrue(dir.mkdirs());
         }
-        PrintStream stream = new PrintStream(file);
-        stream.println(content);
-        stream.close();
+        try (PrintStream stream = new PrintStream(file)) {
+            stream.println(content);
+        }
         return file;
     }
     
@@ -180,14 +181,15 @@ public class FileUtilTest extends TestCase {
     }
     
     private String readFile(File file) throws IOException {
-        InputStreamReader stream = new InputStreamReader(new FileInputStream(file));
-        char[] cbuf = new char[256];
-        int len;
-        StringBuilder sb = new StringBuilder();
-        while ((len = stream.read(cbuf)) != -1) {
-            sb.append(cbuf, 0, len);
+        try (InputStreamReader stream = new InputStreamReader(new FileInputStream(file))) {
+            char[] cbuf = new char[256];
+            int len;
+            StringBuilder sb = new StringBuilder();
+            while ((len = stream.read(cbuf)) != -1) {
+                sb.append(cbuf, 0, len);
+            }
+            stream.close();
+            return sb.toString();
         }
-        stream.close();
-        return sb.toString();
     }
 }
