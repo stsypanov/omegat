@@ -1105,7 +1105,7 @@ public class SearchWindowController {
 
                 String fulltext = msg;
                 if (ex != null)
-                    fulltext += "\n" + ex.getLocalizedMessage();
+                    fulltext += '\n' + ex.getLocalizedMessage();
                 JOptionPane.showMessageDialog(form, fulltext, OStrings.getString("TF_ERROR"), JOptionPane.ERROR_MESSAGE);
             }
         });
