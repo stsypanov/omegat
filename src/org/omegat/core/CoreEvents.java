@@ -29,8 +29,6 @@ import java.awt.Font;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.SwingUtilities;
-
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IEditorEventListener;
@@ -38,6 +36,8 @@ import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.util.Log;
+
+import javax.swing.*;
 
 /**
  * Class for distribute main application events.
@@ -140,16 +140,12 @@ public class CoreEvents {
 
     /** Fire event. */
     public static void fireApplicationStartup() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Log.logInfoRB("LOG_INFO_EVENT_APPLICATION_STARTUP");
-                synchronized (applicationEventListeners) {
-                    for (IApplicationEventListener listener : applicationEventListeners) {
-                        listener.onApplicationStartup();
-                    }
-                }
+        Log.logInfoRB("LOG_INFO_EVENT_APPLICATION_STARTUP");
+        synchronized (applicationEventListeners) {
+            for (IApplicationEventListener listener : applicationEventListeners) {
+                listener.onApplicationStartup();
             }
-        });
+        }
     }
 
     /** Fire event. */
@@ -165,56 +161,44 @@ public class CoreEvents {
 
     /** Fire event. */
     public static void fireEntryNewFile(final String activeFileName) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Log.logInfoRB("LOG_INFO_EVENT_ENTRY_NEWFILE", activeFileName);
-                synchronized (entryEventListeners) {
-                    for (IEntryEventListener listener : entryEventListeners) {
-                        listener.onNewFile(activeFileName);
-                    }
-                }
+        Log.logInfoRB("LOG_INFO_EVENT_ENTRY_NEWFILE", activeFileName);
+        synchronized (entryEventListeners) {
+            for (IEntryEventListener listener : entryEventListeners) {
+                listener.onNewFile(activeFileName);
             }
-        });
+        }
     }
 
     /** Fire event. */
     public static void fireEntryActivated(final SourceTextEntry newEntry) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Log.logInfoRB("LOG_INFO_EVENT_ENTRY_ACTIVATED");
-                synchronized (entryEventListeners) {
-                    for (IEntryEventListener listener : entryEventListeners) {
-                        listener.onEntryActivated(newEntry);
-                    }
-                }
+        Log.logInfoRB("LOG_INFO_EVENT_ENTRY_ACTIVATED");
+        synchronized (entryEventListeners) {
+            for (IEntryEventListener listener : entryEventListeners) {
+                listener.onEntryActivated(newEntry);
             }
-        });
+        }
     }
 
-    /** Fire event. */
+    /**
+     * Fire event.
+     */
     public static void fireFontChanged(final Font newFont) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Log.logInfoRB("LOG_INFO_EVENT_FONT_CHANGED");
-                synchronized (fontChangedEventListeners) {
-                    for (IFontChangedEventListener listener : fontChangedEventListeners) {
-                        listener.onFontChanged(newFont);
-                    }
-                }
+        Log.logInfoRB("LOG_INFO_EVENT_FONT_CHANGED");
+        synchronized (fontChangedEventListeners) {
+            for (IFontChangedEventListener listener : fontChangedEventListeners) {
+                listener.onFontChanged(newFont);
             }
-        });
+        }
     }
 
-    /** Fire event. */
+    /**
+     * Fire event.
+     */
     public static void fireEditorNewWord(final String newWord) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                synchronized (editorEventListeners) {
-                    for (IEditorEventListener listener : editorEventListeners) {
-                        listener.onNewWord(newWord);
-                    }
-                }
+        synchronized (editorEventListeners) {
+            for (IEditorEventListener listener : editorEventListeners) {
+                listener.onNewWord(newWord);
             }
-        });
+        }
     }
 }
