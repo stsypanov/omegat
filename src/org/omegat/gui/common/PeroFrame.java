@@ -57,7 +57,7 @@ public abstract class PeroFrame extends JFrame {
 			GuiUtils.loadLayoutPreferences(this, getPrefX(), getPrefY(), getPrefWidth(), getPrefHeight());
 		} catch (Exception e) {
 			// set default size and position
-			setSize(600, 500);
+			setPreferredSize(new Dimension(600, 500));
 			setLocation(0, 0);
 		}
 	}

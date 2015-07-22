@@ -21,7 +21,7 @@ public class GuiUtils {
 
 	static {
 		String resources = "/org/omegat/gui/resources/";
-		icons = new ArrayList<>();
+		icons = new ArrayList<>(2);
 		try {
 			icons.add(ResourcesUtil.getImage(resources + "OmegaT_small.gif"));
 			icons.add(ResourcesUtil.getImage(resources + "OmegaT.gif"));
@@ -42,7 +42,7 @@ public class GuiUtils {
 
 		int width = Integer.parseInt(Preferences.getPreference(prefWidth));
 		int height = Integer.parseInt(Preferences.getPreference(prefHeight));
-		window.setSize(width, height);
+		window.setPreferredSize(new Dimension(width, height));
 	}
 
 	public static void saveLayoutPreferences(String prefX, String prefY, String prefWidth, String prefHeight,
