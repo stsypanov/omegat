@@ -229,7 +229,8 @@ public class ProjectFilesListController {
                     if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
                         break;
                     }
-                    if (projectFiles.isEmpty() || projectFiles.size() > 1){
+                    boolean hideFileList = Boolean.valueOf(Preferences.getPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD));
+                    if (!hideFileList && (projectFiles.isEmpty() || projectFiles.size() > 1)){
                         list.setVisible(true);
                     }
                     SwingUtilities.invokeLater(new Runnable() {

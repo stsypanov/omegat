@@ -444,6 +444,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsAccessConfigDirMenuItem = createMenuItem("MW_OPTIONSMENU_ACCESS_CONFIG_DIR"));
         optionsMenu.add(new JSeparator());
         optionsMenu.add(baseFilteringMenuItem = createMenuItem("MW_OPTIONSMENU_BASE_FILTERING"));
+        optionsMenu.add(hideFileListMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_HIDE_FILE_LIST"));
+        hideFileListMenuItem.setSelected(Boolean.valueOf(Preferences.getPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD)));
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
@@ -741,6 +743,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenu optionsMenu;
     JMenuItem optionsRestoreGUIMenuItem;
     JMenuItem baseFilteringMenuItem;
+    JMenuItem hideFileListMenuItem;
     JMenuItem optionsAccessConfigDirMenuItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;

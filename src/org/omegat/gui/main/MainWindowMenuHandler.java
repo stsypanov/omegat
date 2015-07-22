@@ -74,12 +74,6 @@ import org.omegat.gui.stat.StatisticsWindow;
 import org.omegat.util.*;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Handler for main menu items.
@@ -1007,6 +1001,9 @@ public class MainWindowMenuHandler {
         MainWindowUI.resetDesktopLayout(mainWindow);
     }
 
+    /**
+     * Configure base filtering
+     */
     public void baseFilteringMenuItemActionPerformed(){
         if (baseFilteringController == null){
             baseFilteringController = new BaseFilteringController(BaseFilteringDialog.getInstance());
@@ -1014,6 +1011,14 @@ public class MainWindowMenuHandler {
         baseFilteringController.loadItems();
         baseFilteringController.adjustColumnWidth();
         baseFilteringController.showDialog();
+    }
+
+    /**
+     * Let Omegat hide file list on project load
+     */
+    public void hideFileListMenuItemActionPerformed(){
+        boolean selected = mainWindow.menu.hideFileListMenuItem.isSelected();
+        Preferences.setPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD, selected);
     }
 
     public void optionsAccessConfigDirMenuItemActionPerformed() {

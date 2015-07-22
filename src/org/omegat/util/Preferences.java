@@ -364,6 +364,9 @@ public class Preferences {
 
 	public static final String PROXY_POLICY = "proxyPolicy";
 
+	/**
+	 * Proxy preferences
+	 */
 	public static final String SET_HTTP_PROXY = "httpProxySet";
 	public static final String SET_HTTPS_PROXY = "httpsProxySet";
 
@@ -372,6 +375,11 @@ public class Preferences {
 
 	public static final String HTTPS_PROXY_HOST = "httpsProxySet";
 	public static final String HTTPS_PROXY_PORT = "httpsProxySet";
+
+	/**
+	 * Decide whether Omegat should show file list at project load
+	 */
+	public static final String HIDE_FILE_LIST_AT_PROJECT_LOAD = "hideFileListAtProjectLoad";
 
 
 	/** Private constructor, because this file is singleton */
