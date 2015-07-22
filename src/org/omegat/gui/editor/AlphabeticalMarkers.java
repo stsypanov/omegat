@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.omegat.core.Core;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
@@ -82,7 +83,6 @@ public abstract class AlphabeticalMarkers extends JPanel {
     private ColorScheme createColorScheme(final Color editorBackground) {
         int MINIMUM_VISIBILITY = 0x8000;
         int distanceToLightScheme = calcurateSSD(editorBackground, Color.YELLOW);
-        ColorScheme scheme;
         if (distanceToLightScheme >= MINIMUM_VISIBILITY) {
             // Use the light scheme
             //                     background     | foreground | border
@@ -123,7 +123,7 @@ public abstract class AlphabeticalMarkers extends JPanel {
 
             g2.dispose();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Log.log(e);
         }
     }
 
@@ -178,10 +178,11 @@ public abstract class AlphabeticalMarkers extends JPanel {
         double baseCenterY   = base.getCenterY();
         double targetCenterX = target.getCenterX();
         double targetCenterY = target.getCenterY();
-        double diffX = 0, diffY = 0;
+        double diffX = 0;
         if (baseCenterX != targetCenterX) {
             diffX = baseCenterX - targetCenterX;
         }
+        double diffY = 0;
         if (baseCenterY != targetCenterY) {
             diffY = baseCenterY - targetCenterY;
         }
@@ -306,7 +307,7 @@ public abstract class AlphabeticalMarkers extends JPanel {
             return this.getClass().getSimpleName() + " {" 
                     + this.segmentNumber + ", '" 
                     + this.title + "', "
-                    + this.location.toString() + "}";
+                    + this.location + '}';
         }
     }
     

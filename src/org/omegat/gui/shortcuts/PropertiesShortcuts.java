@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.swing.InputMap;
 import javax.swing.JMenu;
@@ -37,6 +38,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import org.omegat.util.Log;
 import org.omegat.util.Platform;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -49,6 +51,7 @@ import org.omegat.util.StringUtil;
  */
 public class PropertiesShortcuts {
 
+    private static final Pattern PATTERN = Pattern.compile("\\.properties$");
     private final Properties properties = new Properties();
 
     /**
@@ -62,8 +65,7 @@ public class PropertiesShortcuts {
     public PropertiesShortcuts(String propertiesFileInClasspath) {
         try {
             if (Platform.isMacOSX()) {
-                String macSpecific = propertiesFileInClasspath
-                        .replaceAll("\\.properties$", ".mac.properties");
+                String macSpecific = PATTERN.matcher(propertiesFileInClasspath).replaceAll(".mac.properties");
                 loadProperties(PropertiesShortcuts.class.getResourceAsStream(macSpecific));
             }
             if (properties.isEmpty()) {
@@ -126,7 +128,7 @@ public class PropertiesShortcuts {
                 try {
                     item.setAccelerator(getKeyStroke(shortcut));
                 } catch (Exception ex) {
-                    // Eat exception silently
+                    Log.log(ex);
                 }
             }
         }
@@ -143,7 +145,7 @@ public class PropertiesShortcuts {
                     inputMap.put(keyStroke, key);
                 }
             } catch (Exception ex) {
-                // Eat exception silently
+                Log.log(ex);
             }
         }
     }

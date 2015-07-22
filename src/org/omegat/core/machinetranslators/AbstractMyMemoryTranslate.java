@@ -29,6 +29,8 @@ package org.omegat.core.machinetranslators;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Language;
@@ -53,12 +55,15 @@ import javax.xml.xpath.XPathFactory;
  * @author Manfred Martin
  */
 public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
-	
+
+    private static final Pattern PATTERN = Pattern.compile("#langCode#", Pattern.LITERAL);
     private static final String MYMEMORY_API_EMAIL = "mymemory.api.email";
     protected static String GT_URL = "http://mymemory.translated.net/api/get?q=";
     protected static String MYMEMORYLABEL_TRANSLATION = "translation";
     protected static String MYMEMORYLABEL_MATCHQUALITYPERCENTAGE = "match";
-    protected static String XPATH_QUERY = "child::tuv[starts-with(@lang, '#langCode#')]/seg/text()"; // MyMemory always returns a 4-letter locale code, even when the query contains a language code only; to make sure we get the right matches, only the language code is taken into account
+    // MyMemory always returns a 4-letter locale code, even when the query contains a language code only;
+    // to make sure we get the right matches, only the language code is taken into account
+    protected static String XPATH_QUERY = "child::tuv[starts-with(@lang, '#langCode#')]/seg/text()";
 
     protected final DocumentBuilderFactory factory;
     protected final XPathFactory xPathFactory;
@@ -101,12 +106,13 @@ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
 	 */
 	protected String getBestTranslation(Language sLang, Language tLang, String text, XPath xpath, NodeList allTUs) throws XPathExpressionException {
 			int lowestEditDistance = 999999; 
-            int dist = 0; 
-            Node tu = null;
-            String sourceSeg = "";
-            String targetSeg = "";
-            String targetSegQueryString = XPATH_QUERY.replace("#langCode#", tLang.getLanguageCode());
-            String sourceSegQueryString = XPATH_QUERY.replace("#langCode#", sLang.getLanguageCode());
+            int dist;
+            Node tu;
+            String sourceSeg;
+            String targetSeg;
+
+            String targetSegQueryString = PATTERN.matcher(XPATH_QUERY).replaceAll(Matcher.quoteReplacement(tLang.getLanguageCode()));
+            String sourceSegQueryString = PATTERN.matcher(XPATH_QUERY).replaceAll(Matcher.quoteReplacement(sLang.getLanguageCode()));
             
             String bestTranslation = "";
         
@@ -174,7 +180,7 @@ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
         }
 
         // Get the results from MyMemory
-        String myMemoryResponse = "";
+        String myMemoryResponse;
         try {
             myMemoryResponse = WikiGet.getURL(url);
         } catch (IOException e) {

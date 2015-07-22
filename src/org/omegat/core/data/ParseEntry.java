@@ -45,6 +45,7 @@ import org.omegat.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -60,13 +61,15 @@ import java.util.regex.Pattern;
 public abstract class ParseEntry implements IParseCallback {
 
     private static final Pattern CARET_RETURN_PATTERN = Pattern.compile("\r", Pattern.LITERAL);
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\r\n", Pattern.LITERAL);
     private final ProjectProperties m_config;
     
     /** Cached segments. */
-    private List<ParseEntryQueueItem> parseQueue = new ArrayList<>();
+    private List<ParseEntryQueueItem> parseQueue;
 
     public ParseEntry(final ProjectProperties m_config) {
         this.m_config = m_config;
+        parseQueue = new ArrayList<>();
     }
 
     protected void setCurrentFile(FileInfo fi) {
@@ -310,8 +313,8 @@ public abstract class ParseEntry implements IParseCallback {
          */
         per.crlf = r.indexOf("\r\n") > 0;
         if (per.crlf)
-            r = r.replace("\r\n", "\n");
-        per.cr = r.indexOf("\r") > 0;
+            r = NEW_LINE_PATTERN.matcher(r).replaceAll(Matcher.quoteReplacement("\n"));
+        per.cr = r.indexOf('\r') > 0;
         if (per.cr)
             r = CARET_RETURN_PATTERN.matcher(r).replaceAll("\n");
 

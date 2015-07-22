@@ -38,6 +38,7 @@ public class BaseFilter implements IEditorFilter {
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[-\\w.]+@([A-z0-9][-A-z0-9]+\\.)+[A-z]{2,4}$");
 	//todo check if this is correctly compiled when reading from XML
 	private static final Pattern URL_PATTERN = Pattern.compile("((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)");
+	private static final Pattern PATTERN = Pattern.compile("\\\\+");
 
 	//сделать шаблон для номеров вида №1
 
@@ -66,10 +67,9 @@ public class BaseFilter implements IEditorFilter {
     private void load(String baseFilteringItems) throws IOException, JAXBException {
 		File filteringItems = new File(baseFilteringItems);
 		if (filteringItems.exists()) {
-			BaseFilteringParser parser = new BaseFilteringParser();
-			BaseFilteringItems items = parser.getObject(filteringItems, BaseFilteringItems.class);
+			BaseFilteringItems items = BaseFilteringParser.getObject(filteringItems, BaseFilteringItems.class);
 			for (BaseFilteringItem item : items.getFilteringItems()) {
-				String pattern = item.getPattern().replaceAll("\\\\+", "\\\\");
+				String pattern = PATTERN.matcher(item.getPattern()).replaceAll("\\\\");
 				Pattern p = Pattern.compile(pattern);
 				PATTERNS.put(p, item.isApply());
 			}

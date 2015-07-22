@@ -28,6 +28,7 @@
 package org.omegat.gui.editor;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -46,6 +47,8 @@ import org.omegat.util.Token;
  * @author Aaron Madlon-Kay
  */
 public class EditorUtils {
+    private static final Pattern PATTERN = Pattern.compile("[\u202A\u202B\u202C]");
+
     /**
      * Check if language is Right-To-Left oriented.
      * 
@@ -130,7 +133,7 @@ public class EditorUtils {
      * @return string without direction chars
      */
     public static String removeDirectionChars(String text) {
-        return text.replaceAll("[\u202A\u202B\u202C]", "");
+        return PATTERN.matcher(text).replaceAll("");
     }
     
     /**
