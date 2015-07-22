@@ -137,6 +137,7 @@ public class ScriptingWindow extends PeroFrame {
         }
     }
 
+    //todo don't create window when loading scripts
     public ScriptingWindow() {
         setTitle(OStrings.getString("SCW_TITLE"));
 
@@ -165,7 +166,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private List<String> getAvailableScriptExtensions() {
-        ArrayList<String> extensions = new ArrayList<String>();
+        ArrayList<String> extensions = new ArrayList<>();
         for (ScriptEngineFactory engine : manager.getEngineFactories()) {
             for (String ext : engine.getExtensions()) {
                 extensions.add(ext);
@@ -176,15 +177,15 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private StringBuilder listScriptEngine() {
-        StringBuilder sb = new StringBuilder(OStrings.getString("SCW_LIST_ENGINES") + "\n");
+        StringBuilder sb = new StringBuilder(OStrings.getString("SCW_LIST_ENGINES") + '\n');
         for (ScriptEngineFactory engine : manager.getEngineFactories()) {
             sb.append(" - ");
             sb.append(engine.getEngineName());
-            sb.append(" ");
+            sb.append(' ');
             sb.append(engine.getLanguageName());
             sb.append(" v.");
             sb.append(engine.getLanguageVersion());
-            sb.append(" (").append(OStrings.getString("SCW_EXTENSIONS")).append(" ");
+            sb.append(" (").append(OStrings.getString("SCW_EXTENSIONS")).append(' ');
             boolean hasMore = false;
             for (String ext : engine.getExtensions()) {
                 if (hasMore) {
@@ -193,8 +194,8 @@ public class ScriptingWindow extends PeroFrame {
                 sb.append(ext);
                 hasMore = true;
             }
-            sb.append(")");
-            sb.append("\n");
+            sb.append(')');
+            sb.append('\n');
         }
 
         return sb;
@@ -448,7 +449,7 @@ public class ScriptingWindow extends PeroFrame {
 
             if (scriptName != null || "".equals(scriptName)) {
                 m_quickScriptButtons[i].setToolTipText(scriptName);
-                m_quickScriptButtons[i].setText("<" + scriptKey + ">");
+                m_quickScriptButtons[i].setText("<" + scriptKey + '>');
             } else {
                 m_quickScriptButtons[i].setToolTipText(OStrings.getString("SCW_NO_SCRIPT_SET"));
             }
@@ -475,7 +476,7 @@ public class ScriptingWindow extends PeroFrame {
                     ScriptItem scriptItem = (ScriptItem) m_scriptList.getSelectedValue();
                     Preferences.setPreference("scripts_quick_" + scriptKey, scriptItem.getName());
                     m_quickScriptButtons[index].setToolTipText(scriptItem.getToolTip());
-                    m_quickScriptButtons[index].setText("<" + scriptKey + ">");
+                    m_quickScriptButtons[index].setText("<" + scriptKey + '>');
 
                     setQuickScriptMenu(scriptItem, index);
 
@@ -493,7 +494,7 @@ public class ScriptingWindow extends PeroFrame {
                     logResult(StaticUtils.format(OStrings.getString("SCW_REMOVED_QUICK_SCRIPT"), scriptName, scriptKey));
                     Preferences.setPreference("scripts_quick_" + scriptKey, "");
                     m_quickScriptButtons[index].setToolTipText(OStrings.getString("SCW_NO_SCRIPT_SET"));
-                    m_quickScriptButtons[index].setText(" " + scriptKey + " ");
+                    m_quickScriptButtons[index].setText(" " + scriptKey + ' ');
 
                     unsetQuickScriptMenu(index);
                 }
@@ -637,7 +638,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private void logResult(String s) {
-        logResult(m_txtResult, s + "\n");
+        logResult(m_txtResult, s + '\n');
     }
 
     private void logResult(JEditorPane e, String s) {
@@ -645,7 +646,7 @@ public class ScriptingWindow extends PeroFrame {
         try {
             doc.insertString(doc.getLength(), s, null);
         } catch (BadLocationException e1) {
-            /* empty */
+            Log.log(e1);
         }
     }
 
@@ -701,7 +702,7 @@ public class ScriptingWindow extends PeroFrame {
     @SuppressWarnings("unchecked")
     public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive)
             throws Exception {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private void onListSelectionChanged() {
