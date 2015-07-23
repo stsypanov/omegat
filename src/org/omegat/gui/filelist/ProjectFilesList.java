@@ -39,6 +39,7 @@ public class ProjectFilesList extends PeroFrame {
     /**
      * Creates new form ProjectFilesList
      */
+    //todo don't create until needed
     public ProjectFilesList() {
         initComponents();
     }
