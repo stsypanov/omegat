@@ -139,11 +139,7 @@ public class ScriptingWindow extends PeroFrame {
 
     //todo don't create window when loading scripts
     public ScriptingWindow() {
-        setTitle(OStrings.getString("SCW_TITLE"));
-
-        OmegaTIcons.setIconImages(this);
-
-        StaticUIUtils.setEscapeClosable(this);
+        super(OStrings.getString("SCW_TITLE"));
 
         setScriptsDirectory(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY, DEFAULT_SCRIPTS_DIR));
         addScriptCommandToOmegaT();
@@ -210,7 +206,9 @@ public class ScriptingWindow extends PeroFrame {
         scriptMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ScriptingWindow.this.setVisible(true);
+                pack();
+                setLocationRelativeTo(null);
+                setVisible(true);
             }
         });
 

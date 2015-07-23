@@ -42,6 +42,13 @@ public class GuiUtils {
 
 		int width = Integer.parseInt(Preferences.getPreference(prefWidth));
 		int height = Integer.parseInt(Preferences.getPreference(prefHeight));
+
+		if (width == 0 || height == 0){
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			width = (int) (screenSize.getWidth() / 2);
+			height = (int) (screenSize.getHeight() / 2);
+		}
+
 		window.setPreferredSize(new Dimension(width, height));
 	}
 
