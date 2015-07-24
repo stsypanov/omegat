@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool 
-          with fuzzy matching, translation memory, keyword search, 
+ OmegaT - Computer Assisted Translation (CAT) tool
+          with fuzzy matching, translation memory, keyword search,
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, and Kim Bruning
@@ -80,16 +80,12 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.data.IProject;
 import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.main.MainWindow;
-import org.omegat.util.OConsts;
-import org.omegat.util.OStrings;
-import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.*;
 import org.omegat.util.gui.DragTargetOverlay;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 import org.omegat.util.gui.OSXIntegration;
@@ -100,7 +96,7 @@ import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * Controller for showing all the files of the project.
- * 
+ *
  * @author Keith Godfrey
  * @author Kim Bruning
  * @author Maxym Mykhalchuk
@@ -120,19 +116,99 @@ public class ProjectFilesListController {
     private Sorter currentSorter;
 
     private TableFilterPanel filterPanel;
-    
+
     private final MainWindow m_parent;
 
     private Font defaultFont;
-    
+
     public ProjectFilesListController(MainWindow parent) {
         m_parent = parent;
 
+
+
+        CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
+            @Override
+            public void onFontChanged(Font newFont) {
+                if (!Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
+                    newFont = defaultFont;
+                }
+                setFont(newFont);
+            }
+        });
+
+        CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
+            @Override
+            public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+                switch (eventType) {
+                    case CLOSE:
+                        list.setVisible(false);
+                        break;
+                    case LOAD:
+                        break;
+                    case CREATE:
+                        if (list == null) {
+                            initAndShow();
+                        }
+
+                        break;
+                }
+            }
+        });
+
+        CoreEvents.registerEntryEventListener(new IEntryEventListener() {
+            @Override
+            public void onNewFile(String activeFileName) {
+                list.tableFiles.repaint();
+                list.tableTotal.repaint();
+                modelTotal.fireTableDataChanged();
+            }
+
+            /**
+             * Updates the number of translated segments only, does not rebuild the whole display.
+             */
+            @Override
+            public void onEntryActivated(SourceTextEntry newEntry) {
+                UIThreadsUtil.mustBeSwingThread();
+                if (modelTotal != null) {
+                    modelTotal.fireTableDataChanged();
+                }
+            }
+        });
+    }
+
+    private void initAndShow() {
+        init();
+
+        List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+        buildDisplay(projectFiles);
+        if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
+            return;
+        }
+        boolean hideFileList = Boolean.valueOf(Preferences.getPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD));
+        if (!hideFileList && (projectFiles.isEmpty() || projectFiles.size() > 1)){
+            list.setVisible(true);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    list.tableFiles.requestFocus();
+                }
+            });
+        }
+    }
+
+    private void init() {
         list = new ProjectFilesList();
+
+        StaticUIUtils.setEscapeAction(list, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                doCancel();
+            }
+        });
 
         createTableFiles();
         createTableTotal();
-        
+
         TableColumnSizer colSizer = TableColumnSizer.autoSize(list.tableFiles, 0, true);
         colSizer.addColumnAdjustmentListener(new ActionListener() {
             @Override
@@ -140,7 +216,7 @@ public class ProjectFilesListController {
                 propagateTableColumns();
             }
         });
-        
+
         DragTargetOverlay.apply(list.tableFiles, new FileDropInfo(m_parent, true) {
             @Override
             public String getImportDestination() {
@@ -164,7 +240,7 @@ public class ProjectFilesListController {
                 return list.tablesInnerPanel;
             }
         });
-        
+
         defaultFont = list.tableFiles.getFont();
         if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
             String fontName = Preferences.getPreference(OConsts.TF_SRC_FONT_NAME);
@@ -175,9 +251,6 @@ public class ProjectFilesListController {
         }
 
         list.tablesInnerPanel.setBorder(new JScrollPane().getBorder());
-        
-        // set the position and size
-        initWindowLayout();
 
         list.m_addNewFileButton.addActionListener(new ActionListener() {
             @Override
@@ -208,89 +281,13 @@ public class ProjectFilesListController {
             }
         });
 
-        StaticUIUtils.setEscapeAction(list, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                doCancel();
-            }
-        });
-
-        CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
-            @Override
-            public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-                switch (eventType) {
-                case CLOSE:
-                    list.setVisible(false);
-                    break;
-                case LOAD:
-                case CREATE:
-                    List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
-                    buildDisplay(projectFiles);
-                    if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
-                        break;
-                    }
-                    boolean hideFileList = Boolean.valueOf(Preferences.getPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD));
-                    if (!hideFileList && (projectFiles.isEmpty() || projectFiles.size() > 1)){
-                        list.setVisible(true);
-                    }
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            list.toFront();
-                            list.tableFiles.requestFocus();
-                        }
-                    });
-                    break;
-                }
-            }
-        });
-
-        CoreEvents.registerEntryEventListener(new IEntryEventListener() {
-            @Override
-            public void onNewFile(String activeFileName) {
-                list.tableFiles.repaint();
-                list.tableTotal.repaint();
-                modelTotal.fireTableDataChanged();
-            }
-
-            /**
-             * Updates the number of translated segments only, does not rebuild the whole display.
-             */
-            @Override
-            public void onEntryActivated(SourceTextEntry newEntry) {
-                UIThreadsUtil.mustBeSwingThread();
-                modelTotal.fireTableDataChanged();
-            }
-        });
-
-        CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
-            @Override
-            public void onFontChanged(Font newFont) {
-                if (!Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
-                    newFont = defaultFont;
-                }
-                setFont(newFont);
-            }
-        });
-
-        CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
-            @Override
-            public void onApplicationStartup() {
-            }
-
-            @Override
-            public void onApplicationShutdown() {
-                saveWindowLayout();
-            }
-        });
-
         list.tableFiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 gotoFile(list.tableFiles.rowAtPoint(e.getPoint()));
             }
         });
-        
+
         list.tableFiles.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -309,13 +306,13 @@ public class ProjectFilesListController {
         list.btnDown.addKeyListener(filterTrigger);
         list.btnFirst.addKeyListener(filterTrigger);
         list.btnLast.addKeyListener(filterTrigger);
-        
+
         list.btnUp.addActionListener(moveAction);
         list.btnDown.addActionListener(moveAction);
         list.btnFirst.addActionListener(moveAction);
         list.btnLast.addActionListener(moveAction);
     }
-    
+
     private final KeyListener filterTrigger = new KeyAdapter() {
         @Override
         public void keyTyped(KeyEvent e) {
@@ -331,7 +328,7 @@ public class ProjectFilesListController {
             }
         }
     };
-    
+
     private void startFilter(char c) {
         if (filterPanel != null) {
             return;
@@ -399,7 +396,7 @@ public class ProjectFilesListController {
         list.validate();
         list.repaint();
     }
-    
+
     private void resumeFilter(char c) {
         if (filterPanel == null) {
             return;
@@ -409,10 +406,10 @@ public class ProjectFilesListController {
                     Character.toString(c), null);
             filterPanel.filterTextField.requestFocus();
         } catch (BadLocationException ex) {
-            // Nothing
+            Log.log(ex);
         }
     }
-    
+
     private void applyFilter() {
         if (filterPanel == null) {
             return;
@@ -439,7 +436,7 @@ public class ProjectFilesListController {
         list.validate();
         list.repaint();
     }
-    
+
     ActionListener moveAction = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -449,7 +446,7 @@ public class ProjectFilesListController {
             }
 
             int pos = selected[0];
-            
+
             int newPos;
             if (e.getSource() == list.btnUp) {
                 newPos = pos - 1;
@@ -468,14 +465,26 @@ public class ProjectFilesListController {
     };
 
     public boolean isActive() {
-        return list.isActive();
+        if (list == null) {
+            return false;
+        } else {
+            return list.isActive();
+        }
     }
 
     public void setActive(boolean active) {
+        if (list == null) {
+            initAndShow();
+        }
+
         if (active) {
             // moved current file selection here so it will be properly set on each activation
+            List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+            buildDisplay(projectFiles);
+            if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
+                return;
+            }
             list.setVisible(true);
-            list.toFront();
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -512,39 +521,6 @@ public class ProjectFilesListController {
         list.tableFiles.getSelectionModel().setSelectionInterval(row, row);
         list.tableFiles.scrollRectToVisible(list.tableFiles.getCellRect(row, 0, true));
     }
-    
-    /**
-     * Loads/sets the position and size of the project files window.
-     */
-    private void initWindowLayout() {
-        // main window
-        try {
-            String dx = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_X);
-            String dy = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_Y);
-            int x = Integer.parseInt(dx);
-            int y = Integer.parseInt(dy);
-            list.setLocation(x, y);
-            String dw = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_WIDTH);
-            String dh = Preferences.getPreference(Preferences.PROJECT_FILES_WINDOW_HEIGHT);
-            int w = Integer.parseInt(dw);
-            int h = Integer.parseInt(dh);
-            list.setSize(w, h);
-        } catch (NumberFormatException nfe) {
-            // set default size and position
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            list.setBounds((screenSize.width - 640) / 2, (screenSize.height - 400) / 2, 640, 400);
-        }
-    }
-
-    /**
-     * Saves the size and position of the project files window
-     */
-    private void saveWindowLayout() {
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_WIDTH, list.getWidth());
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_HEIGHT, list.getHeight());
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_X, list.getX());
-        Preferences.setPreference(Preferences.PROJECT_FILES_WINDOW_Y, list.getY());
-    }
 
     private void doCancel() {
         list.setVisible(false);
@@ -580,13 +556,13 @@ public class ProjectFilesListController {
         DataTableStyling.applyColors(list.tableFiles);
         list.tableFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
-    
+
     private void propagateTableColumns() {
         // Set last column of tableTotal to match size of scrollbar.
         JScrollBar scrollbar = list.scrollFiles.getVerticalScrollBar();
         int sbWidth = scrollbar == null || !scrollbar.isVisible() ? 0 : scrollbar.getWidth();
         list.tableTotal.getColumnModel().getColumn(list.tableTotal.getColumnCount() - 1).setPreferredWidth(sbWidth);
-        
+
         // Propagate column sizes to totals table
         for (int i = 0; i < list.tableFiles.getColumnCount(); i++) {
             TableColumn srcCol = list.tableFiles.getColumnModel().getColumn(i);
@@ -777,7 +753,7 @@ public class ProjectFilesListController {
 
     /**
      * Imports the file/files/folder into project's source files.
-     * 
+     *
      * @author Kim Bruning
      * @author Maxym Mykhalchuk
      */
@@ -816,17 +792,17 @@ public class ProjectFilesListController {
     private TableCellRenderer getNumberCellRenderer(List<IProject.FileInfo> files) {
         return new CustomRenderer(files, SwingConstants.RIGHT, DataTableStyling.NUMBER_FORMAT, true);
     }
-    
+
     private TableCellRenderer getTextCellRenderer(List<IProject.FileInfo> files) {
         return new CustomRenderer(files, SwingConstants.LEFT, DataTableStyling.NUMBER_FORMAT, true);
     }
-    
+
     /**
      * Render for table cells.
      */
     private class CustomRenderer extends DataTableStyling.AlternatingHighlightRenderer {
         private final List<IProject.FileInfo> files;
-        
+
         public CustomRenderer(List<IProject.FileInfo> files, int alignment, NumberFormat numberFormat,
                 boolean doHighlight) {
             super(alignment, numberFormat, doHighlight, DataTableStyling.FONT_NO_CHANGE);
@@ -881,16 +857,16 @@ public class ProjectFilesListController {
                     excluded++;
                 }
             }
-            viewToModel = new ArrayList<Integer>(modelToView.length - excluded);
+            viewToModel = new ArrayList<>(modelToView.length - excluded);
             for (int i = 0, j = 0; i < modelToView.length; i++) {
                 if (modelToView[i] != -1) {
                     viewToModel.add(j++, i);
                 }
             }
         }
-        
+
         private void applyPrefs() {
-            final List<String> filenames = new ArrayList<String>();
+            final List<String> filenames = new ArrayList<>(files.size());
             for (IProject.FileInfo fi : files) {
                 filenames.add(fi.filePath);
             }
@@ -958,13 +934,13 @@ public class ProjectFilesListController {
 
         @Override
         public List<? extends SortKey> getSortKeys() {
-            List<SortKey> r = new ArrayList<RowSorter.SortKey>();
+            List<SortKey> r = new ArrayList<>();
             r.add(sortKey);
             return r;
         }
 
         @Override
-        public void setSortKeys(List<? extends javax.swing.RowSorter.SortKey> keys) {
+        public void setSortKeys(List<? extends RowSorter.SortKey> keys) {
             throw new RuntimeException("Not implemented");
         }
 
@@ -1040,17 +1016,17 @@ public class ProjectFilesListController {
         }
 
         public int moveTo(int[] selected, int newPos) {
-            int[] temp = new int[selected.length];
-            int n = selected.length;
-            for(int i = 0; i < selected.length; i++) {
-                temp[i] = viewToModel.remove(selected[--n]);
+            int length = selected.length;
+            int[] temp = new int[length];
+            for(int i = 0; i < length; i++) {
+                temp[i] = viewToModel.remove(selected[--length]);
             }
 
             newPos = Math.max(newPos, 0);
             newPos = Math.min(newPos, viewToModel.size());
 
-            for(int i = 0; i < temp.length; i++) {
-                viewToModel.add(newPos, temp[i]);
+            for (int item : temp) {
+                viewToModel.add(newPos, item);
             }
             recalc();
             save();
@@ -1063,14 +1039,14 @@ public class ProjectFilesListController {
         }
 
         private void save() {
-            List<String> filenames = new ArrayList<String>();
+            List<String> filenames = new ArrayList<>();
             for (Integer i : viewToModel) {
                 String fn = files.get(i).filePath;
                 filenames.add(fn);
             }
             Core.getProject().setSourceFilesOrder(filenames);
         }
-        
+
         public void setFilter(String regex) {
             if (filter == null && regex == null) {
                 return;
@@ -1090,14 +1066,14 @@ public class ProjectFilesListController {
             sort();
             fireRowSorterChanged(lastViewToModel);
         }
-        
+
         private boolean include(IProject.FileInfo item) {
             if (filter == null) {
                 return true;
             }
             return filter.matcher(item.filePath).matches();
         }
-        
+
         private int[] getIntArrayFromIntegerList(List<Integer> list) {
             int[] result = new int[list.size()];
             for (int i = 0; i < result.length; i++) {

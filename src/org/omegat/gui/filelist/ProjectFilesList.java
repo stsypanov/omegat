@@ -41,6 +41,7 @@ public class ProjectFilesList extends PeroFrame {
      */
     //todo don't create until needed
     public ProjectFilesList() {
+        super();
         initComponents();
     }
 
