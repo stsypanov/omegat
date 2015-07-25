@@ -61,7 +61,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -285,7 +284,7 @@ public class EditorController implements IEditor {
         // register Swing error logger
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             public void uncaughtException(Thread t, Throwable e) {
-                LOGGER.log(Level.SEVERE, "Uncatched exception in thread [" + t.getName() + "]", e);
+                LOGGER.log(Level.SEVERE, "Uncatched exception in thread [" + t.getName() + ']', e);
             }
         });
         initActionMap();
@@ -793,7 +792,7 @@ public class EditorController implements IEditor {
         String trans = doc.extractTranslation();
         if (trans != null) {
             SourceTextEntry ste = m_docSegList[displayedEntryIndex].ste;
-            String lMsg = " " + ste.getSrcText().length() + "/" + trans.length() + " ";
+            String lMsg = " " + ste.getSrcText().length() + '/' + trans.length() + ' ';
             Core.getMainWindow().showLengthMessage(lMsg);
         }
     }
@@ -900,9 +899,9 @@ public class EditorController implements IEditor {
                         MainWindowUI.STATUS_BAR_MODE.DEFAULT);
 
         if (progressMode == MainWindowUI.STATUS_BAR_MODE.DEFAULT) {
-            StringBuilder pMsg = new StringBuilder(1024).append(" ");
-            pMsg.append(translatedInFile).append("/").append(fi.entries.size()).append(" (")
-                    .append(stat.numberofTranslatedSegments).append("/").append(stat.numberOfUniqueSegments)
+            StringBuilder pMsg = new StringBuilder(1024).append(' ');
+            pMsg.append(translatedInFile).append('/').append(fi.entries.size()).append(" (")
+                    .append(stat.numberofTranslatedSegments).append('/').append(stat.numberOfUniqueSegments)
                     .append(", ").append(stat.numberOfSegmentsTotal).append(") ");
             Core.getMainWindow().showProgressMessage(pMsg.toString());
         } else {
@@ -1942,8 +1941,8 @@ public class EditorController implements IEditor {
         String country = Locale.getDefault().getCountry().toUpperCase(Locale.ENGLISH);
 
         // Check if there's a translation for the full locale (lang + country)
-        if (HelpFrame.getHelpFileURL(language + "_" + country, OConsts.HELP_INSTANT_START) != null) {
-            return language + "_" + country;
+        if (HelpFrame.getHelpFileURL(language + '_' + country, OConsts.HELP_INSTANT_START) != null) {
+            return language + '_' + country;
         }
 
         // Check if there's a translation for the language only
