@@ -50,8 +50,8 @@ public class SourceTextEntry {
     /** Storage for full entry's identifiers, including source text. */
     private final EntryKey key;
 
-    /** 
-     * String properties from source file. Contents are alternating 
+    /**
+     * String properties from source file. Contents are alternating
      * key (even index), value (odd index) strings. Should be of even length.
      */
     private final String[] props;
@@ -166,7 +166,7 @@ public class SourceTextEntry {
         return IntStream.range(0, props.length).filter((i) -> i % 2 != 0).mapToObj((i) -> props[i])
                 .collect(Collectors.joining("\n"));
     }
-    
+
     public String[] getRawProperties() {
         if (props != null) {
             return Arrays.copyOf(props, props.length);
@@ -187,13 +187,25 @@ public class SourceTextEntry {
         return duplicates == null ? DUPLICATE.NONE : DUPLICATE.FIRST;
     }
 
-    public int getNumberOfDuplicates() {
-        if (firstInstance != null) {
-            return firstInstance.getNumberOfDuplicates();
-        }
-        return duplicates == null ? 0 : duplicates.size();
+    public boolean hasDuplicates() {
+        return getDuplicate() != DUPLICATE.NONE;
     }
-    
+
+    public boolean notFirstDuplicate() {
+        return getDuplicate() != DUPLICATE.FIRST;
+    }
+
+    public int getNumberOfDuplicates() {
+        SourceTextEntry other = this;
+        while (true) {
+            if (other.firstInstance != null) {
+                other = other.firstInstance;
+                continue;
+            }
+            return other.duplicates == null ? 0 : other.duplicates.size();
+        }
+    }
+
     public List<SourceTextEntry> getDuplicates() {
         if (firstInstance != null) {
             List<SourceTextEntry> result = new ArrayList<SourceTextEntry>(firstInstance.getDuplicates());
