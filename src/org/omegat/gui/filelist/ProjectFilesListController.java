@@ -141,7 +141,9 @@ public class ProjectFilesListController {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
                 switch (eventType) {
                     case CLOSE:
-                        list.setVisible(false);
+                        if (list != null) {
+                            list.setVisible(false);
+                        }
                         break;
                     case LOAD:
                         break;
