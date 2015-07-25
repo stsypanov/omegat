@@ -91,7 +91,6 @@ import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.dialogs.ConflictDialogController;
 import org.omegat.gui.editor.autocompleter.IAutoCompleter;
-import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromMTMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -771,6 +770,10 @@ public class EditorController implements IEditor {
         ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<SegmentBuilder>(file.entries.size());
         for (int i = 0; i < file.entries.size(); i++) {
             SourceTextEntry ste = file.entries.get(i);
+            boolean notAllowedDuplicate = ste.hasDuplicates() && ste.notFirstDuplicate();
+            if (notAllowedDuplicate) {
+                continue;
+            }
             if (entriesFilter == null || entriesFilter.allowed(ste)) {
                 SegmentBuilder sb = new SegmentBuilder(this, doc, settings, ste, ste.entryNum(), hasRTL);
                 temp_docSegList2.add(sb);
@@ -906,7 +909,7 @@ public class EditorController implements IEditor {
             CoreEvents.fireEntryNewFile(Core.getProject().getProjectFiles().get(displayedFileIndex).filePath);
         }
 
-        editor.autoCompleter.setVisible(false);
+        if (editor.autoCompleter != null ) editor.autoCompleter.setVisible(false);
         editor.repaint();
 
         // fire event about new segment activated
