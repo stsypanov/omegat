@@ -181,7 +181,7 @@ public class FilterMaster {
      */
     public IFilter loadFile(String filename, FilterContext fc, IParseCallback parseCallback)
             throws IOException, TranslationException {
-        IFilter filterObject = null;
+        IFilter filterObject;
         try {
             LookupInformation lookup = lookupFilter(new File(filename), fc);
             if (lookup == null) {
@@ -196,7 +196,7 @@ public class FilterMaster {
             filterObject.parseFile(inFile, lookup.config, fc, parseCallback);
         } catch (Exception ioe) {
             ioe.printStackTrace();
-            throw new IOException(filename + "\n" + ioe);
+            throw new IOException(filename + '\n' + ioe);
         }
         return filterObject;
     }
@@ -404,7 +404,7 @@ public class FilterMaster {
             Log.logErrorRB("FILTERMASTER_ERROR_SAVING_FILTERS_CONFIG");
             Log.log(e);
             JOptionPane.showMessageDialog(Core.getMainWindow().getApplicationFrame(),
-                    OStrings.getString("FILTERMASTER_ERROR_SAVING_FILTERS_CONFIG") + "\n" + e,
+                    OStrings.getString("FILTERMASTER_ERROR_SAVING_FILTERS_CONFIG") + '\n' + e,
                     OStrings.getString("ERROR_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -515,7 +515,7 @@ public class FilterMaster {
     private static String constructTargetFilename(String sourceMask, String filename, String pattern,
             Language targetLang, String sourceEncoding, String targetEncoding, String filterFormatName) {
         int lastStarPos = sourceMask.lastIndexOf('*');
-        int dot = 0;
+        int dot;
         if (lastStarPos >= 0) {
             // bugfix #1204740
             // so where's the dot next to the star
@@ -576,7 +576,7 @@ public class FilterMaster {
         res = res.replace(AbstractFilter.TFP_SYSTEM_OS_VERSION, System.getProperty("os.arch"));
         res = res.replace(AbstractFilter.TFP_SYSTEM_OS_ARCH, System.getProperty("os.version"));
         res = res.replace(AbstractFilter.TFP_SYSTEM_USER_NAME, System.getProperty("user.name"));
-        String hostName = null;
+        String hostName;
         try {
             hostName = java.net.InetAddress.getLocalHost().getHostName();
         } catch (java.net.UnknownHostException uhe) {
@@ -616,7 +616,7 @@ public class FilterMaster {
             res = res.replaceAll ("\\$\\{nameOnly-" + i + "\\}", nameOnlyBuf.toString());
             res = res.replaceAll ("\\$\\{extension-" + i + "\\}", extensionBuf.toString());
             if (i + 1 < splitName.length) {
-                nameOnlyBuf.append (".").append(splitName[i + 1]);
+                nameOnlyBuf.append ('.').append(splitName[i + 1]);
                 extensionBuf.insert(0, splitName[splitName.length - i - 2] + '.');
             }
         }
@@ -711,7 +711,7 @@ public class FilterMaster {
      * @return options for filter usage
      */
     public static Map<String, String> forFilter(List<Option> options) {
-        final Map<String, String> result = new TreeMap<String, String>();
+        final Map<String, String> result = new TreeMap<>();
         for (Option opt : options) {
             result.put(opt.getName(), opt.getValue());
         }
