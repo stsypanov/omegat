@@ -93,7 +93,7 @@ public class SourceTextEntry {
     public SourceTextEntry(EntryKey key) {
         this.key = key;
         m_entryNum = 0;
-        protectedParts = new ProtectedPart[0];
+        protectedParts = EMPTY_PROTECTED_PARTS;
         sourceTranslation = null;
         comment = null;
     }
@@ -165,23 +165,34 @@ public class SourceTextEntry {
         return duplicates == null ? DUPLICATE.NONE : DUPLICATE.FIRST;
     }
 
+    public boolean hasDuplicates() {
+        return getDuplicate() != DUPLICATE.NONE;
+    }
+
+    public boolean notFirstDuplicate() {
+        return getDuplicate() != DUPLICATE.FIRST;
+    }
+
     public int getNumberOfDuplicates() {
-        if (firstInstance != null) {
-            return firstInstance.getNumberOfDuplicates();
+        SourceTextEntry other = this;
+        while (true) {
+            if (other.firstInstance != null) {
+                other = other.firstInstance;
+                continue;
+            }
+            return other.duplicates == null ? 0 : other.duplicates.size();
         }
-        return duplicates == null ? 0 : duplicates.size();
     }
     
     @SuppressWarnings("unchecked")
     public List<SourceTextEntry> getDuplicates() {
         if (firstInstance != null) {
-            List<SourceTextEntry> result = new ArrayList<SourceTextEntry>(firstInstance.getDuplicates());
+            List<SourceTextEntry> result = new ArrayList<>(firstInstance.getDuplicates());
             result.remove(this);
             result.add(0, firstInstance);
             return Collections.unmodifiableList(result);
         }
-        return duplicates == null ? Collections.EMPTY_LIST
-                : Collections.unmodifiableList(duplicates);
+        return duplicates == null ? Collections.<SourceTextEntry>emptyList() : Collections.unmodifiableList(duplicates);
     }
     
     public String getSourceTranslation() {
