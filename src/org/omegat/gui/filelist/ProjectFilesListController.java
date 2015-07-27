@@ -160,9 +160,11 @@ public class ProjectFilesListController {
         CoreEvents.registerEntryEventListener(new IEntryEventListener() {
             @Override
             public void onNewFile(String activeFileName) {
-                list.tableFiles.repaint();
-                list.tableTotal.repaint();
-                modelTotal.fireTableDataChanged();
+                if (list != null) {
+                    list.tableFiles.repaint();
+                    list.tableTotal.repaint();
+                    modelTotal.fireTableDataChanged();
+                }
             }
 
             /**
