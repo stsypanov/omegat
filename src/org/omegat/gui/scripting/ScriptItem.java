@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Comparator;
@@ -45,8 +44,10 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
+import org.jetbrains.annotations.NotNull;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.LinebreakPreservingReader;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 
 /**
@@ -65,8 +66,8 @@ public class ScriptItem extends File {
     public ScriptItem(File scriptFile) {
         super(scriptFile.getParentFile(), scriptFile.getName());
 
-        try {
-            ClassLoader loader = new URLClassLoader(new URL[]{scriptFile.getParentFile().toURI().toURL()});
+        try (URLClassLoader loader = new URLClassLoader(new URL[]{scriptFile.getParentFile().toURI().toURL()})){
+
             String shortName = ScriptingWindow.getBareFileName(scriptFile.getName());
             try { // Try first at the root of the script dir, for compatibility
                 m_res = ResourceBundle.getBundle(shortName, Locale.getDefault(), loader); 
@@ -77,29 +78,21 @@ public class ScriptItem extends File {
                     scanFileForDescription(scriptFile);
                 }
             }
-        } catch (MalformedURLException e) {
-            /* ignore */
+        } catch (IOException e) {
+            Log.log(e);
         }
     }
 
     private void scanFileForDescription(File file) {
-        Scanner scan = null;
-        try {
-            scan = new Scanner(file);
+
+        try (Scanner scan = new Scanner(file)) {
+
             scan.findInLine(":name\\s*=\\s*(.*)\\s+:description\\s*=\\s*(.*)");
             MatchResult results = scan.match();
             m_scriptName = results.group(1).trim();
             m_description = results.group(2).trim();
-        } catch (IllegalStateException e) {
-            /* bad luck */
-        } catch (FileNotFoundException e) {
-            /* ignore - it should not happen here */
-        }
-        finally {
-            if (scan != null)
-            {
-                scan.close();
-            }
+        } catch (IllegalStateException | FileNotFoundException e) {
+            Log.log(e);
         }
     }
 
@@ -113,10 +106,11 @@ public class ScriptItem extends File {
             final String MISSING_BUNDLE_MESSAGE = "ResourceBundle (.properties file for localization) is missing.";
 
             @Override
-            protected Object handleGetObject(String key) {
+            protected Object handleGetObject(@NotNull String key) {
                 throw new MissingResourceException(MISSING_BUNDLE_MESSAGE, null, key);
             }
 
+            @NotNull
             @Override
             public Enumeration<String> getKeys() {
                 throw new MissingResourceException(MISSING_BUNDLE_MESSAGE, null, null);
@@ -159,10 +153,9 @@ public class ScriptItem extends File {
     }
 
     public String getText() throws IOException {
-        String ret = "";
-        LinebreakPreservingReader lpin = null;
-        try {
-            lpin = getUTF8LinebreakPreservingReader(this);
+        String ret;
+
+        try (LinebreakPreservingReader lpin = getUTF8LinebreakPreservingReader(this)) {
             StringBuilder sb = new StringBuilder();
             String s = lpin.readLine();
             startsWithBOM = s.startsWith(BOM);
@@ -179,14 +172,6 @@ public class ScriptItem extends File {
                 s = lpin.readLine();
             }
             ret = sb.toString();
-        } finally {
-            if (lpin != null) {
-                try {
-                    lpin.close();
-                } catch (IOException ex) {
-                    // Eat exception silently
-                }
-            }
         }
         return ret;
     }
