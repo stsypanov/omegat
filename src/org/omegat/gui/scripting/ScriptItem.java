@@ -43,6 +43,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 
 import org.jetbrains.annotations.NotNull;
 import org.omegat.util.LFileCopy;
@@ -62,6 +63,7 @@ public class ScriptItem extends File {
     private static final long serialVersionUID = -257191026120285430L;
     
     private static final String PROPERTIES = "properties/";
+    private static final Pattern PATTERN = Pattern.compile("\n");
 
     public ScriptItem(File scriptFile) {
         super(scriptFile.getParentFile(), scriptFile.getName());
@@ -103,7 +105,7 @@ public class ScriptItem extends File {
 
         // Create empty resource for confirmation
         return new ResourceBundle() {
-            final String MISSING_BUNDLE_MESSAGE = "ResourceBundle (.properties file for localization) is missing.";
+            private static final String MISSING_BUNDLE_MESSAGE = "ResourceBundle (.properties file for localization) is missing.";
 
             @Override
             protected Object handleGetObject(@NotNull String key) {
@@ -184,7 +186,7 @@ public class ScriptItem extends File {
     }
 
     public void setText(String text) throws IOException {
-        text = text.replaceAll("\n", lineBreak);
+        text = PATTERN.matcher(text).replaceAll(lineBreak);
         if (startsWithBOM) {
             text = BOM + text;
         }
@@ -206,7 +208,7 @@ public class ScriptItem extends File {
         }
     }
 
-    private final String BOM = "\uFEFF";
+    private static final String BOM = "\uFEFF";
     private boolean startsWithBOM = false;
     private String lineBreak = System.getProperty("line.separator");
 
