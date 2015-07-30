@@ -89,7 +89,7 @@ public class FilterVisitor extends NodeVisitor {
     /** Do we collect the translatable text now. */
     boolean text = false;
     /** The translatable text being collected. */
-    // StringBuffer paragraph;
+    // StringBuilder paragraph;
     /** Did the PRE block start (it means we mustn't compress the spaces). */
     boolean preformatting = false;
 
@@ -550,7 +550,7 @@ public class FilterVisitor extends NodeVisitor {
         }
 
         // appending all tags until "last good" one to paragraph text
-        StringBuffer paragraph = new StringBuffer();
+        StringBuilder paragraph = new StringBuilder();
         // appending all tags starting from "first good" one to paragraph text
         for (int i = firstgood; i <= lastgood; i++) {
             Node node = all.get(i);
@@ -632,7 +632,7 @@ public class FilterVisitor extends NodeVisitor {
     private void cleanup() {
         text = false;
         recurse = true;
-        // paragraph = new StringBuffer();
+        // paragraph = new StringBuilder();
         befors = new ArrayList<Node>();
         translatable = new ArrayList<Node>();
         afters = new ArrayList<Node>();
@@ -645,8 +645,8 @@ public class FilterVisitor extends NodeVisitor {
     /**
      * Creates and stores a shortcut for the tag.
      */
-    private void shortcut(Tag tag, StringBuffer paragraph) {
-        StringBuffer result = new StringBuffer();
+    private void shortcut(Tag tag, StringBuilder paragraph) {
+        StringBuilder result = new StringBuilder();
         result.append('<');
         int n = -1;
         if (tag.isEndTag()) {
@@ -964,7 +964,7 @@ public class FilterVisitor extends NodeVisitor {
     /** Converts HTML entities to normal characters */
     protected String entitiesToChars(String str) {
         int strlen = str.length();
-        StringBuffer res = new StringBuffer(strlen);
+        StringBuilder res = new StringBuilder(strlen);
         for (int i = 0; i < strlen; i++) {
             char ch = str.charAt(i);
             switch (ch) {
@@ -1097,7 +1097,7 @@ public class FilterVisitor extends NodeVisitor {
      */
     protected String charsToEntities(String str) {
         int strlen = str.length();
-        StringBuffer res = new StringBuffer(strlen * 5);
+        StringBuilder res = new StringBuilder(strlen * 5);
         for (int i = 0; i < strlen; i++) {
             char ch = str.charAt(i);
             switch (ch) {

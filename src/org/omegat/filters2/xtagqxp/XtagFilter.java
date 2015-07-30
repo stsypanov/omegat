@@ -143,7 +143,7 @@ public class XtagFilter extends AbstractFilter {
      * @return either the original Xtag, or the tag with &lt; and &gt;
      *         characters converted to the Xtag equivalent
      */
-    private String findTag(StringBuffer tag) {
+    private String findTag(StringBuilder tag) {
         for (Xtag oneTag : listTags) {
             if (oneTag.toShortcut().equals(tag.toString()))
                 return oneTag.toOriginal();
@@ -235,7 +235,7 @@ public class XtagFilter extends AbstractFilter {
 
         int state = STATE_NORMAL;
 
-        StringBuffer tag = new StringBuffer(s.length());
+        StringBuilder tag = new StringBuilder(s.length());
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             // Start of a tag

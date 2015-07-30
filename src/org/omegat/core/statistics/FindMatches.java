@@ -227,7 +227,7 @@ public class FindMatches {
         if (ALLOW_PARTIALY_MATCH && separateSegmentMatcher != null
                 && !project.getProjectProperties().isSentenceSegmentingEnabled()) {
             // split paragraph even when segmentation disabled, then find matches for every segment
-            List<StringBuffer> spaces = new ArrayList<>();
+            List<StringBuilder> spaces = new ArrayList<>();
             List<Rule> brules = new ArrayList<>();
             Language sourceLang = project.getProjectProperties().getSourceLanguage();
             Language targetLang = project.getProjectProperties().getTargetLanguage();

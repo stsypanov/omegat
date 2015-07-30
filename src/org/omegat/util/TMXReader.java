@@ -301,7 +301,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
             return segment;
 
         try {
-            StringBuffer buf = new StringBuffer(segment);
+            StringBuilder buf = new StringBuilder(segment);
             Matcher matcher = PatternConsts.OMEGAT_TAG_DECOMPILE.matcher(segment);
 
             int tagstart = matcher.start();
@@ -361,7 +361,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
                 buf.replace(tagstart, tagend, tag.toString());
             }
 
-            StringBuffer res = new StringBuffer();
+            StringBuilder res = new StringBuilder();
             for (int i = unopenedTags.size() - 1; i > 0; i--) {
                 tag = unopenedTags.get(i);
                 res.append(tag.toStringPaired());
@@ -541,7 +541,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         inSegment = false;
         tuvs = new ArrayList<TUV>();
         currentElement = new Stack<String>();
-        currentSub = new Stack<StringBuffer>();
+        currentSub = new Stack<StringBuilder>();
         currentElement.push(TMX_TAG_NONE);
     }
 
@@ -612,7 +612,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     }
 
     private int tagNumber;
-    private StringBuffer currentTag = new StringBuffer();
+    private StringBuilder currentTag = new StringBuilder();
     private boolean insideTag;
     private boolean closeTag;
     private boolean standAloneTag;
@@ -625,7 +625,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
      *            The full tag
      * @return The shortcut
      */
-    private StringBuffer makeShortcut(StringBuffer tag) {
+    private StringBuilder makeShortcut(StringBuilder tag) {
         char letter = ' ';
         String returnTag = "<";
         String tagEnding = ">";
@@ -639,11 +639,11 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
             letter = tag.charAt(i);
             if (Character.isLetter(letter)) {
                 letter = Character.toLowerCase(letter);
-                return new StringBuffer(returnTag + String.valueOf(letter) + Integer.toString(tagNumber)
+                return new StringBuilder(returnTag + String.valueOf(letter) + Integer.toString(tagNumber)
                         + tagEnding);
             }
         }
-        return new StringBuffer(returnTag + "f" + Integer.toString(tagNumber) + tagEnding);
+        return new StringBuilder(returnTag + "f" + Integer.toString(tagNumber) + tagEnding);
     }
 
     /**
@@ -759,7 +759,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         String propVariantLanguages = getProperty(PROPERTY_VARIANT_LANGUAGES);
         if (propVariantLanguages != null) {
             int commaPos = 0;
-            StringBuffer languages = new StringBuffer();
+            StringBuilder languages = new StringBuilder();
             do {
                 // get the position of the next comma
                 commaPos = propVariantLanguages.indexOf(',');
@@ -803,7 +803,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         // put a property value buffer on the subsegment stack
         // (ISSUE: field currentSub should be renamed to reflect this more
         // general use)
-        currentSub.push(new StringBuffer());
+        currentSub.push(new StringBuilder());
 
         // mark the current position as in a property
         inProperty = true;
@@ -823,7 +823,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
             return;
 
         // add the current property to the property map
-        StringBuffer propertyValue = currentSub.pop();
+        StringBuilder propertyValue = currentSub.pop();
         m_properties.put(currentProperty, propertyValue.toString());
 
         currentProperty = null;
@@ -1096,7 +1096,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         // stack
         // NOTE: the assumption is made here that sub segments are
         // in the same order in both source and target segments
-        StringBuffer sub = new StringBuffer();
+        StringBuilder sub = new StringBuilder();
         tuvs.get(tuvs.size() - 1).subSegments.add(sub);
         currentSub.push(sub);
     }
@@ -1186,7 +1186,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
     private List<TUV> tuvs; // Contains all TUVs of the current TU
     private Stack<String> currentElement; // Stack of tag names up to the
                                           // current parsing point
-    private Stack<StringBuffer> currentSub; // Stack of sub segment buffers
+    private Stack<StringBuilder> currentSub; // Stack of sub segment buffers
     private String currentProperty; // Name of the current property being parsed
                                     // (null if none)
     private boolean isSegmentingEnabled;
@@ -1203,7 +1203,7 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         /**
          * Segment text
          */
-        public StringBuffer text;
+        public StringBuilder text;
         /**
          * Specifies the date of the last modification of the element.
          */
@@ -1224,17 +1224,17 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler {
         public String creationId;
 
         /**
-         * Contains StringBuffers for subsegments
+         * Contains StringBuilders for subsegments
          */
-        public ArrayList<StringBuffer> subSegments;
+        public ArrayList<StringBuilder> subSegments;
 
         /**
          * Default constructor
          */
         public TUV() {
             super();
-            text = new StringBuffer();
-            subSegments = new ArrayList<StringBuffer>();
+            text = new StringBuilder();
+            subSegments = new ArrayList<StringBuilder>();
         }
     }
 

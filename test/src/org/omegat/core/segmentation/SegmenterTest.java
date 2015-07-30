@@ -52,7 +52,7 @@ public class SegmenterTest extends TestCore
      */
     public void testSegment()
     {
-        List<StringBuffer> spaces = new ArrayList<StringBuffer>();
+        List<StringBuilder> spaces = new ArrayList<StringBuilder>();
         List<String> segments = Segmenter.segment(new Language("en"),"<br7>\n\n<br5>\n\nother", spaces, new ArrayList<Rule>());
         if(segments.size()!=3 || !segments.get(0).equals("<br7>") ||
                 !segments.get(1).equals("<br5>") ||
@@ -65,7 +65,7 @@ public class SegmenterTest extends TestCore
      */
     public void testGlue()
     {
-        List<StringBuffer> spaces = new ArrayList<StringBuffer>();
+        List<StringBuilder> spaces = new ArrayList<StringBuilder>();
         List<Rule> brules = new ArrayList<Rule>();
         String oldString = "<br7>\n\n<br5>\n\nother";
         List<String> segments = Segmenter.segment(new Language("en"),oldString, spaces, brules);
@@ -104,7 +104,7 @@ public class SegmenterTest extends TestCore
     private String getPseudoTranslationFromEnToJa(final String source) {
         final String EN_FULLSTOP = ".";
         final String JA_FULLSTOP = "\\u3002";
-        List<StringBuffer> spaces = new ArrayList<StringBuffer>();
+        List<StringBuilder> spaces = new ArrayList<StringBuilder>();
         List<Rule> brules = new ArrayList<Rule>();
         List<String> segments = Segmenter.segment(new Language("en"), source, spaces, brules);
 

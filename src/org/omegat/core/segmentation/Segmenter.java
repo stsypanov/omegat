@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.omegat.util.Language;
+import org.omegat.util.Log;
 import org.omegat.util.PatternConsts;
 
 /**
@@ -68,7 +69,7 @@ public final class Segmenter {
      *            list to store rules that account to breaks
      * @return list of sentences (String objects)
      */
-    public static List<String> segment(Language lang, String paragraph, List<StringBuffer> spaces,
+    public static List<String> segment(Language lang, String paragraph, List<StringBuilder> spaces,
             List<Rule> brules) {
         if (paragraph == null) {
             return null;
@@ -81,14 +82,14 @@ public final class Segmenter {
         for (String one : segments) {
             int len = one.length();
             int b = 0;
-            StringBuffer bs = new StringBuffer();
+            StringBuilder bs = new StringBuilder();
             while (b < len && Character.isWhitespace(one.charAt(b))) {
                 bs.append(one.charAt(b));
                 b++;
             }
 
             int e = len - 1;
-            StringBuffer es = new StringBuffer();
+            StringBuilder es = new StringBuilder();
             while (e >= b && Character.isWhitespace(one.charAt(e))) {
                 es.append(one.charAt(e));
                 e--;
@@ -117,6 +118,7 @@ public final class Segmenter {
      * @param brules
      *            list to store rules that account to breaks
      */
+    //todo try to create brules variable near line 145
     private static List<String> breakParagraph(Language lang, String paragraph, List<Rule> brules) {
         List<Rule> rules = Segmenter.srx.lookupRulesForLanguage(lang);
         if (brules == null)
@@ -139,7 +141,7 @@ public final class Segmenter {
         breakpositions.removeAll(dontbreakpositions);
 
         // and now breaking the string according to the positions
-        List<String> segments = new ArrayList<>();
+        List<String> segments = new ArrayList<>(breakpositions.size());
         brules.clear();
         int prevpos = 0;
         for (BreakPosition bposition : breakpositions) {
@@ -161,6 +163,7 @@ public final class Segmenter {
             } else
                 segments.add(oneseg);
         } catch (IndexOutOfBoundsException iobe) {
+            Log.log(iobe);
         }
 
         return segments;
@@ -277,7 +280,7 @@ public final class Segmenter {
      * @return glued translated paragraph
      */
     public static String glue(Language sourceLang, Language targetLang, List<String> sentences,
-            List<StringBuffer> spaces, List<Rule> brules) {
+            List<StringBuilder> spaces, List<Rule> brules) {
         if (sentences.size() <= 0)
             return "";
 

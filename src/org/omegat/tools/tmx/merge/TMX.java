@@ -267,10 +267,10 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 		inTUV = false;
 		inSegment = false;
 		currentElement = new Stack();
-		currentSegment = new Stack();
+		currentSegment = new Stack<>();
 		currentTU = null;
 		currentTUV = null;
-		segmentBuffers = new ArrayList();
+		segmentBuffers = new ArrayList<>();
 
 		// clear the TU list and TMX attributes, if we're not merging
 		if (!merging) {
@@ -612,11 +612,11 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 						   int start,
 						   int length) throws SAXException {
 		// if not in a segment, or when in an inline element other than sub, do nothing
-		if (!inSegment || ((String) currentElement.peek()).equals(TMX_TAG_INLINE))
+		if (!inSegment || currentElement.peek().equals(TMX_TAG_INLINE))
 			return;
 
 		// append the data to the current segment buffer
-		StringBuffer segment = (StringBuffer) currentSegment.peek();
+		StringBuilder segment = currentSegment.peek();
 		segment.append(ch, start, length);
 	}
 
@@ -627,11 +627,11 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 									int start,
 									int length) throws SAXException {
 		// if not in a segment, or when in an inline element other than sub, do nothing
-		if (!inSegment || ((String) currentElement.peek()).equals(TMX_TAG_INLINE))
+		if (!inSegment || currentElement.peek().equals(TMX_TAG_INLINE))
 			return;
 
 		// append the data to the current segment buffer
-		StringBuffer segment = (StringBuffer) currentSegment.peek();
+		StringBuilder segment = currentSegment.peek();
 		segment.append(ch, start, length);
 	}
 
@@ -845,12 +845,12 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 			return;
 
 		// copy the contents of the segment buffers to the TUV
-		// (i.e. convert the StringBuffers to Strings)
+		// (i.e. convert the StringBuilders to Strings)
 		// the first item in the segment buffer list is the
 		// main segment, the rest are sub segments
-		currentTUV.text = ((StringBuffer) segmentBuffers.get(0)).toString();
+		currentTUV.text = segmentBuffers.get(0).toString();
 		for (int i = 1; i < segmentBuffers.size(); i++)
-			currentTUV.subSegments.add(((StringBuffer) segmentBuffers.get(0)).toString());
+			currentTUV.subSegments.add(segmentBuffers.get(0).toString());
 
 		// add the current TUV to the current TU
 		currentTU.tuvs.add(currentTUV);
@@ -873,7 +873,7 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 		}
 
 		// create new entries in the segment buffer list and on the stack
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		segmentBuffers.clear();
 		segmentBuffers.add(buffer);
 		currentSegment.clear();
@@ -926,7 +926,7 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 		// create new entries in the segment buffer list and on the stack
 		// NOTE: the assumption is made here that sub segments are
 		// in the same order in both source and target segments
-		StringBuffer sub = new StringBuffer("");
+		StringBuilder sub = new StringBuilder("");
 		segmentBuffers.add(sub);
 		currentSegment.push(sub);
 	}
@@ -955,7 +955,7 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 	 * Converts a String into valid XML.
 	 */
 	public static String toValidXML(String text) {
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder();
 		int l = text.length();
 		for (int i = 0; i < l; i++) {
 			char c = text.charAt(i);
@@ -1018,10 +1018,10 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 	private boolean inSegment;           // True if in a SEG element
 	private boolean sourceNotFound;      // True if no source segment was found for one or more TUs
 	private Stack currentElement;      // Stack of tag names up to the current parsing point
-	private Stack currentSegment;      // Stack of (sub) segment buffers
+	private Stack<StringBuilder> currentSegment;      // Stack of (sub) segment buffers
 	private TU currentTU;           // Current translation unit
 	private TUV currentTUV;          // Current translation unit variant
-	private List segmentBuffers;      // Segment buffers for current TU, first is seg, rest is sub
+	private List<StringBuilder> segmentBuffers;      // Segment buffers for current TU, first is seg, rest is sub
 	private boolean merging;             // True when merging TMX's
 
 }
