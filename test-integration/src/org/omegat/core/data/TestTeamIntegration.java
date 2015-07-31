@@ -263,8 +263,9 @@ public class TestTeamIntegration {
 		public Run(String source, File dir, int delay) throws Exception {
 			this.source = source;
 			URLClassLoader cl = (URLClassLoader) TestTeamIntegration.class.getClassLoader();
-			List<String> cp = new ArrayList<>();
-			for (URL u : cl.getURLs()) {
+			URL[] urls = cl.getURLs();
+			List<String> cp = new ArrayList<>(urls.length);
+			for (URL u : urls) {
 				cp.add(u.getFile());
 			}
 

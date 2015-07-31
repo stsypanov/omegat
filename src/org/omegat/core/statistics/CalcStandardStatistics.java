@@ -174,7 +174,7 @@ public class CalcStandardStatistics extends LongProcessThread {
         unique.addFiles(filesUnique.size());
         remainingUnique.addFiles(filesRemainingUnique.size());
 
-        List<FileData> counts = new ArrayList<>();
+        List<FileData> counts = new ArrayList<>(project.getProjectFiles().size());
         Map<String, Boolean> firstSeenUniqueSegment = new HashMap<>();
         for (FileInfo file : project.getProjectFiles()) {
             FileData numbers = new FileData();

@@ -108,10 +108,10 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
         // Plain Scripts
     	// Only display files with an extension supported by the engines 
     	// currently installed.
-        ArrayList<ScriptItem> scriptsList = new ArrayList<>();
 		// Replace the script filename by its description, if available
-        for (File script : m_scriptDir.listFiles(m_filter))
-        {
+		File[] files = m_scriptDir.listFiles(m_filter);
+		ArrayList<ScriptItem> scriptsList = new ArrayList<>(files.length);
+		for (File script : files) {
         	scriptsList.add(new ScriptItem(script));
         }
 

@@ -43,7 +43,7 @@ public class TransTips {
     // List containing the characters that may be found at the end of a word,
     // that
     // might result in the word not being underlined
-    private static List<Character> afterExcludeCases = new ArrayList<>();
+    private static List<Character> afterExcludeCases = new ArrayList<>(9);
     static {
         afterExcludeCases.add('.');
         afterExcludeCases.add('!');
@@ -59,7 +59,7 @@ public class TransTips {
     // List containing the characters that may be found at the beginning of a
     // word, that
     // might result in the word not being underlined
-    private static List<Character> beforeExcludeCases = new ArrayList<>();
+    private static List<Character> beforeExcludeCases = new ArrayList<>(3);
     static {
         beforeExcludeCases.add('>');
         beforeExcludeCases.add('(');

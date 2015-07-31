@@ -45,11 +45,10 @@ public class TagUtil {
         
     public static List<String> getAllTagsInSource() {
         
-        List<String> result = new ArrayList<>();
-        
         // Add tags.
-        SourceTextEntry ste = Core.getEditor().getCurrentEntry();
-        for(ProtectedPart pp:ste.getProtectedParts()) {
+        ProtectedPart[] protectedParts = Core.getEditor().getCurrentEntry().getProtectedParts();
+        List<String> result = new ArrayList<>(protectedParts.length);
+        for (ProtectedPart pp : protectedParts) {
             result.add(pp.getTextInSourceSegment());
         }
         return result;
