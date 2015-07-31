@@ -224,6 +224,9 @@ public interface IProject {
          * Characterset name used for parsing the source file.
          */
         public String fileEncoding;
+        /**
+         * Source text entries of the file
+         */
         public List<SourceTextEntry> entries = new ArrayList<>();
     }
 
