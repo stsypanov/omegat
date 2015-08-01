@@ -207,7 +207,6 @@ public class ScriptingWindow extends PeroFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pack();
-                setLocationRelativeTo(null);
                 setVisible(true);
             }
         });
