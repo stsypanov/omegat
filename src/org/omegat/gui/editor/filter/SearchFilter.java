@@ -42,11 +42,11 @@ import org.omegat.gui.editor.IEditorFilter;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class SearchFilter implements IEditorFilter {
-    private final Set<Integer> entriesList = new HashSet<>();
+    private final Set<Integer> entriesList;
     private FilterBarSearch controlComponent;
 
     public SearchFilter(List<Integer> entries) {
-        entriesList.addAll(entries);
+        entriesList = new HashSet<>(entries);
         controlComponent = new FilterBarSearch();
         controlComponent.getRemoveFilterButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
