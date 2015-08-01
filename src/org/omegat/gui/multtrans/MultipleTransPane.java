@@ -109,11 +109,11 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         UIThreadsUtil.mustBeSwingThread();
 
         entries.clear();
-        String o = "";
+        StringBuilder o = new StringBuilder();
         
         // Check case if current segment has default translation and there are no alternative translations.
         if (data.size() == 1 && data.get(0).key == null) {
-            setText(o);
+            setText("");
             return;
         }
         
@@ -123,25 +123,27 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
             de.start = o.length();
             if (e.entry.translation == null) continue;
             if (e.key != null) {
-                o += e.entry.translation + '\n';
-                o += "<" + e.key.file;
+                o.append(e.entry.translation).append('\n');
+                o.append('<').append(e.key.file);
                 if (e.key.id != null) {
-                    o += "/" + e.key.id;
+                    o.append('/').append(e.key.id);
                 }
-                o += ">\n";
+                o.append(">\n");
                 if (e.key.prev != null && e.key.next != null) {
-                    o += "(" + StringUtil.firstN(e.key.prev, 10) + " <...> "
-                            + StringUtil.firstN(e.key.next, 10) + ")\n";
+                    o.append('(').append(StringUtil.firstN(e.key.prev, 10))
+                            .append(" <...> ")
+                            .append(StringUtil.firstN(e.key.next, 10))
+                            .append(")\n");
                 }
             } else {
-                o += e.entry.translation + '\n';
+                o.append(e.entry.translation).append('\n');
             }
             de.end = o.length();
             entries.add(de);
-            o += "\n";
+            o.append('\n');
         }
 
-        setText(o);
+        setText(o.toString());
     }
     
     @Override
