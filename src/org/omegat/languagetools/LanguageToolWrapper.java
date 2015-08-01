@@ -140,7 +140,6 @@ public class LanguageToolWrapper implements IMarker, IProjectEventListener {
             return null;
         }
 
-        List<Mark> r = new ArrayList<>();
         List<RuleMatch> matches;
         if (ltSource != null && bRules != null) {
             // LT knows about source and target languages both and has bitext rules
@@ -150,6 +149,7 @@ public class LanguageToolWrapper implements IMarker, IProjectEventListener {
             matches = ltTarget.check(translationText);
         }
 
+        List<Mark> r = new ArrayList<>(matches.size());
         for (RuleMatch match : matches) {
             Mark m = new Mark(Mark.ENTRY_PART.TRANSLATION, match.getFromPos(), match.getToPos());
             m.toolTipText = match.getMessage();
