@@ -224,11 +224,11 @@ public class XHTMLDialect extends DefaultXMLDialect {
     }
 
     public boolean checkDoSkipMetaTag(String key, String value) {
-        return skipMetaAttributes.containsKey(key.toUpperCase() + "=" + value.toUpperCase());
+        return skipMetaAttributes.containsKey(key.toUpperCase() + '=' + value.toUpperCase());
     }
 
     private boolean checkIgnoreTags(String key, String value) {
-        return ignoreTagsAttributes.containsKey(key.toUpperCase() + "=" + value.toUpperCase());
+        return ignoreTagsAttributes.containsKey(key.toUpperCase() + '=' + value.toUpperCase());
     }
 
     /**

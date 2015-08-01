@@ -44,7 +44,7 @@ import org.omegat.filters3.xml.DefaultXMLDialect;
 public class HelpAndManualDialect extends DefaultXMLDialect {
     public static final Pattern HAM_ROOT_TAG = Pattern.compile("topic|map|helpproject");
 
-    /*
+    /**
      * A map of attribute-name and attribute value pairs that, if exist in a
      * tag, indicate that this tag should not be translated
      */
@@ -53,8 +53,7 @@ public class HelpAndManualDialect extends DefaultXMLDialect {
     public HelpAndManualDialect() {
         defineConstraint(CONSTRAINT_ROOT, HAM_ROOT_TAG);
 
-        defineParagraphTags(new String[] { "caption", "config-value", "variable", "para", "title", "keyword",
-                "li", });
+        defineParagraphTags(new String[] { "caption", "config-value", "variable", "para", "title", "keyword", "li", });
 
         defineShortcut("link", "li");
         
@@ -63,7 +62,7 @@ public class HelpAndManualDialect extends DefaultXMLDialect {
     }
 
     private boolean checkIgnoreTags(String key, String value) {
-        return ignoreTagsAttributes.containsKey(key.toUpperCase() + "=" + value.toUpperCase());
+        return ignoreTagsAttributes.containsKey(key.toUpperCase() + '=' + value.toUpperCase());
     }
 
     /**

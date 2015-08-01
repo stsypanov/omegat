@@ -751,9 +751,7 @@ public class SearchWindowController {
 
         EntryListPane viewer = (EntryListPane) form.m_viewer;
         Core.getEditor().commitAndLeave(); // Otherwise, the current segment being edited is lost
-        Core.getEditor()
-                .setFilter(
-                        new ReplaceFilter(viewer.getEntryList(), viewer.getSearcher(), replaceString));
+        Core.getEditor().setFilter(new ReplaceFilter(viewer.getEntryList(), viewer.getSearcher(), replaceString));
     }
 
     private void doReplaceAll() {

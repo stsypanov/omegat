@@ -139,7 +139,7 @@ public class NearString {
 
 		@Override
 		public String toString() {
-			return "(" + score + "/" + scoreNoStem + "/" + adjustedScore + "%)";
+			return "(" + score + '/' + scoreNoStem + '/' + adjustedScore + "%)";
 		}
 	}
 
