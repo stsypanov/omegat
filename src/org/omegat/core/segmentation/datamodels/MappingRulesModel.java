@@ -30,7 +30,7 @@ import org.omegat.core.segmentation.Rule;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.util.OStrings;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.PatternSyntaxException;
 
 /**
@@ -103,8 +103,7 @@ public class MappingRulesModel extends AbstractModel {
     /** Adds a new empty mapping rule. */
     public int addRow() {
         int rows = srx.getMappingRules().size();
-        srx.getMappingRules().add(
-                new MapRule(OStrings.getString("SEG_NEW_LN_CO"), "LN-CO", new ArrayList<Rule>()));
+        srx.getMappingRules().add(new MapRule(OStrings.getString("SEG_NEW_LN_CO"), "LN-CO", Collections.<Rule>emptyList()));
         fireTableRowsInserted(rows, rows);
         return rows;
     }
@@ -118,7 +117,6 @@ public class MappingRulesModel extends AbstractModel {
     /** Moves a mapping rule up an order. */
     public void moveRowUp(int row) {
         MapRule maprulePrev = srx.getMappingRules().get(row - 1);
-        MapRule maprule = srx.getMappingRules().get(row);
         srx.getMappingRules().remove(row - 1);
         srx.getMappingRules().add(row, maprulePrev);
         fireTableRowsUpdated(row - 1, row);
@@ -127,7 +125,6 @@ public class MappingRulesModel extends AbstractModel {
     /** Moves a mapping rule down an order. */
     public void moveRowDown(int row) {
         MapRule mapruleNext = srx.getMappingRules().get(row + 1);
-        MapRule maprule = srx.getMappingRules().get(row);
         srx.getMappingRules().remove(row + 1);
         srx.getMappingRules().add(row, mapruleNext);
         fireTableRowsUpdated(row, row + 1);
