@@ -42,7 +42,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Martin Fleurke
  */
 @SuppressWarnings("serial")
-public class NotesTextArea extends EntryInfoPane<String> implements INotes {
+public class NotesTextArea extends EntryInfoPane implements INotes {
 
     private static final String EXPLANATION = OStrings.getString("GUI_NOTESWINDOW_explanation");
 

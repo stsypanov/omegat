@@ -45,7 +45,7 @@ import org.omegat.core.events.IProjectEventListener;
  *            result type of found data
  */
 @SuppressWarnings("serial")
-public abstract class EntryInfoPane<T> extends JTextPane implements IProjectEventListener {
+public abstract class EntryInfoPane extends JTextPane implements IProjectEventListener {
 
     public EntryInfoPane(final boolean useApplicationFont) {
         if (useApplicationFont) {
