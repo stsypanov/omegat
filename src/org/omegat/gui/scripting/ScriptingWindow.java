@@ -257,7 +257,7 @@ public class ScriptingWindow extends PeroFrame {
         // with the segment content, so we set it to a Function key.
         m_quickMenus[index].setAccelerator(KeyStroke.getKeyStroke("shift ctrl F" + (index + 1)));
         m_quickMenus[index].setEnabled(true);
-        if ("".equals(scriptItem.getDescription())) {
+        if (scriptItem.getDescription() != null && scriptItem.getDescription().isEmpty()) {
             m_quickMenus[index].setToolTipText(scriptItem.getDescription());
         }
 
@@ -611,7 +611,7 @@ public class ScriptingWindow extends PeroFrame {
             String scriptString;
             if (forceFromFile) {
                 scriptString = scriptItem.getText();
-            } else if ("".equals(m_txtScriptEditor.getText().trim())) {
+            } else if (m_txtScriptEditor.getText().trim() != null && m_txtScriptEditor.getText().trim().isEmpty()) {
                 scriptString = scriptItem.getText();
                 m_txtScriptEditor.setText(scriptString);
             } else {

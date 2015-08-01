@@ -122,7 +122,7 @@ public class GlossaryEntry {
         int commentIndex = 0;
         for (int i = 0; i < m_loc.length; i++) {
             if (i > 0 && m_loc[i].equals(m_loc[i - 1])) {
-                if (!m_com[i].equals("")) {
+                if (!m_com[i].isEmpty()) {
                     comments.append("\n");
                     comments.append(commentIndex);
                     comments.append(". ");
@@ -139,7 +139,7 @@ public class GlossaryEntry {
                 result.markBoldEnd();
             }
             commentIndex++;
-            if (!m_com[i].equals("")) {
+            if (!m_com[i].isEmpty()) {
                 comments.append("\n");
                 comments.append(commentIndex);
                 comments.append(". ");

@@ -96,7 +96,7 @@ public class GlossaryAutoCompleterView extends AutoCompleterListView {
      * @param context
      */
     private void fillMatchingTerms(List<AutoCompleterItem> result, List<GlossaryEntry> glossary, String context) {
-        if ("".equals(context)) {
+        if (context != null && context.isEmpty()) {
             // Context is present but empty--we consider no terms to match.
             return;
         }

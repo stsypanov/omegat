@@ -67,7 +67,7 @@ public class TagAutoCompleterView extends AutoCompleterListView {
         }
 
         List<String> matchGroups = new ArrayList<String>();
-        if (!"".equals(wordChunk)) {
+        if (wordChunk != null && !wordChunk.isEmpty()) {
             // Check for partial matches among missing tag groups.
             for (String g : missingGroups) {
                 if (g.startsWith(wordChunk)) matchGroups.add(g);
@@ -116,7 +116,7 @@ public class TagAutoCompleterView extends AutoCompleterListView {
         @SuppressWarnings("unchecked")
         @Override
         public Map<Version, String> getSupportedBehaviors() {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         @Override
