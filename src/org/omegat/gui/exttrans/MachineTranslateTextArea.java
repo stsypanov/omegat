@@ -73,8 +73,9 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_MachineTranslate");
         Core.getMainWindow().addDockable(new DockableScrollPane("MACHINE_TRANSLATE", title, this, true));
 
-        List<IMachineTranslation> tr = new ArrayList<>();
-        for (Class<?> mtc : PluginUtils.getMachineTranslationClasses()) {
+        List<Class<?>> classes = PluginUtils.getMachineTranslationClasses();
+        List<IMachineTranslation> tr = new ArrayList<>(classes.size());
+        for (Class<?> mtc : classes) {
             try {
                 tr.add((IMachineTranslation) mtc.newInstance());
             } catch (Exception ex) {
