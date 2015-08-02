@@ -128,7 +128,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
             }
         }
     }
-    
+
     public void forceUpdateGlossary() {
         pane.refresh();
     }
@@ -146,7 +146,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
             Log.logRB("CT_LOADING_GLOSSARY", file.getName());
             return GlossaryReaderTSV.read(file, isPriority);
         } else if (fname_lower.endsWith(OConsts.EXT_CSV_UTF8)) {
-        Log.logRB("CT_LOADING_GLOSSARY", file.getName());
+            Log.logRB("CT_LOADING_GLOSSARY", file.getName());
             return GlossaryReaderCSV.read(file, isPriority);
         } else if (fname_lower.endsWith(OConsts.EXT_TBX)) {
             Log.logRB("CT_LOADING_GLOSSARY", file.getName());
@@ -158,7 +158,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
 
     /**
      * Get glossary entries.
-     * 
+     *
      * @return all entries
      * @param src
      */
@@ -179,7 +179,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
      * Get glossary entries for search operation. Almost the same as getGlossaryEntries(), except search
      * usually executed for every segment in project, i.e. should work enough fast. Then, search should be
      * produced by local files only.
-     * 
+     *
      * @return all entries
      * @param src
      */

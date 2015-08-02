@@ -29,6 +29,7 @@
  **************************************************************************/
 package org.omegat.util;
 
+import java.text.Normalizer;
 import java.util.Locale;
 
 /**
@@ -56,7 +57,7 @@ public class StringUtil {
     public static boolean notEmpty(String str) {
         return !isEmpty(str);
     }
-    
+
     /**
      * Returns true if the input has at least one letter and
      * all letters are lower case.
@@ -139,7 +140,7 @@ public class StringUtil {
         else
             return notEmpty(input) && Character.isTitleCase(input.charAt(0));
     }
-    
+
     public static boolean isTitleCase(int codePoint) {
         // True if is actual title case, or if is upper case and has no separate title case variant.
         return Character.isTitleCase(codePoint) ||
@@ -163,7 +164,7 @@ public class StringUtil {
         }
         return true;
     }
-    
+
     /**
      * Returns true if the input is a whitespace character
      * (including non-breaking characters that are false according to
@@ -175,7 +176,7 @@ public class StringUtil {
                 || codePoint == '\u2007'
                 || codePoint == '\u202F';
     }
-    
+
     public static boolean isCJK(String input) {
         if (input.isEmpty()) {
             return false;
@@ -190,7 +191,7 @@ public class StringUtil {
         }
         return true;
     }
-    
+
     /**
      * Convert text to title case according to the supplied locale.
      */
@@ -207,7 +208,7 @@ public class StringUtil {
                     : text.substring(0, remainderOffset).toUpperCase(locale);
         return first + text.substring(remainderOffset).toLowerCase(locale);
     }
-    
+
 	/**
 	 * Returns first not null object from list, or null if all values is null.
 	 */
@@ -264,7 +265,7 @@ public class StringUtil {
             return str.substring(0, len) + "...";
         }
     }
-    
+
     /**
      * Returns first letter in lowercase. Usually used for create tag shortcuts.
      * Does not support non-BMP Unicode characters.
@@ -296,28 +297,35 @@ public class StringUtil {
 		return substring.equals(text.substring(pos, pos + substring.length()));
 	}
 
-	/**
-	 * Checks if text contains substring before specified position.
-	 */
-	public static boolean isSubstringBefore(String text, int pos, String substring) {
-		if (pos - substring.length() < 0) {
-			return false;
-		}
-		return substring.equals(text.substring(pos - substring.length(), pos));
-	}
+    /**
+     * Checks if text contains substring before specified position.
+     */
+    public static boolean isSubstringBefore(String text, int pos, String substring) {
+        if (pos - substring.length() < 0) {
+            return false;
+        }
+        return substring.equals(text.substring(pos - substring.length(), pos));
+    }
 
-	public static String stripFromEnd(String string, String... toStrip) {
-		if (string == null) {
-			return null;
-		}
-		if (toStrip == null) {
-			return string;
-		}
-		for (String s : toStrip) {
-			if (string.endsWith(s)) {
-				string = string.substring(0, string.length() - s.length());
-			}
-		}
-		return string;
-	}
+    public static String stripFromEnd(String string, String... toStrip) {
+        if (string == null) {
+            return null;
+        }
+        if (toStrip == null) {
+            return string;
+        }
+        for (String s : toStrip) {
+            if (string.endsWith(s)) {
+                string = string.substring(0, string.length() - s.length());
+            }
+        }
+        return string;
+    }
+
+    /**
+     * Apply Unicode NFC normalization to a string.
+     */
+    public static String normalizeUnicode(CharSequence text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFC);
+    }
 }
