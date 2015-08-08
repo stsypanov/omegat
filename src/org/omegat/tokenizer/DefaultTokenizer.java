@@ -251,7 +251,7 @@ public class DefaultTokenizer implements ITokenizer {
 
     @Override
     public Map<Version, String> getSupportedBehaviors() {
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     @Override

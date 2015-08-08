@@ -41,8 +41,7 @@ public class LuceneFinnishTokenizer extends BaseTokenizer {
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            Set stopWords = stopWordsAllowed ? FinnishAnalyzer.getDefaultStopSet()
-                    : Collections.EMPTY_SET;
+            Set stopWords = stopWordsAllowed ? FinnishAnalyzer.getDefaultStopSet() : Collections.emptySet();
             return new FinnishAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {
