@@ -78,18 +78,18 @@ public abstract class TestFilterBase extends TestCore {
     protected void setUp() throws Exception {
         super.setUp();
 
-        Core.initializeConsole(Collections.EMPTY_MAP);
+        Core.initializeConsole(Collections.<String, String>emptyMap());
         Core.setFilterMaster(new FilterMaster(FilterMaster.createDefaultFiltersConfig()));
         Core.setProject(new TestProject(new ProjectPropertiesTest()));
 
-        outFile = new File("build/testdata/OmegaT_test-" + getClass().getName() + "-" + getName());
+        outFile = new File("build/testdata/OmegaT_test-" + getClass().getName() + '-' + getName());
         outFile.getParentFile().mkdirs();
     }
 
     protected List<String> parse(AbstractFilter filter, String filename) throws Exception {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
 
-		filter.parseFile(new File(filename), Collections.EMPTY_MAP, context, new IParseCallback() {
+		filter.parseFile(new File(filename), Collections.<String, String>emptyMap(), context, new IParseCallback() {
 			public void addEntry(String id, String source, String translation, boolean isFuzzy,
 								 String comment, IFilter filter) {
 				addEntry(id, source, translation, isFuzzy, comment, null, filter, null);
@@ -110,7 +110,7 @@ public abstract class TestFilterBase extends TestCore {
 
     protected List<String> parse(AbstractFilter filter, String filename, Map<String, String> options)
             throws Exception {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
 
         filter.parseFile(new File(filename), options, context, getCallback(result));
 
@@ -137,7 +137,7 @@ public abstract class TestFilterBase extends TestCore {
     protected void parse2(final AbstractFilter filter, final String filename,
             final Map<String, String> result, final Map<String, String> legacyTMX) throws Exception {
 
-        filter.parseFile(new File(filename), Collections.EMPTY_MAP, context, new IParseCallback() {
+        filter.parseFile(new File(filename), Collections.<String, String>emptyMap(), context, new IParseCallback() {
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
                     String comment, IFilter filter) {
                 addEntry(id, source, translation, isFuzzy, comment, null, filter, null);
@@ -149,7 +149,7 @@ public abstract class TestFilterBase extends TestCore {
                 result.put(source, segTranslation);
                 if (translation != null) {
                     // Add systematically the TU as a legacy TMX
-                    String tmxSource = isFuzzy ? "[" + filter.getFuzzyMark() + "] " + source : source;
+                    String tmxSource = isFuzzy ? '[' + filter.getFuzzyMark() + "] " + source : source;
                     addFileTMXEntry(tmxSource, translation);
                 }
             }
@@ -165,7 +165,7 @@ public abstract class TestFilterBase extends TestCore {
 
     protected List<ParsedEntry> parse3(AbstractFilter filter, String filename, Map<String, String> options)
             throws Exception {
-        final List<ParsedEntry> result = new ArrayList<ParsedEntry>();
+        final List<ParsedEntry> result = new ArrayList<>();
 
         filter.parseFile(new File(filename), options, context, new IParseCallback() {
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
@@ -195,7 +195,7 @@ public abstract class TestFilterBase extends TestCore {
     }
 
     protected void translate(AbstractFilter filter, String filename) throws Exception {
-        translate(filter, filename, Collections.EMPTY_MAP);
+        translate(filter, filename, Collections.<String, String>emptyMap());
     }
     
     protected void translate(AbstractFilter filter, String filename, Map<String, String> config) throws Exception {
@@ -220,11 +220,11 @@ public abstract class TestFilterBase extends TestCore {
     protected void align(IFilter filter, String in, String out, IAlignCallback callback) throws Exception {
         File inFile = new File("test/data/filters/" + in);
         File outFile = new File("test/data/filters/" + out);
-        filter.alignFile(inFile, outFile, Collections.EMPTY_MAP, context, callback);
+        filter.alignFile(inFile, outFile, Collections.<String, String>emptyMap(), context, callback);
     }
 
     protected void translateText(AbstractFilter filter, String filename) throws Exception {
-        translateText(filter, filename, Collections.EMPTY_MAP);
+        translateText(filter, filename, Collections.<String, String>emptyMap());
     }
     protected void translateText(AbstractFilter filter, String filename, Map<String, String> config) throws Exception {
         translate(filter, filename, config);
@@ -309,7 +309,7 @@ public abstract class TestFilterBase extends TestCore {
     }
 
     protected IProject.FileInfo loadSourceFiles(IFilter filter, String file) throws Exception {
-        return loadSourceFiles(filter, file, Collections.EMPTY_MAP);
+        return loadSourceFiles(filter, file, Collections.<String, String>emptyMap());
     }
 
     protected IProject.FileInfo fi;
@@ -373,8 +373,8 @@ public abstract class TestFilterBase extends TestCore {
         public FileInfo loadSourceFiles(IFilter filter, String file, Map<String, String> filterOptions) throws Exception {
             Core.setProject(this);
 
-            Set<String> existSource = new HashSet<String>();
-            Set<EntryKey> existKeys = new HashSet<EntryKey>();
+            Set<String> existSource = new HashSet<>();
+            Set<EntryKey> existKeys = new HashSet<>();
 
             LoadFilesCallback loadFilesCallback = new LoadFilesCallback(existSource, existKeys);
 
@@ -426,7 +426,7 @@ public abstract class TestFilterBase extends TestCore {
     }
 
     protected static class TestAlignCallback implements IAlignCallback {
-        public List<AlignedEntry> entries = new ArrayList<AlignedEntry>();
+        public List<AlignedEntry> entries = new ArrayList<>();
 
         public void addTranslation(String id, String source, String translation, boolean isFuzzy,
                 String path, IFilter filter) {
