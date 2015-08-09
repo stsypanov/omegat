@@ -3,7 +3,6 @@ package org.omegat.filters.base;
 import gen.core.project.ProjectFileStorageTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.omegat.core.Core;
 import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;

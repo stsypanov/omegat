@@ -12,14 +12,16 @@ import static org.junit.Assert.*;
  * Created by stsypanov on 13.05.2015.
  */
 public class ProjectFileStorageTest {
-	protected String path = "c:\\Users\\STsypanov\\IdeaProjects\\omegat-test-project\\";
+	protected String path = "test/data/test-project/";
 
 	@Test
 	public void testLoadProjectProperties() throws Exception {
 		ProjectProperties projectProperties = getProjectProperties();
 		String baseFilteringItems = projectProperties.getBaseFilteringItems();
 		String expected = path + "baseFilteringItems.xml";
-		assertEquals(expected, baseFilteringItems);
+		File expectedFile = new File(expected);
+		assertTrue(expectedFile.exists());
+		assertEquals(expectedFile.getAbsolutePath(), baseFilteringItems);
 	}
 
 	@Test

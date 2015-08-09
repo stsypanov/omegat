@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tmx SYSTEM "tmx11.dtd">
+<tmx version="1.1">
+  <header creationtool="OmegaT" o-tmf="OmegaT TMX" adminlang="EN-US" datatype="plaintext" creationtoolversion="3.1.9_1" segtype="sentence" srclang="FI"/>
+  <body>
+<!-- Default translations -->
+    <tu>
+      <tuv lang="FI">
+        <seg>(Convention de la Haye du 5 octobre 1961)</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172254Z" creationid="Сергей" creationdate="20150212T172254Z">
+        <seg>(Гаагская конвенция от 5 октября 1961 г.)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>(jos se poikkeaa kuitin päiväyksestä)</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171556Z" creationid="Сергей" creationdate="20150212T171556Z">
+        <seg>(если отличается от датировки чека)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>- kuntotarkastusmaksu</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172052Z" creationid="Сергей" creationdate="20150212T172052Z">
+        <seg>- выплата за проверку состояния</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>- vakuutusmaksu</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172059Z" creationid="Сергей" creationdate="20150212T172059Z">
+        <seg>- страховая выплата</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>1.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172304Z" creationid="Сергей" creationdate="20150212T172304Z">
+        <seg>1.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>10.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172455Z" creationid="Сергей" creationdate="20150212T172455Z">
+        <seg>10.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>1068,00</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172054Z" creationid="Сергей" creationdate="20150212T172054Z">
+        <seg>1068,00</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>10779</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171454Z" creationid="Сергей" creationdate="20150212T171454Z">
+        <seg>10779</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>1100,00</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172220Z" creationid="Сергей" creationdate="20150212T172220Z">
+        <seg>1100,00</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>119900,93</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172006Z" creationid="Сергей" creationdate="20150212T172006Z">
+        <seg>119900,93</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>1394,47</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172104Z" creationid="Сергей" creationdate="20150212T172104Z">
+        <seg>1394,47</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>14.10.2015</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172413Z" creationid="Сергей" creationdate="20150212T172413Z">
+        <seg>14.10.2015</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>16.5.2008</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172005Z" creationid="Сергей" creationdate="20150212T172005Z">
+        <seg>16.5.2008</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>2.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172313Z" creationid="Сергей" creationdate="20150212T172313Z">
+        <seg>2.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>227,73</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172222Z" creationid="Сергей" creationdate="20150212T172222Z">
+        <seg>227,73</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>2722,20</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172224Z" creationid="Сергей" creationdate="20150212T172224Z">
+        <seg>2722,20</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>3.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172320Z" creationid="Сергей" creationdate="20150212T172320Z">
+        <seg>3.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>31.01.2014</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171524Z" creationid="Сергей" creationdate="20150212T171524Z">
+        <seg>31.01.2014</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>326,47</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172100Z" creationid="Сергей" creationdate="20150212T172100Z">
+        <seg>326,47</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>4.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172339Z" creationid="Сергей" creationdate="20150212T172339Z">
+        <seg>4.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>5.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172401Z" creationid="Сергей" creationdate="20150212T172401Z">
+        <seg>5.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>6.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172411Z" creationid="Сергей" creationdate="20150212T172411Z">
+        <seg>6.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>6500,00</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171215Z" creationid="Сергей" creationdate="20150212T171215Z">
+        <seg>6500,00</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>7.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172414Z" creationid="Сергей" creationdate="20150212T172414Z">
+        <seg>7.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>8.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172427Z" creationid="Сергей" creationdate="20150212T172427Z">
+        <seg>8.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>9.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172445Z" creationid="Сергей" creationdate="20150212T172445Z">
+        <seg>9.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>A Maksajalle/Velalliselle</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170417Z" creationid="Сергей" creationdate="20150212T170417Z">
+        <seg>Плательщику / Должнику</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>APOSTILLE</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172236Z" creationid="Сергей" creationdate="20150212T172236Z">
+        <seg>АПОСТИЛЬ</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Allekirjoitus:</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172502Z" creationid="Сергей" creationdate="20150212T172502Z">
+        <seg>Подпись:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Asuntokeskus</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171200Z" creationid="Сергей" creationdate="20150212T171200Z">
+        <seg>Жилищный центр</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Belik Zhanna 181074-174C</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171154Z" creationid="Сергей" creationdate="20150212T171154Z">
+        <seg>Белик Жанна 181074-174C</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Erityispantti</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172004Z" creationid="Сергей" creationdate="20150212T172004Z">
+        <seg>Особый залог</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Helsingin maistraatti</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172518Z" creationid="Сергей" creationdate="20150212T172518Z">
+        <seg>Магистрат Хельсинки</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Helsingissä</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172410Z" creationid="Сергей" creationdate="20150212T172410Z">
+        <seg>в Хельсинки</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Jaana Isosaari</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171820Z" creationid="Сергей" creationdate="20150212T171820Z">
+        <seg>Яана Исосаари</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Jakeluosoite, postinumero ja -toimipaikka</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171133Z" creationid="Сергей" creationdate="20150212T171133Z">
+        <seg>Адрес распределения, почтовый индекс и почтамп</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Jyväskylä, 24.02.2014</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171811Z" creationid="Сергей" creationdate="20150212T171811Z">
+        <seg>Ювяскюля, 24.02.2014</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Kiinteistön 179-409-8-841 vapaa myynti</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171540Z" creationid="Сергей" creationdate="20150212T171540Z">
+        <seg>Свободная продажа недвижимости 179-409-8-841</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Kuitataan</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171801Z" creationid="Сергей" creationdate="20150212T171801Z">
+        <seg>Расписка</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Kuitti virka-apuasiassa</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170634Z" creationid="Сергей" creationdate="20150212T170634Z">
+        <seg>Чек в деле официальной помощи</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Laskun nro</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171439Z" creationid="Сергей" creationdate="20150212T171439Z">
+        <seg>Номер счёта</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Luhangan osuuspankki</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172037Z" creationid="Сергей" creationdate="20150212T172037Z">
+        <seg>Акционерный банк Луханга</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Maa</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172258Z" creationid="Сергей" creationdate="20150212T172258Z">
+        <seg>Страна</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Maksajan kuitti</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170439Z" creationid="Сергей" creationdate="20150212T170439Z">
+        <seg>Чек плательщика</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Maksajan nimi /Virka-avun hakija</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171026Z" creationid="Сергей" creationdate="20150212T171026Z">
+        <seg>Имя плательщика / ПОлучатель официальной помощи</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Maksupäivä</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171523Z" creationid="Сергей" creationdate="20150212T171523Z">
+        <seg>День оплаты</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Myyntimaksu valtiolle</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172219Z" creationid="Сергей" creationdate="20150212T172219Z">
+        <seg>Продажа в пользу государства</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Nro 12867/2014</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172443Z" creationid="Сергей" creationdate="20150212T172443Z">
+        <seg>№ 12867/2014</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Op-asuntoluottopankki Oyj</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171923Z" creationid="Сергей" creationdate="20150212T171923Z">
+        <seg>ОАО "ОП Асунтолуоттопанкки"</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Osam.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171517Z" creationid="Сергей" creationdate="20150212T171517Z">
+        <seg>Частичный платёж</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Paula Ojaniemi, julkinen notaari</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172426Z" creationid="Сергей" creationdate="20150212T172426Z">
+        <seg>Паула Ояниэми, государственный нотариус</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Puttonen ja Seppänen</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171229Z" creationid="Сергей" creationdate="20150212T171229Z">
+        <seg>"Путтонен и Сеппанен"</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Pyöreä vaakunasinetti:</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172511Z" creationid="Сергей" creationdate="20150212T172511Z">
+        <seg>Круглая гербовая печать:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Siinä oleva leima/sinetti on</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172355Z" creationid="Сергей" creationdate="20150212T172355Z">
+        <seg>Печать/штамп на нём принадлежит</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Sinetti/Leima:</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172454Z" creationid="Сергей" creationdate="20150212T172454Z">
+        <seg>Печать/штамп:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Suomi</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172301Z" creationid="Сергей" creationdate="20150212T172301Z">
+        <seg>Финляндия</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Suoritettu yhteensä</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171459Z" creationid="Сергей" creationdate="20150212T171459Z">
+        <seg>Итого уплачено</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>This Apostille does not certify the content of the document for which it was issued.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172549Z" creationid="Сергей" creationdate="20150212T172549Z">
+        <seg>Данный апостиль не подтверждает содержание документа, на который он поставлен.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>This Apostille only certifies the authenticity of the signature and the capacity of the person who has signed the public document, and, where appropriate, the identity of the seal or stamp which the public document bears.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172540Z" creationid="Сергей" creationdate="20150212T172540Z">
+        <seg>Данный апостиль подтверждает только подлинность подписи и полномочия лица, которое подписало данный документ, и, при необходимости, печати или штампа на нём.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Tilitetään hakijalle</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171433Z" creationid="Сергей" creationdate="20150212T171433Z">
+        <seg>Отчёт получателю</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Todistetaan</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172400Z" creationid="Сергей" creationdate="20150212T172400Z">
+        <seg>Заверено</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Tuotenro 70325001K 02.2007 948241</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171857Z" creationid="Сергей" creationdate="20150212T171857Z">
+        <seg>Номер изделия 70325001K 02.2007 948241</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Tämän yleisen asiakirjan:</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172312Z" creationid="Сергей" creationdate="20150212T172312Z">
+        <seg>Этот официальный документ:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Tästä suorituksesta annetaan velalliselle erikseen yksilöity valtion perimiskuitti</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171011Z" creationid="Сергей" creationdate="20150212T171011Z">
+        <seg>С этой выплаты должник получает отдельный чек по выплате государству</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Täytäntöönpano</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172011Z" creationid="Сергей" creationdate="20150212T172011Z">
+        <seg>Исполнение</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Ulosottolomake nro</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150404T114136Z" creationid="Сергей" creationdate="20150212T170357Z">
+        <seg>Анкета выемки</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Ulosottomaksu valtiolle</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171452Z" creationid="Сергей" creationdate="20150212T171452Z">
+        <seg>Взискиваемая выплата государству</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>VALTION PERIMISKUITTI A 0477197</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171902Z" creationid="Сергей" creationdate="20150212T171902Z">
+        <seg>ЧЕК ОБ УПЛАТЕ В ПОЛЬЗУ ГОСУДАРСТВА A 0477197</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>VALTION PERIMISKUITTI A 0477198</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170432Z" creationid="Сергей" creationdate="20150212T170432Z">
+        <seg>ЧЕК ОБ УПЛАТЕ В ПОЛЬЗУ ГОСУДАРСТВА A 0477198</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>VALTION PERIMISKUITTI A 0477199</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172228Z" creationid="Сергей" creationdate="20150212T172228Z">
+        <seg>ЧЕК ОБ УПЛАТЕ В ПОЛЬЗУ ГОСУДАРСТВА A 0477199</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Valtion perimiskuitti A-D</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171617Z" creationid="Сергей" creationdate="20150212T171617Z">
+        <seg>Чек об уплате в пользу государства A-Д</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Velallisen nimi ja henkilötunnus</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171145Z" creationid="Сергей" creationdate="20150212T171145Z">
+        <seg>Имя и личный код должника</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Velkakirjasaatava nro FI12 5809 6080 693848</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171959Z" creationid="Сергей" creationdate="20150212T171959Z">
+        <seg>Причитающиеся по долговому обязательству FI12 5809 6080 693848</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Väliaikaiskuitti velalliselle</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170649Z" creationid="Сергей" creationdate="20150212T170649Z">
+        <seg>Временный чек должнику</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Välityspalkkio</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171213Z" creationid="Сергей" creationdate="20150212T171213Z">
+        <seg>Вознаграждение посредника</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>X</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170650Z" creationid="Сергей" creationdate="20150212T170650Z">
+        <seg>X</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>X Kertam.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171511Z" creationid="Сергей" creationdate="20150212T171511Z">
+        <seg>X Разовый платёж.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Yksilöidyssä kuitissa tiedot asiasta (hakija, perintätunnus tai vastaava)</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171112Z" creationid="Сергей" creationdate="20150212T171112Z">
+        <seg>Данные о деле в отдельном чеку (получатель, код взискания или соответствующий ему)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>Yksilöity kuitti maksusta ulosottomiehelle</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T170835Z" creationid="Сергей" creationdate="20150212T170835Z">
+        <seg>Отдельный чек по выплате судебному исполнителю</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>allekirjoitus</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171814Z" creationid="Сергей" creationdate="20150212T171814Z">
+        <seg>подпись</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>kihlakunnanulosottomies</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T171847Z" creationid="Сергей" creationdate="20150212T171847Z">
+        <seg>уездный пристав</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>kihlakunnanulosottomies.</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172338Z" creationid="Сергей" creationdate="20150212T172338Z">
+        <seg>уездного пристава.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>on allekirjoittanut</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172317Z" creationid="Сергей" creationdate="20150212T172317Z">
+        <seg>подписала</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="FI">
+        <seg>toimiessaan</seg>
+      </tuv>
+      <tuv lang="RU" changeid="Сергей" changedate="20150212T172325Z" creationid="Сергей" creationdate="20150212T172325Z">
+        <seg>выполняя обязанности</seg>
+      </tuv>
+    </tu>
+<!-- Alternative translations -->
+  </body>
+</tmx>

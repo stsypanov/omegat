@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<filteringItems>
+    <filteringItem>
+        <apply>true</apply>
+        <pattern>^(?:(\\d+(?:[\\.,]\\d+)?)(?:\\|)?)+</pattern>
+        <example>30,21</example>
+    </filteringItem>
+    <filteringItem>
+        <apply>true</apply>
+        <pattern>(0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|[1-9]|0[1-9]|1[012])[- /.](19|20)\\d\\d</pattern>
+        <example>12.01.2010</example>
+    </filteringItem>
+    <filteringItem>
+        <apply>true</apply>
+        <pattern>^[-\\w.]+@([A-z0-9][-A-z0-9]+\\.)+[A-z]{2,4}$</pattern>
+        <example>sieger_116@mail.ru</example>
+    </filteringItem>
+    <!-- 	<filteringItem>
+            <apply>true</apply>
+            <pattern>((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&amp;=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&amp;=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&amp;;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)</pattern>
+            <example>example4</example>
+        </filteringItem> -->
+</filteringItems>
+
+
+        <!-- ((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?) -->
