@@ -97,7 +97,7 @@ public class SrtFilter extends AbstractAlignmentFilter {
                 outFile.write(EOL);
                 break;
             case WAIT_TEXT:
-                if (s.trim().length() == 0) {
+                if (s.trim().isEmpty()) {
                     flush();
                     outFile.write(EOL);
                     state = READ_STATE.WAIT_TIME;

@@ -92,7 +92,7 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
     }
 
     private void showTagResultsInGui(List<ErrorReport> suspects, String message) {
-        if (suspects != null && suspects.size() > 0) {
+        if (suspects != null && !suspects.isEmpty()) {
             // create a tag validation window if necessary
             if (m_tagWin == null) {
                 m_tagWin = new TagValidationFrame(mainWindow);
@@ -119,7 +119,7 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
     }
 
     private void showTagResultsInConsole(List<ErrorReport> suspects) {
-        if (suspects != null && suspects.size() > 0) {
+        if (suspects != null && !suspects.isEmpty()) {
             for (ErrorReport report : suspects) {
                 System.out.println(report.entryNum);
                 System.out.println(report.source);
@@ -215,7 +215,7 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
         // if there's no translation, skip the string
         // bugfix for:
         // http://sourceforge.net/support/tracker.php?aid=1209839
-        if (!te.isTranslated() || s.length() == 0) {
+        if (!te.isTranslated() || s.isEmpty()) {
             return null;
         }
         ErrorReport report = new ErrorReport(ste, te.translation);

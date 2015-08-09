@@ -166,7 +166,7 @@ public class OmegaTLogFormatter extends Formatter {
      */
     protected void appendFormattedLine(final StringBuilder out, final LogRecord record, final String line,
             final boolean isStack) {
-        if (line.length() == 0)
+        if (line.isEmpty())
             return;
 
         String res = logMask;

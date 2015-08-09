@@ -57,7 +57,7 @@ public class DictionaryPopupController {
 
     public void updatePopup() {
         List<String> byKey = popupModel.findByKey(popup.getText());
-        if (byKey.size() != 0){
+        if (!byKey.isEmpty()){
             popup.setModel(byKey);
             popup.redraw();
         } else {

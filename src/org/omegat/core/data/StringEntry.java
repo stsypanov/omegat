@@ -77,7 +77,7 @@ public class StringEntry {
      * Returns whether the given string entry is already translated.
      */
     public boolean isTranslated() {
-        return m_translation != null && m_translation.length() > 0;
+        return m_translation != null && !m_translation.isEmpty();
     }
 
     private String m_srcText;

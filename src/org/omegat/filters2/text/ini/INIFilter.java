@@ -90,7 +90,7 @@ public class INIFilter extends AbstractAlignmentFilter {
             String trimmed = str.trim();
 
             // skipping empty strings and comments
-            if (trimmed.length() == 0 || trimmed.charAt(0) == '#' || trimmed.charAt(0) == ';') {
+            if (trimmed.isEmpty() || trimmed.charAt(0) == '#' || trimmed.charAt(0) == ';') {
                 // outfile.write(str+"\n");
                 outfile.write(str + lbpr.getLinebreak()); // fix for bug 1462566
                 continue;

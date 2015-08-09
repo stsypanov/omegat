@@ -55,7 +55,7 @@ public class MapRule implements Serializable {
     /** Returns Language Name (to display it in a dialog). */
     public String getLanguage() {
         String res = LanguageCodes.getLanguageName(languageCode);
-        if (res == null || res.length() == 0)
+        if (res == null || res.isEmpty())
             res = languageCode;
         return res;
     }

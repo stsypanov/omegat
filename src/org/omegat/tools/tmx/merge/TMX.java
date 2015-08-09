@@ -841,7 +841,7 @@ public class TMX extends org.xml.sax.helpers.DefaultHandler {
 		inTUV = false;
 
 		// if no segments have been found, skip the TUV
-		if (segmentBuffers.size() == 0)
+		if (segmentBuffers.isEmpty())
 			return;
 
 		// copy the contents of the segment buffers to the TUV

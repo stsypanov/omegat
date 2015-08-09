@@ -148,7 +148,7 @@ public class XMLStreamReader {
         if (blk != null && m_killEmptyBlocks) {
             String str = blk.getText();
             str = str.trim();
-            if (str.length() == 0) {
+            if (str.isEmpty()) {
                 blk = getNextBlock();
             }
         }
@@ -1072,7 +1072,7 @@ public class XMLStreamReader {
             }
         }
 
-        if (lst.size() == 0)
+        if (lst.isEmpty())
             return null;
         else
             return lst;

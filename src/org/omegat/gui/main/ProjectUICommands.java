@@ -113,7 +113,7 @@ public class ProjectUICommands {
 
                 final String projectRoot = newProps.getProjectRoot();
 
-                if (projectRoot != null && projectRoot.length() > 0) {
+                if (projectRoot != null && !projectRoot.isEmpty()) {
                     // create project
                     try {
                         ProjectFactory.createProject(newProps);

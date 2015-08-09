@@ -1136,7 +1136,7 @@ public class RealProject implements IProject {
 
             loadFilesCallback.fileFinished();
 
-            if (filter != null && (fi.entries.size() > 0)) {
+            if (filter != null && (!fi.entries.isEmpty())) {
                 fi.filterClass = filter.getClass(); //Don't store the instance, because every file gets an instance and 
                                                     // then we consume a lot of memory for all instances. 
                                                     //See also IFilter "TODO: each filter should be stateless"
@@ -1519,7 +1519,7 @@ public class RealProject implements IProject {
      * @return Tokenizer implementation
      */
     protected ITokenizer createTokenizer(String cmdLine, Class<?> projectPref) {
-        if (cmdLine != null && cmdLine.length() > 0) {
+        if (cmdLine != null && !cmdLine.isEmpty()) {
             try {
                 return (ITokenizer) this.getClass().getClassLoader().loadClass(cmdLine).newInstance();
             } catch (ClassNotFoundException e) {
@@ -1549,7 +1549,7 @@ public class RealProject implements IProject {
      */
     protected void configTokenizer(String cmdLine, ITokenizer tokenizer) {
         // Set from command line.
-        if (cmdLine != null && cmdLine.length() > 0) {
+        if (cmdLine != null && !cmdLine.isEmpty()) {
             try {
                 tokenizer.setBehavior(Version.valueOf(cmdLine));
                 return;
@@ -1562,7 +1562,7 @@ public class RealProject implements IProject {
         String vString = Preferences.getPreferenceDefault(
                 Preferences.TOK_BEHAVIOR_PREFIX + tokenizer.getClass().getName(),
                 null);
-         if (vString != null && vString.length() > 0) {
+         if (vString != null && !vString.isEmpty()) {
              try {
                  tokenizer.setBehavior(Version.valueOf(vString));
              }  catch (Throwable e) {
@@ -1677,7 +1677,7 @@ public class RealProject implements IProject {
                 List<ProtectedPart> protectedParts, String segmentTranslation, boolean segmentTranslationFuzzy,
                 String comment, String prevSegment, String nextSegment, String path) {
             // if the source string is empty, don't add it to TM
-            if (segmentSource.length() == 0 || segmentSource.trim().length() == 0) {
+            if (segmentSource.isEmpty() || segmentSource.trim().isEmpty()) {
                 throw new RuntimeException("Segment must not be empty");
             }
 

@@ -57,7 +57,7 @@ public class LingvoDSL implements IDictionary {
         StringBuilder word = new StringBuilder();
         StringBuilder trans = new StringBuilder();
         while ((s = rd.readLine()) != null) {
-            if (s.length() == 0) {
+            if (s.isEmpty()) {
                 continue;
             }
             if (s.charAt(0) == '#') {

@@ -84,7 +84,7 @@ public class GlossaryTextAreaTest extends TestCore {
             }
         });
         gta.clear();
-        if (gta.getText().length() > 0)
+        if (!gta.getText().isEmpty())
             fail("Glossary pane isn't empty.");
     }
 

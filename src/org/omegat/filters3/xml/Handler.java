@@ -210,7 +210,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
      * included into main file. Each entry is {@link File}.
      */
     public List<File> getProcessedFiles() {
-        if (processedFiles.size() > 0)
+        if (!processedFiles.isEmpty())
             return processedFiles;
         else
             return null;

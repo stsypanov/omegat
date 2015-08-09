@@ -116,7 +116,7 @@ public class Language implements Comparable<Object> {
      */
     public String getLanguage() {
         String langstring = getLanguageCode();
-        if (langstring.length() > 0 && getCountryCode().length() > 0)
+        if (!langstring.isEmpty() && !getCountryCode().isEmpty())
             langstring += "-" + getCountryCode();
         return langstring;
     }

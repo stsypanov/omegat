@@ -211,7 +211,7 @@ public class MozillaLangFilter extends AbstractFilter {
         if (localizationNote.length() > 0) {
             c += "\n" + OStrings.getString("LANGFILTER_LOCALIZATION_NOTE") + "\n" + localizationNote.toString();
         }
-        if (c.length()==0) {
+        if (c.isEmpty()) {
             c = null;
         }
         align(s, t, c);

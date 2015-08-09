@@ -564,7 +564,7 @@ public class Preferences {
      */
     public static void setPreference(String name, String value) {
         m_changed = true;
-        if (name != null && name.length() != 0 && value != null) {
+        if (name != null && !name.isEmpty() && value != null) {
             if (!m_loaded)
                 doLoad();
             Integer i = m_preferenceMap.get(name);
@@ -591,7 +591,7 @@ public class Preferences {
      */
     public static void setPreference(String name, Enum<?> value) {
         m_changed = true;
-        if (name != null && name.length() != 0 && value != null) {
+        if (name != null && !name.isEmpty() && value != null) {
             if (!m_loaded)
                 doLoad();
             Integer i = m_preferenceMap.get(name);

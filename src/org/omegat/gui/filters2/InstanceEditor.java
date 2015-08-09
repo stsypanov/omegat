@@ -63,7 +63,7 @@ public class InstanceEditor extends PeroDialog {
         sourceFilenameMaskField.setText("*.*");
         targetFilenamePatternField.setText("${filename}");
 
-        if (hint != null && hint.length() != 0)
+        if (hint != null && !hint.isEmpty())
             hintTextArea.setText(hint);
         else
             hintTextArea.setVisible(false);

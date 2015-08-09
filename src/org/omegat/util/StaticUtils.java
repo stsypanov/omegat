@@ -676,7 +676,7 @@ public class StaticUtils {
 
         // if os or user home is null or empty, we cannot reliably determine
         // the config dir, so we use the current working dir (= empty string)
-        if ((os == null) || (home == null) || (home.length() == 0)) {
+        if ((os == null) || (home == null) || (home.isEmpty())) {
             // set the config dir to the current working dir
             m_configDir = new File(".").getAbsolutePath() + File.separator;
             return m_configDir;
@@ -701,7 +701,7 @@ public class StaticUtils {
                 }
             }
 
-            if ((appData != null) && (appData.length() > 0)) {
+            if ((appData != null) && (!appData.isEmpty())) {
                 // if a valid application data dir has been found,
                 // append an OmegaT subdir to it
                 m_configDir = appData + WINDOWS_CONFIG_DIR;
@@ -732,7 +732,7 @@ public class StaticUtils {
         }
 
         // create the path to the configuration dir, if necessary
-        if (m_configDir.length() > 0) {
+        if (!m_configDir.isEmpty()) {
             try {
                 // check if the dir exists
                 File dir = new File(m_configDir);
@@ -1193,7 +1193,7 @@ public class StaticUtils {
      */
     public static String[] parseCLICommand(String cmd) {
         cmd = cmd.trim();
-        if (cmd.length() == 0) return new String[] { "" };
+        if (cmd.isEmpty()) return new String[] { "" };
         
         StringBuilder arg = new StringBuilder();
         List<String> result = new ArrayList<>();
@@ -1238,7 +1238,7 @@ public class StaticUtils {
     }
 
     public static boolean isProjectDir(File f) {
-        if (f == null || f.getName().length() == 0) {
+        if (f == null || f.getName().isEmpty()) {
             return false;
         }
         File projFile = new File(f.getAbsolutePath(), OConsts.FILE_PROJECT);

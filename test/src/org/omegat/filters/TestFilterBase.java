@@ -97,7 +97,7 @@ public abstract class TestFilterBase extends TestCore {
 
 			public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
 								 String path, IFilter filter, List<ProtectedPart> protectedParts) {
-				if (source.length() > 0)
+				if (!source.isEmpty())
 					result.add(source);
 			}
 
@@ -126,7 +126,7 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                                  String path, IFilter filter, List<ProtectedPart> protectedParts) {
-                if (source.length() > 0)
+                if (!source.isEmpty())
                     result.add(source);
             }
 
@@ -174,7 +174,7 @@ public abstract class TestFilterBase extends TestCore {
             }
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
                     String comment, String path, IFilter filter, List<ProtectedPart> protectedParts) {
-                if (source.length() == 0) {
+                if (source.isEmpty()) {
                     return;
                 }
                 ParsedEntry e = new ParsedEntry();

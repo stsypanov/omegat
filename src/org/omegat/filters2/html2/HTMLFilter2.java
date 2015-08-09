@@ -146,7 +146,7 @@ public class HTMLFilter2 extends AbstractFilter {
 
         // Prepare matcher
         String skipRegExp = options.getSkipRegExp();
-        if (skipRegExp != null && skipRegExp.length() > 0) {
+        if (skipRegExp != null && !skipRegExp.isEmpty()) {
             try {
                 this.skipRegExpPattern = Pattern.compile(skipRegExp, Pattern.CASE_INSENSITIVE);
             } catch (PatternSyntaxException e) {

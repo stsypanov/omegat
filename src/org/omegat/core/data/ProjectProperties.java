@@ -445,7 +445,7 @@ public class ProjectProperties {
             if (!Character.isLetter(code.charAt(i)))
                 return false;
         }
-        if (new Language(code).getDisplayName().length() > 0) {
+        if (!new Language(code).getDisplayName().isEmpty()) {
             return true;
         } else
             return false;

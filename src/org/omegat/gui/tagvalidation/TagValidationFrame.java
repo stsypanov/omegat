@@ -414,7 +414,7 @@ public class TagValidationFrame extends PeroFrame {
             break;
         }
         
-        if (m_errorList.size() > 0) {
+        if (!m_errorList.isEmpty()) {
             update();
         } else {
             this.dispose();

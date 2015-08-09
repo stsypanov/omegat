@@ -575,7 +575,7 @@ public class PoFilter extends AbstractFilter {
         if (references.length() > 0) {
             c += OStrings.getString("POFILTER_REFERENCES") + "\n" + unescape(references.toString() + "\n");
         }
-        if (c.length()==0) {
+        if (c.isEmpty()) {
             c = null;
         }
         align(s, t, c, pathSuffix);
@@ -591,7 +591,7 @@ public class PoFilter extends AbstractFilter {
      *            for next
      */
     protected void align(String source, String translation, String comments, String pathSuffix) {
-        if (translation.length() == 0) {
+        if (translation.isEmpty()) {
             translation = null;
         }
         if (entryParseCallback != null) {

@@ -115,7 +115,7 @@ public class DocBookFilter extends XMLFilter {
      */
     public boolean isFileSupported(BufferedReader reader) {
         XMLDialect dialect = getDialect();
-        if (dialect.getConstraints() == null || dialect.getConstraints().size() == 0)
+        if (dialect.getConstraints() == null || dialect.getConstraints().isEmpty())
             return true;
         try {
             char[] cbuf = new char[OConsts.READ_AHEAD_LIMIT];
