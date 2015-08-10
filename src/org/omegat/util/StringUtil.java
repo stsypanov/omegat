@@ -113,7 +113,7 @@ public class StringUtil {
             cp = input.codePointAt(i);
             if (Character.isLetter(cp)) {
                 // Don't count the first cp as upper to allow for title case
-                if (Character.isUpperCase(cp) && i > 0) {
+                if (Character.isUpperCase(cp)) {
                     hasUpper = true;
                 } else if (Character.isLowerCase(cp)) {
                     hasLower = true;
