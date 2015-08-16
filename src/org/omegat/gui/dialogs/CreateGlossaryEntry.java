@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DockingUI;
-import org.omegat.util.gui.StaticUIUtils;
 
 /**
  * 
@@ -51,8 +50,6 @@ public class CreateGlossaryEntry extends PeroDialog {
     /** Creates new form CreateGlossaryEntry */
     public CreateGlossaryEntry(Frame parent) {
         super(parent, false);
-
-        StaticUIUtils.setEscapeClosable(this);
 
         initComponents();
 
@@ -138,6 +135,7 @@ public class CreateGlossaryEntry extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 16, 4, 4);
         getContentPane().add(sourceTermLabel, gridBagConstraints);
 
+        //todo replace with label
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setFont(getFont());
         descriptionTextArea.setLineWrap(true);
