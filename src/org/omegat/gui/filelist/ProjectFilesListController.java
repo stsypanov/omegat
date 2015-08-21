@@ -938,9 +938,7 @@ public class ProjectFilesListController {
 
         @Override
         public List<? extends SortKey> getSortKeys() {
-            List<SortKey> r = new ArrayList<>();
-            r.add(sortKey);
-            return r;
+            return Collections.singletonList(sortKey);
         }
 
         @Override
@@ -1043,7 +1041,7 @@ public class ProjectFilesListController {
         }
 
         private void save() {
-            List<String> filenames = new ArrayList<>();
+            List<String> filenames = new ArrayList<>(viewToModel.size());
             for (Integer i : viewToModel) {
                 String fn = files.get(i).filePath;
                 filenames.add(fn);
@@ -1079,8 +1077,9 @@ public class ProjectFilesListController {
         }
 
         private int[] getIntArrayFromIntegerList(List<Integer> list) {
-            int[] result = new int[list.size()];
-            for (int i = 0; i < result.length; i++) {
+            int size = list.size();
+            int[] result = new int[size];
+            for (int i = 0; i < size; i++) {
                 result[i] = list.get(i);
             }
             return result;
