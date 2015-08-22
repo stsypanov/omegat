@@ -109,15 +109,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="org.eclipse.jgit-2.1.0.201209190230-r.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/org.eclipse.jgit-2.1.0.201209190230-r.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="jsch-0.1.49.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/jsch-0.1.49.jar!/" />
@@ -420,5 +411,6 @@
     <orderEntry type="library" name="junit-4.12" level="project" />
     <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
     <orderEntry type="library" name="commons-io-2.4" level="project" />
+    <orderEntry type="library" name="org.eclipse.jgit-3.7.1.201504261725-r" level="project" />
   </component>
 </module>
