@@ -307,19 +307,21 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
      * @return A list of strings of tokens which can be considered being numerals
      */
     private List<String> getNumberList(Token[] strTokenAll, String text) {
-        List<String> numberList = new ArrayList<>();
+        List<String> numberList = new ArrayList<>(strTokenAll.length);
         //todo detect numbers with regexp, not with exception
         for (Token oneToken : strTokenAll) {
             try {
                 Integer.parseInt(oneToken.getTextFromString(text));
                 numberList.add(oneToken.getTextFromString(text));
             } catch (NumberFormatException nfe) {
+                Log.log(nfe);
                 try {
                     Double.parseDouble(oneToken.getTextFromString(text));
                     numberList.add(oneToken.getTextFromString(text));
                 } catch (NumberFormatException nfe2) {
-                } // Eat exception silently
-            } // Eat exception silently
+                    Log.log(nfe2);
+                }
+            }
         }
         return numberList;
     }

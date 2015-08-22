@@ -154,7 +154,7 @@ public class HunspellTokenizer extends BaseTokenizer {
     }
     
     private static String[] langsToStrings(Set<Language> langs) {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>(langs.size() * 2);
         for (Language lang : langs) {
             result.add(lang.getLanguage().toLowerCase());
             result.add(lang.getLanguageCode().toLowerCase());
