@@ -40,6 +40,7 @@ import java.io.Writer;
  * @author Keith Godfrey
  * @author Kim Bruning
  * @author Maxym Mykhalchuk
+ * @deprecated use {@link org.omegat.util.PeroFileCopyUtils} instead
  */
 public class LFileCopy {
     private static int BUFSIZE = 1024;
