@@ -94,7 +94,7 @@ public class ScriptItem extends File {
             m_scriptName = results.group(1).trim();
             m_description = results.group(2).trim();
         } catch (IllegalStateException | FileNotFoundException e) {
-            Log.log(e);
+            Log.severe("No match result available for file " + file.getAbsolutePath(), e);
         }
     }
 
