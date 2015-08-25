@@ -29,7 +29,6 @@ package org.omegat.core.spellchecker;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +73,7 @@ public class DictionaryManager {
     /** return the file name only - e.g. until the first dot */
     private String getFileNameOnly(String filename) {
         int position;
-        if ((position = filename.indexOf(".")) != -1)
+        if ((position = filename.indexOf('.')) != -1)
             return filename.substring(0, position);
         else
             return null;
@@ -84,7 +83,7 @@ public class DictionaryManager {
      * returns a list of full names of dictionaries from a dictionary code list
      */
     public List<String> getDictionaryNameList(List<String> aList) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         for (String dic : aList) {
             String parts[] = dic.split("_");
@@ -110,16 +109,13 @@ public class DictionaryManager {
      * returns a list of available dictionaries in the xx_YY form
      */
     public List<String> getLocalDictionaryCodeList() {
-        List<String> result = new ArrayList<String>();
-
-        String[] affixFiles;
-        String[] dictionaryFiles;
+        List<String> result = new ArrayList<>();
 
         // get all affix files
-        affixFiles = dir.list(new DictionaryFileNameFilter(OConsts.SC_AFFIX_EXTENSION));
+        String[] affixFiles = dir.list(new DictionaryFileNameFilter(OConsts.SC_AFFIX_EXTENSION));
 
         // get all dictionary files
-        dictionaryFiles = dir.list(new DictionaryFileNameFilter(OConsts.SC_DICTIONARY_EXTENSION));
+        String[] dictionaryFiles = dir.list(new DictionaryFileNameFilter(OConsts.SC_DICTIONARY_EXTENSION));
 
         // match them
         if (affixFiles != null && dictionaryFiles != null) {
@@ -193,7 +189,7 @@ public class DictionaryManager {
 
         List<String> remoteDicList = getRemoteDictionaryCodeList();
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         // compare the two lists
         for (String dicCode : remoteDicList) {
@@ -208,7 +204,7 @@ public class DictionaryManager {
      * downloads the list of available dictionaries from the net
      */
     private List<String> getRemoteDictionaryCodeList() throws IOException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         // download the file
         String htmlfile = StaticUtils.downloadFileToString
@@ -220,7 +216,7 @@ public class DictionaryManager {
         while (matcher.find()) {
             // strip the quotes from the ends
             String match = matcher.group();
-            int dotPosition = match.indexOf(".");
+            int dotPosition = match.indexOf('.');
             // delete the '.zip"'
             result.add(match.substring(1, dotPosition));
         }
@@ -239,7 +235,7 @@ public class DictionaryManager {
     public void installRemoteDictionary(String langCode) throws IOException {
         // download the package in question to the disk to a temporary location
         String from = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL) +
-                      "/" + langCode + ".zip";
+                '/' + langCode + ".zip";
 
         // TODO: replace this with something meaningful
         File tempFile = File.createTempFile(langCode, ".zip");

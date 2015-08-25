@@ -74,30 +74,30 @@ public class DTD extends XMLPseudoTag {
     public String toOriginal() {
         StringBuilder res = new StringBuilder();
         res.append("<!DOCTYPE");
-        res.append(" ");
+        res.append(' ');
         res.append(name);
         if (publicId!=null) {
-            res.append(" ");
+            res.append(' ');
             res.append("PUBLIC");
-            res.append(" ");
-            res.append("\"" + publicId + "\"");
+            res.append(' ');
+            res.append('"').append(publicId).append('"');
         }
         if (systemId!=null) {
-            res.append(" ");
-            res.append("\"" + systemId + "\"");
+            res.append(' ');
+            res.append('"').append(systemId).append('"');
         }
 
         if (!entities.isEmpty()) {
             res.append("\n[\n");
             for (Entity entity : entities) {
-                res.append(entity.toString());
-                res.append("\n");
+                res.append(entity);
+                res.append('\n');
             }
-            res.append("]");
+            res.append(']');
         }
 
-        res.append(">");
-        res.append("\n");
+        res.append('>');
+        res.append('\n');
         return res.toString();
     }
 

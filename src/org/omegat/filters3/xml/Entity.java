@@ -116,18 +116,18 @@ public class Entity {
         res.append("<!ENTITY");
         if (parameter)
             res.append(" %");
-        res.append(" ");
+        res.append(' ');
         res.append(name);
         if (internal) {
             // <!ENTITY % name "value">
-            res.append(" \"" + value + "\"");
+            res.append(" \"").append(value).append('"');
         } else {
             // <!ENTITY gloss SYSTEM "gloss.xml">
             if (publicId != null)
-                res.append(" PUBLIC \"" + publicId + "\"");
-            res.append(" SYSTEM \"" + systemId + "\"");
+                res.append(" PUBLIC \"").append(publicId).append('"');
+            res.append(" SYSTEM \"").append(systemId).append('"');
         }
-        res.append(">");
+        res.append('>');
         return res.toString();
     }
 

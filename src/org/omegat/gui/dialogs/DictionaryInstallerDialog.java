@@ -233,7 +233,7 @@ public class DictionaryInstallerDialog extends JDialog {
             for (Object o : selection) {
                 // install the respective dictionaries
                 String item = (String) o;
-                String langCode = (item).substring(0, item.indexOf(" "));
+                String langCode = (item).substring(0, item.indexOf(' '));
                 try {
                     dicMan.installRemoteDictionary(langCode);
                     completed.add(item);

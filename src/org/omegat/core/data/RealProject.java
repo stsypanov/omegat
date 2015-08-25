@@ -216,10 +216,10 @@ public class RealProject implements IProject {
 
         sourceTokenizer = createTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_SOURCE), props.getSourceTokenizer());
         configTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_SOURCE_BEHAVIOR), sourceTokenizer);
-        Log.log("Source tokenizer: " + sourceTokenizer.getClass().getName() + " (" + sourceTokenizer.getBehavior() + ")");
+        Log.log("Source tokenizer: " + sourceTokenizer.getClass().getName() + " (" + sourceTokenizer.getBehavior() + ')');
         targetTokenizer = createTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_TARGET), props.getTargetTokenizer());
         configTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_TARGET_BEHAVIOR), targetTokenizer);
-        Log.log("Target tokenizer: " + targetTokenizer.getClass().getName() + " (" + targetTokenizer.getBehavior() + ")");
+        Log.log("Target tokenizer: " + targetTokenizer.getClass().getName() + " (" + targetTokenizer.getBehavior() + ')');
     }
     
     public IRemoteRepository getRepository() {
@@ -544,7 +544,7 @@ public class RealProject implements IProject {
         } catch (Exception e) {
             Log.logErrorRB("CT_ERROR_CREATING_TMX");
             Log.log(e);
-            throw new IOException(OStrings.getString("CT_ERROR_CREATING_TMX") + "\n" + e.getMessage());
+            throw new IOException(OStrings.getString("CT_ERROR_CREATING_TMX") + '\n' + e.getMessage());
         }
 
         // build mirror directory of source tree
@@ -1275,7 +1275,7 @@ public class RealProject implements IProject {
                         // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
                         // directory separators into "/".
                         //
-                        if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + "/")) {                         
+                        if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + '/')) {
                             appendFromAutoTMX(newTMX, false);
                         } else if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
                             appendFromAutoTMX(newTMX, true);
@@ -1759,7 +1759,7 @@ public class RealProject implements IProject {
                             .segment(config.getTargetLanguage(), transS, null, null);
                     if (segmentsTranslation.size() != segmentsSource.size()) {
                         if (isFuzzy) {
-                            transS = "[" + filter.getFuzzyMark() + "] " + transS;
+                            transS = '[' + filter.getFuzzyMark() + "] " + transS;
                         }
                         tr.source = sourceS;
                         tr.translation = transS;
@@ -1769,7 +1769,7 @@ public class RealProject implements IProject {
                             String oneSrc = segmentsSource.get(i);
                             String oneTrans = segmentsTranslation.get(i);
                             if (isFuzzy) {
-                                oneTrans = "[" + filter.getFuzzyMark() + "] " + oneTrans;
+                                oneTrans = '[' + filter.getFuzzyMark() + "] " + oneTrans;
                             }
                             tr.source = oneSrc;
                             tr.translation = oneTrans;
@@ -1778,7 +1778,7 @@ public class RealProject implements IProject {
                     }
                 } else {
                     if (isFuzzy) {
-                        transS = "[" + filter.getFuzzyMark() + "] " + transS;
+                        transS = '[' + filter.getFuzzyMark() + "] " + transS;
                     }
                     tr.source = sourceS;
                     tr.translation = transS;

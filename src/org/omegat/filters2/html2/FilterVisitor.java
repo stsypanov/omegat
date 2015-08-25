@@ -255,7 +255,7 @@ public class FilterVisitor extends NodeVisitor {
     protected void maybeTranslateAttribute(Tag tag, String key) {
         String attr = tag.getAttribute(key);
         if (attr != null) {
-            String comment = OStrings.getString("HTMLFILTER_TAG") + " " + tag.getTagName() + " " + OStrings.getString("HTMLFILTER_ATTRIBUTE") + " " + key;
+            String comment = OStrings.getString("HTMLFILTER_TAG") + ' ' + tag.getTagName() + ' ' + OStrings.getString("HTMLFILTER_ATTRIBUTE") + ' ' + key;
             String trans = filter.privateProcessEntry(entitiesToChars(attr), comment);
             tag.setAttribute(key, charsToEntities(trans));
         }
@@ -544,7 +544,7 @@ public class FilterVisitor extends NodeVisitor {
         for (int i = 0; i < firstgood; i++) {
             Node node = all.get(i);
             if (node instanceof Tag)
-                writeout("<" + node.getText() + ">");
+                writeout('<' + node.getText() + '>');
             else
                 writeout(compressWhitespace(node.getText()));
         }
@@ -618,7 +618,7 @@ public class FilterVisitor extends NodeVisitor {
         for (int i = lastgood + 1; i < all.size(); i++) {
             Node node = all.get(i);
             if (node instanceof Tag)
-                writeout("<" + node.getText() + ">");
+                writeout('<' + node.getText() + '>');
             else
                 writeout(compressWhitespace(node.getText()));
         }
@@ -717,7 +717,7 @@ public class FilterVisitor extends NodeVisitor {
             while ((pos = str.indexOf(shortcut, pos + 1)) >= 0) {
                 Tag tag = s_tags.get(i);
                 try {
-                    str = str.substring(0, pos) + "<" + tag.getText() + ">"
+                    str = str.substring(0, pos) + '<' + tag.getText() + '>'
                             + str.substring(pos + shortcut.length());
                 } catch (StringIndexOutOfBoundsException sioobe) {
                     // nothing, string doesn't change
@@ -767,7 +767,7 @@ public class FilterVisitor extends NodeVisitor {
             queueTranslatable(tag);
         else if (isParagraphTag(tag)) {
             flushbefors();
-            writeout("<" + tag.getText() + ">");
+            writeout('<' + tag.getText() + '>');
         } else
             befors.add(tag);
     }
@@ -786,7 +786,7 @@ public class FilterVisitor extends NodeVisitor {
     private void flushbefors() {
         for (Node node : befors) {
             if (node instanceof Tag)
-                writeout("<" + node.getText() + ">");
+                writeout('<' + node.getText() + '>');
             else
                 writeout(compressWhitespace(node.getText()));
         }
@@ -1110,7 +1110,7 @@ public class FilterVisitor extends NodeVisitor {
             case '>':
                 // If it's the end of a processing instruction
                 if ((i > 0) && str.substring(i-1, i).contentEquals("?")) {
-                   res.append(">"); 
+                   res.append('>');
                 } else {
                     res.append("&gt;");
                 }
@@ -1119,7 +1119,7 @@ public class FilterVisitor extends NodeVisitor {
                 int qMarkPos = str.indexOf('?', i);
                 // If it's the beginning of a processing instruction
                 if (qMarkPos == i+1) {
-                    res.append("<");
+                    res.append('<');
                     break;
                 }
                 int gtpos = str.indexOf('>', i);
