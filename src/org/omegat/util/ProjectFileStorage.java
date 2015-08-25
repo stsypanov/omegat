@@ -258,7 +258,7 @@ public class ProjectFileStorage {
             String res = absolutePath;
             File abs = new File(absolutePath).getCanonicalFile();
             File root = new File(m_root).getCanonicalFile();
-            String prefix = "";
+            StringBuilder prefix = new StringBuilder();
             //
             // Try to derive the absolutePath as a relative path
             // from root.
@@ -281,7 +281,7 @@ public class ProjectFileStorage {
                     break;
                 } else {
                     root = root.getParentFile();
-                    prefix += File.separator + "..";
+                    prefix.append(File.separator).append("..");
                     //
                     // There are no more parent paths.
                     //
