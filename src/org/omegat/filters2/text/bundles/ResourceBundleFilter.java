@@ -229,9 +229,10 @@ public class ResourceBundleFilter extends AbstractFilter {
             else if ((ch >= 32 && ch < 127) || charsetEncoder.canEncode(ch)) 
                 result.append(ch);
             else {
-                String code = Integer.toString(ch, 16);
-                while (code.length() < 4)
-                    code = '0' + code;
+                StringBuilder code = new StringBuilder(Integer.toString(ch, 16));
+                while (code.length() < 4) {
+                    code.append('0').append(code);
+                }
                 result.append("\\u").append(code);
             }
         }
