@@ -64,7 +64,6 @@ import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.DockingUI;
 
 /**
  * GIT repository connection implementation.
@@ -212,7 +211,7 @@ public class GITRemoteRepository implements IRemoteRepository {
             return;
         }
         myCredentialsProvider.setCredentials(credentials);
-        setReadOnly(credentials.readOnly);
+        readOnly = credentials.readOnly;
     }
 
     public void setReadOnly(boolean value) {
@@ -346,16 +345,18 @@ public class GITRemoteRepository implements IRemoteRepository {
     }
 
     private static File getLocalRepositoryRoot(File path) {
-        if (path == null) {
-            return null;
-        }
-        File possibleControlDir = new File(path, ".git");
-        if (possibleControlDir.exists() && possibleControlDir.isDirectory()) {
-            return path;
-        } else {
-            // We need to call getAbsoluteFile() because "path" can be relative. In this case, we will have
-            // "null" instead real parent directory.
-            return getLocalRepositoryRoot(path.getAbsoluteFile().getParentFile());
+        while (true) {
+            if (path == null) {
+                return null;
+            }
+            File possibleControlDir = new File(path, ".git");
+            if (possibleControlDir.exists() && possibleControlDir.isDirectory()) {
+                return path;
+            } else {
+                // We need to call getAbsoluteFile() because "path" can be relative. In this case, we will have
+                // "null" instead real parent directory.
+                path = path.getAbsoluteFile().getParentFile();
+            }
         }
     }
 

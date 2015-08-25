@@ -200,25 +200,28 @@ public class DiffDriver {
         Render optimized = optimizeRender(result,level+1);
         return (optimized.formatting.size() < result.formatting.size()) ? optimized : result;
     }
+
     /**
      * Recurse through a change script until we find a change at the given index.
      *
-     * @param i Index to seek
+     * @param i      Index to seek
      * @param script Change script
      * @return Element at index i, or null if not found
      */
     private static Diff.change search(int i, Diff.change script) {
-    	// Give up when we reach the end of the list,
-    	// OR if we've passed the desired index (list is sorted in increasing order).
-        if (script == null || script.line0 > i) {
-            return null;
-        }
+        while (true) {
+            // Give up when we reach the end of the list,
+            // OR if we've passed the desired index (list is sorted in increasing order).
+            if (script == null || script.line0 > i) {
+                return null;
+            }
 
-        if (script.line0 == i) {
-            return script;
-        }
+            if (script.line0 == i) {
+                return script;
+            }
 
-        return search(i, script.link);
+            script = script.link;
+        }
     }
 
     /**
