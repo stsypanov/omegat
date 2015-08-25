@@ -49,6 +49,7 @@ import org.omegat.util.Token;
  * @author Aaron Madlon-Kay
  */
 public abstract class BaseTokenizer implements ITokenizer {
+    public static final String[] EMPTY_STRINGS = new String[0];
     private static Map<String, Token[]> tokenCacheNone = new HashMap<>(
             5000);
     private static Map<String, Token[]> tokenCacheMatching = new HashMap<>(
@@ -286,7 +287,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     @Override
     public String[] getSupportedLanguages() {
         Tokenizer ann = getClass().getAnnotation(Tokenizer.class);
-        return ann == null ? new String[0] : ann.languages();
+        return ann == null ? EMPTY_STRINGS : ann.languages();
     }
 
     protected String test(String... args) {

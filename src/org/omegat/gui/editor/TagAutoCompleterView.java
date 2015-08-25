@@ -113,6 +113,8 @@ public class TagAutoCompleterView extends AutoCompleterListView {
     
     private static class TagTokenizer implements ITokenizer {
 
+        public static final String[] EMPTY_STRINGS = new String[0];
+
         @SuppressWarnings("unchecked")
         @Override
         public Map<Version, String> getSupportedBehaviors() {
@@ -194,7 +196,7 @@ public class TagAutoCompleterView extends AutoCompleterListView {
         
         @Override
         public String[] getSupportedLanguages() {
-            return new String[0];
+            return EMPTY_STRINGS;
         }
     }
 }

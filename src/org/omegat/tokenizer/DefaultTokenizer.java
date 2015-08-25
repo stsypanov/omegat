@@ -53,6 +53,7 @@ import org.omegat.util.Token;
  */
 public class DefaultTokenizer implements ITokenizer {
 
+    public static final String[] EMPTY_STRINGS = new String[0];
     /**
      * Contains a list of tokens for each *unique* string. By not storing a list
      * of tokens for every string, memory is saved. Token lists are not saved
@@ -269,6 +270,6 @@ public class DefaultTokenizer implements ITokenizer {
 
     @Override
     public String[] getSupportedLanguages() {
-        return new String[0];
+        return EMPTY_STRINGS;
     }
 }

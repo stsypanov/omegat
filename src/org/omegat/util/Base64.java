@@ -397,6 +397,7 @@ public class Base64
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 
     };
+    public static final byte[] EMPTY_BYTES = new byte[0];
 
     
 /* ********  D E T E R M I N E   W H I C H   A L H A B E T  ******** */
@@ -1158,7 +1159,7 @@ public class Base64
         }   // end if
         
         if( len == 0 ){
-            return new byte[0];
+            return EMPTY_BYTES;
         }else if( len < 4 ){
             throw new IllegalArgumentException( 
             "Base64-encoded string must have at least four characters, but length specified was " + len );
