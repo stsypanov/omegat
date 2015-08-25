@@ -281,16 +281,16 @@ public class FindMatches {
             final List<TMXProp> props) {
         // remove part that is to be removed prior to tokenize
         String realSource = source;
-        String entryRemovedText = "";
+        StringBuilder entryRemovedText = new StringBuilder();
         int realPenaltyForRemoved = 0;
         if (this.removePattern != null) {
             Matcher removeMatcher = removePattern.matcher(realSource);
             while (removeMatcher.find()) {
-                entryRemovedText += source.substring(removeMatcher.start(), removeMatcher.end());
+                entryRemovedText.append(source.substring(removeMatcher.start(), removeMatcher.end()));
             }
             realSource = removeMatcher.replaceAll("");
             // calculate penalty if something has been removed, otherwise different strings get 100% match.
-            if (!entryRemovedText.equals(this.removedText)) {
+            if (!entryRemovedText.toString().equals(this.removedText)) {
                 // penalty for different 'removed'-part
                 realPenaltyForRemoved = PENALTY_FOR_REMOVED;
             }
