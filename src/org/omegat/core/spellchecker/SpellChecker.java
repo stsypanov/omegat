@@ -27,23 +27,6 @@
 
 package org.omegat.core.spellchecker;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.SourceTextEntry;
@@ -53,6 +36,11 @@ import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.*;
 
 /**
  * Common spell checker interface for use any spellchecker providers.
@@ -67,15 +55,15 @@ public class SpellChecker implements ISpellChecker {
     private ISpellCheckerProvider checker;
 
     /** the list of ignored words */
-    private List<String> ignoreList = new ArrayList<String>();
+    private List<String> ignoreList = new ArrayList<>();
 
     /** the list of learned (valid) words */
-    private List<String> learnedList = new ArrayList<String>();
+    private List<String> learnedList = new ArrayList<>();
 
     /** Cache of correct words. */
-    private final Set<String> correctWordsCache = new HashSet<String>();
+    private final Set<String> correctWordsCache = new HashSet<>();
     /** Cache of incorrect words. */
-    private final Set<String> incorrectWordsCache = new HashSet<String>();
+    private final Set<String> incorrectWordsCache = new HashSet<>();
 
     /**
      * the file name with the ignored words
@@ -137,24 +125,22 @@ public class SpellChecker implements ISpellChecker {
         ignoreFileName = projectDir + OConsts.IGNORED_WORD_LIST_FILE_NAME;
 
         // Since we read from disk, we clean the list first
-        ignoreList = new ArrayList<String>();
+        ignoreList = new ArrayList<>();
         fillWordList(ignoreFileName, ignoreList);
 
         // now the correct words
         learnedFileName = projectDir + OConsts.LEARNED_WORD_LIST_FILE_NAME;
 
         // Since we read from disk, we clean the list first
-        learnedList = new ArrayList<String>();
+        learnedList = new ArrayList<>();
         fillWordList(learnedFileName, learnedList);
 
         checker = null;
         if (dictionaryName.isFile()) {
             try {
                 checker = new SpellCheckerHunspell(language, dictionaryName.getPath(), affixName.getPath());
-            } catch (Exception ex) {
+            } catch (Exception | Error ex) {
                 Log.log("Error loading hunspell: " + ex.getMessage());
-            } catch (Error err) {
-                Log.log("Error loading hunspell: " + err.getMessage());
             }
             if (checker == null) {
                 try {
@@ -228,25 +214,11 @@ public class SpellChecker implements ISpellChecker {
      * fill the word list (ignore or learned) with contents from the disk
      */
     private void fillWordList(String filename, List<String> list) {
-        BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), OConsts.UTF8));
-
-            String thisLine;
-            while ((thisLine = br.readLine()) != null) {
-                list.add(thisLine);
-            }
-        } catch (FileNotFoundException ex) {
-            // discard this
-        } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-            } catch (IOException ex) {
-                // so now what?
-            }
+            List<String> strings = Files.readAllLines(new File(filename).toPath(), Charset.forName(OConsts.UTF8));
+            list.addAll(strings);
+        } catch (IOException e) {
+            Log.severe("Failed to read word list", e);
         }
     }
 
@@ -254,25 +226,16 @@ public class SpellChecker implements ISpellChecker {
      * dump word list to a file
      */
     private void dumpWordList(List<String> list, String filename) {
-        if (filename == null)
-            return;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8));
+        if (filename == null) return;
+
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), OConsts.UTF8))) {
 
             for (String text : list) {
                 bw.write(text);
                 bw.newLine();
             }
         } catch (IOException ex) {
-            // so now what?
-        } finally {
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            Log.severe("Failed to dump wod list", ex);
         }
     }
 
@@ -283,11 +246,11 @@ public class SpellChecker implements ISpellChecker {
     public boolean isCorrect(String word) {
         //check if spellchecker is already initialized. If not, skip checking
         //to prevent nullPointerErrors.
-        if (checker==null) 
+        if (checker == null)
             return true;
 
         word = normalize(word);
-        
+
         // check in cache first
         synchronized (this) {
             if (incorrectWordsCache.contains(word)) {
@@ -297,14 +260,8 @@ public class SpellChecker implements ISpellChecker {
             }
         }
 
-        boolean isCorrect;
-
         // if it is valid (learned), it is ok
-        if (learnedList.contains(word) || ignoreList.contains(word)) {
-            isCorrect = true;
-        } else {
-            isCorrect = checker.isCorrect(word);
-        }
+        boolean isCorrect = learnedList.contains(word) || ignoreList.contains(word) || checker.isCorrect(word);
 
         // remember in cache
         synchronized (this) {
