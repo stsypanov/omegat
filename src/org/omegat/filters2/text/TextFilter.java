@@ -156,24 +156,26 @@ public class TextFilter extends AbstractFilter {
 
     /** Processes the file segmenting on line breaks. */
     private void processSegLineBreaks(BufferedReader in, Writer out) throws IOException {
-        LinebreakPreservingReader lpin = new LinebreakPreservingReader(in);
-        String nontrans = "";
-        String s;
-        while ((s = lpin.readLine()) != null) {
-            if (s.trim().isEmpty()) {
-                nontrans += s + lpin.getLinebreak();
-                continue;
-            }
-
-            out.write(nontrans);
+        String nontrans;
+        try (LinebreakPreservingReader lpin = new LinebreakPreservingReader(in)) {
             nontrans = "";
+            String s;
+            while ((s = lpin.readLine()) != null) {
+                if (s.trim().isEmpty()) {
+                    nontrans += s + lpin.getLinebreak();
+                    continue;
+                }
 
-            String translation = processEntry(s);
-            out.write(translation);
+                out.write(nontrans);
+                nontrans = "";
 
-            nontrans += lpin.getLinebreak();
+                String translation = processEntry(s);
+                out.write(translation);
+
+                nontrans += lpin.getLinebreak();
+            }
+            lpin.close();
         }
-        lpin.close();
 
         if (!nontrans.isEmpty())
             out.write(nontrans);
@@ -181,29 +183,32 @@ public class TextFilter extends AbstractFilter {
 
     /** Processes the file segmenting on line breaks. */
     private void processSegEmptyLines(BufferedReader in, Writer out) throws IOException {
-        LinebreakPreservingReader lpin = new LinebreakPreservingReader(in);
-        StringBuilder nontrans = new StringBuilder();
-        StringBuilder trans = new StringBuilder();
-        String s;
-        while ((s = lpin.readLine()) != null) {
-            if (s.isEmpty()) {
-                out.write(nontrans.toString());
-                nontrans.setLength(0);
+        StringBuilder nontrans;
+        StringBuilder trans;
+        try (LinebreakPreservingReader lpin = new LinebreakPreservingReader(in)) {
+            nontrans = new StringBuilder();
+            trans = new StringBuilder();
+            String s;
+            while ((s = lpin.readLine()) != null) {
+                if (s.isEmpty()) {
+                    out.write(nontrans.toString());
+                    nontrans.setLength(0);
 
-                out.write(processEntry(trans.toString()));
-                trans.setLength(0);
-                nontrans.append(lpin.getLinebreak());
-            } else {
-                if (s.trim().isEmpty() && trans.length() == 0) {
-                    nontrans.append(s);
+                    out.write(processEntry(trans.toString()));
+                    trans.setLength(0);
                     nontrans.append(lpin.getLinebreak());
                 } else {
-                    trans.append(s);
-                    trans.append(lpin.getLinebreak());
+                    if (s.trim().isEmpty() && trans.length() == 0) {
+                        nontrans.append(s);
+                        nontrans.append(lpin.getLinebreak());
+                    } else {
+                        trans.append(s);
+                        trans.append(lpin.getLinebreak());
+                    }
                 }
             }
+            lpin.close();
         }
-        lpin.close();
         if (nontrans.length() >= 0)
             out.write(nontrans.toString());
         if (trans.length() >= 0)
