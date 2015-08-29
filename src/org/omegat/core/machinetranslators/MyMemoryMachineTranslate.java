@@ -67,10 +67,12 @@ public class MyMemoryMachineTranslate extends AbstractMyMemoryTranslate {
             return prev;
         }
 
-        String tmxResponse = "";
-        String machineTranslationMatch = ""; 
+        String tmxResponse;
+        String machineTranslationMatch;
         
         // Get MyMemory response in TMX format
+        //todo handle {"responseData":{"translatedText":"MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. VISIT HTTP:\/\/MYMEMORY.TRANSLATED.NET\/DOC\/QUOTAREACHED TO TRANSLATE MORE"},"responseDetails":"MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. VISIT HTTP:\/\/MYMEMORY.TRANSLATED.NET\/DOC\/QUOTAREACHED TO TRANSLATE MORE","responseStatus":"403","matches":""}
+
         try {
             tmxResponse = getMyMemoryResponse(sLang, tLang, text, "tmx");
         } catch(Exception e) { 
@@ -99,9 +101,9 @@ public class MyMemoryMachineTranslate extends AbstractMyMemoryTranslate {
     }
     
     private String extractMTresponse(Document document, String targetLang) {
-        String MTresponse = "";
+        String MTresponse;
         String MTQuery = String.format("/tmx/body/tu[@creationid='MT!']/tuv[starts-with(@lang, '%s')]/seg/text()", targetLang); 
-        Object result = null; 
+        Object result;
         
         XPath xpath = xPathFactory.newXPath();
         

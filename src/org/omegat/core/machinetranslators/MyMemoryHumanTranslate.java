@@ -67,15 +67,14 @@ public class MyMemoryHumanTranslate extends AbstractMyMemoryTranslate {
             return prev;
         }
 
-        String tmxResponse = "";
-        String bestHumanTranslation = "";
+        String tmxResponse;
+        String bestHumanTranslation;
         
         // Get MyMemory response in TMX format
+        //todo handle {"responseData":{"translatedText":"MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. VISIT HTTP:\/\/MYMEMORY.TRANSLATED.NET\/DOC\/QUOTAREACHED TO TRANSLATE MORE"},"responseDetails":"MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY. VISIT HTTP:\/\/MYMEMORY.TRANSLATED.NET\/DOC\/QUOTAREACHED TO TRANSLATE MORE","responseStatus":"403","matches":""}
         try {
             tmxResponse = getMyMemoryResponse(sLang, tLang, text, "tmx");
-        }
-        catch(Exception e)
-        {
+        } catch(Exception e) {
             return e.getLocalizedMessage();
         }
         
