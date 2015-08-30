@@ -52,6 +52,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyledDocument;
 
+import org.apache.commons.lang.StringUtils;
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.StringData;
@@ -308,19 +309,10 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
      */
     private List<String> getNumberList(Token[] strTokenAll, String text) {
         List<String> numberList = new ArrayList<>(strTokenAll.length);
-        //todo detect numbers with regexp, not with exception
         for (Token oneToken : strTokenAll) {
-            try {
-                Integer.parseInt(oneToken.getTextFromString(text));
-                numberList.add(oneToken.getTextFromString(text));
-            } catch (NumberFormatException nfe) {
-                Log.log(nfe);
-                try {
-                    Double.parseDouble(oneToken.getTextFromString(text));
-                    numberList.add(oneToken.getTextFromString(text));
-                } catch (NumberFormatException nfe2) {
-                    Log.log(nfe2);
-                }
+            String textFromString = oneToken.getTextFromString(text);
+            if (!StringUtils.isEmpty(textFromString) && StringUtils.isNumeric(textFromString)) {
+                numberList.add(textFromString);
             }
         }
         return numberList;
@@ -468,7 +460,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     public void clear() {
         UIThreadsUtil.mustBeSwingThread();
 
-        setFoundResult(null, new ArrayList<NearString>());
+        setFoundResult(null, Collections.<NearString>emptyList());
     }
 
     protected MouseListener mouseListener = new MouseAdapter() {
@@ -531,7 +523,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                 } else {
                     b.append(proj);
                 }
-                b.append(" ");
+                b.append(' ');
                 b.append(m.scores[i].toString());
                 JMenuItem pItem = popup.add(b.toString());
                 pItem.setEnabled(false);
