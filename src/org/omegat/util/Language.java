@@ -128,7 +128,7 @@ public class Language implements Comparable<Object> {
     public String getLocaleCode() {
         if (locale == null) {
             return "";
-        } else { 
+        } else {
             // Patch Java locale, to return correct locales instead of obsolete codes
             String returnString = locale.toString();
             if (returnString.length()<2)
@@ -182,7 +182,7 @@ public class Language implements Comparable<Object> {
     /**
      * Determine whether or not the language is space-delimited. Only Chinese,
      * Japanese, and Tibetan are not space-delimited.
-     * 
+     *
      * @see <a href="https://linguistlist.org/issues/6/6-1302.html">LINGUIST
      *      List 6.1302</a>
      */
@@ -332,8 +332,8 @@ public class Language implements Comparable<Object> {
 
             new Language("FF"), // FULAH
 
-            new Language("FI"), // FINNISH
-            // new Language("FI-FI"), // FINNISH (FINLAND)
+//            new Language("FI"), // FINNISH
+             new Language("FI-FI"), // FINNISH (FINLAND)
 
             new Language("FJ"), // FIJIAN
             // new Language("FJ-FJ"), // FIJIAN (FIJI)
@@ -653,7 +653,7 @@ public class Language implements Comparable<Object> {
 
     /**
      * Verify the correctness of a language or country code
-     * 
+     *
      * @param code
      *            A string containing a language or country code
      * @return <code>true</code> or <code>false</code>
