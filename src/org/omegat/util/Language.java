@@ -117,7 +117,7 @@ public class Language implements Comparable<Object> {
     public String getLanguage() {
         String langstring = getLanguageCode();
         if (!langstring.isEmpty() && !getCountryCode().isEmpty())
-            langstring += "-" + getCountryCode();
+            langstring += '-' + getCountryCode();
         return langstring;
     }
 
@@ -327,8 +327,8 @@ public class Language implements Comparable<Object> {
 
             new Language("FF"), // FULAH
 
-            new Language("FI"), // FINNISH
-            // new Language("FI-FI"), // FINNISH (FINLAND)
+//            new Language("FI"), // FINNISH
+             new Language("FI-FI"), // FINNISH (FINLAND)
 
             new Language("FJ"), // FIJIAN
             // new Language("FJ-FJ"), // FIJIAN (FIJI)
