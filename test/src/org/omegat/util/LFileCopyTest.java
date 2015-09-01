@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by stsypanov on 25.05.2015.
  */
+@SuppressWarnings("deprecation")
 public class LFileCopyTest {
     protected static final Charset CS = Charset.forName(OConsts.UTF8);
     protected File tempFileSrc;
@@ -45,7 +46,7 @@ public class LFileCopyTest {
     public void testCopy() throws Exception {
         String from = tempFileSrc.getAbsolutePath();
         String to = tempFileDestination.getAbsolutePath();
-        LFileCopy.copy(from, to);
+        LFileCopy.copy(new File(from), new File(to));
 
         testResult();
     }
