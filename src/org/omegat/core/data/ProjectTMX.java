@@ -180,9 +180,9 @@ public class ProjectTMX {
                 }
             }
 
-            List<String> p=new ArrayList<>();
+            List<String> p = new ArrayList<>();
             wr.writeComment(" Default translations ");
-            for (Map.Entry<String, TMXEntry> en : new TreeMap<>(tempDefaults).entrySet()) {
+            for (Map.Entry<String, TMXEntry> en : tempDefaults.entrySet()) {
                 p.clear();
                 if (Preferences.isPreferenceDefault(Preferences.SAVE_AUTO_STATUS, false)) {
                     if (en.getValue().linked == TMXEntry.ExternalLinked.xAUTO) {
@@ -194,8 +194,7 @@ public class ProjectTMX {
             }
 
             wr.writeComment(" Alternative translations ");
-            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<>(tempAlternatives)
-                    .entrySet()) {
+            for (Map.Entry<EntryKey, TMXEntry> en : tempAlternatives.entrySet()) {
                 EntryKey k = en.getKey();
                 p.clear();
                 p.add(PROP_FILE);
