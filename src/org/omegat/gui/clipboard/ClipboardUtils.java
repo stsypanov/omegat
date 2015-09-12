@@ -1,9 +1,7 @@
 package org.omegat.gui.clipboard;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -32,7 +30,7 @@ public class ClipboardUtils {
         String key = "insert from clipboard";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK + KeyEvent.SHIFT_DOWN_MASK, true);
         im.put(keyStroke, key);
-        am.put(key, getAction(component, owner));
+        am.put(key, getAction(component));
 
         bindCopyIntoClipboardItemsAction(im, am);
 
@@ -60,31 +58,23 @@ public class ClipboardUtils {
         });
     }
 
-    private static Action getAction(final JTextComponent component, final Frame owner) {
+    private static Action getAction(final JTextComponent component) {
         return new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showDialogAndPaste(component, owner);
+                showDialogAndPaste(component);
             }
         };
     }
 
-    private static void showDialogAndPaste(JTextComponent component, Frame owner) {
+    private static void showDialogAndPaste(JTextComponent component) {
         controller.showDialog();
         String selected = controller.getSelected();
         if (component instanceof JTextArea) {
-            ((JTextArea) component).insert(selected, component.getCaretPosition());
-            controller.hideDialog();
+            ((JTextArea) component).replaceRange(selected, component.getSelectionStart(), component.getSelectionEnd());
+        } else if (component instanceof JEditorPane) {
+            component.replaceSelection(selected);
         }
-        if (component instanceof JEditorPane) {
-            Document document = component.getDocument();
-            try {
-                document.insertString(component.getCaretPosition(), selected, null);
-                controller.hideDialog();
-            } catch (BadLocationException e) {
-                Log.log(e);
-            }
-        }
-        controller.setSelected(null);
+        controller.hideDialog();
     }
 }
