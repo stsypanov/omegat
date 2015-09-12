@@ -30,6 +30,7 @@ import org.omegat.filters3.Attribute;
 import org.omegat.filters3.Tag;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.util.Language;
+import org.xml.sax.Attributes;
 
 /**
  * XML Tag.
@@ -39,7 +40,7 @@ import org.omegat.util.Language;
  */
 public class XMLTag extends Tag {
     /** Creates a new instance of XML Tag */
-    public XMLTag(String tag, String shortcut, Type type, org.xml.sax.Attributes attributes, Language targetLanguage) {
+    public XMLTag(String tag, String shortcut, Type type, Attributes attributes, Language targetLanguage) {
         super(tag, shortcut, type, XMLUtils.convertAttributes(attributes));     
         this.targetLanguage = targetLanguage;
     }
@@ -53,11 +54,11 @@ public class XMLTag extends Tag {
     public String toOriginal() {
         StringBuilder buf = new StringBuilder();
 
-        buf.append("<");
+        buf.append('<');
         if (Type.END == getType())
-            buf.append("/");
+            buf.append('/');
         buf.append(getTag());
-        buf.append(getAttributes().toString());
+        buf.append(getAttributes());
         
         // If that's an Open XML document, we preserve spaces for all <w:t> tags 
         if (getTag().equalsIgnoreCase("w:t") && Type.BEGIN == getType()) {
@@ -94,9 +95,9 @@ public class XMLTag extends Tag {
         }
 
         if (Type.ALONE == getType() && !alreadyClosed) {
-            buf.append("/");
+            buf.append('/');
         }
-        buf.append(">");
+        buf.append('>');
 
         return buf.toString();
     }
