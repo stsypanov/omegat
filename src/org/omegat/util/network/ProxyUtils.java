@@ -6,6 +6,7 @@ import org.omegat.util.Preferences;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,23 +20,28 @@ public class ProxyUtils {
 	public static List<Proxy> getProxySelector(String url) throws URISyntaxException {
 		if (proxies == null) {
 			ProxySearch proxySearch = new ProxySearch();
+			proxySearch.addStrategy(ProxySearch.Strategy.JAVA);
 
 			if (PlatformUtil.getCurrentPlattform() == PlatformUtil.Platform.WIN) {
 				proxySearch.addStrategy(ProxySearch.Strategy.IE);
 				proxySearch.addStrategy(ProxySearch.Strategy.FIREFOX);
-				proxySearch.addStrategy(ProxySearch.Strategy.JAVA);
 			} else if (PlatformUtil.getCurrentPlattform() == PlatformUtil.Platform.LINUX) {
 				proxySearch.addStrategy(ProxySearch.Strategy.GNOME);
 				proxySearch.addStrategy(ProxySearch.Strategy.KDE);
 				proxySearch.addStrategy(ProxySearch.Strategy.FIREFOX);
 			} else {
 				proxySearch.addStrategy(ProxySearch.Strategy.OS_DEFAULT);
+				proxySearch.addStrategy(ProxySearch.Strategy.BROWSER);
 			}
 
 			ProxySelector proxySelector = proxySearch.getProxySelector();
 
 //            ProxySelector.setDefault(proxySelector);
-			proxies = proxySelector.select(new URI(url));
+			if (proxySelector == null) {
+				proxies = Collections.singletonList(Proxy.NO_PROXY);
+			} else {
+				proxies = proxySelector.select(new URI(url));
+			}
 		}
 		return proxies;
 	}
