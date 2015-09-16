@@ -4,7 +4,6 @@ import org.omegat.util.Log;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -13,24 +12,24 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
  * Created by Сергей on 23.05.2015.
  */
-public class ClipboardController implements Clibboard {
+public class ClipboardController {
     private static final Pattern PATTERN = Pattern.compile("\r?\n");
 
     protected ClipboardDialog dialog;
-    protected List<String> clipboardItems;
+    protected Set<String> clipboardItems;
     protected StyledDocument document;
     private String selected;
 
     public ClipboardController(final ClipboardDialog dialog) {
         this.dialog = dialog;
-        this.clipboardItems = new ArrayList<>();
+        this.clipboardItems = new HashSet<>();
         this.document = dialog.getTextArea().getStyledDocument();
 
         addComponentListener(dialog);
@@ -71,7 +70,7 @@ public class ClipboardController implements Clibboard {
             public void componentShown(ComponentEvent e) {
                 try {
                     updateStoredList();
-                } catch (BadLocationException | UnsupportedFlavorException | IOException ex) {
+                } catch (BadLocationException ex) {
                     Log.log(ex);
                 }
             }
@@ -89,17 +88,18 @@ public class ClipboardController implements Clibboard {
         });
     }
 
-    private void updateStoredList() throws BadLocationException, IOException, UnsupportedFlavorException {
+    private void updateStoredList() throws BadLocationException {
         dialog.getTextArea().setText(null);
-        String fromSystem = getSelectionFromSystemClipboard();
-        if (fromSystem != null && !fromSystem.isEmpty() && !clipboardItems.contains(fromSystem)) {
-            clipboardItems.add(fromSystem);
-        }
+        //todo uncomment if selection from system CB needed
+//        String fromSystem = getSelectionFromSystemClipboard();
+//        if (fromSystem != null && !fromSystem.isEmpty()) {
+//            clipboardItems.add(fromSystem);
+//        }
         for (int i = clipboardItems.size(); i > 0; --i) {
             if (i != 1) {
-                document.insertString(document.getLength(), clipboardItems.get(i - 1) + '\n', null);
+                document.insertString(document.getLength(), clipboardItems.toArray(new String[clipboardItems.size()])[i - 1] + '\n', null);
             } else {
-                document.insertString(document.getLength(), clipboardItems.get(i - 1), null);
+                document.insertString(document.getLength(), clipboardItems.toArray(new String[clipboardItems.size()])[i - 1], null);
             }
         }
         dialog.getTextArea().setCaretPosition(0);
@@ -109,7 +109,7 @@ public class ClipboardController implements Clibboard {
         String[] lines = PATTERN.split(dialog.getTextArea().getText());
         int currentLine = TextUtils.getLineAtCaret(dialog.getTextArea());
         this.selected = lines[currentLine - 1];
-        dialog.dispose();
+        hideDialog();
     }
 
     private String getSelectionFromSystemClipboard() throws IOException, UnsupportedFlavorException {
@@ -122,22 +122,19 @@ public class ClipboardController implements Clibboard {
         return null;
     }
 
-    @Override
-    public void insertSelection(JTextComponent component, String string) {
-        int position = component.getCaretPosition();
-        ((JTextArea) component).insert(string, position);
-    }
+//    @Override
+//    public void insertSelection(JTextComponent component, String string) {
+//        int position = component.getCaretPosition();
+//        ((JTextArea) component).insert(string, position);
+//    }
 
-    @Override
-    public List<String> getStoredStrings() {
+    public Set<String> getStoredStrings() {
         return clipboardItems;
     }
 
-    @Override
     public void addString(String s) {
         clipboardItems.add(s);
     }
-
 
     public String getSelected() {
         return selected;
@@ -147,14 +144,14 @@ public class ClipboardController implements Clibboard {
         this.selected = selected;
     }
 
-
     private void onOK() {
         performAction();
-        dialog.dispose();
+        dialog.hideDialog();
     }
 
     private void onCancel() {
-        dialog.dispose();
+        selected = null;
+        dialog.hideDialog();
     }
 
     public void showDialog() {

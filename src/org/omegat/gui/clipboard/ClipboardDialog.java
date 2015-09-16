@@ -4,22 +4,10 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.omegat.gui.common.PeroDialog;
-import org.omegat.util.Log;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.awt.event.ActionListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -56,7 +44,7 @@ public class ClipboardDialog extends PeroDialog {
         new LinePainter(textArea);
 
         textArea.setEditable(false);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
     @Override
@@ -68,13 +56,12 @@ public class ClipboardDialog extends PeroDialog {
         return textArea;
     }
 
-
     public void showDialog() {
         setVisible(true);
     }
 
     public void hideDialog() {
-        dispose();
+        setVisible(false);
     }
 
     {
