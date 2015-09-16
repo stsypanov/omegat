@@ -81,6 +81,9 @@ import org.omegat.util.StringUtil;
  */
 public class Searcher {
 
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile(" ");
+    private static final Pattern COMPILE = Pattern.compile("\\\\s");
+
     /**
      * Create new searcher instance.
      * 
@@ -180,7 +183,7 @@ public class Searcher {
 
             // space match nbsp (\u00a0)
             if (expression.spaceMatchNbsp) {
-                text = text.replaceAll(" ", "( |\u00A0)");
+                text = WHITESPACE_PATTERN.matcher(text).replaceAll("( |\u00A0)");
             }
 
             // create a matcher for the search string
@@ -218,8 +221,8 @@ public class Searcher {
         case REGEXP:
             // space match nbsp (\u00a0)
             if (expression.spaceMatchNbsp) {
-                text = text.replaceAll(" ", "( |\u00A0)");
-                text = text.replaceAll("\\\\s", "(\\\\s|\u00A0)");
+                text = WHITESPACE_PATTERN.matcher(text).replaceAll("( |\u00A0)");
+                text = COMPILE.matcher(text).replaceAll("(\\\\s|\u00A0)");
             }
 
             // create a matcher for the search string

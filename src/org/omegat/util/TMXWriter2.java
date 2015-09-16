@@ -56,6 +56,7 @@ import org.omegat.core.data.TMXEntry;
  * @author Aaron Madlon-Kay
  */
 public class TMXWriter2 {
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n", Pattern.LITERAL);
     private static XMLOutputFactory FACTORY;
 
     private final OutputStream out;
@@ -267,9 +268,9 @@ public class TMXWriter2 {
 
         String version = OStrings.VERSION;
         if (!OStrings.UPDATE.equals("0"))
-            version = version + "_" + OStrings.UPDATE;
+            version = version + '_' + OStrings.UPDATE;
         if (!OStrings.BRANDING.isEmpty()) {
-            version += "_" + OStrings.BRANDING;
+            version += '_' + OStrings.BRANDING;
         }
 
         xml.writeAttribute("creationtoolversion", version);
@@ -331,7 +332,7 @@ public class TMXWriter2 {
                 xml.writeEndElement();
                 break;
             case START:
-                String endTag = "</" + tagName + tagNumber + ">";
+                String endTag = "</" + tagName + tagNumber + '>';
                 if (segment.contains(endTag)) {
                     xml.writeStartElement("bpt");
                     xml.writeAttribute("i", tagNumber);
@@ -347,7 +348,7 @@ public class TMXWriter2 {
                 }
                 break;
             case END:
-                String startTag = "<" + tagName + tagNumber + ">";
+                String startTag = '<' + tagName + tagNumber + '>';
                 if (segment.contains(startTag)) {
                     xml.writeStartElement("ept");
                     xml.writeAttribute("i", tagNumber);
@@ -377,6 +378,6 @@ public class TMXWriter2 {
      * @return The converted string
      */
     private String platformLineSeparator(String text) {
-        return text.replace("\n", FileUtil.LINE_SEPARATOR);
+        return NEW_LINE_PATTERN.matcher(text).replaceAll(Matcher.quoteReplacement(FileUtil.LINE_SEPARATOR));
     }
 }
