@@ -56,7 +56,7 @@ import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
-import org.omegat.gui.dialogs.CreateGlossaryEntry;
+import org.omegat.gui.dialogs.CreateGlossaryEntryDialog;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
@@ -100,7 +100,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
      */
     protected JPopupMenu popup;
 
-    private CreateGlossaryEntry createGlossaryEntryDialog;
+    private CreateGlossaryEntryDialog createGlossaryEntryDialogDialog;
 
     /** Creates new form MatchGlossaryPane */
     public GlossaryTextArea(final MainWindow mw) {
@@ -287,7 +287,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     }
 
     public void showCreateGlossaryEntryDialog(final Frame parent) {
-        CreateGlossaryEntry d = createGlossaryEntryDialog;
+        CreateGlossaryEntryDialog d = createGlossaryEntryDialogDialog;
         if (d != null) {
             d.requestFocus();
             return;
@@ -296,7 +296,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         ProjectProperties props = Core.getProject().getProjectProperties();
         final File out = new File(props.getWriteableGlossary());
 
-        final CreateGlossaryEntry dialog = new CreateGlossaryEntry(parent);
+        final CreateGlossaryEntryDialog dialog = new CreateGlossaryEntryDialog(parent);
         String txt = dialog.getGlossaryFileText().getText();
         txt = MessageFormat.format(txt, out.getAbsolutePath());
         dialog.getGlossaryFileText().setText(txt);
@@ -339,8 +339,8 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                createGlossaryEntryDialog = null;
-                if (dialog.getReturnStatus() == CreateGlossaryEntry.RET_OK) {
+                createGlossaryEntryDialogDialog = null;
+                if (dialog.getReturnStatus() == CreateGlossaryEntryDialog.RET_OK) {
                     String src = dialog.getSourceText().getText();
                     String loc = dialog.getTargetText().getText();
                     String com = dialog.getCommentText().getText();
@@ -354,6 +354,6 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
                 }
             }
         });
-        createGlossaryEntryDialog = dialog;
+        createGlossaryEntryDialogDialog = dialog;
     }
 }

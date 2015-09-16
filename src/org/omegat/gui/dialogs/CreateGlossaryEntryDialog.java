@@ -41,14 +41,14 @@ import org.omegat.util.gui.DockingUI;
  * @author Didier Briel
  */
 @SuppressWarnings("serial")
-public class CreateGlossaryEntry extends PeroDialog {
+public class CreateGlossaryEntryDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
 
     /** Creates new form CreateGlossaryEntry */
-    public CreateGlossaryEntry(Frame parent) {
+    public CreateGlossaryEntryDialog(Frame parent) {
         super(parent, false);
 
         initComponents();
