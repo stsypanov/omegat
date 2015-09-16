@@ -309,7 +309,7 @@ class EntryListPane extends JTextPane {
                 m_stringBuf.append(ENTRY_SEPARATOR);
 
             if (preamble != null && !preamble.isEmpty())
-                m_stringBuf.append(preamble + "\n");
+                m_stringBuf.append(preamble).append('\n');
             if (src != null && !src.isEmpty()) {
                 m_stringBuf.append("-- ");
                 if (srcPrefix != null) {
@@ -583,6 +583,7 @@ class EntryListPane extends JTextPane {
                             } else {
                                 editor.gotoEntry(entry);
                             }
+                            Core.getMainWindow().getApplicationFrame().toFront();
                         }
                     });
                 }
