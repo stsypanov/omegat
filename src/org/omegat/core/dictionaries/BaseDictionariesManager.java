@@ -9,23 +9,20 @@ import java.util.*;
  * Created by stsypanov on 19.04.2015.
  */
 public class BaseDictionariesManager {
-    protected static final Map<String, DictionaryInfo> infos = new TreeMap<>();
-    protected final Set<String> ignoreWords = new TreeSet<>();
+    protected static final Map<String, DictionaryInfo> infos = new HashMap<>();
+    protected final Set<String> ignoredWords = new HashSet<>();
     protected DirectoryMonitor monitor;
     protected List<DictionaryInfo> dictionaries;
     protected Set<String> loadedKeys;
 
-    public BaseDictionariesManager(){
-        synchronized (this) {
-            dictionaries = new ArrayList<>(infos.values());
-        }
+    public BaseDictionariesManager() {
+        dictionaries = new ArrayList<>(infos.values());
     }
 
     /**
      * Find words list in all dictionaries.
      *
-     * @param words
-     *            words list
+     * @param words words list
      * @return articles list
      */
     public List<DictionaryEntry> findWords(Set<String> words) {
@@ -36,19 +33,19 @@ public class BaseDictionariesManager {
         return result;
     }
 
-    public List<DictionaryEntry> findWord(String word){
+    public List<DictionaryEntry> findWord(String word) {
         List<DictionaryEntry> result = new ArrayList<>();
         findWord(dictionaries, result, word);
         return result;
     }
 
-    public Set<String> getKeys(String key){
-        if (loadedKeys == null){
+    public Set<String> getKeys(String key) {
+        if (loadedKeys == null) {
             loadKeys();
         }
         Set<String> possibleKeys = new TreeSet<>();
-        for (String loadedKey : loadedKeys){
-            if (loadedKey.startsWith(key)){
+        for (String loadedKey : loadedKeys) {
+            if (loadedKey.startsWith(key)) {
                 possibleKeys.add(loadedKey);
             }
         }
@@ -57,7 +54,7 @@ public class BaseDictionariesManager {
 
     private void loadKeys() {
         loadedKeys = new HashSet<>();
-        for (DictionaryInfo dictionary : dictionaries){
+        for (DictionaryInfo dictionary : dictionaries) {
             Set<String> strings = dictionary.info.keySet();
             loadedKeys.addAll(strings);
         }
@@ -66,18 +63,14 @@ public class BaseDictionariesManager {
     protected void findWord(List<DictionaryInfo> dictionaries, List<DictionaryEntry> result, String word) {
         for (DictionaryInfo dictionary : dictionaries) {
             try {
-                synchronized (ignoreWords) {
-                    if (ignoreWords.contains(word)) {
-                        continue;
-                    }
+                if (ignoredWords.contains(word)) {
+                    continue;
                 }
                 Object data = dictionary.info.get(word);
                 if (data == null) {
                     String lowerCaseWord = word.toLowerCase();
-                    synchronized (ignoreWords) {
-                        if (ignoreWords.contains(lowerCaseWord)) {
-                            continue;
-                        }
+                    if (ignoredWords.contains(lowerCaseWord)) {
+                        continue;
                     }
                     data = dictionary.info.get(lowerCaseWord);
                 }

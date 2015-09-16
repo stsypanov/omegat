@@ -34,12 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.omegat.gui.dictionaries.DictionariesTextArea;
 import org.omegat.util.DirectoryMonitor;
@@ -69,37 +64,29 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
 
     public void stop() {
         monitor.fin();
-        synchronized (this) {
-            infos.clear();
-        }
+        infos.clear();
     }
 
     /**
-     * Executed on file changed.
+     * Executed if file is changed.
      */
-    public void fileChanged(File file) {
+    public synchronized void fileChanged(File file) {
         String fn = file.getPath();
-        synchronized (this) {
-            infos.remove(fn);
-        }
+        infos.remove(fn);
         if (file.exists()) {
             try {
                 long st = System.currentTimeMillis();
 
                 if (file.getName().equals("ignore.txt")) {
-                    loadIgnoreWords(file);
+                    loadIgnoredWords(file);
                 } else if (fn.endsWith(".ifo")) {
                     IDictionary dict = new StarDict(file);
                     Map<String, Object> header = dict.readHeader();
-                    synchronized (this) {
-                        infos.put(fn, new DictionaryInfo(dict, header));
-                    }
+                    infos.put(fn, new DictionaryInfo(dict, header));
                 } else if (fn.endsWith(".dsl")) {
                     IDictionary dict = new LingvoDSL(file);
                     Map<String, Object> header = dict.readHeader();
-                    synchronized (this) {
-                        infos.put(fn, new DictionaryInfo(dict, header));
-                    }
+                    infos.put(fn, new DictionaryInfo(dict, header));
                 } else {
                     fn = null;
                 }
@@ -118,14 +105,14 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     /**
      * Load ignored words from 'ignore.txt' file.
      */
-    protected void loadIgnoreWords(final File f) throws IOException {
+    protected void loadIgnoredWords(final File f) throws IOException {
         //todo use utils to read file
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(f), OConsts.UTF8))) {
-            synchronized (ignoreWords) {
-                ignoreWords.clear();
+            synchronized (ignoredWords) {
+                ignoredWords.clear();
                 String line;
                 while ((line = rd.readLine()) != null) {
-                    ignoreWords.add(line.trim());
+                    ignoredWords.add(line.trim());
                 }
             }
         }
@@ -138,13 +125,10 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
         try {
             File outFile = new File(monitor.getDir(), "ignore.txt");
             File outFileTmp = new File(monitor.getDir(), "ignore.txt.new");
-            try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp),
-                    OConsts.UTF8))) {
-                synchronized (ignoreWords) {
-                    ignoreWords.add(word);
-                    for (String w : ignoreWords) {
-                        wr.write(w + System.getProperty("line.separator"));
-                    }
+            try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp), OConsts.UTF8))) {
+                ignoredWords.add(word);
+                for (String w : ignoredWords) {
+                    wr.write(w + System.getProperty("line.separator"));
                 }
                 wr.flush();
             }
