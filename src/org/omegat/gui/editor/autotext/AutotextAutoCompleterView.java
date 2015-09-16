@@ -55,8 +55,7 @@ public class AutotextAutoCompleterView extends AutoCompleterListView {
         List<AutoCompleterItem> result = new ArrayList<>();
         for (AutotextPair s : Core.getAutoText().getList()) {
             if (prevText.endsWith(s.source)) {
-                result.add(new AutoCompleterItem(s.target,
-                    new String[] { s.source, s.comment }, s.source.length()));
+                result.add(new AutoCompleterItem(s.target, new String[] { s.source, s.comment }, s.source.length()));
             }
         }
         

@@ -54,10 +54,8 @@ import org.omegat.util.Token;
  */
 public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
-    private static JList list;
+    private static JList<String> list;
 
-    ListModel listModel = new DefaultListModel();
-    
     private static AutoCompleterItem NO_SUGGESTIONS = new AutoCompleterItem(
             OStrings.getString("AC_NO_SUGGESTIONS"), null, 0);
     
@@ -68,7 +66,7 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
     public JList getList() {
         if (list == null) {
-            list = new JList();
+            list = new JList<>();
             list.setCellRenderer(new CellRenderer());
             list.addMouseListener(mouseAdapter);
         }
