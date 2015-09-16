@@ -44,12 +44,12 @@ import org.omegat.util.gui.StaticUIUtils;
  */
 public class CharTableAutoCompleterOptionsDialog extends PeroDialog {
 
+    public static final Object[][] EMPTY_DATA = new Object[0][0];
+    public static final String[] EMPTY_STRINGS = new String[0];
     CharTableModel allCharModel = new CharTableModel(null);
     
     CharTableModel selCharModel = new CharTableModel("");
-    
-    StringBuilder builder = new StringBuilder();
-    
+
     /**
      * Creates new form CharTableAutoCompleterDialog
      */
@@ -160,12 +160,8 @@ public class CharTableAutoCompleterOptionsDialog extends PeroDialog {
         jPanel6.add(allCharLabel, java.awt.BorderLayout.NORTH);
 
         allCharTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
+                EMPTY_DATA,
+                EMPTY_STRINGS
         ));
         allCharTable.setCellSelectionEnabled(true);
         allCharTable.setFillsViewportHeight(true);
@@ -194,12 +190,8 @@ public class CharTableAutoCompleterOptionsDialog extends PeroDialog {
         jPanel5.add(selCharLabel, java.awt.BorderLayout.NORTH);
 
         selCharTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
+                EMPTY_DATA,
+                EMPTY_STRINGS
         ));
         selCharTable.setCellSelectionEnabled(true);
         selCharTable.setFillsViewportHeight(true);
