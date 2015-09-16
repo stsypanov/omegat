@@ -198,7 +198,7 @@ public class GlossaryReaderTBX {
     }
 
     protected static void appendLine(final StringBuilder str, String line) {
-        if (!(!line.isEmpty())) // No need to append empty lines
+        if (line.isEmpty()) // No need to append empty lines
             return;
         if (str.length() > 0) {
             str.append('\n');
@@ -213,7 +213,7 @@ public class GlossaryReaderTBX {
                 Hi hi = (Hi) o;
                 res.append(" *").append(hi.getContent()).append("* ");
             } else {
-                res.append(o.toString());
+                res.append(o);
             }
         }
         return res.toString();

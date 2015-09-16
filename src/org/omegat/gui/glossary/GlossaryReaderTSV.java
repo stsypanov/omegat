@@ -27,19 +27,13 @@
 
 package org.omegat.gui.glossary;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.omegat.filters2.EncodingDetector;
+import org.omegat.util.ByteUtils;
 import org.omegat.util.OConsts;
 import org.omegat.util.StringUtil;
 
@@ -62,16 +56,12 @@ public class GlossaryReaderTSV {
         } else {
             return null;
         }
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
 
-        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
-        BufferedReader in = new BufferedReader(reader);
-        try {
+        List<GlossaryEntry> result = new ArrayList<>();
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding))){
             // BOM (byte order mark) bugfix
-            in.mark(1);
-            int ch = in.read();
-            if (ch != 0xFEFF)
-                in.reset();
+            ByteUtils.checkByteOrderMark(in);
 
             for (String s = in.readLine(); s != null; s = in.readLine()) {
                 // skip lines that start with '#'
@@ -91,8 +81,6 @@ public class GlossaryReaderTSV {
                     comment = tokens[2];
                 result.add(new GlossaryEntry(tokens[0], tokens[1], comment, priorityGlossary));
             }
-        } finally {
-            in.close();
         }
 
         return result;
@@ -118,12 +106,12 @@ public class GlossaryReaderTSV {
         } else {
             encoding = EncodingDetector.detectEncodingDefault(file, OConsts.UTF8);
         }
-        Writer wr = new OutputStreamWriter(new FileOutputStream(file, true), encoding);
-        wr.append(newEntry.getSrcText()).append('\t').append(newEntry.getLocText());
-        if (!StringUtil.isEmpty(newEntry.getCommentText())) {
-            wr.append('\t').append(newEntry.getCommentText());
+        try (Writer wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), encoding))) {
+            wr.append(newEntry.getSrcText()).append('\t').append(newEntry.getLocText());
+            if (!StringUtil.isEmpty(newEntry.getCommentText())) {
+                wr.append('\t').append(newEntry.getCommentText());
+            }
+            wr.append(System.getProperty("line.separator"));
         }
-        wr.append(System.getProperty("line.separator"));
-        wr.close();
     }
 }
