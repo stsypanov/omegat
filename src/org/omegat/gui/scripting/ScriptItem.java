@@ -189,8 +189,9 @@ public class ScriptItem extends File {
             text = BOM + text;
         }
 
-        InputStream is = new ByteArrayInputStream(text.getBytes(OConsts.UTF8));
-        LFileCopy.copy(is, this);
+        try (InputStream is = new ByteArrayInputStream(text.getBytes(OConsts.UTF8))) {
+            LFileCopy.copy(is, this);
+        }
     }
 
     @Override
