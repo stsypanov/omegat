@@ -46,10 +46,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 import org.jetbrains.annotations.NotNull;
-import org.omegat.util.LFileCopy;
-import org.omegat.util.LinebreakPreservingReader;
-import org.omegat.util.Log;
-import org.omegat.util.OConsts;
+import org.omegat.util.*;
 
 /**
  * A script file in the script list is represented as ScriptListFile to allow for localization, description and
@@ -68,6 +65,7 @@ public class ScriptItem extends File {
     public ScriptItem(File scriptFile) {
         super(scriptFile.getParentFile(), scriptFile.getName());
 
+        if (scriptFile.getParentFile() == null) return;
         try (URLClassLoader loader = new URLClassLoader(new URL[]{scriptFile.getParentFile().toURI().toURL()})){
 
             String shortName = ScriptingWindow.getBareFileName(scriptFile.getName());
