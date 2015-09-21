@@ -128,7 +128,7 @@ import com.vlsolutions.swing.docking.event.DockableSelectionListener;
  * @author Didier Briel
  * @author Martin Fleurke
  * @author Guido Leenders
- * @Author Aaron Madlon-Kay
+ * @author Aaron Madlon-Kay
  * @author Piotr Kulik
  * @author Yu Tang
  */
