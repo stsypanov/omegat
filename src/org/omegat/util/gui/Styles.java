@@ -28,7 +28,7 @@
 
 package org.omegat.util.gui;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.logging.Logger;
 
 import javax.swing.UIManager;
@@ -49,7 +49,7 @@ import org.omegat.util.Preferences;
  * @author Briac Pilpre
  */
 public final class Styles {
-    private static final Logger LOGGER = Logger.getLogger(EditorColor.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Styles.class.getName());
 
     public enum EditorColor {
         COLOR_BACKGROUND(UIManager.getColor("TextPane.background")), // Also used for EditorPane.background
@@ -95,7 +95,7 @@ public final class Styles {
         private Color color;
         private Color defaultColor;
 
-        private EditorColor(Color defaultColor) {
+        EditorColor(Color defaultColor) {
             this.color = defaultColor;
             this.defaultColor = defaultColor;
 
@@ -104,13 +104,12 @@ public final class Styles {
                 try {
                     this.color = Color.decode(prefColor);
                 } catch (NumberFormatException e) {
-                    Log.logDebug(LOGGER, "Cannot set custom color for {0}, default to {1}.", name(),
-                            prefColor);
+                    Log.logDebug(LOGGER, "Cannot set custom color for {0}, default to {1}.", name(), prefColor);
                 }
             }
         }
 
-        private EditorColor(String defaultColor) {
+        EditorColor(String defaultColor) {
             this(Color.decode(defaultColor));
         }
 
