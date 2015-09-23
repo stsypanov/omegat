@@ -30,16 +30,14 @@
 
 package org.omegat.gui.editor;
 
-import java.awt.Cursor;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JEditorPane;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.AbstractDocument;
@@ -70,6 +68,7 @@ import org.omegat.util.Log;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
+import org.omegat.util.gui.SwingUtils;
 
 /**
  * Changes of standard JEditorPane implementation for support custom behavior.
@@ -231,6 +230,23 @@ public class EditorTextArea3 extends JEditorPane {
             c.constructor.addItems(popup, EditorTextArea3.this, pos, isInActiveEntry,
                     isInActiveTranslation(pos), sb);
         }
+
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Component c = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+
+                List<JPopupMenu> popups = SwingUtils.getDescendantsOfType(JPopupMenu.class, (Container) c, true);
+
+                for (JPopupMenu p : popups) {
+                    p.setVisible(false);
+                }
+            }
+        };
+
+        popup.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+        popup.getActionMap().put("ESCAPE", escapeAction);
 
         DockingUI.removeUnusedMenuSeparators(popup);
 
