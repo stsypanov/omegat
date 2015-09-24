@@ -205,24 +205,20 @@ public class EditorTextArea3 extends JEditorPane {
     };
 
     private JPopupMenu makePopupMenu(int pos) {
-        
+
         PopupMenuConstructorInfo[] cons;
         synchronized (popupConstructors) {
             /**
-             * Copy constructors - for disable blocking in the procesing
+             * Copy constructors - for disable blocking in the processing
              * time.
              */
             cons = popupConstructors.toArray(new PopupMenuConstructorInfo[popupConstructors.size()]);
         }
 
-        boolean isInActiveEntry;
         int ae = controller.displayedEntryIndex;
         SegmentBuilder sb = controller.m_docSegList[ae];
-        if (sb.isActive()) {
-            isInActiveEntry = pos >= sb.getStartPosition() && pos <= sb.getEndPosition();
-        } else {
-            isInActiveEntry = false;
-        }
+
+        boolean isInActiveEntry = sb.isActive() && pos >= sb.getStartPosition() && pos <= sb.getEndPosition();
 
         JPopupMenu popup = new JPopupMenu();
         for (PopupMenuConstructorInfo c : cons) {
