@@ -112,10 +112,8 @@ public class DictionaryInstallerDialog extends JDialog {
                     infoTextArea.setText(OStrings.getString("GUI_DICTIONARY_INSTALLER_TEXT_NOTHING"));
                 }
                 progressBar.setVisible(false);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DictionaryInstallerDialog.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ExecutionException ex) {
-                Logger.getLogger(DictionaryInstallerDialog.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException | ExecutionException ex) {
+                Logger.getLogger(DictionaryInstallerDialog.LoaderWorker.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
