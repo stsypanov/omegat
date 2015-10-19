@@ -2,12 +2,16 @@ package org.omegat.util.network;
 
 import com.btr.proxy.search.ProxySearch;
 import com.btr.proxy.util.PlatformUtil;
+import com.sun.java.swing.SwingUtilities3;
+import org.jetbrains.annotations.NotNull;
 import org.omegat.util.Preferences;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +50,7 @@ public class ProxyUtils {
 		return proxies;
 	}
 
-	public static Proxy getProxy(String url) throws URISyntaxException {
+	public static Proxy getProxy(String url) throws URISyntaxException, ExecutionException, InterruptedException {
 		if (!isProxySettingsDefined()) {
 			return Proxy.NO_PROXY;
 		} else {
@@ -55,7 +59,7 @@ public class ProxyUtils {
 
 	}
 
-	private static Proxy pickProxy(String url) throws URISyntaxException {
+	private static Proxy pickProxy(String url) throws URISyntaxException, ExecutionException, InterruptedException {
 		List<Proxy> proxyList = getProxySelector(url);
 		for (Proxy proxy : proxyList) {
 			if (testConnection(proxy)) {
@@ -65,28 +69,45 @@ public class ProxyUtils {
 		return Proxy.NO_PROXY;
 	}
 
-	private static boolean testConnection(Proxy proxy) {
-		try {
-			URL url = new URL(URL);
-			Proxy.Type type = proxy.type();
-			switch (type) {
-				case HTTP: {
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
-					int responseCode = connection.getResponseCode();
-					return responseCode >= 200 && responseCode <= 400;
+	private static boolean testConnection(final Proxy proxy) throws ExecutionException, InterruptedException {
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				try {
+					URL url = new URL(URL);
+					Proxy.Type type = proxy.type();
+					switch (type) {
+						case HTTP: {
+							return checkResponseCode(url, proxy);
+						}
+						case SOCKS: {
+							return checkResponseCode(url, proxy);
+						}
+						case DIRECT: {
+							return true;
+						}
+					}
+				} catch (IOException e) {
+					logger.log(Level.SEVERE, "Failed to get connection", e);
+					return false;
 				}
-				case SOCKS: {
-
-				}
-				case DIRECT: {
-					return true;
-				}
+				return false;
 			}
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Failed to get connection", e);
-			return false;
+		};
+		worker.execute();
+		return worker.get();
+	}
+
+	@NotNull
+	private static Boolean checkResponseCode(URL url, Proxy proxy) throws IOException {
+		HttpURLConnection connection = null;
+		try {
+			connection = (HttpURLConnection) url.openConnection(proxy);
+			int responseCode = connection.getResponseCode();
+			return responseCode >= 200 && responseCode <= 400;
+		} finally {
+			if (connection != null) connection.disconnect();
 		}
-		return false;
 	}
 
 	private static boolean isProxySettingsDefined() {

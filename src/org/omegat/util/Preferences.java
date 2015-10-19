@@ -386,14 +386,12 @@ public class Preferences {
 	/**
 	 * Proxy preferences
 	 */
-	public static final String SET_HTTP_PROXY = "httpProxySet";
-	public static final String SET_HTTPS_PROXY = "httpsProxySet";
+	public static final String PROXY_SET = "proxySet";
 
 	public static final String HTTP_PROXY_HOST = "httpProxyHost";
 	public static final String HTTP_PROXY_PORT = "httpProxyPort";
 
-	public static final String HTTPS_PROXY_HOST = "httpsProxySet";
-	public static final String HTTPS_PROXY_PORT = "httpsProxySet";
+	public static final String HTTP_PROXY_TYPE = "httpProxyType";
 
 	/**
 	 * Decide whether Omegat should show file list at project load
