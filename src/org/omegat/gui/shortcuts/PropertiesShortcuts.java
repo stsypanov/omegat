@@ -134,7 +134,7 @@ public class PropertiesShortcuts {
         }
     }
 
-    public void bindKeyStrokes(InputMap inputMap, Object[] keys) {
+    public void bindKeyStrokes(InputMap inputMap, Object... keys) {
         for (Object o : keys) {
             try {
                 String key = (String) o;

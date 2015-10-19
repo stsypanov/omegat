@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
+               2015 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -50,6 +51,7 @@ import org.omegat.util.PatternConsts;
  * Windows-1251 on my OS).
  * 
  * @author Maxym Mykhalchuk
+ * @author Didier Briel
  */
 public class HTMLReader extends AbstractReader {
 
@@ -110,13 +112,18 @@ public class HTMLReader extends AbstractReader {
             String buffer = new String(buf, 0, len);
 
             Matcher matcher_html = PatternConsts.HTML_ENCODING.matcher(buffer);
-            if (matcher_html.find())
+            if (matcher_html.find()) {
                 encoding = matcher_html.group(1);
-
-            if (encoding == null) {
-                Matcher matcher_xml = PatternConsts.XML_ENCODING.matcher(buffer);
-                if (matcher_xml.find())
-                    encoding = matcher_xml.group(1);
+            } else if (encoding == null) {
+                Matcher matcher_html5 = PatternConsts.HTML5_ENCODING.matcher(buffer);
+                if (matcher_html5.find()) {
+                    encoding = matcher_html5.group(1);
+                } else if (encoding == null) {
+                    Matcher matcher_xml = PatternConsts.XML_ENCODING.matcher(buffer);
+                    if (matcher_xml.find()) {
+                        encoding = matcher_xml.group(1);
+                    }
+                }
             }
         }
 

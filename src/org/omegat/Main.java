@@ -461,7 +461,7 @@ public class Main {
                 .get("pseudotranslatetype"));
 
         String fname;
-        if (pseudoTranslateTMXFilename != null && pseudoTranslateTMXFilename.length() > 0) {
+        if (!StringUtil.isEmpty(pseudoTranslateTMXFilename)) {
             if (!pseudoTranslateTMXFilename.endsWith(OConsts.TMX_EXTENSION)) {
                 fname = pseudoTranslateTMXFilename + '.' + OConsts.TMX_EXTENSION;
             } else {
@@ -521,7 +521,7 @@ public class Main {
 
         validateTagsConsoleMode();
 
-        System.out.println(StaticUtils.format(OStrings.getString("CONSOLE_ALIGN_AGAINST"), dir));
+        System.out.println(StringUtil.format(OStrings.getString("CONSOLE_ALIGN_AGAINST"), dir));
 
         Map<String, TMXEntry> data = p.align(p.getProjectProperties(), new File(dir));
         Map<String, PrepareTMXEntry> result = new TreeMap<>();

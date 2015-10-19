@@ -176,7 +176,7 @@ public class EditorController implements IEditor {
 
     protected final EditorSettings settings;
 
-    protected Font font, fontb, fonti, fontbi;
+    protected Font font;
 
     private enum SHOW_TYPE {
         INTRO, EMPTY_PROJECT, FIRST_ENTRY, NO_CHANGE
@@ -358,7 +358,7 @@ public class EditorController implements IEditor {
         case FIRST_ENTRY:
             displayedFileIndex = 0;
             displayedEntryIndex = 0;
-            title = StaticUtils.format(OStrings.getString("GUI_SUBWINDOWTITLE_Editor"), getCurrentFile());
+            title = StringUtil.format(OStrings.getString("GUI_SUBWINDOWTITLE_Editor"), getCurrentFile());
             data = editor;
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -371,7 +371,7 @@ public class EditorController implements IEditor {
             });
             break;
         case NO_CHANGE:
-            title = StaticUtils.format(OStrings.getString("GUI_SUBWINDOWTITLE_Editor"), getCurrentFile());
+            title = StringUtil.format(OStrings.getString("GUI_SUBWINDOWTITLE_Editor"), getCurrentFile());
             data = editor;
             break;
         }
@@ -402,10 +402,10 @@ public class EditorController implements IEditor {
 
         @Override
         public boolean handleDroppedObject(Object dropped) {
-            final List<File> files = (List<File>) dropped;
-
+            final List<?> files = (List<?>) dropped;
+            
             // Only look at first file to determine intent to open project
-            File firstFile = files.get(0);
+            File firstFile = (File) files.get(0);
             if (firstFile.getName().equals(OConsts.FILE_PROJECT)) {
                 firstFile = firstFile.getParentFile();
             }
@@ -426,8 +426,8 @@ public class EditorController implements IEditor {
             });
             return true;
         }
-
-        private boolean handleDroppedFiles(final List<File> files) {
+        
+        private boolean handleDroppedFiles(final List<?> files) {
             if (!Core.getProject().isProjectLoaded()) {
                 return false;
             }
@@ -466,10 +466,6 @@ public class EditorController implements IEditor {
 
     private void setFont(final Font font) {
         this.font = font;
-        this.fontb = new Font(font.getFontName(), Font.BOLD, font.getSize());
-        this.fonti = new Font(font.getFontName(), Font.ITALIC, font.getSize());
-        this.fontbi = new Font(font.getFontName(), Font.BOLD | Font.ITALIC, font.getSize());
-
         editor.setFont(font);
     }
 
@@ -913,14 +909,14 @@ public class EditorController implements IEditor {
             nfPer.setRoundingMode(java.math.RoundingMode.DOWN);
             nfPer.setMaximumFractionDigits(1);
 
-            String message = StaticUtils.format( OStrings.getString("MW_PROGRESS_DEFAULT_PERCENTAGE"),
-                    new Object[] { (translatedUniqueInFile == 0) ? "0%" :
+            String message = StringUtil.format( OStrings.getString("MW_PROGRESS_DEFAULT_PERCENTAGE"),
+                    (translatedUniqueInFile == 0) ? "0%" :
                             nfPer.format((double)translatedUniqueInFile / uniqueInFile),
                     uniqueInFile - translatedUniqueInFile,
                     (stat.numberofTranslatedSegments == 0) ? "0%" :
                             nfPer.format((double)stat.numberofTranslatedSegments / stat.numberOfUniqueSegments),
                     stat.numberOfUniqueSegments - stat.numberofTranslatedSegments,
-                    stat.numberOfSegmentsTotal });
+                    stat.numberOfSegmentsTotal);
 
             Core.getMainWindow().showProgressMessage(message);
         }
@@ -1016,7 +1012,6 @@ public class EditorController implements IEditor {
         PrepareTMXEntry newen = new PrepareTMXEntry();
         newen.source = sb.getSourceText();
         newen.note = Core.getNotes().getNoteText();
-        boolean defaultTranslation = sb.isDefaultTranslation();
         if (forceTranslation != null) { // there is force translation
             switch (forceTranslation) {
             case UNTRANSLATED:
@@ -1057,13 +1052,16 @@ public class EditorController implements IEditor {
             }
         }
 
-        if (StringUtil.equalsWithNulls(oldTE.translation, newen.translation)) {
-            // translation wasn't changed
-            if (!StringUtil.nvl(oldTE.note, "").equals(StringUtil.nvl(newen.note, ""))) {
-                // note was changed
-                Core.getProject().setNote(entry, oldTE, newen.note);
-            }
-        } else {
+        boolean defaultTranslation = sb.isDefaultTranslation();
+        boolean isNewAltTrans = !defaultTranslation && oldTE.defaultTranslation;
+        boolean translationChanged = !StringUtil.equalsWithNulls(oldTE.translation, newen.translation);
+        boolean noteChanged = !StringUtil.nvl(oldTE.note, "").equals(StringUtil.nvl(newen.note, ""));
+
+        if (!isNewAltTrans && !translationChanged && noteChanged) {
+            // Only note was changed, and we are not making a new alt translation.
+            Core.getProject().setNote(entry, oldTE, newen.note);
+        } else if (translationChanged || noteChanged) {
+            // We are changing translation or making a new alt translation.
             Core.getProject().setTranslation(entry, newen, defaultTranslation, null);
         }
 
@@ -1218,7 +1216,7 @@ public class EditorController implements IEditor {
         int startFileIndex = displayedFileIndex;
         int startEntryIndex = displayedEntryIndex;
         boolean looped = false;
-        do {
+        while (true) {
             displayedEntryIndex--;
             if (displayedEntryIndex < 0) {
                 displayedFileIndex--;
@@ -1230,15 +1228,22 @@ public class EditorController implements IEditor {
                 displayedEntryIndex = m_docSegList.length - 1;
             }
             ste = getCurrentEntry();
-        } while (ste == null // filtered file has no entries
-                && (!looped || !(displayedFileIndex == startFileIndex && displayedEntryIndex <= startEntryIndex) // and
-                                                                                                                 // we
-                                                                                                                 // have
-                                                                                                                 // not
-                                                                                                                 // had
-                                                                                                                 // all
-                                                                                                                 // entries
-                ));
+            if (ste != null) {
+                // We found an entry
+                break;
+            }
+            if (looped && displayedFileIndex == startFileIndex) {
+                if (displayedEntryIndex >= startEntryIndex) {
+                    // We have looped back to our starting point
+                    break;
+                }
+                if (m_docSegList.length == 0) {
+                    // We have looped back to our starting point
+                    // and there were no hits in any files
+                    break;
+                }
+            }
+        };
 
         activateEntry();
 

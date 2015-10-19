@@ -40,6 +40,7 @@ import org.omegat.gui.editor.autocompleter.AutoCompleterItem;
 import org.omegat.gui.editor.autocompleter.AutoCompleterListView;
 import org.omegat.util.OStrings;
 import org.omegat.util.TagUtil;
+import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.Token;
 
 /**
@@ -62,8 +63,11 @@ public class TagAutoCompleterView extends AutoCompleterListView {
         List<String> missingGroups = TagUtil.getGroupedMissingTagsFromTarget();
         
         // If wordChunk is a tag, pretend we have a blank wordChunk.
-        if (TagUtil.getAllTagsInSource().contains(wordChunk)) {
-            wordChunk = "";
+        for (Tag tag : TagUtil.getAllTagsInSource()) {
+            if (tag.tag.equals(wordChunk)) {
+                wordChunk = "";
+                break;
+            }
         }
 
         List<String> matchGroups = new ArrayList<String>();
@@ -115,7 +119,6 @@ public class TagAutoCompleterView extends AutoCompleterListView {
 
         public static final String[] EMPTY_STRINGS = new String[0];
 
-        @SuppressWarnings("unchecked")
         @Override
         public Map<Version, String> getSupportedBehaviors() {
             return Collections.emptyMap();
@@ -140,13 +143,18 @@ public class TagAutoCompleterView extends AutoCompleterListView {
         }
 
         @Override
-        public Token[] tokenizeWordsForSpelling(String str) {
+        public String[] tokenizeWordsToStrings(String str, StemmingMode stemmingMode) {
+            return null;
+        }
+
+        @Override
+        public Token[] tokenizeVerbatim(String str) {
             return tokenize(str);
         }
 
         @Override
-        public Token[] tokenizeAllExactly(String str) {
-            return tokenize(str);
+        public String[] tokenizeVerbatimToStrings(String str) {
+            return null;
         }
 
         private Token[] tokenize(String str) {

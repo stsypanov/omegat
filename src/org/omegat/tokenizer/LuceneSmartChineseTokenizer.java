@@ -42,8 +42,13 @@ public class LuceneSmartChineseTokenizer extends BaseTokenizer {
 
 
     @Override
-    public Token[] tokenizeAllExactly(String strOrig) {
+    public Token[] tokenizeVerbatim(String strOrig) {
         return tokenizeByCodePoint(strOrig);
+    }
+    
+    @Override
+    public String[] tokenizeVerbatimToStrings(String strOrig) {
+        return tokenizeByCodePointToStrings(strOrig);
     }
 
     @Override
@@ -53,7 +58,7 @@ public class LuceneSmartChineseTokenizer extends BaseTokenizer {
             SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer(getBehavior(), stopWordsAllowed);
             return analyzer.tokenStream("", new StringReader(strOrig));
         } else {
-            return new WordTokenFilter(new SentenceTokenizer(new StringReader(strOrig.toLowerCase())));
+            return new WordTokenFilter(new SentenceTokenizer(new StringReader(strOrig)));
         }
     }
 }

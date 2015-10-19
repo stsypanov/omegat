@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool
-          with fuzzy matching, translation memory, keyword search,
+ OmegaT - Computer Assisted Translation (CAT) tool 
+          with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
@@ -77,10 +77,10 @@ public class ProjectFileStorage {
         Omegat om = (Omegat) CONTEXT.createUnmarshaller().unmarshal(inFile);
         Project project = om.getProject();
 
-        if (!OConsts.PROJ_CUR_VERSION.equals(project.getVersion())) {
-            throw new TranslationException(StaticUtils.format(OStrings
-                    .getString("PFR_ERROR_UNSUPPORTED_PROJECT_VERSION"), project
-                    .getVersion()));
+        if (!OConsts.PROJ_CUR_VERSION.equals(om.getProject().getVersion())) {
+            throw new TranslationException(StringUtil.format(
+                    OStrings.getString("PFR_ERROR_UNSUPPORTED_PROJECT_VERSION"),
+                    om.getProject().getVersion()));
         }
 
         // if folder is in default locations, name stored as __DEFAULT__
@@ -303,7 +303,7 @@ public class ProjectFileStorage {
      * if the specified one could not be loaded for whatever reason.
      */
     private static Class<?> loadTokenizer(String className, Language fallback) {
-        if (className != null && !className.isEmpty()) {
+        if (!StringUtil.isEmpty(className)) {
             try {
                 return ProjectFileStorage.class.getClassLoader().loadClass(className);
             } catch (ClassNotFoundException e) {

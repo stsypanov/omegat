@@ -42,12 +42,12 @@ public class LuceneCzechTokenizer extends BaseTokenizer {
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             String[] stopWords = stopWordsAllowed ? CzechAnalyzer.CZECH_STOP_WORDS
-                    : EMPTY_STOP_WORDS_LIST;
+                    : EMPTY_STRING_LIST;
             return new CzechAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {
             return new StandardTokenizer(getBehavior(),
-                    new StringReader(strOrig.toLowerCase()));
+                    new StringReader(strOrig));
         }
     }
 }

@@ -27,9 +27,6 @@ package org.omegat.core.segmentation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-
-import junit.framework.Assert;
 
 import org.omegat.core.TestCore;
 import org.omegat.util.Language;
@@ -41,9 +38,8 @@ import org.omegat.util.Language;
  */
 public class SegmenterTest extends TestCore
 {
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
-
     protected void setUp() throws Exception {
+        super.setUp();
         Segmenter.srx = SRX.getDefault();
     }
 
@@ -54,10 +50,10 @@ public class SegmenterTest extends TestCore
     {
         List<StringBuilder> spaces = new ArrayList<StringBuilder>();
         List<String> segments = Segmenter.segment(new Language("en"),"<br7>\n\n<br5>\n\nother", spaces, new ArrayList<Rule>());
-        if(segments.size()!=3 || !segments.get(0).equals("<br7>") ||
-                !segments.get(1).equals("<br5>") ||
-                !segments.get(2).equals("other"))
-            fail("Bug XXXXXX.");
+        assertEquals(3, segments.size());
+        assertEquals("<br7>", segments.get(0));
+        assertEquals("<br5>", segments.get(1));
+        assertEquals("other", segments.get(2));
     }
     
     /**
@@ -70,8 +66,7 @@ public class SegmenterTest extends TestCore
         String oldString = "<br7>\n\n<br5>\n\nother";
         List<String> segments = Segmenter.segment(new Language("en"),oldString, spaces, brules);
         String newString = Segmenter.glue(new Language("en"),new Language("fr"),segments, spaces, brules);
-        if(!newString.equals(oldString))
-            fail("Glue failed.");
+        assertEquals(oldString, newString);
     }
     
     /**
@@ -84,21 +79,21 @@ public class SegmenterTest extends TestCore
 
         // basic combination
         final String SOURCE = "Foo. Bar.\nHere.\n\nThere.\r\nThis.\tThat.\n\tOther.";
-        final String TRANSLATED = WHITESPACE_PATTERN.matcher(SOURCE).replaceAll("").replace(EN_FULLSTOP, JA_FULLSTOP);
+        final String TRANSLATED = SOURCE.replace(" ", "").replace(EN_FULLSTOP, JA_FULLSTOP);
         String translated = getPseudoTranslationFromEnToJa(SOURCE);
-        Assert.assertEquals(TRANSLATED, translated);
+        assertEquals(TRANSLATED, translated);
 
         // spaces after/before \n
         final String SOURCE2 = "Foo. \n Bar.";
         final String TRANSLATED2 = "Foo\\u3002\n Bar\\u3002";
         translated = getPseudoTranslationFromEnToJa(SOURCE2);
-        Assert.assertEquals(TRANSLATED2, translated);
+        assertEquals(TRANSLATED2, translated);
 
         // spaces after/before \t
         final String SOURCE3 = "Foo. \t Bar.";
         final String TRANSLATED3 = "Foo\\u3002\t Bar\\u3002";
         translated = getPseudoTranslationFromEnToJa(SOURCE3);
-        Assert.assertEquals(TRANSLATED3, translated);
+        assertEquals(TRANSLATED3, translated);
     }
     
     private String getPseudoTranslationFromEnToJa(final String source) {

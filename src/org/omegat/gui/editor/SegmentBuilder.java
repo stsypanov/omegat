@@ -51,7 +51,6 @@ import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -71,8 +70,6 @@ public class SegmentBuilder {
     public static final String SEGMENT_MARK_ATTRIBUTE = "SEGMENT_MARK_ATTRIBUTE";
     public static final String SEGMENT_SPELL_CHECK = "SEGMENT_SPELL_CHECK";
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
-    private static final DateFormat dateFormat = DateFormat.getDateInstance();
-    private static final DateFormat timeFormat = DateFormat.getTimeInstance();
     private static final Pattern PATTERN = Pattern.compile("0000", Pattern.LITERAL);
 
     static AtomicLong globalVersions = new AtomicLong();
@@ -283,10 +280,10 @@ public class SegmentBuilder {
             System.gc();
 
             // There, that should do it, now inform the user
-            Object[] args = { Runtime.getRuntime().maxMemory() / 1024 / 1024 };
-            Log.logErrorRB("OUT_OF_MEMORY", args);
+            long memory = Runtime.getRuntime().maxMemory() / 1024 / 1024;
+            Log.logErrorRB("OUT_OF_MEMORY", memory);
             Log.log(oome);
-            Core.getMainWindow().showErrorDialogRB("OUT_OF_MEMORY", args, "TF_ERROR");
+            Core.getMainWindow().showErrorDialogRB("TF_ERROR", "OUT_OF_MEMORY", memory);
             // Just quit, we can't help it anyway
             System.exit(0);
 
@@ -494,14 +491,14 @@ public class SegmentBuilder {
             if (trans.changeDate != 0) {
                 template = OStrings.getString("TF_CUR_SEGMENT_AUTHOR_DATE");
                 Date changeDate = new Date(trans.changeDate);
-                String changeDateString = dateFormat.format(changeDate);
-                String changeTimeString = timeFormat.format(changeDate);
+                String changeDateString = DateFormat.getDateInstance().format(changeDate);
+                String changeTimeString = DateFormat.getTimeInstance().format(changeDate);
                 Object[] args = { author, changeDateString, changeTimeString };
-                text = StaticUtils.format(template, args);
+                text = StringUtil.format(template, args);
             } else {
                 template = OStrings.getString("TF_CUR_SEGMENT_AUTHOR");
                 Object[] args = { author };
-                text = StaticUtils.format(template, args);
+                text = StringUtil.format(template, args);
             }
         }
 
@@ -577,7 +574,7 @@ public class SegmentBuilder {
             String replacement = NUMBER_FORMAT.format(segmentNumberInProject);
             if (Preferences.isPreference(Preferences.MARK_NON_UNIQUE_SEGMENTS)
                     && ste.getDuplicate() != SourceTextEntry.DUPLICATE.NONE) {
-                replacement = StaticUtils.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
+                replacement = StringUtil.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
                         replacement,
                         ste.getNumberOfDuplicates());
             }

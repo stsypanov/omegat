@@ -6,7 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, and Henry Pijffers
                2007 Didier Briel, Zoltan Bartko
                2008 Alex Buloichik
-               2015 Didier Briel
+               2015 Didier Briel, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -39,6 +39,7 @@ import org.apache.lucene.util.Version;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.util.PatternConsts;
+import org.omegat.util.StringUtil;
 import org.omegat.util.Token;
 
 /**
@@ -50,6 +51,7 @@ import org.omegat.util.Token;
  * @author Didier Briel
  * @author Zoltan Bartko - bartkozoltan@bartkozoltan.com
  * @author Alex Buloichik
+ * @author Aaron Madlon-Kay
  */
 public class DefaultTokenizer implements ITokenizer {
 
@@ -62,6 +64,7 @@ public class DefaultTokenizer implements ITokenizer {
     private static Map<String, Token[]> tokenCache = new HashMap<>(5000);
 
     private static final Token[] EMPTY_TOKENS_LIST = new Token[0];
+    private static final String[] EMPTY_STRINGS_LIST = new String[0];
 
     public DefaultTokenizer() {
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
@@ -79,20 +82,18 @@ public class DefaultTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
-    public Token[] tokenizeWordsForSpelling(final String str) {
-        return tokenizeTextNoCache(str, false);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Token[] tokenizeWords(final String strOrig, final StemmingMode stemmingMode) {
+        if (StringUtil.isEmpty(strOrig)) {
+            return EMPTY_TOKENS_LIST;
+        }
+
         Token[] result;
         synchronized (tokenCache) {
             result = tokenCache.get(strOrig);
         }
-        if (result != null)
+        if (result != null) {
             return result;
+        }
 
         result = tokenizeTextNoCache(strOrig, false);
 
@@ -103,11 +104,22 @@ public class DefaultTokenizer implements ITokenizer {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Token[] tokenizeAllExactly(final String strOrig) {
+    @Override
+    public String[] tokenizeWordsToStrings(String str, StemmingMode stemmingMode) {
+        if (StringUtil.isEmpty(str)) {
+            return EMPTY_STRINGS_LIST;
+        }
+        return tokenizeTextToStringsNoCache(str, false);
+    }
+
+    @Override
+    public Token[] tokenizeVerbatim(final String strOrig) {
         return tokenizeTextNoCache(strOrig, true);
+    }
+
+    @Override
+    public String[] tokenizeVerbatimToStrings(String str) {
+        return tokenizeTextToStringsNoCache(str, true);
     }
 
     /**
@@ -131,7 +143,7 @@ public class DefaultTokenizer implements ITokenizer {
      * @return array of tokens (all)
      */
     private static Token[] tokenizeTextNoCache(final String strOrig, final boolean all) {
-        if (strOrig.isEmpty()) {
+        if (StringUtil.isEmpty(strOrig)) {
             // fixes bug nr. 1382810 (StringIndexOutOfBoundsException)
             return EMPTY_TOKENS_LIST;
         }
@@ -140,30 +152,69 @@ public class DefaultTokenizer implements ITokenizer {
         List<Token> tokens = new ArrayList<>(64);
 
         // get a word breaker
-        String str = strOrig.toLowerCase(); // HP: possible error, this makes
-                                            // "A" and "a" match, CHECK AND FIX
+        BreakIterator breaker = getWordBreaker();
+        breaker.setText(strOrig);
+
+        int start = breaker.first();
+        for (int end = breaker.next(); end != BreakIterator.DONE; start = end, end = breaker.next()) {
+            String tokenStr = strOrig.substring(start, end);
+            if (all) {
+                // Accepting all tokens
+                tokens.add(new Token(tokenStr, start));
+                continue;
+            }
+            // Accepting only words that aren't OmegaT tags
+            boolean word = false;
+            for (int cp, i = 0; i < tokenStr.length(); i += Character.charCount(cp)) {
+                cp = tokenStr.codePointAt(i);
+                if (Character.isLetter(cp)) {
+                    word = true;
+                    break;
+                }
+            }
+            if (word && !PatternConsts.OMEGAT_TAG.matcher(tokenStr).matches()) {
+                tokens.add(new Token(tokenStr, start));
+            }
+        }
+
+        return tokens.toArray(new Token[tokens.size()]);
+    }
+
+    private static String[] tokenizeTextToStringsNoCache(String str, boolean all) {
+        if (StringUtil.isEmpty(str)) {
+            return EMPTY_STRINGS_LIST;
+        }
+
+        // create a new token list
+        List<String> tokens = new ArrayList<String>(64);
+
+        // get a word breaker
         BreakIterator breaker = getWordBreaker();
         breaker.setText(str);
 
         int start = breaker.first();
         for (int end = breaker.next(); end != BreakIterator.DONE; start = end, end = breaker.next()) {
             String tokenStr = str.substring(start, end);
+            if (all) {
+                // Accepting all tokens
+                tokens.add(tokenStr);
+                continue;
+            }
+            // Accepting only words that aren't OmegaT tags
             boolean word = false;
-            for (int i = 0; i < tokenStr.length(); i++) {
-                char ch = tokenStr.charAt(i);
-                if (Character.isLetter(ch)) {
+            for (int cp, i = 0; i < tokenStr.length(); i += Character.charCount(cp)) {
+                cp = tokenStr.codePointAt(i);
+                if (Character.isLetter(cp)) {
                     word = true;
                     break;
                 }
             }
-
-            if (all || (word && !PatternConsts.OMEGAT_TAG.matcher(tokenStr).matches())) {
-                Token token = new Token(tokenStr, start);
-                tokens.add(token);
+            if (word && !PatternConsts.OMEGAT_TAG.matcher(tokenStr).matches()) {
+                tokens.add(tokenStr);
             }
         }
 
-        return tokens.toArray(new Token[tokens.size()]);
+        return tokens.toArray(new String[tokens.size()]);
     }
 
     /** Returns an iterator to break sentences into words. */

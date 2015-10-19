@@ -42,7 +42,6 @@ import org.omegat.util.Language;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 
 /**
@@ -391,33 +390,33 @@ public class ProjectProperties {
         String srcDir = sourceRoot;
         File src = new File(srcDir);
         if (!src.exists()) {
-            throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_SOURCE_FOLDER"), srcDir));
+            throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_SOURCE_FOLDER"), srcDir));
         }
         //
         String tgtDir = targetRoot;
         File tgt = new File(tgtDir);
         if (!tgt.exists()) {
-            throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_TARGET_FOLDER"), tgtDir));
+            throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_TARGET_FOLDER"), tgtDir));
         }
         //
         String glsDir = glossaryRoot;
         File gls = new File(glsDir);
         if (!gls.exists()) {
-            throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_GLOSSARY_FOLDER"), glsDir));
+            throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_GLOSSARY_FOLDER"), glsDir));
         }
         String wGlsDir = getWriteableGlossaryDir();
         if (!wGlsDir.endsWith(File.separator)) {
             wGlsDir += File.separator;
         }
-        if (!wGlsDir.contains(glossaryRoot)) {
-            throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_W_GLOSSARY"), glsDir));
+        if (!wGlsDir.contains(getGlossaryRoot())) {
+            throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_W_GLOSSARY"), glsDir));
         }
 
         //
         String tmxDir = tmRoot;
         File tmx = new File(tmxDir);
         if (!tmx.exists()) {
-            throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_TM_FOLDER"), tmxDir));
+            throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_TM_FOLDER"), tmxDir));
         }
         
         // Dictionary folder is always created automatically when it does not exist, for ascending
@@ -441,32 +440,33 @@ public class ProjectProperties {
      */
     private static boolean verifyLangCode(String code) {
         // Make sure all values are characters
-        for (int i = 0; i < code.length(); i++) {
-            if (!Character.isLetter(code.charAt(i)))
+        for (int cp, i = 0; i < code.length(); i += Character.charCount(cp)) {
+            cp = code.codePointAt(i);
+            if (!Character.isLetter(cp)) {
                 return false;
+            }
         }
-        if (!new Language(code).getDisplayName().isEmpty()) {
-            return true;
-        } else
-            return false;
+        return !new Language(code).getDisplayName().isEmpty();
     }
 
     /**
      * Verifies whether the language code is OK.
      */
     public static boolean verifySingleLangCode(String code) {
-        if (code.length() == 2 || code.length() == 3) {
+        int cpc = code.codePointCount(0, code.length());
+        if (cpc == 2 || cpc == 3) {
             return verifyLangCode(code);
-        } else if (code.length() == 5 || code.length() == 6) {
+        } else if (cpc == 5 || cpc == 6) {
             int shift = 0;
-            if (code.length() == 6)
+            if (cpc == 6) {
                 shift = 1;
-            if ((verifyLangCode(code.substring(0, 2 + shift)))
-                    && (code.charAt(2 + shift) == '-' || code.charAt(2 + shift) == '_')
-                    && (verifyLangCode(code.substring(3 + shift, 5 + shift))))
-                return true;
-            else
-                return false;
+            }
+            int sepOffset = code.offsetByCodePoints(0, 2 + shift);
+            int sep = code.codePointAt(sepOffset);
+            return verifyLangCode(code.substring(0, sepOffset))
+                    && (sep == '-' || sep == '_')
+                    && verifyLangCode(code.substring(code.offsetByCodePoints(sepOffset, 1),
+                            code.offsetByCodePoints(sepOffset, 3)));
         }
         return false;
     }

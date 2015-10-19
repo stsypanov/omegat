@@ -1,9 +1,174 @@
 ----------------------------------------------------------------------
- OmegaT 3.5.1 
+ OmegaT 3.5.3
+----------------------------------------------------------------------
+  14 Enhancements
+   4 Bug fixes
+   1 Localisation update
+----------------------------------------------------------------------
+3.5.3 vs 3.5.2 update 1
+
+  Implemented requests:  
+
+  - Add sentence case to Shift+F3 case change 
+  https://sourceforge.net/p/omegat/feature-requests/1134/
+
+  - Improve glossary matching of terms containing numbers
+  https://sourceforge.net/p/omegat/feature-requests/1138/
+
+  - Allow suppressing MT retrieval for translated segments
+  https://sourceforge.net/p/omegat/feature-requests/1137/
+
+  - Ctrl-M manual call of MT on translated segments
+  https://sourceforge.net/p/omegat/feature-requests/1140/
+
+  - Machine translate only current segment, on demand
+  https://sourceforge.net/p/omegat/feature-requests/552/
+
+  - Make URLs in Comments, Notes, Glossary panes clickable
+  https://sourceforge.net/p/omegat/feature-requests/1141/
+
+  - Back up preferences when a loading error occurs
+  https://sourceforge.net/p/omegat/feature-requests/1142/
+
+  - Set focus to "Search for" field if search returns zero hits
+  https://sourceforge.net/p/omegat/feature-requests/1143/
+
+  - Allow disabling unescaping of Unicode literals (\uXXXX) in Java
+Resource Bundle filter
+  https://sourceforge.net/p/omegat/feature-requests/1144/
+
+  Other changes:
+
+  - Mac OS X: It is now possible to make the project files list 
+"truly" full-screen. On OS X 10.11 this means you can have the main 
+window and the project files window open side-by-side in split view.
+
+  - spellcheck.groovy has a new option to ignore segments where 
+source=target
+
+  - A new script, Strip Bidi Marks (strip_bidi_marks.groovy) allows
+removing bidi marks in the current segment 
+
+  - It's now possible to have an alternative translation where
+the translation is the same but the note is different
+
+  Bug fixes:
+
+  - Spell Checking issue with a Turkish character 
+  https://sourceforge.net/p/omegat/bugs/771/
+
+  - Unresolvable scripting folder setting can cause an empty
+Scripting window
+  https://sourceforge.net/p/omegat/bugs/775/
+
+  - Segments remain marked for note after note deletion
+  https://sourceforge.net/p/omegat/bugs/671/
+
+  - Tag validation could wrongly mention bad nesting for custom tags.
+Tag nesting is now only tested for OmegaT tags.
+
+  Localisation Updates:
+
+ - German localisation updated to 3.5.2 (UI)
+
+----------------------------------------------------------------------
+ OmegaT 3.5.2 update 1 (2015-09-25)
+----------------------------------------------------------------------
+   0 Enhancement
+   3 Bug fixes
+   0 Localisation update
+----------------------------------------------------------------------
+3.5.2 update 1 vs 3.5.2
+
+  Bug fixes:
+
+  - No dictionaries show up in the Spellchecker Setup window 
+  https://sourceforge.net/p/omegat/bugs/766/
+
+  - Fails to buid OmegaT users guide on Linux 
+  https://sourceforge.net/p/omegat/bugs/769/
+
+  - Wrong encoding of the Portugal Portuguese UI strings
+
+----------------------------------------------------------------------
+ OmegaT 3.5.2 (2015-09-18)
+----------------------------------------------------------------------
+   9 Enhancements
+   8 Bug fixes
+   5 Localisation updates
+----------------------------------------------------------------------
+3.5.2 vs 3.5.1
+
+  Implemented requests:  
+  
+  -Allow aggressive font fallback for undisplayable characters
+  https://sourceforge.net/p/omegat/feature-requests/1112/
+
+  - Allow to apply tokenizer to dictionaries 
+  https://sourceforge.net/p/omegat/feature-requests/1053/
+
+  - Changing "Ctrl + Left/Right Arrow" Shortcuts in Auto-completer 
+  https://sourceforge.net/p/omegat/feature-requests/1113/
+
+  Other changes:
+
+  - Open XML filter: In Word, <w:br> (soft return) was considered
+a paragraph tag. There is now an option in the filter (on, by default, 
+for compatibility with existing translations) to decide whether soft
+returns should generate a new paragraph or not.
+
+  - In the Search window, the Author search field can match either creator 
+or changer
+
+  - The About window shows the Java version
+
+  - It is possible to define a custom colour for the segment marker
+
+  - In Windows 8 or above, the panes are square instead of rounded
+
+  - English tokenizer: three stop words were added: a, and, of
+
+  Bug fixes:
+
+  - Auto-Completer does not work for repeated custom tags 
+  https://sourceforge.net/p/omegat/bugs/753/
+
+  - Equivalent Unicode composed and decomposed characters not treated as equivalent
+  https://sourceforge.net/p/omegat/bugs/758/
+
+  - Tag validation does not recognize extraneous tags 
+  https://sourceforge.net/p/omegat/bugs/660/
+
+  - Tag validation fails 
+  https://sourceforge.net/p/omegat/bugs/733/
+
+  - Non-Latin characters corrupted in the editor, but not in the other panes
+  https://sourceforge.net/p/omegat/bugs/759/
+
+  - The auto-completer popup once again follows the caret when navigating with
+the arrow keys
+
+  - Team project: new source files not downloaded when doing a reload 
+  https://sourceforge.net/p/omegat/bugs/763/
+
+  - Numeric entities, e.g., &#181; (decimal) &#x00B5; (hex) were not read
+correctly from configuration files
+
+
+  Localisation Updates:
+
+ - Belarusian localisation updated to 3.5 (UI)
+ - Brazilian Portuguese localisation updated to 3.5 (UI, documentation, scripts, readme)
+ - Dutch localisation updated to 3.5.2 (UI, readme)
+ - Hungarian localisation updated to 3.5.2 (UI)
+ - Italian localisation updated to 3.5.2 (UI, readme)
+
+----------------------------------------------------------------------
+ OmegaT 3.5.1 (2015-07-26)
 ----------------------------------------------------------------------
    8 Enhancements
    4 Bug fixes
-   2 Localisation updates
+   7 Localisation update
 ----------------------------------------------------------------------
 3.5.1 vs 3.5 update 1
 
@@ -33,7 +198,7 @@ directly the configuration folder
   - The encoding of glossaries is now determined automatically. That means
 you can now have a .tab or .csv glossary in UTF-16 LE and a .txt glossary in 
 Windows 1252. Of course, the encoding must be compatible with both the 
-languages contained, so Unicode is recommanded.
+languages contained, so Unicode is recommended.
 
   Bug fixes:
 
@@ -51,8 +216,13 @@ correctly.
 
   Localisation updates:
 
+  - Belarusian localisation updated to 3.5 (UI)
+  - Dutch localisation updated to 3.5 (UI)
+  - Hungarian localisation updated to 3.5 (UI)
+  - Italian localisation updated to 3.5 (UI)
+  - Japanese localisation updated to 3.5 (UI)
   - Norwegian localisation created (UI, Instant Start, scripts, readme)
-  - Japanese localisation updated to 3.5.1 (UI)
+  - Portuguese localisation updated to 3.5 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 3.5 update 1 (2015-06-11)
@@ -244,18 +414,26 @@ of "foo\.\scripts"
   - Japanese localisation updated to 3.4 (UI, readme)
 
 ----------------------------------------------------------------------
- OmegaT 3.1.9 update 4 
+ OmegaT 3.1.9 update 4 (2015-09-12)
 ----------------------------------------------------------------------
-   0 Enhancement
-   1 Bug fix
+   1 Enhancement
+   2 Bug fixes
    0 Localisation update
 ----------------------------------------------------------------------
 3.1.9 update 4 vs. 3.1.9 update 3
 
+  Implemented requests:
+
+  - Support HTML 5 encoding detection 
+  https://sourceforge.net/p/omegat/feature-requests/1122/
+  
   Bug fixes:
 
-  Mac: With the included JRE, it was not possible to launch scripts
+  - Mac: With the included JRE, it was not possible to launch scripts
 opening files or folders
+
+  - Team project: URL used for checkout is not trimmed 
+  https://sourceforge.net/p/omegat/bugs/764/
 
 ----------------------------------------------------------------------
  OmegaT 3.1.9 update 3 (2015-07-10)

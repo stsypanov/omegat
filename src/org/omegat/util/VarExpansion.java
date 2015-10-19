@@ -98,7 +98,7 @@ public abstract class VarExpansion<Param> {
         while ((matcher = patternBundleEntry.matcher(localTemplate)).find()) {
             String original = matcher.group();
             String translation = OStrings.getString(matcher.group(1));
-            if ((matcher.group(2) != null) && (!matcher.group(2).isEmpty())) {
+            if (!StringUtil.isEmpty(matcher.group(2))) {
                 String vars = matcher.group(2); 
                 List<String> values = new ArrayList<>();
                 matcher = Pattern.compile("\\[(.+?)\\]").matcher(vars);
@@ -129,8 +129,8 @@ public abstract class VarExpansion<Param> {
         String filePath = filePaths[0];
         String numHint;
         if (filePaths.length > 1) {
-            numHint = filePath.isEmpty() ? OStrings.getString("MATCHES_THIS_PROJECT") : "";
-            numHint += " " + StaticUtils.format(OStrings.getString("MATCHES_MULTI_FILE_HINT"), filePaths.length - 1);
+            numHint = filePath.equals("") ? OStrings.getString("MATCHES_THIS_PROJECT") : "";
+            numHint += " " + StringUtil.format(OStrings.getString("MATCHES_MULTI_FILE_HINT"), filePaths.length - 1);
         } else {
             numHint = "";
         }

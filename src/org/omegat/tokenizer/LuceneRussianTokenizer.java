@@ -26,7 +26,6 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
-import java.util.Collections;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ru.RussianAnalyzer;
@@ -46,12 +45,13 @@ public class LuceneRussianTokenizer extends BaseTokenizer {
             if (stopWordsAllowed) {
                 an = new RussianAnalyzer(getBehavior());
             } else {
-                an = new RussianAnalyzer(getBehavior(), Collections.emptySet());
+                an = new RussianAnalyzer(getBehavior(),
+                        EMPTY_STRING_LIST);
             }
             return an.tokenStream("", new StringReader(strOrig));
         } else {
             return new StandardTokenizer(getBehavior(),
-                    new StringReader(strOrig.toLowerCase()));
+                    new StringReader(strOrig));
         }
     }
 }

@@ -6,6 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2007 Zoltan Bartko
                2011 John Moran
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -29,17 +30,20 @@ package org.omegat.gui.notes;
 
 import java.awt.Dimension;
 
+import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.JTextPaneLinkifier;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * This is a pane that displays notes on translation units.
  * 
  * @author Martin Fleurke
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
 public class NotesTextArea extends EntryInfoPane implements INotes {
@@ -53,11 +57,13 @@ public class NotesTextArea extends EntryInfoPane implements INotes {
         super(true);
 
         String title = OStrings.getString("GUI_NOTESWINDOW_SUBWINDOWTITLE_Notes");
-        mw.addDockable(new DockableScrollPane("NOTES", title, this, true));
+        Core.getMainWindow().addDockable(new DockableScrollPane("NOTES", title, this, true));
 
-        this.setEditable(false);
-        this.setText(EXPLANATION);
-        this.setMinimumSize(new Dimension(100, 50));
+        setEditable(false);
+        setText(EXPLANATION);
+        setMinimumSize(new Dimension(100, 50));
+        
+        JTextPaneLinkifier.linkify(this);
     }
 
     @Override
@@ -68,28 +74,30 @@ public class NotesTextArea extends EntryInfoPane implements INotes {
     @Override
     protected void onProjectClose() {
         clear();
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
     }
 
     /** Clears up the pane. */
     public void clear() {
         UIThreadsUtil.mustBeSwingThread();
 
-        this.setText("");
-        this.setEditable(false);
-        this.ste = null;
+        setText("");
+        setEditable(false);
+        ste = null;
     }
 
     public void setNoteText(String text) {
         UIThreadsUtil.mustBeSwingThread();
 
-        this.setText(text != null ? text : "");
-        this.setEditable(true);
+        setText(text);
+        setEditable(true);
     }
 
     public String getNoteText() {
         UIThreadsUtil.mustBeSwingThread();
 
-        return this.getText();
+        String text = getText();
+        // Disallow empty note. Use null to indicate lack of note.
+        return text.isEmpty() ? null : text;
     }
 }

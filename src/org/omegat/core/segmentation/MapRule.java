@@ -31,13 +31,15 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.omegat.util.StringUtil;
+
 /**
  * A class representing the language rules and their mapping to the segmentation
  * rules for each particular language.
  * 
  * @author Maxym Mykhalchuk
  */
-public class MapRule implements Serializable {
+public class MapRule implements Serializable, Cloneable {
     /** creates a new empty MapRule */
     public MapRule() {
     }
@@ -55,9 +57,7 @@ public class MapRule implements Serializable {
     /** Returns Language Name (to display it in a dialog). */
     public String getLanguage() {
         String res = LanguageCodes.getLanguageName(languageCode);
-        if (res == null || res.isEmpty())
-            res = languageCode;
-        return res;
+        return StringUtil.isEmpty(res) ? languageCode : res;
     }
 
     /** Sets Language Name */

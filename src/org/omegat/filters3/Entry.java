@@ -39,8 +39,8 @@ import org.omegat.filters3.xml.Handler;
 import org.omegat.filters3.xml.XMLContentBasedTag;
 import org.omegat.filters3.xml.XMLDialect;
 import org.omegat.filters3.xml.XMLText;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
+import org.omegat.util.TagUtil;
 
 /**
  * Translatable entry. Holds a list of source tags and text, translated text and
@@ -65,7 +65,6 @@ public class Entry {
     public void clear() {
         tagsDetected = false;
         elements.clear();
-        translation = "";
         translatedEntry = null;
         textInstance = null;
     }
@@ -499,9 +498,6 @@ public class Entry {
     // Dealing with translation
     // //////////////////////////////////////////////////////////////////////////
 
-    /** Translation in shortcut form. */
-    private String translation = "";
-
     Entry translatedEntry = null;
 
     /**
@@ -534,7 +530,6 @@ public class Entry {
             throws TranslationException {
         if (!sourceToShortcut(xmlDialect, protectedParts).equals(translation)) {
             checkAndRecoverTags(translation, protectedParts);
-            this.translation = translation;
         }
     }
 
@@ -548,10 +543,10 @@ public class Entry {
 
         // /////////////////////////////////////////////////////////////////////
         // recovering tags
-        List<StaticUtils.TagOrder> shortTags = StaticUtils.buildAllTagList(translation,
+        List<TagUtil.Tag> shortTags = TagUtil.buildTagList(translation,
                 protectedParts.toArray(new ProtectedPart[protectedParts.size()]));
         int pos = 0;
-        for (StaticUtils.TagOrder shortTag : shortTags) {
+        for (TagUtil.Tag shortTag : shortTags) {
             if (pos < shortTag.pos) {
                 translatedEntry.add(createTextInstance(translation.substring(pos, shortTag.pos)));
                 pos = shortTag.pos;
@@ -670,5 +665,10 @@ public class Entry {
     /** Returns the number of source elements. */
     public int size() {
         return elements.size();
+    }
+
+    /** Returns whether or not the elements list is empty. */
+    public boolean isEmpty() {
+        return elements.isEmpty();
     }
 }

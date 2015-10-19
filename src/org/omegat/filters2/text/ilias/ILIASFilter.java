@@ -97,11 +97,11 @@ public class ILIASFilter extends AbstractFilter {
 
                 String trimmed = line.trim();
 
-                // skipping empty strings
-                if (trimmed.length() == 0) {
-                    outfile.write(line + lbpr.getLinebreak());
-                    continue;
-                }
+            // skipping empty strings
+            if (trimmed.isEmpty()) {
+                outfile.write(line + lbpr.getLinebreak());
+                continue;
+            }
 
                 Matcher mat = patternText.matcher(line);
                 if (!mat.matches()) {
@@ -139,7 +139,7 @@ public class ILIASFilter extends AbstractFilter {
 
             while ((line = lbpr.readLine()) != null && --more > 0) {
                 line = line.trim();
-                if (line.length() == 0) {
+                if (line.isEmpty()) {
                     continue;
                 }
                 markFound = patternMark.matcher(line).matches();
@@ -151,6 +151,12 @@ public class ILIASFilter extends AbstractFilter {
         } catch (IOException e) {
             Log.log(e);
             return false;
+        } finally {
+            try {
+                lbpr.close();
+            } catch (IOException e) {
+                // Ignore
+            }
         }
         return markFound & !textFound;
     }

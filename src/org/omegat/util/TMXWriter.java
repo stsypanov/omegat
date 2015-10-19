@@ -110,15 +110,16 @@ public class TMXWriter {
         String source = null;
         String target = null;
         String note = null;
+        TMXDateParser dateParser = new TMXDateParser();
         for (Map.Entry<String, PrepareTMXEntry> en : data.entrySet()) {
             PrepareTMXEntry transEntry = en.getValue();
-            source = forceValidTMX ? StaticUtils.stripXmlTags(en.getKey()) : en.getKey();
-            target = forceValidTMX ? StaticUtils.stripXmlTags(transEntry.translation) : transEntry.translation;
-            source = StaticUtils.makeValidXML(source);
-            target = StaticUtils.makeValidXML(target);
+            source = forceValidTMX ? TagUtil.stripXmlTags(en.getKey()) : en.getKey();
+            target = forceValidTMX ? TagUtil.stripXmlTags(transEntry.translation) : transEntry.translation;
+            source = StringUtil.makeValidXML(source);
+            target = StringUtil.makeValidXML(target);
             if (transEntry.note != null) {
-                note = forceValidTMX ? StaticUtils.stripXmlTags(transEntry.note) : transEntry.note;
-                note = StaticUtils.makeValidXML(note);
+                note = forceValidTMX ? TagUtil.stripXmlTags(transEntry.note) : transEntry.note;
+                note = StringUtil.makeValidXML(note);
             }
             // TO DO: This *possibly* converts occurrences in the actual text of
             // &lt;fX&gt;
@@ -131,7 +132,7 @@ public class TMXWriter {
                     + transEntry.changer + "\""
                     : "");
             String changeDatePropertyString = (transEntry.changeDate != 0 ? " changedate=\""
-                    + TMXDateParser.getTMXDate(transEntry.changeDate) + "\"" : "");
+                    + dateParser.getTMXDate(transEntry.changeDate) + "\"" : "");
             out.println("    <tu>");
             out.println("      <tuv " + langAttr + "=\"" + sourceLocale + "\">");
             out.println("        <seg>" + source + "</seg>");

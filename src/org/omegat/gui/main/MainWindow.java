@@ -66,7 +66,6 @@ import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.WikiGet;
 import org.omegat.util.FileUtil.ICollisionCallback;
@@ -387,7 +386,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
                 OStrings.getString("TF_WIKI_IMPORT_TITLE"), JOptionPane.OK_CANCEL_OPTION);
         String projectsource = Core.getProject().getProjectProperties().getSourceRoot();
         // [1762625] Only try to get MediaWiki page if a string has been entered
-        if ((remote_url != null) && (!remote_url.trim().isEmpty())) {
+        if (remote_url != null && !remote_url.trim().isEmpty()) {
             WikiGet.doWikiGet(remote_url, projectsource);
             ProjectUICommands.projectReload();
         }
@@ -412,7 +411,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
         } else if (params == null) {
             return OStrings.getString(messageKey);
         } else {
-            return StaticUtils.format(OStrings.getString(messageKey), params);
+            return StringUtil.format(OStrings.getString(messageKey), params);
         }
     }
 
@@ -501,7 +500,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
             public void run() {
                 String msg;
                 if (params != null) {
-                    msg = StaticUtils.format(OStrings.getString(warningKey), params);
+                    msg = StringUtil.format(OStrings.getString(warningKey), params);
                 } else {
                     msg = OStrings.getString(warningKey);
                 }
@@ -532,7 +531,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
             public void run() {
                 String msg;
                 if (params != null) {
-                    msg = StaticUtils.format(OStrings.getString(errorKey), params);
+                    msg = StringUtil.format(OStrings.getString(errorKey), params);
                 } else {
                     msg = OStrings.getString(errorKey);
                 }
@@ -602,10 +601,10 @@ public class MainWindow extends PeroFrame implements IMainWindow {
     /**
      * {@inheritDoc}
      */
-    public void showErrorDialogRB(String message, Object[] args, String title) {
+    public void showErrorDialogRB(String title, String message, Object... args) {
 
         JOptionPane.showMessageDialog(this.getApplicationFrame(),
-                StaticUtils.format(OStrings.getString(message), args), OStrings.getString(title),
+                StringUtil.format(OStrings.getString(message), args), OStrings.getString(title),
                 JOptionPane.ERROR_MESSAGE);
     }
 

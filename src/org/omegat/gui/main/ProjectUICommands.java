@@ -57,6 +57,7 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.ProjectFileStorage;
 import org.omegat.util.RecentProjects;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.OpenProjectFileChooser;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -113,7 +114,7 @@ public class ProjectUICommands {
 
                 final String projectRoot = newProps.getProjectRoot();
 
-                if (projectRoot != null && !projectRoot.isEmpty()) {
+                if (!StringUtil.isEmpty(projectRoot)) {
                     // create project
                     try {
                         ProjectFactory.createProject(newProps);
@@ -123,6 +124,9 @@ public class ProjectUICommands {
                         Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
                     }
                 }
+
+                RecentProjects.add(dir.getAbsolutePath());
+
                 mainWindow.setCursor(oldCursor);
                 return null;
             }
@@ -173,8 +177,8 @@ public class ProjectUICommands {
                         }
                     }.execute(repository);
                 } catch (IRemoteRepository.BadRepositoryException bre) {
-                    Object[] args = { bre.getMessage() };
-                    Core.getMainWindow().showErrorDialogRB("TEAM_BADREPOSITORY_ERROR", args, "TF_ERROR");
+                    Core.getMainWindow().showErrorDialogRB("TF_ERROR", "TEAM_BADREPOSITORY_ERROR",
+                            bre.getMessage());
                     mainWindow.setCursor(oldCursor);
                     return null;
                 } catch (Exception ex) {
@@ -199,7 +203,7 @@ public class ProjectUICommands {
                             }
                         } catch (Exception e) {
                             Log.logErrorRB(e, "TEAM_MISSING_FOLDER", f.getName());
-                        }
+                        };
                     }
                     //load project
                     ProjectFactory.loadProject(props, repository, true);
@@ -310,8 +314,7 @@ public class ProjectUICommands {
                         File GlossaryFile = new File(props.getWriteableGlossary());
                         if (repository.isChanged(tmxFile) || repository.isChanged(GlossaryFile)) {
                             Log.logWarningRB("TEAM_NOCHECKOUT");
-                            Core.getMainWindow().showErrorDialogRB("TEAM_NOCHECKOUT", null,
-                                    "TEAM_NOCHECKOUT_TITLE");
+                            Core.getMainWindow().showErrorDialogRB("TEAM_NOCHECKOUT_TITLE", "TEAM_NOCHECKOUT");
                         } else {
                             new RepositoryUtils.AskCredentials() {
                                 public void callRepository() throws Exception {
@@ -402,10 +405,20 @@ public class ProjectUICommands {
                 Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
-                IRemoteRepository repository = Core.getProject().getRepository();
+                final IRemoteRepository repository = Core.getProject().getRepository();
 
                 Core.getProject().saveProject();
                 ProjectFactory.closeProject();
+
+                if (repository != null) {
+                    new RepositoryUtils.AskCredentials() {
+                        public void callRepository() throws Exception {
+                            Core.getMainWindow().showStatusMessageRB("TEAM_SYNCHRONIZE");
+                            repository.updateFullProject();
+                            Core.getMainWindow().showStatusMessageRB(null);
+                        }
+                    }.execute(repository);
+                }
 
                 ProjectFactory.loadProject(props, repository, true);
                 mainWindow.setCursor(oldCursor);

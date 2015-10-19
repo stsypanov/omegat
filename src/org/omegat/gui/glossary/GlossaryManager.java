@@ -109,7 +109,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
                 if (entries != null) {
                     synchronized (this) {
                         Log.logRB("CT_LOADING_GLOSSARY_DETAILS", entries.size(), file.getName());
-                        glossaries.put(file.getName(), entries);
+                        glossaries.put(file.getPath(), entries);
                     }
                 }
             } catch (Exception ex) {

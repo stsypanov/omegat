@@ -139,6 +139,15 @@ public class EditorTextArea3 extends JEditorPane {
         setDragEnabled(true);
     }
 
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        Document3 doc = getOmDocument();
+        if (doc != null) {
+            doc.setFont(font);
+        }
+    }
+
     private void addDictionaryAction() {
        addKeyListener(new KeyAdapter() {
            private static final int INTERVAL = 250;
@@ -186,8 +195,8 @@ public class EditorTextArea3 extends JEditorPane {
             getAutoCompleter().setVisible(false);
             
             // where is the mouse
-            int mousepos = viewToModel(e.getPoint());
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                int mousepos = viewToModel(e.getPoint());
                 boolean changed = controller.goToSegmentAtLocation(getCaretPosition());
                 if (!changed) {
                     if (selectTag(mousepos)) {
@@ -196,6 +205,7 @@ public class EditorTextArea3 extends JEditorPane {
                 }
             }
             if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
+                int mousepos = viewToModel(e.getPoint());
                 JPopupMenu popup = makePopupMenu(mousepos);
                 if (popup.getComponentCount() > 0) {
                     popup.show(EditorTextArea3.this, (int) e.getPoint().getX(), (int) e.getPoint().getY());
@@ -445,6 +455,7 @@ public class EditorTextArea3 extends JEditorPane {
                 case KeyEvent.VK_KP_UP:
                 case KeyEvent.VK_KP_DOWN:
                     checkAndFixCaret(); //works only in after-processing if translation length (start and end position) has not changed, because start and end position are not updated yet.
+                    autoCompleter.updatePopup();
             }
         }
     }

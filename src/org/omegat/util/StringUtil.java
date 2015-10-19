@@ -1,7 +1,7 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
- with fuzzy matching, translation memory, keyword search,
- glossaries, and translation leveraging into updated projects.
+          with fuzzy matching, translation memory, keyword search, 
+          glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2007 Didier Briel and Tiago Saboga
@@ -29,6 +29,7 @@
  **************************************************************************/
 package org.omegat.util;
 
+import java.text.MessageFormat;
 import java.text.Normalizer;
 import java.util.Locale;
 
@@ -268,24 +269,21 @@ public class StringUtil {
 
     /**
      * Returns first letter in lowercase. Usually used for create tag shortcuts.
-     * Does not support non-BMP Unicode characters.
      */
-   	public static char getFirstLetterLowercase(CharSequence s) {
-		if (s == null) {
-			return 0;
-		}
+    public static int getFirstLetterLowercase(String s) {
+        if (s == null) {
+            return 0;
+        }
 
-		char f = 0;
+        for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
+            cp = s.codePointAt(i);
+            if (Character.isLetter(cp)) {
+                return Character.toLowerCase(cp);
+            }
+        }
 
-		for (int i = 0; i < s.length(); i++) {
-			if (Character.isLetter(s.charAt(i))) {
-				f = Character.toLowerCase(s.charAt(i));
-				break;
-			}
-		}
-
-		return f;
-	}
+        return 0;
+    }
 
 	/**
 	 * Checks if text contains substring after specified position.
@@ -328,5 +326,152 @@ public class StringUtil {
     public static String normalizeUnicode(CharSequence text) {
         return Normalizer.isNormalized(text, Normalizer.Form.NFC) ? text.toString() :
             Normalizer.normalize(text, Normalizer.Form.NFC);
+    }
+
+    /**
+     * Replace invalid XML chars by spaces. See supported chars at
+     * http://www.w3.org/TR/2006/REC-xml-20060816/#charsets.
+     *
+     * @param str
+     *            input stream
+     * @return result stream
+     */
+    public static String removeXMLInvalidChars(String str) {
+        StringBuilder sb = new StringBuilder(str.length());
+        for (int c, i = 0; i < str.length(); i += Character.charCount(c)) {
+            c = str.codePointAt(i);
+            if (!isValidXMLChar(c)) {
+                c = ' ';
+            }
+            sb.appendCodePoint(c);
+        }
+        return sb.toString();
+    }
+
+    public static boolean isValidXMLChar(int codePoint) {
+        if (codePoint < 0x20) {
+            if (codePoint != 0x09 && codePoint != 0x0A && codePoint != 0x0D) {
+                return false;
+            }
+        } else if (codePoint >= 0x20 && codePoint <= 0xD7FF) {
+        } else if (codePoint >= 0xE000 && codePoint <= 0xFFFD) {
+        } else if (codePoint >= 0x10000 && codePoint <= 0x10FFFF) {
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Converts a stream of plaintext into valid XML. Output stream must convert
+     * stream to UTF-8 when saving to disk.
+     */
+    public static String makeValidXML(String plaintext) {
+        StringBuilder out = new StringBuilder();
+        String text = removeXMLInvalidChars(plaintext);
+        for (int cp, i = 0; i < text.length(); i += Character.charCount(cp)) {
+            cp = text.codePointAt(i);
+            out.append(escapeXMLChars(cp));
+        }
+        return out.toString();
+    }
+
+    /** Compresses spaces in case of non-preformatting paragraph. */
+    public static String compressSpaces(String str) {
+        int strlen = str.length();
+        StringBuilder res = new StringBuilder(strlen);
+        boolean wasspace = true;
+        for (int cp, i = 0; i < strlen; i += Character.charCount(cp)) {
+            cp = str.codePointAt(i);
+            if (Character.isWhitespace(cp)) {
+                if (!wasspace) {
+                    wasspace = true;
+                }
+            } else {
+                if (wasspace && res.length() > 0) {
+                    res.append(' ');
+                }
+                res.appendCodePoint(cp);
+                wasspace = false;
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * Converts a single code point into valid XML. Output stream must convert stream
+     * to UTF-8 when saving to disk.
+     */
+    public static String escapeXMLChars(int cp) {
+        switch (cp) {
+        // case '\'':
+        // return "&apos;";
+        case '&':
+            return "&amp;";
+        case '>':
+            return "&gt;";
+        case '<':
+            return "&lt;";
+        case '"':
+            return "&quot;";
+        default:
+            return String.valueOf(Character.toChars(cp));
+        }
+    }
+
+    /**
+     * Converts XML entities to characters.
+     */
+    public static String unescapeXMLEntities(String text) {
+
+        if (text.contains("&gt;")) {
+            text = text.replaceAll("&gt;", ">");
+        }
+        if (text.contains("&lt;")) {
+            text = text.replaceAll("&lt;", "<");
+        }
+        if (text.contains("&quot;")) {
+            text = text.replaceAll("&quot;", "\"");
+        }
+       // If makeValidXML converts ' to apos;, the following lines should be uncommented
+        /* if (text.indexOf("&apos;") >= 0) {
+            text = text.replaceAll("&apos;", "'");
+        }*/
+        if (text.contains("&amp;")) {
+            text = text.replaceAll("&amp;", "&");
+        }
+        return text;
+    }
+
+    /**
+     * Compares two strings for equality. Handles nulls: if both strings are
+     * nulls they are considered equal.
+     */
+    public static boolean equal(String one, String two) {
+        return (one == null && two == null) || (one != null && one.equals(two));
+    }
+
+    /**
+     * Formats UI strings.
+     *
+     * Note: This is only a first attempt at putting right what goes wrong in
+     * MessageFormat. Currently it only duplicates single quotes, but it doesn't
+     * even test if the string contains parameters (numbers in curly braces),
+     * and it doesn't allow for string containg already escaped quotes.
+     *
+     * @param str
+     *            The string to format
+     * @param arguments
+     *            Arguments to use in formatting the string
+     *
+     * @return The formatted string
+     *
+     * @author Henry Pijffers (henry.pijffers@saxnot.com)
+     */
+    public static String format(String str, Object... arguments) {
+        // MessageFormat.format expects single quotes to be escaped
+        // by duplicating them, otherwise the string will not be formatted
+        str = str.replaceAll("'", "''");
+        return MessageFormat.format(str, arguments);
     }
 }

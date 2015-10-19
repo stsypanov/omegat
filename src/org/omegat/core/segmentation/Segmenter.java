@@ -47,7 +47,7 @@ import org.omegat.util.PatternConsts;
  */
 public final class Segmenter {
     
-    public static SRX srx;
+    public static volatile SRX srx;
     /** private to disallow creation */
     private Segmenter() {
     }
@@ -83,20 +83,26 @@ public final class Segmenter {
             int len = one.length();
             int b = 0;
             StringBuilder bs = new StringBuilder();
-            while (b < len && Character.isWhitespace(one.charAt(b))) {
-                bs.append(one.charAt(b));
-                b++;
+            for (int cp; b < len; b += Character.charCount(cp)) {
+                cp = one.codePointAt(b);
+                if (!Character.isWhitespace(cp)) {
+                    break;
+                }
+                bs.appendCodePoint(cp);
             }
 
-            int e = len - 1;
+            int e = len;
             StringBuilder es = new StringBuilder();
-            while (e >= b && Character.isWhitespace(one.charAt(e))) {
-                es.append(one.charAt(e));
-                e--;
+            for (int cp; e > b; e -= Character.charCount(cp)) {
+                cp = one.codePointBefore(e);
+                if (!Character.isWhitespace(cp)) {
+                    break;
+                }
+                es.appendCodePoint(cp);
             }
             es.reverse();
 
-            String trimmed = one.substring(b, e + 1);
+            String trimmed = one.substring(b, e);
             sentences.add(trimmed);
             if (spaces != null) {
                 spaces.add(bs);

@@ -95,11 +95,12 @@ public abstract class TestFilterBase extends TestCore {
 				addEntry(id, source, translation, isFuzzy, comment, null, filter, null);
 			}
 
-			public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
-								 String path, IFilter filter, List<ProtectedPart> protectedParts) {
-				if (!source.isEmpty())
-					result.add(source);
-			}
+            public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
+                    String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                if (!source.isEmpty()) {
+                    result.add(source);
+                }
+            }
 
 			public void linkPrevNextSegments() {
 			}
@@ -125,9 +126,10 @@ public abstract class TestFilterBase extends TestCore {
             }
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
-                                 String path, IFilter filter, List<ProtectedPart> protectedParts) {
-                if (!source.isEmpty())
+                    String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                if (!source.isEmpty()) {
                     result.add(source);
+                }
             }
 
             public void linkPrevNextSegments() {
@@ -236,7 +238,7 @@ public abstract class TestFilterBase extends TestCore {
         compareXML(new File(filename), outFile);
     }
 
-    protected void compareBinary(File f1, File f2) throws Exception {
+    public static void compareBinary(File f1, File f2) throws Exception {
         ByteArrayOutputStream d1 = new ByteArrayOutputStream();
         LFileCopy.copy(f1, d1);
 

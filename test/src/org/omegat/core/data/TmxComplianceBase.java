@@ -165,9 +165,6 @@ public abstract class TmxComplianceBase extends TestCase {
                 result.addAll(Segmenter.segment(context.getSourceLang(), source, null, null));
             }
 
-            public void addFileTMXEntry(String source, String translation) {
-            }
-
             public void linkPrevNextSegments() {
             }
         };

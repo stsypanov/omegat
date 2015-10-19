@@ -46,7 +46,7 @@ import org.omegat.core.threads.LongProcessThread;
 import org.omegat.gui.stat.BaseMatchStatisticsPanel;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.Token;
 import org.omegat.util.gui.TextUtil;
 
@@ -148,7 +148,7 @@ public class CalcMatchStatistics extends LongProcessThread {
 
             String[][] table = perFile.calcTable(rowsPerFile);
             String outText = TextUtil.showTextTable(header, table, align);
-            String title = StaticUtils.format(OStrings.getString("CT_STATSMATCH_File"), fileNumber, fi.filePath);
+            String title = StringUtil.format(OStrings.getString("CT_STATSMATCH_File"), fileNumber, fi.filePath);
             appendText(title + "\n");
             appendText(outText + "\n");
             appendTable(title, table);
@@ -166,6 +166,7 @@ public class CalcMatchStatistics extends LongProcessThread {
         String fn = Core.getProject().getProjectProperties().getProjectInternal()
                 + OConsts.STATS_MATCH_PER_FILE_FILENAME;
         Statistics.writeStat(fn, textForLog.toString());
+        callback.setDataFile(fn);
     }
 
     MatchStatCounts calcTotal(boolean outData) {
@@ -210,6 +211,7 @@ public class CalcMatchStatistics extends LongProcessThread {
             String fn = Core.getProject().getProjectProperties().getProjectInternal()
                     + OConsts.STATS_MATCH_FILENAME;
             Statistics.writeStat(fn, outText);
+            callback.setDataFile(fn);
         }
 
         return result;

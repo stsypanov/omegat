@@ -559,7 +559,7 @@ public class PoFilter extends AbstractFilter {
         if (pair > 0) {
             s = unescape(sources[1].toString());
             pathSuffix = "[" + pair + "]";
-            c += StaticUtils.format(OStrings.getString("POFILTER_PLURAL_FORM_COMMENT"), pair) + "\n";
+            c += StringUtil.format(OStrings.getString("POFILTER_PLURAL_FORM_COMMENT"), pair) + "\n";
         } else {
             s = unescape(sources[pair].toString());
             pathSuffix = "";
@@ -596,12 +596,12 @@ public class PoFilter extends AbstractFilter {
         }
         if (entryParseCallback != null) {
             if (formatMonolingual) {
-                List<ProtectedPart> protectedParts = StaticUtils.applyCustomProtectedParts(translation,
+                List<ProtectedPart> protectedParts = TagUtil.applyCustomProtectedParts(translation,
                         PatternConsts.PRINTF_VARS, null);
                 entryParseCallback.addEntry(source, translation, null, fuzzy, comments, path + pathSuffix,
                         this, protectedParts);
             } else {
-                List<ProtectedPart> protectedParts = StaticUtils.applyCustomProtectedParts(source,
+                List<ProtectedPart> protectedParts = TagUtil.applyCustomProtectedParts(source,
                         PatternConsts.PRINTF_VARS, null);
                 entryParseCallback.addEntry(null, source, translation, fuzzy, comments, path + pathSuffix,
                         this, protectedParts);
@@ -614,7 +614,7 @@ public class PoFilter extends AbstractFilter {
     protected void alignHeader(String header, FilterContext fc) {
         if (entryParseCallback != null && !PoFilter.skipHeader) {
             header = unescape(autoFillInPluralStatement(header, fc));
-            List<ProtectedPart> protectedParts = StaticUtils.applyCustomProtectedParts(header,
+            List<ProtectedPart> protectedParts = TagUtil.applyCustomProtectedParts(header,
                     PatternConsts.PRINTF_VARS, null);
             entryParseCallback.addEntry(null, header, null, false, null, path, this, protectedParts);
         }

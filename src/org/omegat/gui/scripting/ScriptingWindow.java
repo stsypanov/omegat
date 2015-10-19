@@ -32,6 +32,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -85,7 +86,6 @@ import org.omegat.gui.editor.mark.Mark;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.StaticUIUtils;
@@ -141,11 +141,11 @@ public class ScriptingWindow extends PeroFrame {
     public ScriptingWindow() {
         super(OStrings.getString("SCW_TITLE"));
 
-        setScriptsDirectory(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY, DEFAULT_SCRIPTS_DIR));
+        initWindowLayout();
+
         addScriptCommandToOmegaT();
         addRunShortcutToOmegaT();
-
-        initWindowLayout();
+        setScriptsDirectory(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY, DEFAULT_SCRIPTS_DIR));
 
         monitor = new ScriptsMonitor(this, m_scriptList, getAvailableScriptExtensions());
         if (m_scriptsDirectory != null) {
@@ -217,13 +217,7 @@ public class ScriptingWindow extends PeroFrame {
             JMenuItem menuItem = new JMenuItem();
             m_quickMenus[i] = menuItem;
 
-            String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey(i), null);
-
-            if (scriptName != null || "".equals(scriptName)) {
-                setQuickScriptMenu(new ScriptItem(new File(m_scriptsDirectory, scriptName)), i);
-            } else {
-                unsetQuickScriptMenu(i);
-            }
+            unsetQuickScriptMenu(i);
 
             // Since the script is run while editing a segment, the shortcut should not interfere
             // with the segment content, so we set it to a Function key.
@@ -297,7 +291,7 @@ public class ScriptingWindow extends PeroFrame {
             return;
         }
 
-        logResult(StaticUtils.format(OStrings.getString("SCW_QUICK_RUN"), (index + 1)));
+        logResult(StringUtil.format(OStrings.getString("SCW_QUICK_RUN"), (index + 1)));
         ScriptItem scriptFile = new ScriptItem(new File(m_scriptsDirectory, m_quickScripts[index]));
 
         executeScriptFile(scriptFile, true);
@@ -346,14 +340,14 @@ public class ScriptingWindow extends PeroFrame {
         //m_txtScriptEditor.setEditable(false);
         JPopupMenu editorPopUp = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem(OStrings.getString("SCW_SAVE_SCRIPT"));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
                     m_currentScriptItem.setText(m_txtScriptEditor.getText());
-                    logResult(StaticUtils.format(OStrings.getString("SCW_SAVE_OK"),
+                    logResult(StringUtil.format(OStrings.getString("SCW_SAVE_OK"),
                             m_currentScriptItem.getAbsolutePath()));
                 } catch (IOException e) {
                     logResult(OStrings.getString("SCW_SAVE_ERROR"));
@@ -442,23 +436,14 @@ public class ScriptingWindow extends PeroFrame {
             final int scriptKey = scriptKey(index);
             m_quickScriptButtons[i] = new JButton(String.valueOf(scriptKey));
 
-            String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey, null);
-
-            if (scriptName != null || "".equals(scriptName)) {
-                m_quickScriptButtons[i].setToolTipText(scriptName);
-                m_quickScriptButtons[i].setText("<" + scriptKey + '>');
-            } else {
-                m_quickScriptButtons[i].setToolTipText(OStrings.getString("SCW_NO_SCRIPT_SET"));
-            }
-
             // Run a script from the quick button bar
             m_quickScriptButtons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent a) {
-                    if (Preferences.existsPreference("scripts_quick_" + scriptKey)) {
+                    if (Preferences.existsPreference(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey)) {
                         runQuickScript(index);
                     } else {
-                        logResult(StaticUtils.format(OStrings.getString("SCW_NO_SCRIPT_BOUND"), scriptKey));
+                        logResult(StringUtil.format(OStrings.getString("SCW_NO_SCRIPT_BOUND"), scriptKey));
                     }
                 }
             });
@@ -471,13 +456,13 @@ public class ScriptingWindow extends PeroFrame {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     ScriptItem scriptItem = (ScriptItem) m_scriptList.getSelectedValue();
-                    Preferences.setPreference("scripts_quick_" + scriptKey, scriptItem.getName());
+                    Preferences.setPreference(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey, scriptItem.getName());
                     m_quickScriptButtons[index].setToolTipText(scriptItem.getToolTip());
                     m_quickScriptButtons[index].setText("<" + scriptKey + '>');
 
                     setQuickScriptMenu(scriptItem, index);
 
-                    logResult(StaticUtils.format(OStrings.getString("SCW_SAVE_QUICK_SCRIPT"), scriptItem, scriptKey));
+                    logResult(StringUtil.format(OStrings.getString("SCW_SAVE_QUICK_SCRIPT"), scriptItem, scriptKey));
                 }
             });
             quickScriptPopup.add(addQuickScriptMenuItem);
@@ -487,9 +472,9 @@ public class ScriptingWindow extends PeroFrame {
             removeQuickScriptMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
-                    String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey, "(unknown)");
-                    logResult(StaticUtils.format(OStrings.getString("SCW_REMOVED_QUICK_SCRIPT"), scriptName, scriptKey));
-                    Preferences.setPreference("scripts_quick_" + scriptKey, "");
+                    String scriptName = Preferences.getPreferenceDefault(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey, "(unknown)");
+                    logResult(StringUtil.format(OStrings.getString("SCW_REMOVED_QUICK_SCRIPT"), scriptName, scriptKey));
+                    Preferences.setPreference(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey, "");
                     m_quickScriptButtons[index].setToolTipText(OStrings.getString("SCW_NO_SCRIPT_SET"));
                     m_quickScriptButtons[index].setText(" " + scriptKey + ' ');
 
@@ -505,7 +490,7 @@ public class ScriptingWindow extends PeroFrame {
                     addQuickScriptMenuItem.setEnabled(!m_scriptList.isSelectionEmpty());
 
                     // Disable remove a script command if the quick run button is not bounded
-                    String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey, null);
+                    String scriptName = Preferences.getPreferenceDefault(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey, null);
                     removeQuickScriptMenuItem.setEnabled(!StringUtil.isEmpty(scriptName));
                 }
 
@@ -539,7 +524,7 @@ public class ScriptingWindow extends PeroFrame {
         }
 
         m_txtResult.setText("");
-        logResult(StaticUtils.format(OStrings.getString("SCW_RUNNING_SCRIPT"),
+        logResult(StringUtil.format(OStrings.getString("SCW_RUNNING_SCRIPT"),
                 m_currentScriptItem.getAbsolutePath()));
 
         executeScriptFile(m_currentScriptItem, false);
@@ -676,6 +661,7 @@ public class ScriptingWindow extends PeroFrame {
     private void setScriptsDirectory(File scriptsDir) {
         
         if (!scriptsDir.isDirectory()) {
+            updateQuickScripts();
             return;
         }
         m_scriptsDirectory = scriptsDir;
@@ -690,13 +676,31 @@ public class ScriptingWindow extends PeroFrame {
             monitor.stop();
             monitor.start(m_scriptsDirectory);
         }
+        updateQuickScripts();
+    }
+
+    private void updateQuickScripts() {
+        for (int i = 0; i < NUMBERS_OF_QUICK_SCRIPTS; i++) {
+            int key = scriptKey(i);
+            String scriptName = Preferences.getPreferenceDefault(
+                    Preferences.SCRIPTS_QUICK_PREFIX + key, null);
+
+            if (m_scriptsDirectory != null && !StringUtil.isEmpty(scriptName)) {
+                setQuickScriptMenu(new ScriptItem(new File(m_scriptsDirectory, scriptName)), i);
+                m_quickScriptButtons[i].setToolTipText(scriptName);
+                m_quickScriptButtons[i].setText("<" + key + ">");
+            } else {
+                unsetQuickScriptMenu(i);
+                m_quickScriptButtons[i].setToolTipText(OStrings.getString("SCW_NO_SCRIPT_SET"));
+                m_quickScriptButtons[i].setText(String.valueOf(key));
+            }
+        }
     }
 
     public HighlightPainter getPainter() {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive)
             throws Exception {
         return Collections.emptyList();

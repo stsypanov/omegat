@@ -336,8 +336,10 @@ public class FilterMaster {
      */
     public static List<String> getSupportedEncodings() {
         if (supportedEncodings == null) {
-            supportedEncodings = new ArrayList<>(Charset.availableCharsets().keySet());
-            supportedEncodings.add(AbstractFilter.ENCODING_AUTO_HUMAN);
+            ArrayList<String> list = new ArrayList<String>();
+            list.add(AbstractFilter.ENCODING_AUTO_HUMAN);
+            list.addAll(Charset.availableCharsets().keySet());
+            supportedEncodings = list;
         }
         return supportedEncodings;
     }

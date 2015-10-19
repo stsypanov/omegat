@@ -35,7 +35,7 @@
 
 package org.omegat.gui.main;
 
-import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -46,13 +46,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -105,59 +105,9 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     /** MainWindow menu handler instance. */
     protected final MainWindowMenuHandler mainWindowMenuHandler;
 
-    /**
-     * Size of icons (both height and width) of menu entries.
-     */
-    private static final int ICON_SIZE=12;
-
     public MainWindowMenu(final MainWindow mainWindow, final MainWindowMenuHandler mainWindowMenuHandler) {
         this.mainWindow = mainWindow;
         this.mainWindowMenuHandler = mainWindowMenuHandler;
-    }
-    /**
-     * Creates an icon to show color of background marking
-     * @param color background color
-     * @return
-     */
-    private Icon getViewMenuMarkBGIcon(final Color color) {
-        Icon i = new Icon() {
-            public void paintIcon(java.awt.Component cmpnt, java.awt.Graphics grphcs, int x, int y) {
-                if (color!=null) {
-                    grphcs.setColor(color);
-                    grphcs.fillRect(x,y,ICON_SIZE,ICON_SIZE);
-                }
-            }
-            public int getIconWidth() {
-                return ICON_SIZE;
-            }
-            public int getIconHeight() {
-                return ICON_SIZE;
-            }
-        };
-        return i;
-    }
-
-    /**
-     * Creates icon to show font marking
-     * @param color color of font
-     * @return
-     */
-    private Icon getViewMenuMarkTextIcon(final Color color) {
-        return new Icon() {
-            public void paintIcon(java.awt.Component cmpnt, java.awt.Graphics grphcs, int x, int y) {
-                if (color!=null && grphcs != null) { //Mac fix: test on grphcs != null needed. Weird...
-                    grphcs.setColor(color);
-                    char[] data = {'M'};
-                    grphcs.drawChars(data, 0, 1, x, y+ICON_SIZE);
-                }
-            }
-            public int getIconWidth() {
-                return ICON_SIZE;
-            }
-            public int getIconHeight() {
-                return ICON_SIZE;
-            }
-        };
     }
 
     /**
@@ -291,15 +241,17 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectAccessProjectFilesMenu.addMenuListener(new MenuListener() {
             @Override
             public void menuSelected(MenuEvent e) {
-                String sourcePath = Core.getEditor().getCurrentFile();
-                projectAccessCurrentSourceDocumentMenuItem.setEnabled(!StringUtil.isEmpty(sourcePath)
-                        && new File(Core.getProject().getProjectProperties().getSourceRoot(), sourcePath).isFile());
-                String targetPath = Core.getEditor().getCurrentTargetFile();
-                projectAccessCurrentTargetDocumentMenuItem.setEnabled(!StringUtil.isEmpty(targetPath)
-                        && new File(Core.getProject().getProjectProperties().getTargetRoot(), targetPath).isFile());
-                String glossaryPath = Core.getProject().getProjectProperties().getWriteableGlossary();
-                projectAccessWriteableGlossaryMenuItem.setEnabled(!StringUtil.isEmpty(glossaryPath)
-                        && new File(glossaryPath).isFile());
+                if (Core.getProject().isProjectLoaded()) {
+                    String sourcePath = Core.getEditor().getCurrentFile();
+                    projectAccessCurrentSourceDocumentMenuItem.setEnabled(!StringUtil.isEmpty(sourcePath)
+                            && new File(Core.getProject().getProjectProperties().getSourceRoot(), sourcePath).isFile());
+                    String targetPath = Core.getEditor().getCurrentTargetFile();
+                    projectAccessCurrentTargetDocumentMenuItem.setEnabled(!StringUtil.isEmpty(targetPath)
+                            && new File(Core.getProject().getProjectProperties().getTargetRoot(), targetPath).isFile());
+                    String glossaryPath = Core.getProject().getProjectProperties().getWriteableGlossary();
+                    projectAccessWriteableGlossaryMenuItem.setEnabled(!StringUtil.isEmpty(glossaryPath)
+                            && new File(glossaryPath).isFile());
+                }
             }
             @Override
             public void menuDeselected(MenuEvent e) {
@@ -357,6 +309,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         switchCaseSubMenu.add(lowerCaseMenuItem = createMenuItem("TF_EDIT_MENU_SWITCH_CASE_TO_LOWER"));
         switchCaseSubMenu.add(upperCaseMenuItem = createMenuItem("TF_EDIT_MENU_SWITCH_CASE_TO_UPPER"));
         switchCaseSubMenu.add(titleCaseMenuItem = createMenuItem("TF_EDIT_MENU_SWITCH_CASE_TO_TITLE"));
+        switchCaseSubMenu.add(sentenceCaseMenuItem = createMenuItem("TF_EDIT_MENU_SWITCH_CASE_TO_SENTENCE"));
         switchCaseSubMenu.add(new JSeparator());
         switchCaseSubMenu.add(cycleSwitchCaseMenuItem = createMenuItem("TF_EDIT_MENU_SWITCH_CASE_CYCLE"));
 
@@ -382,6 +335,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         viewMenu.add(viewMarkWhitespaceCheckBoxMenuItem = createCheckboxMenuItem("MW_VIEW_MENU_MARK_WHITESPACE"));
         viewMenu.add(viewMarkBidiCheckBoxMenuItem = createCheckboxMenuItem("MW_VIEW_MENU_MARK_BIDI"));
         viewMenu.add(viewMarkAutoPopulatedCheckBoxMenuItem = createCheckboxMenuItem("MW_VIEW_MENU_MARK_AUTOPOPULATED"));
+        viewMenu.add(viewMarkFontFallbackCheckBoxMenuItem = createCheckboxMenuItem("MW_VIEW_MENU_MARK_FONT_FALLBACK"));
         viewMenu.add(viewModificationInfoMenu = createMenu("MW_VIEW_MENU_MODIFICATION_INFO"));
         ButtonGroup viewModificationInfoMenuBG = new ButtonGroup();
         viewModificationInfoMenu.add(viewDisplayModificationInfoNoneRadioButtonMenuItem = createRadioButtonMenuItem(
@@ -390,17 +344,19 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                         "MW_VIEW_MENU_MODIFICATION_INFO_SELECTED", viewModificationInfoMenuBG));
         viewModificationInfoMenu.add(viewDisplayModificationInfoAllRadioButtonMenuItem = createRadioButtonMenuItem(
                         "MW_VIEW_MENU_MODIFICATION_INFO_ALL", viewModificationInfoMenuBG));
-
-        viewMarkTranslatedSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_TRANSLATED.getColor()));
-        viewMarkUntranslatedSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_UNTRANSLATED.getColor()));
-        viewDisplaySegmentSourceCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_SOURCE.getColor()));
-        viewMarkNonUniqueSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkTextIcon(Styles.EditorColor.COLOR_NON_UNIQUE.getColor()));
-        viewMarkNotedSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_NOTED.getColor()));
-        viewMarkNBSPCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_NBSP.getColor()));
-        viewMarkWhitespaceCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_WHITESPACE.getColor()));
-        viewMarkBidiCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_BIDIMARKERS.getColor()));
-        viewModificationInfoMenu.setIcon(getViewMenuMarkBGIcon(null));
-        viewMarkAutoPopulatedCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_XAUTO.getColor()));
+        
+        viewMarkTranslatedSegmentsCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_TRANSLATED.getColor()));
+        viewMarkUntranslatedSegmentsCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_UNTRANSLATED.getColor()));
+        viewDisplaySegmentSourceCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_SOURCE.getColor()));
+        viewMarkNonUniqueSegmentsCheckBoxMenuItem.setIcon(MainMenuIcons.newTextIcon(Styles.EditorColor.COLOR_NON_UNIQUE.getColor(), 'M'));
+        viewMarkNotedSegmentsCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_NOTED.getColor()));
+        viewMarkNBSPCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_NBSP.getColor()));
+        viewMarkWhitespaceCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_WHITESPACE.getColor()));
+        viewMarkBidiCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_BIDIMARKERS.getColor()));
+        viewModificationInfoMenu.setIcon(MainMenuIcons.newBlankIcon());
+        viewMarkAutoPopulatedCheckBoxMenuItem.setIcon(MainMenuIcons.newColorIcon(Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_XAUTO.getColor()));
+        viewMarkFontFallbackCheckBoxMenuItem.setIcon(MainMenuIcons.newTextIcon(UIManager.getColor("Label.foreground"),
+                new Font("Serif", Font.ITALIC, 16), 'F'));
 
         toolsMenu.add(toolsValidateTagsMenuItem = createMenuItem("TF_MENU_TOOLS_VALIDATE"));
         toolsMenu.add(toolsSingleValidateTagsMenuItem = createMenuItem("TF_MENU_TOOLS_SINGLE_VALIDATE"));
@@ -411,11 +367,19 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsTabAdvanceCheckBoxMenuItem = createCheckboxMenuItem("TF_MENU_DISPLAY_ADVANCE"));
         optionsMenu.add(optionsAlwaysConfirmQuitCheckBoxMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_ALWAYS_CONFIRM_QUIT"));
         optionsMenu.add(optionsMachineTranslateMenu = createMenu("TF_OPTIONSMENU_MACHINETRANSLATE"));
+
+        optionsMachineTranslateMenu.add(optionsMTAutoFetchCheckboxMenuItem = createCheckboxMenuItem("MT_AUTO_FETCH"));
+        optionsMachineTranslateMenu.add(optionsMTOnlyUntranslatedCheckboxMenuItem = createCheckboxMenuItem("MT_ONLY_UNTRANSLATED"));
+        optionsMachineTranslateMenu.addSeparator();
+
         optionsMenu.add(optionsGlossaryMenu = createMenu("TF_OPTIONSMENU_GLOSSARY"));
 
         optionsGlossaryMenu.add(optionsGlossaryTBXDisplayContextCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_TBX_DISPLAY_CONTEXT"));
         optionsGlossaryMenu.add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
         optionsGlossaryMenu.add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
+
+        optionsMenu.add(optionsDictionaryMenu= createMenu("TF_OPTIONSMENU_DICTIONARY"));
+        optionsDictionaryMenu.add(optionsDictionaryFuzzyMatchingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_DICTIONARY_FUZZY"));
 
         optionsMenu.add(optionsTransTipsMenu = createMenu("TF_OPTIONSMENU_TRANSTIPS"));
         optionsTransTipsMenu.add(optionsTransTipsEnableMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_ENABLE"));
@@ -506,6 +470,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 .isMarkBidi());
         viewMarkAutoPopulatedCheckBoxMenuItem.setSelected(Core.getEditor().getSettings()
                 .isMarkAutoPopulated());
+        viewMarkFontFallbackCheckBoxMenuItem.setSelected(Core.getEditor().getSettings()
+                .isDoFontFallback());
 
         viewDisplayModificationInfoNoneRadioButtonMenuItem
                 .setSelected(EditorSettings.DISPLAY_MODIFICATION_INFO_NONE.equals(Core.getEditor()
@@ -519,12 +485,19 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         optionsAutoCompleteShowAutomaticallyItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY, true));
+        optionsMTAutoFetchCheckboxMenuItem.setSelected(Preferences.isPreferenceDefault(
+                Preferences.MT_AUTO_FETCH, true));
+        optionsMTOnlyUntranslatedCheckboxMenuItem.setSelected(Preferences.isPreference(
+                Preferences.MT_ONLY_UNTRANSLATED));
+        optionsMTOnlyUntranslatedCheckboxMenuItem.setEnabled(optionsMTAutoFetchCheckboxMenuItem.isSelected());
         optionsGlossaryTBXDisplayContextCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_TBX_DISPLAY_CONTEXT, true));
         optionsGlossaryExactMatchCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_NOT_EXACT_MATCH, true));
         optionsGlossaryStemmingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_STEMMING, true));
+        optionsDictionaryFuzzyMatchingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
+                Preferences.DICTIONARY_FUZZY_MATCHING, true));
     }
 
     /**
@@ -754,6 +727,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsGlossaryTBXDisplayContextCheckBoxMenuItem;
     JMenuItem optionsGlossaryExactMatchCheckBoxMenuItem;
     JMenuItem optionsGlossaryStemmingCheckBoxMenuItem;
+    JMenu optionsDictionaryMenu;
+    JMenuItem optionsDictionaryFuzzyMatchingCheckBoxMenuItem;
     JMenu optionsTransTipsMenu;
     JCheckBoxMenuItem optionsTransTipsEnableMenuItem;
     JCheckBoxMenuItem optionsTransTipsExactMatchMenuItem;
@@ -769,6 +744,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsViewOptionsMenuItem;
     JMenuItem optionsSaveOptionsMenuItem;
     JMenuItem optionsViewOptionsMenuLoginItem;
+    JCheckBoxMenuItem optionsMTAutoFetchCheckboxMenuItem;
+    JCheckBoxMenuItem optionsMTOnlyUntranslatedCheckboxMenuItem;
     JMenuItem projectCloseMenuItem;
     JMenuItem projectCompileMenuItem;
     JMenuItem projectSingleCompileMenuItem;
@@ -794,6 +771,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem projectAccessCurrentSourceDocumentMenuItem;
     JMenuItem projectAccessCurrentTargetDocumentMenuItem;
     JMenuItem projectAccessWriteableGlossaryMenuItem;
+    JMenuItem sentenceCaseMenuItem;
     JMenu switchCaseSubMenu;
     JMenuItem titleCaseMenuItem;
     JMenu toolsMenu;
@@ -810,6 +788,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JCheckBoxMenuItem viewMarkWhitespaceCheckBoxMenuItem;
     JCheckBoxMenuItem viewMarkBidiCheckBoxMenuItem;
     JCheckBoxMenuItem viewMarkAutoPopulatedCheckBoxMenuItem;
+    JCheckBoxMenuItem viewMarkFontFallbackCheckBoxMenuItem;
     JMenu viewModificationInfoMenu;
     JRadioButtonMenuItem viewDisplayModificationInfoNoneRadioButtonMenuItem;
     JRadioButtonMenuItem viewDisplayModificationInfoSelectedRadioButtonMenuItem;

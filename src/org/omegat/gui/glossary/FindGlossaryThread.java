@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
@@ -85,42 +86,47 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
 
     @Override
     protected List<GlossaryEntry> search() {
+
         ITokenizer tok = Core.getProject().getSourceTokenizer();
         if (tok == null) {
-            return null;
+            return Collections.emptyList();
         }
 
-        // Compute source entry tokens
-        StemmingMode mode = Preferences.isPreferenceDefault(Preferences.GLOSSARY_STEMMING, true)
-                ? StemmingMode.GLOSSARY
-                : StemmingMode.NONE;
-        Token[] strTokens = tok.tokenizeWords(src, mode);
-
         List<GlossaryEntry> entries = manager.getGlossaryEntries(src);
-        if (entries != null) {
-            for (GlossaryEntry glosEntry : entries) {
-                checkEntryChanged();
+        if (entries == null) {
+            return Collections.emptyList();
+        }
 
-                // Computer glossary entry tokens
-                String glosStr = glosEntry.getSrcText();
-                Token[] glosTokens = tok.tokenizeWords(glosStr, mode);
-                int glosTokensN = glosTokens.length;
-                if (glosTokensN == 0) {
-                    continue;
-                }
+        List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
 
-                if (DefaultTokenizer.isContainsAll(strTokens, glosTokens, 
-                        Preferences.isPreferenceDefault(Preferences.GLOSSARY_NOT_EXACT_MATCH, true))) {
-                    result.add(glosEntry);
-                    continue;
-                }
-                
-                if (!Core.getProject().getProjectProperties().getSourceLanguage().isSpaceDelimited()
-                        && StringUtil.isCJK(glosEntry.getSrcText()) && src.contains(glosEntry.getSrcText())) {
-                    // This is a CJK word and our source language is not space-delimited, so include if
-                    // word appears anywhere in source string.
-                    result.add(glosEntry);
-                }
+        // Make comparison case-insensitive
+        Locale loc = Core.getProject().getProjectProperties().getSourceLanguage().getLocale();
+        String srcLower = src.toLowerCase(loc);
+
+        // Compute source entry tokens
+        Token[] strTokens = tokenize(tok, srcLower);
+
+        for (GlossaryEntry glosEntry : entries) {
+            checkEntryChanged();
+
+            // Computer glossary entry tokens
+            String glosStr = glosEntry.getSrcText().toLowerCase(loc);
+            Token[] glosTokens = tokenize(tok, glosStr);
+            if (glosTokens.length == 0) {
+                continue;
+            }
+
+            if (DefaultTokenizer.isContainsAll(strTokens, glosTokens,
+                    Preferences.isPreferenceDefault(Preferences.GLOSSARY_NOT_EXACT_MATCH, true))) {
+                result.add(glosEntry);
+                continue;
+            }
+
+            if (!Core.getProject().getProjectProperties().getSourceLanguage().isSpaceDelimited()
+                    && StringUtil.isCJK(glosEntry.getSrcText()) && src.contains(glosEntry.getSrcText())) {
+                // This is a CJK word and our source language is not space-delimited, so include if
+                // word appears anywhere in source string.
+                result.add(glosEntry);
             }
         }
 
@@ -128,8 +134,15 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
         // We reorder entries: 1) by priority, 2) by length, 3) by alphabet
         // Then remove the duplicates and combine the synonyms.
         sortGlossaryEntries(result);
-        result = filterGlossary(result);
-        return result;
+        return filterGlossary(result);
+    }
+
+    private Token[] tokenize(ITokenizer tok, String str) {
+        if (Preferences.isPreferenceDefault(Preferences.GLOSSARY_STEMMING, true)) {
+            return tok.tokenizeWords(str, StemmingMode.GLOSSARY);
+        } else {
+            return tok.tokenizeVerbatim(str);
+        }
     }
 
     static void sortGlossaryEntries(List<GlossaryEntry> entries) {
@@ -157,8 +170,9 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
 
     static List<GlossaryEntry> filterGlossary(List<GlossaryEntry> result) {
         // First check that entries exist in the list.
-        if (result.isEmpty())
+        if (result.isEmpty()) {
             return result;
+        }
 
         List<GlossaryEntry> returnList = new LinkedList<>();
 

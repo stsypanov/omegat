@@ -1,12 +1,12 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
- with fuzzy matching, translation memory, keyword search,
- glossaries, and translation leveraging into updated projects.
+          with fuzzy matching, translation memory, keyword search, 
+          glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
- 2008 Didier Briel
- Home page: http://www.omegat.org/
- Support center: http://groups.yahoo.com/group/OmegaT/
+               2008 Didier Briel
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -163,23 +163,27 @@ public class XMLWriter extends Writer {
 		}
 	}
 
-	/**
-	 * We assume that EOL is always '\n' after XML processing.
-	 */
-	StringBuffer fixEOL(StringBuffer out) {
-		for (int i = 0; i < out.length(); i++) {
-			if (out.charAt(i) == '\n') {
-				// EOL
-				out.setCharAt(i, eol.charAt(0));
-				if (eol.length() > 1) {
-					// eol more than 1 char - need to insert second
-					out.insert(i + 1, eol.charAt(1));
-					i++;
-				}
-			}
-		}
-		return out;
-	}
+    /**
+     * We assume that EOL is always '\n' after XML processing.
+     */
+    StringBuffer fixEOL(StringBuffer out) {
+        for (int cp, i = 0; i < out.length(); i += Character.charCount(cp)) {
+            cp = out.codePointAt(i);
+            if (cp == '\n') {
+                // EOL
+                out.setCharAt(i, eol.charAt(0));
+                if (eol.length() > 1) {
+                    // EOL is more than 1 char - need to insert remaining.
+                    // Intentionally iterating by chars instead of code points.
+                    for (int j = 1; j < eol.length(); j++) {
+                        out.insert(i + 1, eol.charAt(j));
+                        i++;
+                    }
+                }
+            }
+        }
+        return out;
+    }
 
 	/**
 	 * Write a portion of an array of characters. Simply calls

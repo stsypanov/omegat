@@ -36,7 +36,7 @@ import org.omegat.core.Core;
 import org.omegat.gui.editor.AlphabeticalMarkers;
 import org.omegat.gui.editor.EditorController;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -90,10 +90,10 @@ public class GoToSegmentDialog extends javax.swing.JDialog {
 
     private void detectDidInputLetter() {
         String input = segmentField.getText();
-        if (input.length() != 1) {
+        if (input.codePointCount(0, input.length()) != 1) {
             return;
         }
-        if (alphabeticalMarkers.containsTitle(input.charAt(0))) {
+        if (alphabeticalMarkers.containsTitle(input.codePointAt(0))) {
             okButtonActionPerformed(null);
         }
     }
@@ -217,7 +217,7 @@ public class GoToSegmentDialog extends javax.swing.JDialog {
     
     private void displayErrorMessage(int maxNr) {
         JOptionPane.showMessageDialog(this,
-                StaticUtils.format(OStrings.getString("MW_SEGMENT_NUMBER_ERROR"), maxNr),
+                StringUtil.format(OStrings.getString("MW_SEGMENT_NUMBER_ERROR"), maxNr),
                 OStrings.getString("TF_ERROR"), JOptionPane.ERROR_MESSAGE);
     }
     

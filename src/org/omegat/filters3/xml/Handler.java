@@ -51,7 +51,6 @@ import org.omegat.filters3.Element;
 import org.omegat.filters3.Entry;
 import org.omegat.filters3.Tag;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -210,10 +209,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
      * included into main file. Each entry is {@link File}.
      */
     public List<File> getProcessedFiles() {
-        if (!processedFiles.isEmpty())
-            return processedFiles;
-        else
-            return null;
+        return processedFiles.isEmpty() ? null : processedFiles;
     }
 
     /** Throws a nice error message when SAX parser encounders fastal error. */
@@ -230,8 +226,8 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
         } else
             filename = inFile.getAbsolutePath();
         throw new SAXException("\n"
-                + StaticUtils.format(e.getMessage() + "\n" + OStrings.getString("XML_FATAL_ERROR"),
-                        new Object[] { filename, linenum }));
+                + StringUtil.format(e.getMessage() + "\n" + OStrings.getString("XML_FATAL_ERROR"),
+                        filename, linenum));
     }
 
     /**
@@ -267,7 +263,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
                 res = inFile.getCanonicalFile().getParent();
             } catch (IOException ex) {
             }
-            if (res.charAt(res.length() - 1) != File.separatorChar) {
+            if (res.codePointBefore(res.length()) != File.separatorChar) {
                 res = res + File.separatorChar;
             }
             sourceFolderAbsolutePath = res;
@@ -306,8 +302,8 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
         for (Entity entity : externalEntities) {
             if (entity.isInternal())
                 continue;
-            if (StaticUtils.equal(publicId, entity.getPublicId())
-                    && StaticUtils.equal(systemId, entity.getSystemId()))
+            if (StringUtil.equal(publicId, entity.getPublicId())
+                    && StringUtil.equal(systemId, entity.getSystemId()))
                 return entity;
         }
         return null;
@@ -354,8 +350,8 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
     public InputSource doResolve(String publicId, String systemId) throws SAXException, TranslationException,
             IOException, URISyntaxException {
         if (dtd != null
-                && StaticUtils.equal(publicId, dtd.getPublicId())
-                && (StaticUtils.equal(systemId, dtd.getSystemId()) || StaticUtils.equal(
+                && StringUtil.equal(publicId, dtd.getPublicId())
+                && (StringUtil.equal(systemId, dtd.getSystemId()) || StringUtil.equal(
                         localizeSystemId(systemId), dtd.getSystemId()))) {
             inDTD = true;
         }
@@ -409,7 +405,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
             currEntry().add(new XMLEntityText(internalEntityStarted));
         else {
             boolean added = false;
-            if (currEntry().size() > 0) {
+            if (!currEntry().isEmpty()) {
                 Element elem = currEntry().get(currEntry().size() - 1);
                 if (elem instanceof XMLText) {
                     XMLText text = (XMLText) elem;
@@ -461,8 +457,8 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
                         .getTranslatableTagAttributes().containsPair(tag, attr.getName()))
                         && dialect.validateTranslatableTagAttribute(tag, attr.getName(),
                                 xmltag.getAttributes())) {
-                    attr.setValue(StaticUtils.makeValidXML(
-                            translator.translate(StaticUtils.entitiesToCharacters(attr.getValue()), null)));
+                    attr.setValue(StringUtil.makeValidXML(
+                            translator.translate(StringUtil.unescapeXMLEntities(attr.getValue()), null)));
                 }
             }
         }
@@ -584,7 +580,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
      * @see #translateAndFlush()
      */
     private void translateButDontFlash() throws TranslationException {
-        if (currEntry().size() == 0)
+        if (currEntry().isEmpty())
             return;
 
         List<ProtectedPart> shortcutDetails = new ArrayList<ProtectedPart>();
@@ -602,7 +598,7 @@ public class Handler extends DefaultHandler implements LexicalHandler, DeclHandl
         } else {
             String compressed = src;
             if (Core.getFilterMaster().getConfig().isRemoveSpacesNonseg()) {
-                compressed = StaticUtils.compressSpaces(src);
+                compressed = StringUtil.compressSpaces(src);
             } 
             if (isTranslatableTag())
                 translation = translator.translate(compressed, shortcutDetails);

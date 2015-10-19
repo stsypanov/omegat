@@ -183,8 +183,7 @@ public class SourceTextEntry {
             return other.duplicates == null ? 0 : other.duplicates.size();
         }
     }
-    
-    @SuppressWarnings("unchecked")
+
     public List<SourceTextEntry> getDuplicates() {
         if (firstInstance != null) {
             List<SourceTextEntry> result = new ArrayList<>(firstInstance.getDuplicates());
@@ -192,7 +191,11 @@ public class SourceTextEntry {
             result.add(0, firstInstance);
             return Collections.unmodifiableList(result);
         }
-        return duplicates == null ? Collections.<SourceTextEntry>emptyList() : Collections.unmodifiableList(duplicates);
+        if (duplicates == null) {
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(duplicates);
+        }
     }
     
     public String getSourceTranslation() {

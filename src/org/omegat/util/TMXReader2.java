@@ -103,10 +103,9 @@ public class TMXReader2 {
         factory.setXMLReporter(new XMLReporter() {
             public void report(String message, String error_type, Object info, Location location)
                     throws XMLStreamException {
-                Log.logWarningRB(
-                        "TMXR_WARNING_WHILE_PARSING",
-                        String.valueOf(location.getLineNumber()),
-                        String.valueOf(location.getColumnNumber()));
+                Log.logWarningRB("TMXR_WARNING_WHILE_PARSING",
+                        location.getLineNumber(),
+                        location.getColumnNumber());
                 Log.log(message + ": " + info);
                 warningsCount++;
             }
@@ -183,8 +182,7 @@ public class TMXReader2 {
         
         // log some details
         Log.logRB("TMXR_INFO_CREATION_TOOL", getAttributeValue(element, "creationtool"));
-        Log.logRB("TMXR_INFO_CREATION_TOOL_VERSION",
-                getAttributeValue(element, "creationtoolversion"));
+        Log.logRB("TMXR_INFO_CREATION_TOOL_VERSION", getAttributeValue(element, "creationtoolversion"));
         Log.logRB("TMXR_INFO_SEG_TYPE", getAttributeValue(element, "segtype"));
         Log.logRB("TMXR_INFO_SOURCE_LANG", getAttributeValue(element, "srclang"));
 
@@ -425,7 +423,7 @@ public class TMXReader2 {
                 }
                 boolean slashBefore = false;
                 boolean slashAfter = false;
-                char tagName = StringUtil.getFirstLetterLowercase(segInlineTag);
+                int tagName = StringUtil.getFirstLetterLowercase(segInlineTag.toString());
                 Integer tagN;
                 if ("bpt".equals(eEnd.getName().getLocalPart())) {
                     if (tagName != 0) {
@@ -490,7 +488,7 @@ public class TMXReader2 {
                 if (slashBefore) {
                     segContent.append('/');
                 }
-                segContent.append(tagName);
+                segContent.appendCodePoint(tagName);
                 segContent.append(Integer.toString(tagN));
                 if (slashAfter) {
                     segContent.append('/');

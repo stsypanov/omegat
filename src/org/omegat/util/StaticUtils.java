@@ -46,7 +46,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,11 +54,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.omegat.core.data.ProtectedPart;
-import org.omegat.core.statistics.StatisticsSettings;
 import org.omegat.util.Platform.OsType;
 
 /**
@@ -118,92 +114,6 @@ public class StaticUtils {
     private static String m_scriptDir = null;
 
     /**
-     * Builds a list of format tags within the supplied string. Format tags are
-     * 'protected parts' and OmegaT style tags: &lt;xx02&gt; or &lt;/yy01&gt;.
-     */
-    public static void buildTagList(String str, ProtectedPart[] protectedParts, List<String> tagList) {
-        List<TagOrder> tags = new ArrayList<>();
-        if (protectedParts != null) {
-            for (ProtectedPart pp : protectedParts) {
-                int pos = -1;
-                if ((pos = str.indexOf(pp.getTextInSourceSegment(), pos + 1)) >= 0) {
-                    tags.add(new TagOrder(pos, pp.getTextInSourceSegment()));
-                }
-            }
-        }
-
-        if (tags.isEmpty()) {
-            return;
-        }
-        Collections.sort(tags, new Comparator<TagOrder>() {
-            @Override
-            public int compare(TagOrder o1, TagOrder o2) {
-                return o1.pos - o2.pos;
-            }
-        });
-        for (TagOrder t : tags) {
-            tagList.add(t.tag);
-        }
-    }
-
-    /**
-     * Builds a list of all occurrences of all protected parts.
-     */
-    public static List<TagOrder> buildAllTagList(String str, ProtectedPart[] protectedParts) {
-        List<TagOrder> tags = new ArrayList<>();
-        if (protectedParts != null) {
-            for (ProtectedPart pp : protectedParts) {
-                int pos = -1;
-                do {
-                    if ((pos = str.indexOf(pp.getTextInSourceSegment(), pos + 1)) >= 0) {
-                        tags.add(new TagOrder(pos, pp.getTextInSourceSegment()));
-                    }
-                } while (pos >= 0);
-            }
-        }
-
-        if (tags.isEmpty()) {
-            return Collections.emptyList();
-        }
-        Collections.sort(tags, new Comparator<TagOrder>() {
-            @Override
-            public int compare(TagOrder o1, TagOrder o2) {
-                return o1.pos - o2.pos;
-            }
-        });
-        return tags;
-    }
-
-    /**
-     * Builds a list of format tags within the supplied string. Format tags are
-     * OmegaT style tags: &lt;xx02&gt; or &lt;/yy01&gt;.
-     * @return a string containing the tags
-     */
-    public static String buildTagListForRemove(String str) {
-        StringBuilder result = new StringBuilder();
-        Pattern placeholderPattern = PatternConsts.OMEGAT_TAG;
-        Matcher placeholderMatcher = placeholderPattern.matcher(str);
-        while (placeholderMatcher.find()) {
-            result.append(placeholderMatcher.group(0));
-        }
-        return result.toString();
-    }
-    
-    /**
-     * Find the first tag in a segment
-     * @param str A segment
-     * @return the first tag in the segment, or null if there are no tags
-     */
-    public static String getFirstTag(String str) {
-        Pattern placeholderPattern = PatternConsts.OMEGAT_TAG;
-        Matcher placeholderMatcher = placeholderPattern.matcher(str);
-        if (placeholderMatcher.find()) {
-            return placeholderMatcher.group(0);
-        }
-        return null;
-    }
-
-    /**
      * Check if specified key pressed.
      *
      * @param e
@@ -218,99 +128,16 @@ public class StaticUtils {
         return e.getKeyCode() == code && e.getModifiers() == modifiers;
     }
 
-    public static class TagOrder {
-        public final int pos;
-        public final String tag;
-
-        public TagOrder(int pos, String tag) {
-            this.pos = pos;
-            this.tag = tag;
-        }
-    }
-
-    /**
-     * Indicates the type of a tag, e.g.:
-     * <ul>
-     * <li>&lt;foo> = START</li>
-     * <li>&lt;/foo> = END</li>
-     * <li>&lt;bar/> = SINGLE</li>
-     * </ul>
-     */
-    public static enum TagType {
-        START, END, SINGLE
-    }
-
-    /**
-     * Detect the type of a tag, e.g. one of {@link TagType}.
-     * @param tag String containing full text of tag
-     * @return The type of the tag
-     */
-    public static TagType getTagType(String tag) {
-        if (tag.length() < 4 || (!tag.startsWith("<") && !tag.endsWith(">"))) {
-            return TagType.SINGLE;
-        }
-        
-        if (tag.startsWith("</")) {
-            return TagType.END;
-        } else if (tag.endsWith("/>")) {
-            return TagType.SINGLE;
-        }
-
-        return TagType.START;
-    }
-
-    /**
-     * Retrieve info about a tag.
-     * @param tag String containing full text of tag
-     * @return A {@link TagInfo} with tag's name and type
-     */
-    public static TagInfo getTagInfo(String tag) {
-        Matcher m = PatternConsts.OMEGAT_TAG_DECOMPILE.matcher(tag);
-        String name = m.find() ? m.group(2) + m.group(3) : tag;
-        return new TagInfo(name, getTagType(tag));
-    }
-
-        
-    /**
-     * For a given tag, retrieve its pair e.g. &lt;/foo> for &lt;foo>.
-     * @param info A {@link TagInfo} describing the tag
-     * @return The tag's pair as a string, or null for self-contained tags
-     */
-    public static String getPairedTag(TagInfo info) {
-        switch(info.type) {
-        case START:
-            return String.format("</%s>", info.name);
-        case END:
-            return String.format("<%s>", info.name);
-        case SINGLE:
-        default:
-            return null;
-        }
-    }
-
-    
-    /**
-     * A tuple containing 
-     * <ul><li>A tag's name</li>
-     * <li>The tag's {@link TagType} type</li>
-     * </ul>
-     */
-    public static class TagInfo {
-        public final TagType type;
-        public final String name;
-        
-        public TagInfo (String name, TagType type) {
-            this.name = name;
-            this.type = type;
-        }
-    }
-
     /**
      * Returns a list of all files under the root directory by absolute path.
      */
     //todo don't pass files collection, but return it instead
     public static void buildFileList(List<String> lst, File rootDir, boolean recursive) {
-        internalBuildFileList(lst, rootDir, recursive);
+        try {
+            internalBuildFileList(lst, rootDir, recursive);
+        } catch (Exception ex) {
+            // Ignore
+        }
 
         // Get the local collator and set its strength to PRIMARY
         final Collator localCollator = Collator.getInstance(Locale.getDefault());
@@ -341,20 +168,20 @@ public class StaticUtils {
 
     static Pattern compileFileMask(String mask) {
         StringBuilder m = new StringBuilder();
-        for (int i = 0; i < mask.length(); i++) {
-            char c = mask.charAt(i);
-            if (c >= 'A' && c <= 'Z') {
-                m.append(c);
-            } else if (c >= 'a' && c <= 'z') {
-                m.append(c);
-            } else if (c >= '0' && c <= '9') {
-                m.append(c);
-            } else if (c == '/') {
-                m.append(c);
-            } else if (c == '?') {
+        for (int cp, i = 0; i < mask.length(); i += Character.charCount(cp)) {
+            cp = mask.codePointAt(i);
+            if (cp >= 'A' && cp <= 'Z') {
+                m.appendCodePoint(cp);
+            } else if (cp >= 'a' && cp <= 'z') {
+                m.appendCodePoint(cp);
+            } else if (cp >= '0' && cp <= '9') {
+                m.appendCodePoint(cp);
+            } else if (cp == '/') {
+                m.appendCodePoint(cp);
+            } else if (cp == '?') {
                 m.append('.');
-            } else if (c == '*') {
-                if (i + 1 < mask.length() && mask.charAt(i + 1) == '*') {
+            } else if (cp == '*') {
+                if (mask.codePointCount(i, mask.length()) > 1 && mask.codePointAt(mask.offsetByCodePoints(i, 1)) == '*') {
                     // **
                     m.append(".*");
                     i++;
@@ -363,7 +190,7 @@ public class StaticUtils {
                     m.append("[^/]*");
                 }
             } else {
-                m.append('\\').append(c);
+                m.append('\\').appendCodePoint(cp);
             }
         }
         return Pattern.compile(m.toString());
@@ -402,50 +229,15 @@ public class StaticUtils {
     }
 
     private static void internalBuildFileList(List<String> lst, File rootDir, boolean recursive) {
-        // read all files in current directory, recurse into subdirs
-        // append files to supplied list
-        File flist[] = null;
-        try {
-            flist = rootDir.listFiles();
-        } catch (Exception e) {
-            // don't care what exception is there.
-            // by contract, only a SecurityException is possible, but who
-            // knows...
-        }
-        // if IOException occured, flist is null
-        // and we simply return
-        if (flist == null)
+        if (!rootDir.isDirectory()) {
             return;
-
-        for (File file : flist) {
-            if (file.isDirectory()) {
-                continue; // recurse into directories later
-            }
-            lst.add(file.getAbsolutePath());
         }
-        if (recursive) {
-            for (File file : flist) {
-                if (isProperDirectory(file)) // Ignores some directories
-                {
-                    // now recurse into subdirectories
-                    buildFileList(lst, file, true);
-                }
+        for (File file : rootDir.listFiles()) {
+            if (file.isDirectory() && recursive) {
+                internalBuildFileList(lst, file, recursive);
             }
-        }
-    }
-
-    // returns a list of all files under the root directory
-    // by absolute path
-    public static void buildDirList(List<String> lst, File rootDir) {
-        // read all files in current directory, recurse into subdirs
-        // append files to supplied list
-        File[] flist = rootDir.listFiles();
-        for (File file : flist) {
-            if (isProperDirectory(file)) // Ignores some directories
-            {
-                // now recurse into subdirectories
+            if (file.isFile()) {
                 lst.add(file.getAbsolutePath());
-                buildDirList(lst, file);
             }
         }
     }
@@ -457,99 +249,6 @@ public class StaticUtils {
         GraphicsEnvironment graphics;
         graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
         return graphics.getAvailableFontFamilyNames();
-    }
-
-    /**
-     * Tests whether a directory has to be used
-     *
-     * @return <code>true</code> or <code>false</code>
-     */
-    private static boolean isProperDirectory(File file) {
-        if (file.isDirectory()) {
-            return true;
-        } else
-            return false;
-    }
-
-    /**
-     * Converts a single char into valid XML. Output stream must convert stream
-     * to UTF-8 when saving to disk.
-     */
-    public static String makeValidXML(char c) {
-        switch (c) {
-        // case '\'':
-        // return "&apos;";
-        case '&':
-            return "&amp;";
-        case '>':
-            return "&gt;";
-        case '<':
-            return "&lt;";
-        case '"':
-            return "&quot;";
-        default:
-            return String.valueOf(c);
-        }
-    }
-
-    /**
-     * Converts XML entities to characters.
-     */
-    public static String entitiesToCharacters(String text) {
-
-        if (text.contains("&gt;")) {
-            text = text.replaceAll("&gt;", ">");
-        }
-        if (text.contains("&lt;")) {
-            text = text.replaceAll("&lt;", "<");
-        }
-        if (text.contains("&quot;")) {
-            text = text.replaceAll("&quot;", "\"");
-        }
-       // If makeValidXML converts ' to apos;, the following lines should be uncommented
-        /* if (text.indexOf("&apos;") >= 0) {
-            text = text.replaceAll("&apos;", "'");
-        }*/
-        if (text.contains("&amp;")) {
-            text = text.replaceAll("&amp;", "&");
-        }
-        return text;
-    }
-
-    /**
-     * Converts a stream of plaintext into valid XML. Output stream must convert
-     * stream to UTF-8 when saving to disk.
-     */
-    public static String makeValidXML(String plaintext) {
-        char c;
-        StringBuilder out = new StringBuilder();
-        String text = fixChars(plaintext);
-        for (int i = 0; i < text.length(); i++) {
-            c = text.charAt(i);
-            out.append(makeValidXML(c));
-        }
-        return out.toString();
-    }
-
-    /** Compresses spaces in case of non-preformatting paragraph. */
-    public static String compressSpaces(String str) {
-        int strlen = str.length();
-        StringBuilder res = new StringBuilder(strlen);
-        boolean wasspace = true;
-        for (int i = 0; i < strlen; i++) {
-            char ch = str.charAt(i);
-            boolean space = Character.isWhitespace(ch);
-            if (space) {
-                if (!wasspace)
-                    wasspace = true;
-            } else {
-                if (wasspace && res.length() > 0)
-                    res.append(' ');
-                res.append(ch);
-                wasspace = false;
-            }
-        }
-        return res.toString();
     }
 
     /**
@@ -573,14 +272,17 @@ public class StaticUtils {
         return fullcp.substring(semicolon1 + 1, semicolon2);
     }
 
-    /** Trying to see if this ending is inside the classpath */
-    private static String tryThisClasspathElement(String cp, String ending) {
+    /**
+     * Extract classpath element that ends with <code>ending</code> from
+     * the full classpath <code>cp</code>, if present. If not present, returns
+     * null.
+     */
+    private static String extractClasspathElement(String cp, String ending) {
         try {
             int pos = cp.indexOf(ending);
             if (pos >= 0) {
                 String path = classPathElement(cp, pos);
-                path = path.substring(0, path.indexOf(ending));
-                return path;
+                return path.substring(0, path.indexOf(ending));
             }
         } catch (Exception e) {
             // should never happen, but just in case ;-)
@@ -596,28 +298,26 @@ public class StaticUtils {
      * up for OmegaT documentation.
      */
     public static String installDir() {
-        if (INSTALLDIR != null)
-            return INSTALLDIR;
+        if (INSTALLDIR == null) {
+            String cp = System.getProperty("java.class.path");
 
-        String cp = System.getProperty("java.class.path");
-        String path;
+            // See if we are running from a JAR
+            String path = extractClasspathElement(cp, File.separator + OConsts.APPLICATION_JAR);
 
-        // running from a Jar ?
-        path = tryThisClasspathElement(cp, File.separator + OConsts.APPLICATION_JAR);
+            if (path == null) {
+                // We're not running from a JAR; probably debug mode (in IDE, etc.)
+                path = extractClasspathElement(cp, OConsts.DEBUG_CLASSPATH);
+            }
 
-        // again missed, we're not running from Jar, most probably debug mode
-        if (path == null)
-            path = tryThisClasspathElement(cp, OConsts.DEBUG_CLASSPATH);
+            // WTF?!! Falling back to current directory
+            if (path == null) {
+                path = ".";
+            }
 
-        // WTF?!! using current directory
-        if (path == null)
-            path = ".";
-
-        // absolutizing the path
-        path = new File(path).getAbsolutePath();
-
-        INSTALLDIR = path;
-        return path;
+            // Cache the absolute path
+            INSTALLDIR = new File(path).getAbsolutePath();
+        }
+        return INSTALLDIR;
     }
 
     /**
@@ -627,13 +327,14 @@ public class StaticUtils {
      * is being determined, an empty string will be returned, resulting in the
      * current working directory being used.
      *
-     * Windows XP : &lt;Documents and Settings&gt;>\&lt;User name&gt;\Application Data\OmegaT
-     * Windows Vista : User\&lt;User name&gt;\AppData\Roaming 
-     * Linux: &lt;User Home&gt;/.omegat 
-     * Solaris/SunOS: &lt;User Home&gt;/.omegat
-     * FreeBSD: &lt;User Home&gt;/.omegat 
-     * Mac OS X: &lt;User Home&gt;/Library/Preferences/OmegaT 
-     * Other: User home directory
+     * <ul><li>Windows XP: &lt;Documents and Settings>\&lt;User name>\Application Data\OmegaT
+     * <li>Windows Vista: User\&lt;User name>\AppData\Roaming
+     * <li>Linux: ~/.omegat
+     * <li>Solaris/SunOS: ~/.omegat
+     * <li>FreeBSD: ~/.omegat
+     * <li>Mac OS X: ~/Library/Preferences/OmegaT
+     * <li>Other: User home directory
+     * </ul>
      *
      * @return The full path of the directory containing the OmegaT
      *         configuration files, including trailing path separator.
@@ -642,8 +343,9 @@ public class StaticUtils {
      */
     public static String getConfigDir() {
         // if the configuration directory has already been determined, return it
-        if (m_configDir != null)
+        if (m_configDir != null) {
             return m_configDir;
+        }
 
         String cd = RuntimePreferences.getConfigDir();
         if (cd != null) {
@@ -676,7 +378,7 @@ public class StaticUtils {
 
         // if os or user home is null or empty, we cannot reliably determine
         // the config dir, so we use the current working dir (= empty string)
-        if ((os == null) || (home == null) || (home.isEmpty())) {
+        if (os == null || StringUtil.isEmpty(home)) {
             // set the config dir to the current working dir
             m_configDir = new File(".").getAbsolutePath() + File.separator;
             return m_configDir;
@@ -701,7 +403,7 @@ public class StaticUtils {
                 }
             }
 
-            if ((appData != null) && (!appData.isEmpty())) {
+            if (!StringUtil.isEmpty(appData)) {
                 // if a valid application data dir has been found,
                 // append an OmegaT subdir to it
                 m_configDir = appData + WINDOWS_CONFIG_DIR;
@@ -763,6 +465,13 @@ public class StaticUtils {
         return m_configDir;
     }
 
+    /**
+     * For testing purposes only!
+     */
+    public static void setConfigDir(String path) {
+        m_configDir = path;
+    }
+
     public static String getScriptDir() {
         // If the script directory has already been determined, return it
         if (m_scriptDir != null)
@@ -794,59 +503,6 @@ public class StaticUtils {
             Log.log(e.toString());
         }
         return m_scriptDir;
-    }
-
-    /**
-     * Find some protected parts defined in Tag Validation Options dialog: printf variables, java
-     * MessageFormat patterns, user defined cusom tags.
-     * 
-     * These protected parts shouldn't affect statistic but just be displayed in gray in editor and take part
-     * in tag validation.
-     */
-    public static List<ProtectedPart> applyCustomProtectedParts(String source,
-            Pattern protectedPartsPatterns, List<ProtectedPart> protectedParts) {
-        List<ProtectedPart> result;
-        if (protectedParts != null) {
-            // Remove already define protected parts first for prevent intersection
-            for (ProtectedPart pp : protectedParts) {
-                source = source.replace(pp.getTextInSourceSegment(), StaticUtils.TAG_REPLACEMENT);
-            }
-            result = protectedParts;
-        } else {
-            result = new ArrayList<>();
-        }
-
-        Matcher placeholderMatcher = protectedPartsPatterns.matcher(source);
-        while (placeholderMatcher.find()) {
-            ProtectedPart pp = new ProtectedPart();
-            pp.setTextInSourceSegment(placeholderMatcher.group());
-            pp.setDetailsFromSourceFile(placeholderMatcher.group());
-            if (StatisticsSettings.isCountingCustomTags()) {
-                pp.setReplacementWordsCountCalculation(placeholderMatcher.group());
-            } else {
-                pp.setReplacementWordsCountCalculation(StaticUtils.TAG_REPLACEMENT);
-            }
-            pp.setReplacementUniquenessCalculation(placeholderMatcher.group());
-            pp.setReplacementMatchCalculation(placeholderMatcher.group());
-            result.add(pp);
-        }
-        return result;
-    }
-
-    /**
-     * Strips all XML tags (converts to plain text). Tags detected only by
-     * pattern. Protected parts are not used.
-     */
-    public static String stripXmlTags(String xml) {
-        return PatternConsts.OMEGAT_TAG.matcher(xml).replaceAll("");
-    }
-
-    /**
-     * Compares two strings for equality. Handles nulls: if both strings are
-     * nulls they are considered equal.
-     */
-    public static boolean equal(String one, String two) {
-        return (one == null && two == null) || (one != null && one.equals(two));
     }
 
     /**
@@ -945,9 +601,9 @@ public class StaticUtils {
 
         // handle rest of characters to be escaped
         // String escape = "^.*+[]{}()&|-:=?!<>";
-        String escape = "^.+[]{}()&|-:=!<>";
-        for (int i = 0; i < escape.length(); i++)
-            text = text.replaceAll("\\" + escape.charAt(i), "\\\\" + escape.charAt(i));
+        for (char c : "^.+[]{}()&|-:=!<>".toCharArray()) {
+            text = text.replaceAll("\\" + c, "\\\\" + c);
+        }
 
         // handle "wildcard characters" ? and * (only if requested)
         // do this last, or the additional period (.) will cause trouble
@@ -970,30 +626,6 @@ public class StaticUtils {
         }
 
         return text;
-    }
-
-    /**
-     * Formats UI strings.
-     *
-     * Note: This is only a first attempt at putting right what goes wrong in
-     * MessageFormat. Currently it only duplicates single quotes, but it doesn't
-     * even test if the string contains parameters (numbers in curly braces),
-     * and it doesn't allow for string containg already escaped quotes.
-     *
-     * @param str
-     *            The string to format
-     * @param arguments
-     *            Arguments to use in formatting the string
-     *
-     * @return The formatted string
-     *
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
-     */
-    public static String format(String str, Object... arguments) {
-        // MessageFormat.format expects single quotes to be escaped
-        // by duplicating them, otherwise the string will not be formatted
-        str = str.replaceAll("'", "''");
-        return MessageFormat.format(str, arguments);
     }
 
     /**
@@ -1098,94 +730,6 @@ public class StaticUtils {
     }
 
     /**
-     * Replace invalid XML chars by spaces. See supported chars at
-     * http://www.w3.org/TR/2006/REC-xml-20060816/#charsets.
-     *
-     * @param str
-     *            input stream
-     * @return result stream
-     */
-    public static String fixChars(String str) {
-        StringBuilder sb = new StringBuilder(str.length());
-        for (int c, i = 0; i < str.length(); i += Character.charCount(c)) {
-            c = str.codePointAt(i);
-            if (c < 0x20) {
-                if (c != 0x09 && c != 0x0A && c != 0x0D) {
-                    c = ' ';
-                }
-            } else if (c >= 0x20 && c <= 0xD7FF) {
-            } else if (c >= 0xE000 && c <= 0xFFFD) {
-            } else if (c >= 0x10000 && c <= 0x10FFFF) {
-            } else {
-                c = ' ';
-            }
-            sb.appendCodePoint(c);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Reconstruct a tag from its {@link TagInfo}.
-     * 
-     * @param info
-     *            Description of tag
-     * @return Reconstructed original tag
-     */
-    public static String getOriginalTag(TagInfo info) {
-        switch (info.type) {
-        case START:
-            return String.format("<%s>", info.name);
-        case END:
-            return String.format("</%s>", info.name);
-        case SINGLE:
-            return String.format("<%s/>", info.name);
-        }
-        return null;
-    }
-
-    /**
-     * Sort tags by order of their appearance in a reference string.
-     */
-    public static class TagComparator implements Comparator<String> {
-
-        private final String source;
-
-        public TagComparator(String source) {
-            super();
-            this.source = source;
-        }
-
-        @Override
-        public int compare(String tag1, String tag2) {
-            // Check for equality
-            if (tag1.equals(tag2)) {
-                return 0;
-            }
-            // Check to see if one tag encompases the other
-            if (tag1.startsWith(tag2)) {
-                return -1;
-            } else if (tag2.startsWith(tag1)) {
-                return 1;
-            }
-            // Check which tag comes first
-            int index1 = source.indexOf(tag1);
-            int index2 = source.indexOf(tag2);
-            if (index1 == index2) {
-                int len1 = tag1.length();
-                int len2 = tag2.length();
-                if (len1 > len2) {
-                    return -1;
-                } else if (len2 > len1) {
-                    return 1;
-                } else {
-                    return tag1.compareTo(tag2);
-                }
-            }
-            return index1 > index2 ? 1 : -1;
-        }
-    }
-
-    /**
      * Parse a command line string into arguments, interpreting
      * double and single quotes as Bash does.
      * @param cmd Command string
@@ -1193,32 +737,34 @@ public class StaticUtils {
      */
     public static String[] parseCLICommand(String cmd) {
         cmd = cmd.trim();
-        if (cmd.isEmpty()) return new String[] { "" };
+        if (cmd.isEmpty()) {
+            return new String[] { "" };
+        }
         
         StringBuilder arg = new StringBuilder();
         List<String> result = new ArrayList<>();
         
         final char noQuote = '\0';
         char currentQuote = noQuote;
-        for (int i = 0; i < cmd.length(); i++) {
-            char c = cmd.charAt(i);
-            if (c == currentQuote) {
+        for (int cp, i = 0; i < cmd.length(); i += Character.charCount(cp)) {
+            cp = cmd.codePointAt(i);
+            if (cp == currentQuote) {
                 currentQuote = noQuote;
-            } else if (c == '"' && currentQuote == noQuote) {
+            } else if (cp == '"' && currentQuote == noQuote) {
                 currentQuote = '"';
-            } else if (c == '\'' && currentQuote == noQuote) {
+            } else if (cp == '\'' && currentQuote == noQuote) {
                 currentQuote = '\'';
-            } else if (c == '\\' && i + 1 < cmd.length()) {
-                char next = cmd.charAt(i + 1);
-                if ((currentQuote == noQuote && Character.isWhitespace(next))
-                        || (currentQuote == '"' && next == '"')) {
-                    arg.append(next);
-                    i++;
+            } else if (cp == '\\' && i + 1 < cmd.length()) {
+                int ncp = cmd.codePointAt(cmd.offsetByCodePoints(i, 1));
+                if ((currentQuote == noQuote && Character.isWhitespace(ncp))
+                        || (currentQuote == '"' && ncp == '"')) {
+                    arg.appendCodePoint(ncp);
+                    i += Character.charCount(ncp);
                 } else {
-                    arg.append(c);
+                    arg.appendCodePoint(cp);
                 }
             } else {
-                if (Character.isWhitespace(c) && currentQuote == noQuote) {
+                if (Character.isWhitespace(cp) && currentQuote == noQuote) {
                     if (arg.length() > 0) {
                         result.add(arg.toString());
                         arg = new StringBuilder();
@@ -1226,7 +772,7 @@ public class StaticUtils {
                         // Discard
                     }
                 } else {
-                    arg.append(c);
+                    arg.appendCodePoint(cp);
                 }
             }
         }

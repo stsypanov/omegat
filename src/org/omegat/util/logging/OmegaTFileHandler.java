@@ -42,6 +42,7 @@ import java.util.logging.StreamHandler;
 
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 
 /**
@@ -104,7 +105,11 @@ public class OmegaTFileHandler extends StreamHandler {
     private void openFiles(final File dir) throws IOException {
         dir.mkdirs();
         for (int instanceIndex = 0; instanceIndex < 100; instanceIndex++) {
-            String fileName = "OmegaT" + (instanceIndex > 0 ? ("-" + instanceIndex) : "");
+            String fileName = "OmegaT"
+                    // Optional branding identifier
+                    + (OStrings.BRANDING.isEmpty() ? "" : "-" + OStrings.BRANDING)
+                    // Instance index
+                    + (instanceIndex > 0 ? ("-" + instanceIndex) : "");
             
             lockFile = new File(dir, fileName + ".log.lck");
             logFileName = fileName;

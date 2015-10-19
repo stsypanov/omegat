@@ -45,6 +45,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -163,18 +166,13 @@ public class StaticUIUtils {
         }
         
         final int truncateCharWidth = metrics.charWidth(TRUNCATE_CHAR);
-        final int middle = text.length() / 2;
-        int spread = 0, chompStart = 0, chompEnd = 0;
+        final int middle = text.offsetByCodePoints(0, text.codePointCount(0, text.length()) / 2);
+        int chompStart = middle, chompEnd = middle;
         String chomp = null;
         
         // Calculate size when removing progressively larger chunks from the middle
         while (true) {
-            chompStart = middle - spread;
-            if (chompStart < 1) {
-                break;
-            }
-            chompEnd = chompStart + (2 * spread + 1);
-            if (chompEnd >= text.length() - 1) {
+            if (chompStart == 0 || chompEnd == text.length()) {
                 break;
             }
             chomp = text.substring(chompStart, chompEnd);
@@ -182,7 +180,8 @@ public class StaticUIUtils {
             if (newWidth <= comp.getWidth()) {
                 break;
             }
-            spread++;
+            chompStart = text.offsetByCodePoints(chompStart, -1);
+            chompEnd = text.offsetByCodePoints(chompEnd, 1);
         }
         
         if (chomp != null) {
@@ -203,6 +202,13 @@ public class StaticUIUtils {
         Rectangle rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         if (comp.getHeight() > rect.height) {
             comp.setSize(comp.getWidth(), rect.height);
+        }
+    }
+    
+    public static void neverUpdateCaret(JTextComponent comp) {
+        Caret caret = comp.getCaret();
+        if (caret instanceof DefaultCaret) {
+            ((DefaultCaret) caret).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         }
     }
 }

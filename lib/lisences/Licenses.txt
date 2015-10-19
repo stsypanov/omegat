@@ -59,7 +59,7 @@ trilead-ssh2-1.0.0-build217.jar is distributed under the Trilead SSH license
 lucene-*.jar are distributed under the Apache License 2.0
 
 The English tokenizers (org.omegat.tokenizer.SnowballEnglishTokenizer and
-org.omegat.tokenizer.LuceneEnglishTokenizer) use stop words from Okapi
+org.omegat.tokenizer.LuceneEnglishTokenizer) use stop words originally from Okapi
 (http://okapi.sourceforge.net) under the LGPL license.
 
 tinysegmenter.jar is distributed under the Modified BSD license
@@ -98,3 +98,11 @@ OmegaT code uses the method createTempDir from Google Guava
 slf4j-*.jar is distributed under the MIT License.
 
 OmegaT uses icons from the Modern UI Icons project. See ModernUIIcons-license.txt.
+
+juniversalchardet-1.0.3.jar is distributed under the GNU Lesser General
+Public License version 2.1 and greater, the GNU Public License version 2.0
+and greater or the Mozilla Public License version 1.1.
+Sources are available in OmegaT sources, in the directory lib/sources
+
+JTextPaneLinkifier uses a regex from dperini/regex-web.js (https://gist.github.com/dperini/729294)
+under the MIT License.

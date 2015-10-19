@@ -37,14 +37,15 @@ package org.omegat.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,9 +84,16 @@ public class Preferences {
     public static final String DICT_FOLDER = "dict_folder";
     public static final String GLOSSARY_FOLDER = "glossary_folder";
     public static final String GLOSSARY_FILE = "glossary_file";
+
+    /** Whether to automatically perform MT requests on entering segment */
+    public static final String MT_AUTO_FETCH = "mt_auto_fetch";
+    /** Whether to restrict automatic MT requests to only untranslated segments */
+    public static final String MT_ONLY_UNTRANSLATED = "mt_only_untranslated";
+
     public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
-    public static final String GLOSSARY_NOT_EXACT_MATCH="glossary_not_exact_match";
-    public static final String GLOSSARY_STEMMING="glossary_stemming";
+    public static final String GLOSSARY_NOT_EXACT_MATCH = "glossary_not_exact_match";
+    public static final String GLOSSARY_STEMMING = "glossary_stemming";
+    public static final String DICTIONARY_FUZZY_MATCHING = "dictionary_fuzzy_matching";
 
 	public static final String MAINWINDOW_WIDTH = "screen_width";
 	public static final String MAINWINDOW_HEIGHT = "screen_height";
@@ -165,15 +173,17 @@ public class Preferences {
 	/** TransTips Option: Only match exact words */
 	public static final String TRANSTIPS_EXACT_SEARCH = "transtips_exact_search";
 
-	/** Mark the segments with a note with a different color */
-	public static final String MARK_NOTED_SEGMENTS = "mark_noted_segments";
-
-	/** Mark the non-breakable spaces with a different color */
-	public static final String MARK_NBSP = "mark_nbsp";
-	/** Mark whitespace as symbols */
-	public static final String MARK_WHITESPACE = "mark_whitespace";
-	/** Mark Bidi controls as symbols */
-	public static final String MARK_BIDI = "mark_bidi";
+    /** Mark the segments with a note with a different color */
+    public static final String MARK_NOTED_SEGMENTS = "mark_noted_segments";
+    
+    /** Mark the non-breakable spaces with a different color */
+    public static final String MARK_NBSP = "mark_nbsp";
+    /** Mark whitespace as symbols */
+    public static final String MARK_WHITESPACE = "mark_whitespace";
+    /** Mark Bidi controls as symbols */
+    public static final String MARK_BIDI = "mark_bidi";
+    /** Do aggressive font fallback */
+    public static final String FONT_FALLBACK = "font_fallback";
 
 	/** Mark the translated segments with a different color */
 	public static final String MARK_TRANSLATED_SEGMENTS = "mark_translated_segments";
@@ -245,20 +255,23 @@ public class Preferences {
 	 */
 	public static final String SPELLCHECKER_DICTIONARY_URL = "dictionary_url";
 
-    /** View options: Show all sources in bold */
-    public static final String VIEW_OPTION_SOURCE_ALL_BOLD = "view_option_source_all_bold";
-    /** View options: Mark first non-unique */
-    public static final String VIEW_OPTION_UNIQUE_FIRST = "view_option_unique_first";
-    /** View options: Simplify protected parts tooltips */
-    public static final String VIEW_OPTION_PPT_SIMPLIFY = "view_option_ppt_simplify";
-    /** View options: Modification Info display templates **/
-    public static final String VIEW_OPTION_TEMPLATE_ACTIVE = "view_option_template_active";
-    public static final String VIEW_OPTION_MOD_INFO_TEMPLATE = "view_option_mod_info_template";
-    public static final String VIEW_OPTION_MOD_INFO_TEMPLATE_WO_DATE = "view_option_mod_info_template_wo_date";
-	/**
-	 * The location of the scripts
-	 */
-	public static final String SCRIPTS_DIRECTORY = "scripts_dir";
+    /**
+     * The location of the scripts
+     */
+    public static final String SCRIPTS_DIRECTORY = "scripts_dir";
+    
+    /** Quick script names */
+    public static final String SCRIPTS_QUICK_PREFIX = "scripts_quick_";
+    public static final String SCRIPTS_QUICK_1 = "scripts_quick_1";
+    public static final String SCRIPTS_QUICK_2 = "scripts_quick_2";
+    public static final String SCRIPTS_QUICK_3 = "scripts_quick_3";
+    public static final String SCRIPTS_QUICK_4 = "scripts_quick_4";
+    public static final String SCRIPTS_QUICK_5 = "scripts_quick_5";
+    public static final String SCRIPTS_QUICK_6 = "scripts_quick_6";
+    public static final String SCRIPTS_QUICK_7 = "scripts_quick_7";
+    public static final String SCRIPTS_QUICK_8 = "scripts_quick_8";
+    public static final String SCRIPTS_QUICK_9 = "scripts_quick_9";
+    public static final String SCRIPTS_QUICK_0 = "scripts_quick_0";
 
 	/** Most recent projects list */
 	public static final String MOST_RECENT_PROJECTS_SIZE = "most_recent_projects_size";
@@ -564,7 +577,7 @@ public class Preferences {
      */
     public static void setPreference(String name, String value) {
         m_changed = true;
-        if (name != null && !name.isEmpty() && value != null) {
+        if (!StringUtil.isEmpty(name) && value != null) {
             if (!m_loaded)
                 doLoad();
             Integer i = m_preferenceMap.get(name);
@@ -591,7 +604,7 @@ public class Preferences {
      */
     public static void setPreference(String name, Enum<?> value) {
         m_changed = true;
-        if (name != null && !name.isEmpty() && value != null) {
+        if (!StringUtil.isEmpty(name) && value != null) {
             if (!m_loaded)
                 doLoad();
             Integer i = m_preferenceMap.get(name);
@@ -658,78 +671,26 @@ public class Preferences {
     }
 
     private static void doLoad() {
+        // mark as loaded - if the load fails, there's no use
+        // trying again later
+        m_loaded = true;
+
+        XMLStreamReader xml = new XMLStreamReader();
+        xml.killEmptyBlocks();
+
+        File prefsFile = getPreferencesFile();
+
         try {
-            // mark as loaded - if the load fails, there's no use
-            // trying again later
-            m_loaded = true;
-
-            XMLStreamReader xml = new XMLStreamReader();
-            xml.killEmptyBlocks();
-            
-            File prefsFile = new File(StaticUtils.getConfigDir() + FILE_PREFERENCES);
-            // If user prefs don't exist, fall back to defaults (possibly) bundled with OmegaT.
-            if (!prefsFile.exists()) {
-                prefsFile = new File(StaticUtils.installDir(), FILE_PREFERENCES);
-            }
-            // If no prefs are found so far, look inside JAR for defaults. Useful for e.g. Web Start.
-            if (prefsFile.exists()) {
-                xml.setStream(prefsFile);
-            } else {
+            if (prefsFile == null) {
+                // If no prefs file is present, look inside JAR for defaults. Useful for e.g. Web Start.
                 InputStream is = Preferences.class.getResourceAsStream(FILE_PREFERENCES);
-                if (is == null) {
-                    throw new FileNotFoundException("No prefs found of any kind.");
-                } else {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                    xml.setStream(br);
+                if (is != null) {
+                    xml.setStream(new BufferedReader(new InputStreamReader(is)));
+                    readXmlPrefs(xml);
                 }
-            }
-            
-            XMLBlock blk;
-            List<XMLBlock> lst;
-
-            m_preferenceMap.clear();
-            String pref;
-            String val;
-            // advance to omegat tag
-            if (xml.advanceToTag("omegat") == null)
-                return;
-
-            // advance to project tag
-            if ((blk = xml.advanceToTag("preference")) == null)
-                return;
-
-            String ver = blk.getAttribute("version");
-            if (ver != null && !ver.equals("1.0")) {
-                // unsupported preference file version - abort read
-                return;
-            }
-
-            lst = xml.closeBlock(blk);
-            if (lst == null)
-                return;
-
-            for (int i = 0; i < lst.size(); i++) {
-                blk = lst.get(i);
-                if (blk.isClose())
-                    continue;
-
-                if (!blk.isTag())
-                    continue;
-
-                pref = blk.getTagName();
-                blk = lst.get(++i);
-                if (blk.isClose()) {
-                //allow empty string as a preference value
-                    val = "";
-                } else {
-                    val = blk.getText();
-                }
-                if (pref != null && val != null) {
-                    // valid match - record these
-                    m_preferenceMap.put(pref, m_valList.size());
-                    m_nameList.add(pref);
-                    m_valList.add(val);
-                }
+            } else {
+                xml.setStream(prefsFile);
+                readXmlPrefs(xml);
             }
         } catch (TranslationException te) {
             // error loading preference file - keep whatever was
@@ -737,22 +698,28 @@ public class Preferences {
             // print an error to the console as an FYI
             Log.logWarningRB("PM_WARNING_PARSEERROR_ON_READ");
             Log.log(te);
+            makeBackup(prefsFile);
         } catch (IndexOutOfBoundsException e3) {
             // error loading preference file - keep whatever was
             // loaded then return gracefully to calling function
             // print an error to the console as an FYI
             Log.logWarningRB("PM_WARNING_PARSEERROR_ON_READ");
             Log.log(e3);
+            makeBackup(prefsFile);
         } catch (UnsupportedEncodingException e3) {
             // unsupported encoding - forget about it
-            Log.logErrorRB("PM_UNSUPPORTED_ENCODING");
-            Log.log(e3);
-        } catch (FileNotFoundException ex) {
-            // there is no config file yet
+            Log.logErrorRB(e3, "PM_UNSUPPORTED_ENCODING");
+            makeBackup(prefsFile);
         } catch (IOException e4) {
             // can't read file - forget about it and move on
-            Log.logErrorRB("PM_ERROR_READING_FILE");
-            Log.log(e4);
+            Log.logErrorRB(e4, "PM_ERROR_READING_FILE");
+            makeBackup(prefsFile);
+        } finally {
+            try {
+                xml.close();
+            } catch (IOException ex) {
+                Log.log(ex);
+            }
         }
 
         File srxFile = new File(StaticUtils.getConfigDir() + SRX.CONF_SENTSEG);
@@ -762,24 +729,109 @@ public class Preferences {
         }
     }
 
+    /**
+     * Gets the prefs file to use. Looks in these places in this order:
+     * <ol>
+     * <li>omegat.prefs in config dir
+     * <li>omegat.prefs in install dir (defaults supplied with local install)
+     * </ol>
+     */
+    private static File getPreferencesFile() {
+        File prefsFile = new File(StaticUtils.getConfigDir(), FILE_PREFERENCES);
+        if (prefsFile.exists()) {
+            return prefsFile;
+        }
+        // If user prefs don't exist, fall back to defaults (possibly) bundled with OmegaT.
+        prefsFile = new File(StaticUtils.installDir(), FILE_PREFERENCES);
+        if (prefsFile.exists()) {
+            return prefsFile;
+        }
+        return null;
+    }
+
+    private static void readXmlPrefs(XMLStreamReader xml) throws TranslationException {
+        XMLBlock blk;
+        List<XMLBlock> lst;
+
+        m_preferenceMap.clear();
+        String pref;
+        String val;
+        // advance to omegat tag
+        if (xml.advanceToTag("omegat") == null) {
+            return;
+        }
+        // advance to project tag
+        if ((blk = xml.advanceToTag("preference")) == null) {
+            return;
+        }
+        String ver = blk.getAttribute("version");
+        if (ver != null && !ver.equals("1.0")) {
+            // unsupported preference file version - abort read
+            return;
+        }
+        lst = xml.closeBlock(blk);
+        if (lst == null) {
+            return;
+        }
+        for (int i = 0; i < lst.size(); i++) {
+            blk = lst.get(i);
+            if (blk.isClose()) {
+                continue;
+            }
+            if (!blk.isTag()) {
+                continue;
+            }
+            pref = blk.getTagName();
+            blk = lst.get(++i);
+            if (blk.isClose()) {
+                // allow empty string as a preference value
+                val = "";
+            } else {
+                val = blk.getText();
+            }
+            if (pref != null && val != null) {
+                // valid match - record these
+                m_preferenceMap.put(pref, m_valList.size());
+                m_nameList.add(pref);
+                m_valList.add(val);
+            }
+        }
+    }
+
+    private static void makeBackup(File file) {
+        if (file == null || !file.isFile()) {
+            return;
+        }
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+        File bakFile = new File(file.getAbsolutePath() + "." + timestamp + ".bak");
+        try {
+            LFileCopy.copy(file, bakFile);
+            Log.logWarningRB("PM_BACKED_UP_PREFS_FILE", bakFile.getAbsolutePath());
+        } catch (IOException ex) {
+            Log.logErrorRB(ex, "PM_ERROR_BACKING_UP_PREFS_FILE");
+        }
+    }
+
     private static void doSave() throws IOException {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                 StaticUtils.getConfigDir() + FILE_PREFERENCES), "UTF-8"));
+        try {
+            out.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+            out.write("<omegat>\n");
+            out.write("  <preference version=\"1.0\">\n");
 
-        out.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-        out.write("<omegat>\n");
-        out.write("  <preference version=\"1.0\">\n");
-
-        for (int i = 0; i < m_nameList.size(); i++) {
-            String name = m_nameList.get(i);
-            String val = StaticUtils.makeValidXML(m_valList.get(i));
-            out.write("    <" + name + ">");
-            out.write(val);
-            out.write("</" + name + ">\n");
+            for (int i = 0; i < m_nameList.size(); i++) {
+                String name = m_nameList.get(i);
+                String val = StringUtil.makeValidXML(m_valList.get(i));
+                out.write("    <" + name + ">");
+                out.write(val);
+                out.write("</" + name + ">\n");
+            }
+            out.write("  </preference>\n");
+            out.write("</omegat>\n");
+        } finally {
+            out.close();
         }
-        out.write("  </preference>\n");
-        out.write("</omegat>\n");
-        out.close();
         m_changed = false;
     }
 

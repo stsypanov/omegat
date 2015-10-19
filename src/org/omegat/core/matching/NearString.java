@@ -1,14 +1,14 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
- with fuzzy matching, translation memory, keyword search,
- glossaries, and translation leveraging into updated projects.
+          with fuzzy matching, translation memory, keyword search, 
+          glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
- 2009 Alex Buloichik
- 2012 Thomas Cordonnier
- 2013-2014 Aaron Madlon-Kay
- Home page: http://www.omegat.org/
- Support center: http://groups.yahoo.com/group/OmegaT/
+               2009 Alex Buloichik
+               2012 Thomas Cordonnier
+               2013-2014 Aaron Madlon-Kay
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -54,51 +54,55 @@ public class NearString {
 		SCORE, SCORE_NO_STEM, ADJUSTED_SCORE
 	}
 
-	public NearString(final EntryKey key, final String source, final String translation, MATCH_SOURCE comesFrom,
-					  final boolean fuzzyMark, final int nearScore, final int nearScoreNoStem, final int adjustedScore,
-					  final byte[] nearData, final String projName, final String creator, final long creationDate,
-					  final String changer, final long changedDate, final List<TMXProp> props) {
-		this.key = key;
-		this.source = source;
-		this.translation = translation;
-		this.comesFrom = comesFrom;
-		this.fuzzyMark = fuzzyMark;
-		this.scores = new Scores[]{new Scores(nearScore, nearScoreNoStem, adjustedScore)};
-		this.attr = nearData;
-		this.projs = new String[]{projName == null ? "" : projName};
-		this.props = props;
-		this.creator = creator;
-		this.creationDate = creationDate;
-		this.changer = changer;
-		this.changedDate = changedDate;
-	}
-
-	public static NearString merge(NearString ns, final EntryKey key, final String source, final String translation,
-								   MATCH_SOURCE comesFrom, final boolean fuzzyMark, final int nearScore, final int nearScoreNoStem,
-								   final int adjustedScore, final byte[] nearData, final String projName, final String creator,
-								   final long creationDate, final String changer, final long changedDate, final List<TMXProp> props) {
-
-		List<String> projs = new ArrayList<>();
-		List<Scores> scores = new ArrayList<>();
-		Collections.addAll(projs, ns.projs);
-		Collections.addAll(scores, ns.scores);
-
-		if (nearScore > ns.scores[0].score) {
-			projs.add(0, projName);
-			NearString merged = new NearString(key, source, translation, comesFrom, fuzzyMark, nearScore, nearScoreNoStem,
-					adjustedScore, nearData, null, creator, creationDate, changer, changedDate, props);
-			scores.add(0, merged.scores[0]);
-			merged.projs = projs.toArray(new String[projs.size()]);
-			merged.scores = scores.toArray(new Scores[scores.size()]);
-			return merged;
-		} else {
-			projs.add(projName);
-			scores.add(new Scores(nearScore, nearScoreNoStem, adjustedScore));
-			ns.projs = projs.toArray(new String[projs.size()]);
-			ns.scores = scores.toArray(new Scores[scores.size()]);
-			return ns;
-		}
-	}
+    public NearString(final EntryKey key, final String source, final String translation, MATCH_SOURCE comesFrom,
+            final boolean fuzzyMark, final int nearScore, final int nearScoreNoStem, final int adjustedScore,
+            final byte[] nearData, final String projName, final String creator, final long creationDate,
+            final String changer, final long changedDate, final List<TMXProp> props) {
+        this.key = key;
+        this.source = source;
+        this.translation = translation;
+        this.comesFrom = comesFrom;
+        this.fuzzyMark = fuzzyMark;
+        this.scores = new Scores[] { new Scores(nearScore, nearScoreNoStem, adjustedScore) };
+        this.attr = nearData;
+        this.projs = new String[] { projName == null ? "" : projName };
+        this.props = props;
+        this.creator = creator;
+        this.creationDate = creationDate;
+        this.changer = changer;
+        this.changedDate = changedDate;
+    }
+    
+    public static NearString merge(NearString ns, final EntryKey key, final String source, final String translation,
+            MATCH_SOURCE comesFrom, final boolean fuzzyMark, final int nearScore, final int nearScoreNoStem,
+            final int adjustedScore, final byte[] nearData, final String projName, final String creator,
+            final long creationDate, final String changer, final long changedDate, final List<TMXProp> props) {
+        
+        List<String> projs = new ArrayList<String>();
+        List<Scores> scores = new ArrayList<Scores>();
+        for (String p : ns.projs) {
+            projs.add(p);
+        }
+        for (Scores s : ns.scores) {
+            scores.add(s);
+        }
+        
+        if (nearScore > ns.scores[0].score) {
+            projs.add(0, projName);
+            NearString merged = new NearString(key, source, translation, comesFrom, fuzzyMark, nearScore, nearScoreNoStem,
+                    adjustedScore, nearData, null, creator, creationDate, changer, changedDate, props);
+            scores.add(0, merged.scores[0]);
+            merged.projs = projs.toArray(new String[projs.size()]);
+            merged.scores = scores.toArray(new Scores[scores.size()]);
+            return merged;
+        } else {
+            projs.add(projName);
+            scores.add(new Scores(nearScore, nearScoreNoStem, adjustedScore));
+            ns.projs = projs.toArray(new String[projs.size()]);
+            ns.scores = scores.toArray(new Scores[scores.size()]);
+            return ns;
+        }
+    }
 
 	public EntryKey key;
 	public String source;

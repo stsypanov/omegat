@@ -44,7 +44,7 @@ import org.omegat.core.segmentation.datamodels.MappingRulesModel;
 import org.omegat.core.segmentation.datamodels.SegmentationRulesModel;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -621,8 +621,7 @@ public class SegmentationCustomizer extends PeroDialog implements ListSelectionL
         MappingRulesModel model = (MappingRulesModel) mapTable.getModel();
         String set = model.getValueAt(mapTable.getSelectedRow(), 0).toString();
         String title = OStrings.getString("CONFIRM_DIALOG_TITLE");
-        String message = StaticUtils.format(OStrings.getString("SEG_CONFIRM_REMOVE_SENTSEG_SET"),
-                set);
+        String message = StringUtil.format(OStrings.getString("SEG_CONFIRM_REMOVE_SENTSEG_SET"), set);
         if (JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
             model.removeRow(mapTable.getSelectedRow());
     }// GEN-LAST:event_mapDeleteButtonActionPerformed

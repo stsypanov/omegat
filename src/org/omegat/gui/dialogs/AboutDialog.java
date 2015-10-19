@@ -30,7 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -55,17 +55,21 @@ public class AboutDialog extends JDialog {
 
         initComponents();
         if ((OStrings.UPDATE != null) && !OStrings.UPDATE.equals("0")) {
-            versionLabel.setText(StaticUtils.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE"),
-                    new Object[] { OStrings.VERSION, OStrings.UPDATE }));
+            versionLabel.setText(StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE"),
+                    OStrings.VERSION, OStrings.UPDATE));
         } else {
-            versionLabel.setText(StaticUtils.format(OStrings.getString("ABOUTDIALOG_VERSION"),
-                    new Object[] { OStrings.VERSION }));
+            versionLabel.setText(StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION"),
+                    OStrings.VERSION));
         }
         Object[] args = { Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024,
                 Runtime.getRuntime().maxMemory() / 1024 / 1024 };
-        String memoryUsage = StaticUtils.format(OStrings.getString("MEMORY_USAGE"), args);
+        String memoryUsage = StringUtil.format(OStrings.getString("MEMORY_USAGE"), args);
         memoryusage.setText(memoryUsage);
+        
+        String javaVersion = StringUtil.format(OStrings.getString("JAVA_VERSION"),
+                System.getProperty("java.version"));
+        javaversion.setText(javaVersion);
 
         invalidate();
         pack();
@@ -93,6 +97,8 @@ public class AboutDialog extends JDialog {
         jPanel1 = new javax.swing.JPanel();
         licenseButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        javaversion = new javax.swing.JLabel();
         memoryusage = new javax.swing.JLabel();
         versionLabel = new javax.swing.JLabel();
         aboutpane = new javax.swing.JScrollPane();
@@ -132,8 +138,15 @@ public class AboutDialog extends JDialog {
 
         buttonPanel.add(jPanel1, java.awt.BorderLayout.EAST);
 
+        jPanel2.setLayout(new java.awt.GridLayout(0, 1));
+
+        org.openide.awt.Mnemonics.setLocalizedText(javaversion, OStrings.getString("JAVA_VERSION")); // NOI18N
+        jPanel2.add(javaversion);
+
         org.openide.awt.Mnemonics.setLocalizedText(memoryusage, OStrings.getString("MEMORY_USAGE")); // NOI18N
-        buttonPanel.add(memoryusage, java.awt.BorderLayout.PAGE_START);
+        jPanel2.add(memoryusage);
+
+        buttonPanel.add(jPanel2, java.awt.BorderLayout.NORTH);
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
@@ -158,20 +171,18 @@ public class AboutDialog extends JDialog {
         getContentPane().add(aboutpane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void licenseButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_licenseButtonActionPerformed
+    private void licenseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_licenseButtonActionPerformed
         new LicenseDialog(this).setVisible(true);
-    }// GEN-LAST:event_licenseButtonActionPerformed
+    }//GEN-LAST:event_licenseButtonActionPerformed
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_okButtonActionPerformed
-    {
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         doClose(RET_OK);
-    }// GEN-LAST:event_okButtonActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
 
     /** Closes the dialog */
-    private void closeDialog(java.awt.event.WindowEvent evt)// GEN-FIRST:event_closeDialog
-    {
+    private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
-    }// GEN-LAST:event_closeDialog
+    }//GEN-LAST:event_closeDialog
 
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -185,6 +196,8 @@ public class AboutDialog extends JDialog {
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel javaversion;
     private javax.swing.JButton licenseButton;
     private javax.swing.JLabel memoryusage;
     private javax.swing.JButton okButton;

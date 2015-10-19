@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool
-          with fuzzy matching, translation memory, keyword search,
+ OmegaT - Computer Assisted Translation (CAT) tool 
+          with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, Henry Pijffers
@@ -35,7 +35,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
@@ -46,7 +45,6 @@ import javax.swing.JScrollPane;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.PrepareTMXEntry;
-import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.events.IFontChangedEventListener;
@@ -58,7 +56,8 @@ import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
 import org.omegat.util.PatternConsts;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
+import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
 
@@ -98,7 +97,7 @@ public class TagValidationFrame extends PeroFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                        StaticUtils.format(OStrings.getString("TAG_FIX_ALL_WARNING"), m_numFixableErrors),
+                        StringUtil.format(OStrings.getString("TAG_FIX_ALL_WARNING"), m_numFixableErrors),
                         OStrings.getString("CONFIRM_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION)) {
                     return;
                 }
@@ -162,107 +161,38 @@ public class TagValidationFrame extends PeroFrame {
      * Replace tags with &lt;font
      * color="color"&gt;&lt;b&gt;&lt;tag&gt;&lt;/b&gt;&lt;/font&gt;
      */
-    private String colorTags(String str, String color, Pattern removePattern, ProtectedPart[] protectedParts,
-                             Map<String, TagError> errors) {
-        // show OmegaT tags in bold and color, and to-remove text also
-        String htmlResult = formatRemoveTagsAndPlaceholders(str, color, removePattern, protectedParts, errors);
+    private String colorTags(String str, Map<Tag, TagError> errors) {
+
+        StringBuilder html = new StringBuilder(str);
+        List<Tag> tags = new ArrayList<Tag>(errors.keySet());
+        // Sort in reverse order so that tag offsets remain correct as we replace things.
+        Collections.sort(tags, new Comparator<Tag>() {
+            @Override
+            public int compare(Tag o1, Tag o2) {
+                return o1.pos < o2.pos ? 1
+                    : o1.pos > o2.pos ? -1
+                    : 0;
+            }
+        });
+
+        int lastIndex = html.length();
+        for (Tag tag : tags) {
+            // HTML-escape everything after this tag (up to end, or previous tag)
+            int end = tag.pos + tag.tag.length();
+            String tail = html.substring(end, lastIndex);
+            html.replace(end, lastIndex, htmlize(tail));
+            html.replace(tag.pos, end, colorize(htmlize(tag.tag), errors.get(tag)));
+            lastIndex = tag.pos;
+        }
+        // Don't forget to escape everything before the first tag.
+        String head = html.substring(0, lastIndex);
+        html.replace(0, lastIndex, htmlize(head));
 
         // show linefeed as symbol
-        Matcher lfMatch = PatternConsts.HTML_BR.matcher(htmlResult);
+        Matcher lfMatch = PatternConsts.HTML_BR.matcher(html);
         // /simulate unicode symbol for linefeed "\u240A", which is not
         // displayed correctly.
-        htmlResult = lfMatch.replaceAll("<font color=\"" + color + "\"><sup>L</sup>F<br></font>");
-        return htmlResult;
-    }
-
-    /**
-     * Formats plain text as html with placeholders in color 
-     * @param str the text to format
-     * @param color the color to use
-     * @return html text
-     */
-    private String formatPlaceholders(String str, String color, ProtectedPart[] protectedParts,
-                                      Map<String, TagError> errors) {
-        List<TextPart> text = new ArrayList<>();
-        text.add(new TextPart(str, false));
-        while (true) {
-            boolean updated = false;
-            for (ProtectedPart pp : protectedParts) {
-                for (int i = 0; i < text.size(); i++) {
-                    TextPart tp = text.get(i);
-                    if (tp.highlighted) {
-                        continue;
-                    }
-                    int pos = tp.text.indexOf(pp.getTextInSourceSegment());
-                    if (pos >= 0) {
-                        split(text, i, pos, pos + pp.getTextInSourceSegment().length());
-                        updated = true;
-                    }
-                }
-            }
-            if (!updated) {
-                break;
-            }
-        }
-        StringBuilder htmlResult = new StringBuilder();
-        for (TextPart tp : text) {
-            if (tp.highlighted) {
-                htmlResult.append(colorize(htmlize(tp.text), errors.get(tp.text)));
-            } else {
-                htmlResult.append(htmlize(tp.text));
-            }
-        }
-        return htmlResult.toString();
-    }
-
-    private void split(List<TextPart> text, int index, int beg, int end) {
-        int i = index;
-        String tpText = text.remove(i).text;
-        if (beg > 0) {
-            text.add(i, new TextPart(tpText.substring(0, beg), false));
-            i++;
-        }
-        text.add(i, new TextPart(tpText.substring(beg, end), true));
-        i++;
-        if (end < tpText.length()) {
-            text.add(i, new TextPart(tpText.substring(end), false));
-        }
-    }
-
-    protected static class TextPart {
-        String text;
-        boolean highlighted;
-
-        public TextPart(String text, boolean highlighted) {
-            this.text = text;
-            this.highlighted = highlighted;
-        }
-    }
-
-    /**
-     * Formats plain text as html with placeholders and to-remove text in color 
-     * @param str the text to format
-     * @param color the color to use for placeholders
-     * @param placeholderPattern the pattern to decide what is a placeholder
-     * @param removePattern the pattern to decide what text had to be removed.
-     * @return html text
-     */
-    private String formatRemoveTagsAndPlaceholders(String str, String color, Pattern removePattern,
-                                                   ProtectedPart[] protectedParts, Map<String, TagError> errors) {
-        if (removePattern != null) {
-            Matcher removeMatcher = removePattern.matcher(str);
-            StringBuilder htmlResult = new StringBuilder();
-            int pos = 0;
-            while (removeMatcher.find()) {
-                htmlResult.append(formatPlaceholders(str.substring(pos, removeMatcher.start()), color, protectedParts, errors));
-                htmlResult.append(colorize(htmlize(removeMatcher.group(0)), TagError.EXTRANEOUS));
-                pos = removeMatcher.end();
-            }
-            htmlResult.append(formatPlaceholders(str.substring(pos), color, protectedParts, errors));
-            return htmlResult.toString();
-        } else {
-            return formatPlaceholders(str, color, protectedParts, errors);
-        }
+        return lfMatch.replaceAll("<font color=\"blue\"><sup>L</sup>F<br></font>");
     }
 
     public void displayErrorList(List<ErrorReport> errorList) {
@@ -271,8 +201,6 @@ public class TagValidationFrame extends PeroFrame {
     }
 
     private void update() {
-        Pattern removePattern = PatternConsts.getRemovePattern();
-
         m_numFixableErrors = 0;
 
         StringBuilder output = new StringBuilder();
@@ -309,12 +237,10 @@ public class TagValidationFrame extends PeroFrame {
             output.append("</a>");
             output.append("</td>");
             output.append("<td>");
-            output.append(colorTags(report.source, "blue", null, report.ste.getProtectedParts(),
-                    report.srcErrors));
+            output.append(colorTags(report.source, report.srcErrors));
             output.append("</td>");
             output.append("<td>");
-            output.append(colorTags(report.translation, "blue", removePattern,
-                    report.ste.getProtectedParts(), report.transErrors));
+            output.append(colorTags(report.translation, report.transErrors));
             output.append("</td>");
             output.append("<td width=\"10%\">");
             // Although NetBeans mentions that the HashSet can be replaced with java.util.EnumSet
@@ -356,27 +282,27 @@ public class TagValidationFrame extends PeroFrame {
         String color = "black";
         if (error != null) {
             switch (error) {
-                case EXTRANEOUS:
-                    text = String.format("<strike>%s</strike>", text);
-                case MISSING:
-                case MALFORMED:
-                case WHITESPACE:
-                    color = "red";
-                    break;
-                case DUPLICATE:
-                    color = "purple";
-                    break;
-                case ORPHANED:
-                    text = String.format("<u>%s</u>", text);
-                case ORDER:
-                    color = "#FF8C00"; // Orange. Pre-1.7 Java doesn't recognize the name "orange".
-                    break;
-                case UNSPECIFIED:
-                    color = "blue";
+            case EXTRANEOUS:
+                text = "<strike>" + text + "</strike>";
+            case MISSING:
+            case MALFORMED:
+            case WHITESPACE:
+                color = "red";
+                break;
+            case DUPLICATE:
+                color = "purple";
+                break;
+            case ORPHANED:
+                text = "<u>" + text + "</u>";
+            case ORDER:
+                color = "#FF8C00"; // Orange. Pre-1.7 Java doesn't recognize the name "orange".
+                break;
+            case UNSPECIFIED:
+                color = "blue";
             }
         }
-
-        return String.format("<font color=\"%s\"><b>%s</b></font>", color, text);
+        
+        return "<font color=\"" + color + "\"><b>" + text + "</b></font>";
     }
 
     /**
@@ -412,8 +338,8 @@ public class TagValidationFrame extends PeroFrame {
             }
             break;
         }
-
-        if (!m_errorList.isEmpty()) {
+        
+        if (m_errorList != null && !m_errorList.isEmpty()) {
             update();
         } else {
             this.dispose();

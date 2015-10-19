@@ -41,13 +41,13 @@ public class LuceneBulgarianTokenizer extends BaseTokenizer {
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            Set stopWords = stopWordsAllowed ? BulgarianAnalyzer.getDefaultStopSet()
-                    : Collections.emptySet();
+            Set<?> stopWords = stopWordsAllowed ? BulgarianAnalyzer.getDefaultStopSet()
+                    : Collections.EMPTY_SET;
             return new BulgarianAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {
             return new StandardTokenizer(getBehavior(),
-                    new StringReader(strOrig.toLowerCase()));
+                    new StringReader(strOrig));
         }
     }
 }

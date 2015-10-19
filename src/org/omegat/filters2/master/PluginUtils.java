@@ -54,6 +54,7 @@ import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * Static utilities for OmegaT filter plugins.
@@ -276,7 +277,7 @@ public final class PluginUtils {
                     Log.logInfoRB("PLUGIN_LOAD_OK", clazz);
                 } catch (Throwable ex) {
                     Log.logErrorRB(ex, "PLUGIN_LOAD_ERROR", clazz, ex.getClass().getSimpleName(), ex.getMessage());
-                    Core.pluginLoadingError(StaticUtils.format(OStrings.getString("PLUGIN_LOAD_ERROR"), clazz, ex
+                    Core.pluginLoadingError(StringUtil.format(OStrings.getString("PLUGIN_LOAD_ERROR"), clazz, ex
                             .getClass().getSimpleName(), ex.getMessage()));
                 }
             }

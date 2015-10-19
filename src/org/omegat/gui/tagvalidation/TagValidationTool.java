@@ -28,6 +28,7 @@
 package org.omegat.gui.tagvalidation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ import org.omegat.filters2.po.PoFilter;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.TagUtil.Tag;
 
 /**
  * Class for show tag validation results.
@@ -68,10 +69,10 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
     private MainWindow mainWindow;
 
     // variables for one check iteration, by all entries or only by one entry
-    private List<String> srcTags = new ArrayList<>(32);
-    private List<String> locTags = new ArrayList<>(32);
-    private HashSet<String> printfSourceSet = new HashSet<>();
-    private HashSet<String> printfTargetSet = new HashSet<>();
+    private List<String> srcTags = new ArrayList<String>(32);
+    private List<String> locTags = new ArrayList<String>(32);
+    private HashSet<String> printfSourceSet = new HashSet<String>();
+    private HashSet<String> printfTargetSet = new HashSet<String>();
 
     public TagValidationTool(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -124,11 +125,11 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
                 System.out.println(report.entryNum);
                 System.out.println(report.source);
                 System.out.println(report.translation);
-                for (Map.Entry<TagError, List<String>> e : report.inverseReport().entrySet()) {
+                for (Map.Entry<TagError, List<Tag>> e : report.inverseReport().entrySet()) {
                     System.out.print("  ");
                     System.out.print(ErrorReport.localizedTagError(e.getKey()));
                     System.out.print(": ");
-                    for (String tag : e.getValue()) {
+                    for (Tag tag : e.getValue()) {
                         System.out.print(tag);
                         System.out.print(" ");
                     }
@@ -166,7 +167,7 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
 
         Pattern FILE_PATTERN = Pattern.compile(sourcePattern);
         
-        List<ErrorReport> suspects = new ArrayList<>(16);
+        List<ErrorReport> suspects = new ArrayList<ErrorReport>(16);
         for (FileInfo fi : Core.getProject().getProjectFiles()) {
             Matcher fileMatch = FILE_PATTERN.matcher(fi.filePath);
             if (fileMatch.matches()) {
@@ -240,8 +241,6 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
 
         TagValidation.inspectRemovePattern(report);
 
-        TagValidation.inspectCustomTags(report);
-
         return report.isEmpty() ? null : report;
     }
 
@@ -261,14 +260,20 @@ public class TagValidationTool implements ITagValidation, IProjectEventListener 
         }
 
         // Sort the map first to ensure that fixing works properly.
-        Map<String, TagError> sortedErrors = new TreeMap<>(new StaticUtils.TagComparator(
-                report.source));
+        Map<Tag, TagError> sortedErrors = new TreeMap<Tag, TagError>(new Comparator<Tag>() {
+            @Override
+            public int compare(Tag o1, Tag o2) {
+                return o1.pos < o2.pos ? -1
+                        : o1.pos > o2.pos ? 1
+                        : 0;
+            }
+        });
         sortedErrors.putAll(report.srcErrors);
         sortedErrors.putAll(report.transErrors);
 
         StringBuilder sb = new StringBuilder(report.translation);
 
-        for (Map.Entry<String, TagError> e : sortedErrors.entrySet()) {
+        for (Map.Entry<Tag, TagError> e : sortedErrors.entrySet()) {
             TagRepair.fixTag(report.ste, e.getKey(), e.getValue(), sb, report.source);
         }
 

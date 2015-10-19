@@ -116,8 +116,9 @@ public class Language implements Comparable<Object> {
      */
     public String getLanguage() {
         String langstring = getLanguageCode();
-        if (!langstring.isEmpty() && !getCountryCode().isEmpty())
-            langstring += '-' + getCountryCode();
+        if (!langstring.isEmpty() && !getCountryCode().isEmpty()) {
+            langstring += "-" + getCountryCode();
+        }
         return langstring;
     }
 
@@ -125,9 +126,9 @@ public class Language implements Comparable<Object> {
      * Returns a string representation as a Java locale (xx_YY).
      */
     public String getLocaleCode() {
-        if (locale == null)
+        if (locale == null) {
             return "";
-        else { 
+        } else {
             // Patch Java locale, to return correct locales instead of obsolete codes
             String returnString = locale.toString();
             if (returnString.length()<2)

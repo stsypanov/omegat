@@ -119,18 +119,18 @@ public class Searcher {
                     String key = entry.getSrcText() + entry.getTranslation();
                     if (entry.getEntryNum() == ENTRY_ORIGIN_TRANSLATION_MEMORY) {
                         if (m_tmxMap.containsKey(key) && (m_tmxMap.get(key) > 0)) {
-                        	String newPreamble = StaticUtils.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
-                        			new Object[]{entry.getPreamble(), m_tmxMap.get(key)});
+                        	String newPreamble = StringUtil.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
+                        			entry.getPreamble(), m_tmxMap.get(key));
                             entry.setPreamble(newPreamble);
                         }
                     } else if (entry.getEntryNum() > ENTRY_ORIGIN_PROJECT_MEMORY) {
                         // at this stage each PM entry num is increased by 1
                         if (m_entryMap.containsKey(key) && (m_entryMap.get(key) > 0)) {
                         	String newPreamble = StringUtil.isEmpty(entry.getPreamble())
-                        			? StaticUtils.format(OStrings.getString("SW_NR_OF_MORE"),
-                            				new Object[]{m_entryMap.get(key)})
-                    				: StaticUtils.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
-                                            new Object[]{entry.getPreamble(), m_entryMap.get(key)});
+                        			? StringUtil.format(OStrings.getString("SW_NR_OF_MORE"),
+                            				m_entryMap.get(key))
+                    				: StringUtil.format(OStrings.getString("SW_FILE_AND_NR_OF_MORE"),
+                                            entry.getPreamble(), m_entryMap.get(key));
                             entry.setPreamble(newPreamble);
                         }
                     }
@@ -647,27 +647,27 @@ public class Searcher {
     private boolean searchAuthor(TMXEntry te) {
         if (te == null || m_author == null)
             return false;
-        String author = te.changer;
         
-        if (author == null) {
+        if (m_author.pattern().pattern().equals("")) {
             // Handle search for null author.
-            if (te.translation != null && m_author.pattern().pattern().isEmpty()) {
-                return true;
-            }
-            return false;
-        } else if (m_author.pattern().pattern().isEmpty()) {
-            // Don't match non-null authors when searching for null author.
-            return false;
+            return te.changer == null && te.creator == null;
         }
 
-        // check the text against the author matcher
-        m_author.reset(author);
-        if (!m_author.find())
-            return false;
+        if (te.changer != null) {
+            m_author.reset(te.changer);
+            if (m_author.find()) {
+                return true;
+            }
+        }
 
-        // if we arrive here, the search string has been matched,
-        // so this is a hit
-        return true;
+        if (te.creator != null) {
+            m_author.reset(te.creator);
+            if (m_author.find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // ///////////////////////////////////////////////////////////////

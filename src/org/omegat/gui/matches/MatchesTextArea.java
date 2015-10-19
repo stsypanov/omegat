@@ -248,13 +248,13 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         ITokenizer sourceTok = Core.getProject().getSourceTokenizer();
         ITokenizer targetTok = Core.getProject().getTargetTokenizer();
 
-        Token[] sourceMatchStrTokensAll = sourceTok.tokenizeAllExactly(sourceMatch);
+        Token[] sourceMatchStrTokensAll = sourceTok.tokenizeVerbatim(sourceMatch);
         List<String> sourceMatchNumbers = getNumberList(sourceMatchStrTokensAll, sourceMatch);
 
-        Token[] targetMatchStrTokensAll = targetTok.tokenizeAllExactly(targetMatch);
+        Token[] targetMatchStrTokensAll = targetTok.tokenizeVerbatim(targetMatch);
         List<String> targetMatchNumbers = getNumberList(targetMatchStrTokensAll, targetMatch);
 
-        Token[] sourceStrTokensAll = sourceTok.tokenizeAllExactly(source);
+        Token[] sourceStrTokensAll = sourceTok.tokenizeVerbatim(source);
         List <String> sourceNumbers = getNumberList(sourceStrTokensAll, source);
 
         if (sourceMatchNumbers.size() != targetMatchNumbers.size() || //Not the same number of numbers
@@ -397,7 +397,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         
         // Apply sourceText styling
         if (sourcePos.get(activeMatch) != -1) {
-            Token[] tokens = tokenizer.tokenizeAllExactly(match.source);
+            Token[] tokens = tokenizer.tokenizeVerbatim(match.source);
             // fix for bug 1586397
             byte[] attributes = match.attr;
             for (int i = 0; i < tokens.length; i++) {
@@ -419,7 +419,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             // Iterate through each diff variant (${diff}, ${diffReversed}, ...)
             for (Entry<Integer, List<TextRun>> e : diffInfo.entrySet()) {
                 int diffPos = e.getKey();
-                if (diffPos != -1 && diffInfo != null) {
+                if (diffPos != -1) {
                     // Iterate through each style chunk (added or deleted)
                     for (TextRun r : e.getValue()) {
                         int tokstart = delimiters.get(i) + diffPos + r.start;
@@ -502,10 +502,6 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                 setActiveMatch(clickedItem);
         }
     };
-
-    private void mouseOneClick(final int clickedItem, final Point clickedPoint) {
-        // show colored source segment
-    }
 
     private void mouseRightClick(final int clickedItem, final Point clickedPoint) {
         // create the menu

@@ -25,9 +25,13 @@
 
 package org.omegat.filters;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.omegat.core.data.IProject;
 import org.omegat.filters2.IAlignCallback;
 import org.omegat.filters2.IFilter;
+import org.omegat.filters2.TranslationException;
 import org.omegat.filters2.text.bundles.ResourceBundleFilter;
 
 public class ResourceBundleFilterTest extends TestFilterBase {
@@ -59,7 +63,8 @@ public class ResourceBundleFilterTest extends TestFilterBase {
 
     public void testLoad() throws Exception {
         String f = "test/data/filters/resourceBundle/file-ResourceBundleFilter.properties";
-        IProject.FileInfo fi = loadSourceFiles(new ResourceBundleFilter(), f);
+        ResourceBundleFilter filter = new ResourceBundleFilter();
+        IProject.FileInfo fi = loadSourceFiles(filter, f);
 
         checkMultiStart(fi, f);
         checkMulti("Value", "ID", null, null, null, null);
@@ -67,6 +72,50 @@ public class ResourceBundleFilterTest extends TestFilterBase {
         checkMulti("Value3", "ID3", null, null, null, "# some comment");
         checkMulti("Value4", "ID4", null, null, null, "# multiple line\n# comment");
         checkMulti("Value5", "ID5", null, null, null, "! alternate comment style");
+        checkMulti("Value\u2603", "ID6", null, null, null, "# Unicode escape \u2603"); // U+2603 SNOWMAN
         checkMultiEnd();
+        
+        f = "test/data/filters/resourceBundle/file-ResourceBundleFilter-SMP.properties";
+        fi = loadSourceFiles(filter, f);
+
+        checkMultiStart(fi, f);
+        checkMulti("\uD835\uDC00\uD835\uDC01\uD835\uDC02", "ID", null, null, null, null);
+        checkMulti("\uD835\uDC03\uD835\uDC04\uD835\uDC05", "ID2", null, null, null, null);
+        checkMultiEnd();
+    }
+    
+    public void testDoNotEscapeUnicodeLiterals() throws Exception {
+        String f = "test/data/filters/resourceBundle/file-ResourceBundleFilter-UnicodeLiterals.properties";
+        ResourceBundleFilter filter = new ResourceBundleFilter();
+        Map<String, String> options = new HashMap<String, String>();
+        options.put(ResourceBundleFilter.OPTION_DONT_UNESCAPE_U_LITERALS, "true");
+        IProject.FileInfo fi = loadSourceFiles(filter, f, options);
+
+        checkMultiStart(fi, f);
+        checkMulti("a\nb\\u0020\\ad", "MU", null, null, null, "# \\u00ad");
+        checkMultiEnd();
+        
+        translateText(filter, f, options);
+    }
+    
+    public void testBadUnicodeLiterals() throws Exception {
+        String base = "test/data/filters/resourceBundle/";
+        ResourceBundleFilter filter = new ResourceBundleFilter();
+        try {
+            loadSourceFiles(filter, base + "file-ResourceBundleFilter-BadLiteral1.properties");
+            fail("Failed to catch invalid Unicode literal: too short");
+        } catch (TranslationException ex) {
+        }
+        try {
+            loadSourceFiles(filter, base + "file-ResourceBundleFilter-BadLiteral2.properties");
+        } catch (TranslationException ex) {
+            fail("Actual Java ResourceBundle loader doesn't prevent you from including characters "
+                    + "for which Character.isDefined() returns false.");
+        }
+        try {
+            loadSourceFiles(filter, base + "file-ResourceBundleFilter-BadLiteral3.properties");
+            fail("Failed to catch invalid Unicode literal: not hex code");
+        } catch (TranslationException ex) {
+        }
     }
 }

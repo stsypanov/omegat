@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.util.OStrings;
+import org.omegat.util.TagUtil.Tag;
 
 /**
  * A class to encapuslate information about tag errors. Tag errors are stored
@@ -73,9 +74,9 @@ public class ErrorReport {
         return result;
     }
 
-    private static void fillInverseReport(Map<String, TagError> input, Map<TagError, List<String>> collector) {
-        for (Entry<String, TagError> e : input.entrySet()) {
-            List<String> existing = collector.get(e.getValue());
+    private static void fillInverseReport(Map<Tag, TagError> input, Map<TagError, List<Tag>> collector) {
+        for (Entry<Tag, TagError> e : input.entrySet()) {
+            List<Tag> existing = collector.get(e.getValue());
             if (existing == null) {
                 existing = new ArrayList<>();
                 collector.put(e.getValue(), existing);

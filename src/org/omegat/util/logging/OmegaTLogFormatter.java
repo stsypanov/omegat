@@ -38,7 +38,7 @@ import java.util.logging.LogRecord;
 import java.util.regex.Pattern;
 
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * Formatter for output data with session ID
@@ -144,7 +144,7 @@ public class OmegaTLogFormatter extends Formatter {
         if (record.getParameters() == null) {
             message = format;
         } else {
-            message = StaticUtils.format(format, record.getParameters());
+            message = StringUtil.format(format, record.getParameters());
         }
         String[] lines = NEW_LINE_PATTERN.split(message);
         for (String line : lines) {
@@ -166,8 +166,9 @@ public class OmegaTLogFormatter extends Formatter {
      */
     protected void appendFormattedLine(final StringBuilder out, final LogRecord record, final String line,
             final boolean isStack) {
-        if (line.isEmpty())
+        if (line.isEmpty()) {
             return;
+        }
 
         String res = logMask;
         if (isMaskContainsMark) {

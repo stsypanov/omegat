@@ -49,7 +49,6 @@ import javax.swing.text.JTextComponent;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
-import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.NearString;
@@ -415,7 +414,9 @@ public class MainWindowMenuHandler {
 
     public void editOverwriteMachineTranslationMenuItemActionPerformed() {
         String tr = Core.getMachineTranslatePane().getDisplayedTranslation();
-        if (!StringUtil.isEmpty(tr)) {
+        if (tr == null) {
+            Core.getMachineTranslatePane().forceLoad();
+        } else if (!StringUtil.isEmpty(tr)) {
             Core.getEditor().replaceEditText(tr);
         }
     }
@@ -555,6 +556,10 @@ public class MainWindowMenuHandler {
         Core.getEditor().changeCase(IEditor.CHANGE_CASE_TO.CYCLE);
     }
 
+    public void sentenceCaseMenuItemActionPerformed() {
+        Core.getEditor().changeCase(IEditor.CHANGE_CASE_TO.SENTENCE);
+    }
+
     public void titleCaseMenuItemActionPerformed() {
         Core.getEditor().changeCase(IEditor.CHANGE_CASE_TO.TITLE);
     }
@@ -685,6 +690,11 @@ public class MainWindowMenuHandler {
                 .setMarkAutoPopulated(mainWindow.menu.viewMarkAutoPopulatedCheckBoxMenuItem.isSelected());
     }
 
+    public void viewMarkFontFallbackCheckBoxMenuItemActionPerformed() {
+        Core.getEditor().getSettings()
+                .setDoFontFallback(mainWindow.menu.viewMarkFontFallbackCheckBoxMenuItem.isSelected());
+    }
+
     public void viewDisplayModificationInfoNoneRadioButtonMenuItemActionPerformed() {
         Core.getEditor().getSettings()
                 .setDisplayModificationInfo(EditorSettings.DISPLAY_MODIFICATION_INFO_NONE);
@@ -718,33 +728,19 @@ public class MainWindowMenuHandler {
      * Identify all the placeholders in the source text and automatically inserts them into the target text.
      */
     public void editTagPainterMenuItemActionPerformed() {
-        SourceTextEntry ste = Core.getEditor().getCurrentEntry();
-
         // insert tags
-        String tr = Core.getEditor().getCurrentTranslation();
-        for (ProtectedPart pp : ste.getProtectedParts()) {
-            if (!tr.contains(pp.getTextInSourceSegment())) {
-                Core.getEditor().insertText(pp.getTextInSourceSegment());
-            }
+        for (Tag tag : TagUtil.getAllTagsMissingFromTarget()) {
+            Core.getEditor().insertText(tag.tag);
         }
     }
 
     public void editTagNextMissedMenuItemActionPerformed() {
-        String trans = Core.getEditor().getCurrentTranslation();
-        if (trans == null) {
+        // insert next tag
+        List<Tag> tags = TagUtil.getAllTagsMissingFromTarget();
+        if (tags.isEmpty()) {
             return;
         }
-
-        SourceTextEntry ste = Core.getEditor().getCurrentEntry();
-
-        // insert next tag
-        String tr = Core.getEditor().getCurrentTranslation();
-        for (ProtectedPart pp : ste.getProtectedParts()) {
-            if (!tr.contains(pp.getTextInSourceSegment())) {
-                Core.getEditor().insertText(pp.getTextInSourceSegment());
-                break;
-            }
-        }
+        Core.getEditor().insertText(tags.get(0).tag);
     }
 
     public void toolsShowStatisticsStandardMenuItemActionPerformed() {
@@ -796,6 +792,17 @@ public class MainWindowMenuHandler {
         new CharTableAutoCompleterOptionsDialog(mainWindow).setVisible(true);
     }
 
+    public void optionsMTAutoFetchCheckboxMenuItemActionPerformed() {
+        boolean enabled = mainWindow.menu.optionsMTAutoFetchCheckboxMenuItem.isSelected();
+        Preferences.setPreference(Preferences.MT_AUTO_FETCH, enabled);
+        mainWindow.menu.optionsMTOnlyUntranslatedCheckboxMenuItem.setEnabled(enabled);
+    }
+
+    public void optionsMTOnlyUntranslatedCheckboxMenuItemActionPerformed() {
+        Preferences.setPreference(Preferences.MT_ONLY_UNTRANSLATED,
+                mainWindow.menu.optionsMTOnlyUntranslatedCheckboxMenuItem.isSelected());
+    }
+
     public void optionsGlossaryTBXDisplayContextCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_TBX_DISPLAY_CONTEXT,
                 mainWindow.menu.optionsGlossaryTBXDisplayContextCheckBoxMenuItem.isSelected());
@@ -820,6 +827,12 @@ public class MainWindowMenuHandler {
 
     }
 
+    public void optionsDictionaryFuzzyMatchingCheckBoxMenuItemActionPerformed() {
+        Preferences.setPreference(Preferences.DICTIONARY_FUZZY_MATCHING,
+                mainWindow.menu.optionsDictionaryFuzzyMatchingCheckBoxMenuItem.isSelected());
+        Preferences.save();
+        Core.getDictionaries().refresh();
+    }
 
     /**
      * Displays the font dialog to allow selecting the font for source, target text (in main window) and for

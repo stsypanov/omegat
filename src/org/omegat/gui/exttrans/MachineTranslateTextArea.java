@@ -6,6 +6,7 @@
  Copyright (C) 2009-2010 Alex Buloichik
                2011 Martin Fleurke
                2012 Jean-Christophe Helary
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -35,6 +36,7 @@ import java.util.List;
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.common.EntryInfoThreadPane;
@@ -43,6 +45,7 @@ import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.StringUtil;
+import org.omegat.util.Preferences;
 import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -52,6 +55,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Martin Fleurke
  * @author Jean-Christophe Helary
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
 public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTranslationInfo> {
@@ -95,14 +99,21 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
         this.setText(EXPLANATION);
     }
 
+    public void forceLoad() {
+        startSearchThread(currentlyProcessedEntry, true);
+    }
+
     @Override
-    protected void startSearchThread(final SourceTextEntry newEntry) {
+    protected void startSearchThread(SourceTextEntry newEntry) {
+        startSearchThread(newEntry, false);
+    }
+
+    private void startSearchThread(SourceTextEntry newEntry, boolean force) {
         UIThreadsUtil.mustBeSwingThread();
 
-        setText("");
-        displayed = null;
+        clear();
         for (IMachineTranslation mt : translators) {
-            new FindThread(mt, newEntry).start();
+            new FindThread(mt, newEntry, force).start();
         }
     }
 
@@ -118,20 +129,28 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
         }
     }
 
+    private void clear() {
+        setText("");
+        displayed = null;
+    }
+
     protected class FindThread extends EntryInfoSearchThread<MachineTranslationInfo> {
         private final IMachineTranslation translator;
         private final String src;
+        private final boolean force;
 
-        public FindThread(final IMachineTranslation translator, final SourceTextEntry newEntry) {
+        public FindThread(final IMachineTranslation translator, final SourceTextEntry newEntry,
+                boolean force) {
             super(MachineTranslateTextArea.this, newEntry);
             this.translator = translator;
             src = newEntry.getSrcText();
+            this.force = force;
         }
 
         @Override
         protected MachineTranslationInfo search() throws Exception {
-            Language source=null;
-            Language target=null;
+            Language source = null;
+            Language target = null;
             ProjectProperties pp = Core.getProject().getProjectProperties();
             if (pp != null){
                  source = pp.getSourceLanguage();
@@ -141,14 +160,23 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
                 return null;
             }
 
-            String translation = translator.getTranslation(source, target, src);
-            if (StringUtil.isEmpty(translation)) {
-                return null;
+            String result = getTranslation(source, target);
+            return result == null ? null : new MachineTranslationInfo(translator.getName(), result);
+        }
+
+        private String getTranslation(Language source, Language target) throws Exception {
+            if (!force) {
+                if (!Preferences.isPreferenceDefault(Preferences.MT_AUTO_FETCH, true)) {
+                    return translator.getCachedTranslation(source, target, src);
+                }
+                if (Preferences.isPreference(Preferences.MT_ONLY_UNTRANSLATED)) {
+                    TMXEntry entry = Core.getProject().getTranslationInfo(currentlyProcessedEntry);
+                    if (entry.isTranslated()) {
+                        return translator.getCachedTranslation(source, target, src);
+                    }
+                }
             }
-            MachineTranslationInfo info = new MachineTranslationInfo();
-            info.translatorName = translator.getName();
-            info.result = StringUtil.normalizeUnicode(translation);
-            return info;
+            return translator.getTranslation(source, target, src);
         }
     }
 }

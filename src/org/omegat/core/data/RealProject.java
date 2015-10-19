@@ -98,6 +98,7 @@ import org.omegat.util.ProjectFileStorage;
 import org.omegat.util.RuntimePreferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
+import org.omegat.util.TagUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 import org.xml.sax.SAXParseException;
 
@@ -374,10 +375,10 @@ public class RealProject implements IProject {
             System.gc();
 
             // There, that should do it, now inform the user
-            Object[] args = { Runtime.getRuntime().maxMemory() / 1024 / 1024 };
-            Log.logErrorRB("OUT_OF_MEMORY", args);
+            long memory = Runtime.getRuntime().maxMemory() / 1024 / 1024;
+            Log.logErrorRB("OUT_OF_MEMORY", memory);
             Log.log(oome);
-            Core.getMainWindow().showErrorDialogRB("OUT_OF_MEMORY", args, "TF_ERROR");
+            Core.getMainWindow().showErrorDialogRB("TF_ERROR", "OUT_OF_MEMORY", memory);
             // Just quit, we can't help it anyway
             System.exit(0);
         }
@@ -1136,7 +1137,7 @@ public class RealProject implements IProject {
 
             loadFilesCallback.fileFinished();
 
-            if (filter != null && (!fi.entries.isEmpty())) {
+            if (filter != null && !fi.entries.isEmpty()) {
                 fi.filterClass = filter.getClass(); //Don't store the instance, because every file gets an instance and 
                                                     // then we consume a lot of memory for all instances. 
                                                     //See also IFilter "TODO: each filter should be stateless"
@@ -1431,9 +1432,14 @@ public class RealProject implements IProject {
     }
 
     @Override
-    public void setNote(final SourceTextEntry entry, final TMXEntry oldTE, final String note) {
+    public void setNote(final SourceTextEntry entry, final TMXEntry oldTE, String note) {
         if (oldTE == null) {
             throw new IllegalArgumentException("RealProject.setNote(tr) can't be null");
+        }
+
+        // Disallow empty notes. Use null to represent lack of note.
+        if (note != null && note.isEmpty()) {
+            note = null;
         }
 
         TMXEntry prevTrEntry = oldTE.defaultTranslation ? projectTMX
@@ -1519,7 +1525,7 @@ public class RealProject implements IProject {
      * @return Tokenizer implementation
      */
     protected ITokenizer createTokenizer(String cmdLine, Class<?> projectPref) {
-        if (cmdLine != null && !cmdLine.isEmpty()) {
+        if (!StringUtil.isEmpty(cmdLine)) {
             try {
                 return (ITokenizer) this.getClass().getClassLoader().loadClass(cmdLine).newInstance();
             } catch (ClassNotFoundException e) {
@@ -1549,7 +1555,7 @@ public class RealProject implements IProject {
      */
     protected void configTokenizer(String cmdLine, ITokenizer tokenizer) {
         // Set from command line.
-        if (cmdLine != null && !cmdLine.isEmpty()) {
+        if (!StringUtil.isEmpty(cmdLine)) {
             try {
                 tokenizer.setBehavior(Version.valueOf(cmdLine));
                 return;
@@ -1562,7 +1568,7 @@ public class RealProject implements IProject {
         String vString = Preferences.getPreferenceDefault(
                 Preferences.TOK_BEHAVIOR_PREFIX + tokenizer.getClass().getName(),
                 null);
-         if (vString != null && !vString.isEmpty()) {
+         if (!StringUtil.isEmpty(vString)) {
              try {
                  tokenizer.setBehavior(Version.valueOf(vString));
              }  catch (Throwable e) {
@@ -1677,13 +1683,13 @@ public class RealProject implements IProject {
                 List<ProtectedPart> protectedParts, String segmentTranslation, boolean segmentTranslationFuzzy,
                 String comment, String prevSegment, String nextSegment, String path) {
             // if the source string is empty, don't add it to TM
-            if (segmentSource.isEmpty() || segmentSource.trim().isEmpty()) {
+            if (segmentSource.trim().isEmpty()) {
                 throw new RuntimeException("Segment must not be empty");
             }
 
             EntryKey ek = new EntryKey(entryKeyFilename, segmentSource, id, prevSegment, nextSegment, path);
 
-            protectedParts = StaticUtils.applyCustomProtectedParts(segmentSource,
+            protectedParts = TagUtil.applyCustomProtectedParts(segmentSource,
                     PatternConsts.getPlaceholderPattern(), protectedParts);
 
             //If Allow translation equals to source is not set, we ignore such existing translations

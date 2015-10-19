@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Locale;
 
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Language;
@@ -123,7 +124,11 @@ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
                 sourceSeg = xpath.evaluate(sourceSegQueryString, tu);
                 targetSeg = xpath.evaluate(targetSegQueryString, tu);
                 
-                dist = getLevensteinDistance(text, sourceSeg);
+                // Make strings lowercase to make comparison case-insensitive.
+                // (Case-sensitive comparison would penalize mere capitalization
+                // differences equally with whole-word differences.)
+                Locale srcLoc = Core.getProject().getProjectProperties().getSourceLanguage().getLocale();
+                dist = getLevensteinDistance(text.toLowerCase(srcLoc), sourceSeg.toLowerCase(srcLoc));
 
                 if( dist < lowestEditDistance && !sourceSeg.isEmpty() && !targetSeg.isEmpty() ) {
                     lowestEditDistance = dist;
@@ -162,11 +167,11 @@ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
         LevenshteinDistance leven = new LevenshteinDistance();
             ITokenizer srcTokenizer = Core.getProject().getSourceTokenizer();
 
-            Token[] textTokenArray = srcTokenizer.tokenizeAllExactly(text);
-            Token[] sourceSegTokenArray = srcTokenizer.tokenizeAllExactly(sourceSeg);
-
-        int dist = leven.compute(textTokenArray, sourceSegTokenArray);
-        return dist;
+            Token[] textTokenArray = srcTokenizer.tokenizeVerbatim(text);
+            Token[] sourceSegTokenArray = srcTokenizer.tokenizeVerbatim(sourceSeg);
+            
+            dist = leven.compute(textTokenArray, sourceSegTokenArray);
+            return dist;
 	}
     
 

@@ -45,10 +45,12 @@ import javax.swing.text.JTextComponent;
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.spellchecker.SpellCheckerMarker;
+import org.omegat.tokenizer.ITokenizer.StemmingMode;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.TagUtil;
+import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.Token;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -102,7 +104,7 @@ public class EditorPopups {
             String translation = ec.getCurrentTranslation();
             Token tok = null;
             int relOffset = ec.getPositionInEntryTranslation(mousepos);
-            for (Token t : Core.getProject().getTargetTokenizer().tokenizeWordsForSpelling(translation)) {
+            for (Token t : Core.getProject().getTargetTokenizer().tokenizeWords(translation, StemmingMode.NONE)) {
                 if (t.getOffset() <= relOffset && relOffset < t.getOffset() + t.getLength()) {
                     tok = t;
                     break;
@@ -324,7 +326,7 @@ public class EditorPopups {
             if (dups.isEmpty()) {
                 return;
             }
-            JMenuItem header = menu.add(StaticUtils.format(OStrings.getString("MW_GO_TO_DUPLICATE_HEADER"), dups.size()));
+            JMenuItem header = menu.add(StringUtil.format(OStrings.getString("MW_GO_TO_DUPLICATE_HEADER"), dups.size()));
             header.setEnabled(false);
             JMenu submenu = null;
             for (int i = 0; i < dups.size(); i++) {
@@ -340,7 +342,7 @@ public class EditorPopups {
                     }
                     submenu = newSubmenu;
                 }
-                String label = StaticUtils.format(OStrings.getString("MW_GO_TO_DUPLICATE_ITEM"), entryNum);
+                String label = StringUtil.format(OStrings.getString("MW_GO_TO_DUPLICATE_ITEM"), entryNum);
                 JMenuItem item = submenu == null ? menu.add(label) : submenu.add(label);
                 item.addActionListener(new ActionListener() {
                     @Override
@@ -404,11 +406,11 @@ public class EditorPopups {
                 return;
             }
 
-            for (final String tag : TagUtil.getAllTagsMissingFromTarget()) {
-                JMenuItem item = menu.add(StaticUtils.format(OStrings.getString("TF_MENU_EDIT_TAG_INSERT_N"), tag));
+            for (final Tag tag : TagUtil.getAllTagsMissingFromTarget()) {
+                JMenuItem item = menu.add(StringUtil.format(OStrings.getString("TF_MENU_EDIT_TAG_INSERT_N"), tag.tag));
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        Core.getEditor().insertText(tag);
+                        Core.getEditor().insertText(tag.tag);
                     }
                 });
             }

@@ -179,6 +179,7 @@ public class TextFilter extends AbstractFilter {
 
         if (!nontrans.isEmpty())
             out.write(nontrans);
+        }
     }
 
     /** Processes the file segmenting on line breaks. */
@@ -211,8 +212,10 @@ public class TextFilter extends AbstractFilter {
         }
         if (nontrans.length() >= 0)
             out.write(nontrans.toString());
-        if (trans.length() >= 0)
+        }
+        if (trans.length() >= 0) {
             out.write(processEntry(trans.toString()));
+        }
     }
 
     @Override

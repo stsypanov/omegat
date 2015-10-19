@@ -50,6 +50,8 @@ public interface IEditor {
     enum CHANGE_CASE_TO {
         /** lower case */
         LOWER,
+        /** Title case for whole string */
+        SENTENCE,
         /** Title Case */
         TITLE,
         /** UPPER CASE */

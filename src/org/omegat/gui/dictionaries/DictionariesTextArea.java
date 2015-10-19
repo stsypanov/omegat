@@ -4,7 +4,8 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2009 Alex Buloichik
-               2012 Jean-Christophe Helary 
+               2012 Jean-Christophe Helary
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -64,9 +65,10 @@ import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Log;
+import org.omegat.tokenizer.ITokenizer.StemmingMode;
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
-import org.omegat.util.Token;
+import org.omegat.util.Preferences;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.Styles.EditorColor;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -76,9 +78,10 @@ import org.omegat.util.gui.UIThreadsUtil;
  * 
  * @author Alex Buloichik <alex73mail@gmail.com>
  * @author Jean-Christophe Helary 
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEntry>> {
+public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEntry>> implements IDictionaries {
 
 	private static final String EXPLANATION = OStrings.getString("GUI_DICTIONARYWINDOW_explanation");
 
@@ -261,7 +264,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                     if (el != null) {
                         if (el.getStartOffset() <= mousepos && el.getEndOffset() >= mousepos) {
                             final String w = displayedWords.get(i);
-                            String hideW = StaticUtils.format(OStrings.getString("DICTIONARY_HIDE"), w);
+                            String hideW = StringUtil.format(OStrings.getString("DICTIONARY_HIDE"), w);
                             JMenuItem item = popup.add(hideW);
                             item.addActionListener(new ActionListener() {
                                 public void actionPerformed(ActionEvent e) {
@@ -294,13 +297,14 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             if (tok == null) {
                 return null;
             }
-            Token[] tokenList = tok.tokenizeWords(src, ITokenizer.StemmingMode.NONE);
-            Set<String> words = new TreeSet<>();
-            for (Token tok : tokenList) {
-                checkEntryChanged();
-                String w = src.substring(tok.getOffset(), tok.getOffset() + tok.getLength());
 
-                words.add(w);
+            StemmingMode mode = Preferences.isPreferenceDefault(Preferences.DICTIONARY_FUZZY_MATCHING, true)
+                    ? StemmingMode.MATCHING : StemmingMode.NONE;
+            String[] tokenList = tok.tokenizeWordsToStrings(src, mode);
+            Set<String> words = new TreeSet<String>();
+            for (String tok : tokenList) {
+                checkEntryChanged();
+                words.add(tok);
             }
             List<DictionaryEntry> result = manager.findWords(words);
 

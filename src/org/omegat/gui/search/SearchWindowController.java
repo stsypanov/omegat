@@ -80,7 +80,6 @@ import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.StaticUIUtils;
@@ -150,10 +149,6 @@ public class SearchWindowController {
         form.m_numberOfResults.setModel(m_numberModel);
 
         loadPreferences();
-
-        ((EntryListPane) form.m_viewer).setFont(); // Otherwise, the
-                                                   // user-defined font is not
-                                                   // used
 
         if (!Core.getProject().isProjectLoaded()) {
             // restrict user to file only access
@@ -701,12 +696,18 @@ public class SearchWindowController {
             public void run() {
                 EntryListPane viewer = (EntryListPane) form.m_viewer;
                 viewer.displaySearchResult(searcher, ((Integer) form.m_numberOfResults.getValue()));
-                form.m_resultsLabel.setText(StaticUtils.format(OStrings.getString("SW_NR_OF_RESULTS"),
-                        new Object[] { viewer.getNrEntries()}));
+                form.m_resultsLabel.setText(StringUtil.format(OStrings.getString("SW_NR_OF_RESULTS"),
+                        viewer.getNrEntries()));
                 form.m_filterButton.setEnabled(true);
                 form.m_replaceButton.setEnabled(true);
                 form.m_replaceAllButton.setEnabled(true);
-                viewer.requestFocus();
+                if (searcher.getSearchResults().isEmpty()) {
+                    // RFE#1143 https://sourceforge.net/p/omegat/feature-requests/1143/
+                    form.m_searchField.requestFocus();
+                    form.m_searchField.getEditor().selectAll();
+                } else {
+                    viewer.requestFocus();                    
+                }
             }
         });
     }
@@ -797,8 +798,8 @@ public class SearchWindowController {
                 root += File.separator;
             File f = new File(root);
             if (!f.exists() || !f.isDirectory()) {
-                String error = StaticUtils.format(OStrings.getString("SW_ERROR_BAD_DIR"),
-                        new Object[] { form.m_dirField.getText() });
+                String error = StringUtil.format(OStrings.getString("SW_ERROR_BAD_DIR"),
+                        form.m_dirField.getText());
                 form.m_viewer.setText(error);
                 Log.log(error);
                 return;
@@ -1089,7 +1090,7 @@ public class SearchWindowController {
             public void run() {
                 String msg;
                 if (params != null) {
-                    msg = StaticUtils.format(OStrings.getString(errorKey), params);
+                    msg = StringUtil.format(OStrings.getString(errorKey), params);
                 } else {
                     msg = OStrings.getString(errorKey);
                 }

@@ -31,10 +31,12 @@ package org.omegat.core.statistics;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.omegat.core.Core;
 import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.data.IProject;
@@ -94,6 +96,7 @@ public class FindMatches {
     private final Pattern removePattern = PatternConsts.getRemovePattern();
 
     private final ITokenizer tok;
+    private final Locale srcLocale;
     private final int maxCount;
 
     /** Result list. */
@@ -125,6 +128,7 @@ public class FindMatches {
      */
     public FindMatches(ITokenizer sourceTokenizer, int maxCount, boolean allowSeparateSegmentMatch, boolean searchExactlyTheSame) {
         tok = sourceTokenizer;
+        srcLocale = Core.getProject().getProjectProperties().getSourceLanguage().getLocale();
         this.maxCount = maxCount;
         this.searchExactlyTheSame = searchExactlyTheSame;
         if (allowSeparateSegmentMatch) {
@@ -227,8 +231,8 @@ public class FindMatches {
         if (ALLOW_PARTIALY_MATCH && separateSegmentMatcher != null
                 && !project.getProjectProperties().isSentenceSegmentingEnabled()) {
             // split paragraph even when segmentation disabled, then find matches for every segment
-            List<StringBuilder> spaces = new ArrayList<>();
-            List<Rule> brules = new ArrayList<>();
+            List<StringBuilder> spaces = new ArrayList<StringBuilder>();
+            List<Rule> brules = new ArrayList<Rule>();
             Language sourceLang = project.getProjectProperties().getSourceLanguage();
             Language targetLang = project.getProjectProperties().getTargetLanguage();
             List<String> segments = Segmenter.segment(sourceLang, srcText, spaces, brules);
@@ -367,27 +371,19 @@ public class FindMatches {
             return true;
         }
         NearString st = result.get(result.size() - 1);
-        Boolean chanse = checkScore(st.scores[0].score, simStem);
-        if (chanse == null) {
-            chanse = checkScore(st.scores[0].scoreNoStem, simNoStem);
+        int chance = checkScore(st.scores[0].score, simStem);
+        if (chance == 0) {
+            chance = checkScore(st.scores[0].scoreNoStem, simNoStem);
         }
-        if (chanse == null) {
-            chanse = checkScore(st.scores[0].adjustedScore, simExactly);
+        if (chance == 0) {
+            chance = checkScore(st.scores[0].adjustedScore, simExactly);
         }
-        if (chanse == null) {
-            chanse = true;
-        }
-        return chanse;
+        return chance != 1;
     }
 
-    private Boolean checkScore(final int storedScore, final int checkedStore) {
-        if (storedScore < checkedStore) {
-            return true;
-        } else if (storedScore > checkedStore) {
-            return false;
-        } else {
-            return null;
-        }
+    private int checkScore(final int storedScore, final int checkedStore) {
+        return storedScore < checkedStore ? -1
+                : storedScore > checkedStore ? 1 : 0;
     }
 
     /**
@@ -459,6 +455,9 @@ public class FindMatches {
     }
 
     public Token[] tokenizeNoStem(String str) {
+        // No-stemming token comparisons are intentionally case-insensitive
+        // for matching purposes.
+        str = str.toLowerCase(srcLocale);
         Token[] result = tokenizeNoStemCache.get(str);
         if (result == null) {
             result = tok.tokenizeWords(str, ITokenizer.StemmingMode.NONE);
@@ -468,9 +467,12 @@ public class FindMatches {
     }
 
     public Token[] tokenizeAll(String str) {
+        // Verbatim token comparisons are intentionally case-insensitive.
+        // for matching purposes.
+        str = str.toLowerCase(srcLocale);
         Token[] result = tokenizeAllCache.get(str);
         if (result == null) {
-            result = tok.tokenizeAllExactly(str);
+            result = tok.tokenizeVerbatim(str);
             tokenizeAllCache.put(str, result);
         }
         return result;

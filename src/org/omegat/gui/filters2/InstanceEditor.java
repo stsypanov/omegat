@@ -35,6 +35,7 @@ import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
@@ -63,10 +64,8 @@ public class InstanceEditor extends PeroDialog {
         sourceFilenameMaskField.setText("*.*");
         targetFilenamePatternField.setText("${filename}");
 
-        if (hint != null && !hint.isEmpty())
-            hintTextArea.setText(hint);
-        else
-            hintTextArea.setVisible(false);
+        hintTextArea.setText(hint);
+        hintTextArea.setVisible(!StringUtil.isEmpty(hint));
 
         StaticUIUtils.setEscapeClosable(this);
 

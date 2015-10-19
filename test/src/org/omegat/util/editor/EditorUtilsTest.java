@@ -77,40 +77,54 @@ public class EditorUtilsTest {
     
     @Test
     public void testChangeCase() {
-        String input = "I've GOT a {crazy} text hErE including 1 \u65e5\u672c\u8a9e!";
+        String input = "a I've GOT a {crazy} text hErE including 1 \u65e5\u672c\u8a9e!";
         String round1 = EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE);
-        assertEquals("I'VE GOT A {CRAZY} TEXT HERE INCLUDING 1 \u65e5\u672c\u8a9e!", round1);
+        assertEquals("A I'VE GOT A {CRAZY} TEXT HERE INCLUDING 1 \u65e5\u672c\u8a9e!", round1);
         assertEquals(round1, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
         String round2 = EditorUtils.doChangeCase(round1, CHANGE_CASE_TO.CYCLE);
-        assertEquals("i've got a {crazy} text here including 1 \u65e5\u672c\u8a9e!", round2);
+        assertEquals("a i've got a {crazy} text here including 1 \u65e5\u672c\u8a9e!", round2);
         assertEquals(round2, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         String round3 = EditorUtils.doChangeCase(round2, CHANGE_CASE_TO.CYCLE);
-        assertEquals("I've Got A {Crazy} Text Here Including 1 \u65e5\u672c\u8a9e!", round3);
-        assertEquals(round3, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("A i've got a {crazy} text here including 1 \u65e5\u672c\u8a9e!", round3);
+        assertEquals(round3, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         String round4 = EditorUtils.doChangeCase(round3, CHANGE_CASE_TO.CYCLE);
-        assertEquals(round1, round4);
+        assertEquals("A I've Got A {Crazy} Text Here Including 1 \u65e5\u672c\u8a9e!", round4);
+        assertEquals(round4, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        String round5 = EditorUtils.doChangeCase(round4, CHANGE_CASE_TO.CYCLE);
+        assertEquals(round1, round5);
         
         input = "lower case only";
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         assertEquals("LOWER CASE ONLY", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Lower case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         assertEquals("Lower Case Only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
-        assertEquals("Lower Case Only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+        assertEquals("Lower case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
         
         input = "UPPER CASE ONLY";
         assertEquals("upper case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Upper case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         assertEquals("Upper Case Only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
         assertEquals("upper case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
         
         input = "Title Case Only";
         assertEquals("title case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         assertEquals("TITLE CASE ONLY", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Title case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
         assertEquals("TITLE CASE ONLY", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+        
+        input = "Sentence case string";
+        assertEquals("sentence case string", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
+        assertEquals("SENTENCE CASE STRING", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
+        assertEquals("Sentence Case String", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("Sentence Case String", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
         
         input = "mIxed CaSe oNly";
         assertEquals("mixed case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         assertEquals("MIXED CASE ONLY", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Mixed case only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         assertEquals("Mixed Case Only", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
         assertEquals("MIXED CASE ONLY", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
         
@@ -118,17 +132,59 @@ public class EditorUtilsTest {
         input = "A B C";
         assertEquals("a b c", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("A b c", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
         round2 = EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE);
         assertEquals("a b c", round2);
         round3 = EditorUtils.doChangeCase(round2, CHANGE_CASE_TO.CYCLE);
-        assertEquals(input, round3);
+        assertEquals("A b c", round3);
+        round4 = EditorUtils.doChangeCase(round3, CHANGE_CASE_TO.CYCLE);
+        assertEquals(input, round4);
         
         // No letter-containing tokens
         input = "{!} 1 \u65e5\u672c\u8a9e";
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+        
+        // Single tokens
+        
+        input = "lower";
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
+        assertEquals("LOWER", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Lower", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
+        assertEquals("Lower", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("Lower", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+        
+        input = "UPPER";
+        assertEquals("upper", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Upper", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
+        assertEquals("Upper", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("upper", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+        
+        input = "Title";
+        assertEquals("title", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
+        assertEquals("TITLE", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("TITLE", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+                
+        input = "mIxed";
+        assertEquals("mixed", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
+        assertEquals("MIXED", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals("Mixed", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
+        assertEquals("Mixed", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("MIXED", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
+        
+        // Ambiguous
+        input = "A";
+        assertEquals("a", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
+        assertEquals("a", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
     }
 }

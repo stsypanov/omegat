@@ -40,7 +40,6 @@ import org.omegat.filters2.IFilter;
 import org.omegat.filters2.IParseCallback;
 import org.omegat.util.Language;
 import org.omegat.util.PatternConsts;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 
 import java.util.ArrayList;
@@ -168,6 +167,8 @@ public abstract class ParseEntry implements IParseCallback {
         }
 
         if (m_config.isSentenceSegmentingEnabled()) {
+            List<StringBuffer> spaces = new ArrayList<StringBuffer>();
+            List<Rule> brules = new ArrayList<Rule>();
             Language sourceLang = m_config.getSourceLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, new ArrayList<StringBuilder>(), new ArrayList<Rule>());
             if (segments.size() == 1) {
@@ -217,7 +218,7 @@ public abstract class ParseEntry implements IParseCallback {
      */
     private void internalAddSegment(String id, short segmentIndex, String segmentSource, String segmentTranslation,
             boolean segmentTranslationFuzzy, String comment, String path, List<ProtectedPart> protectedParts) {
-        if (segmentSource.isEmpty() || segmentSource.trim().isEmpty()) {
+        if (segmentSource.trim().isEmpty()) {
             // skip empty segments
             return;
         }
@@ -287,23 +288,27 @@ public abstract class ParseEntry implements IParseCallback {
         int len = r.length();
         int b = 0;
         if (removeSpaces) {
-            while (b < len && (Character.isWhitespace(r.charAt(b)) || r.charAt(b) == '\u00A0')) {
-                b++;
+            for (int cp; b < len; b += Character.charCount(cp)) {
+                cp = r.codePointAt(b);
+                if (!Character.isWhitespace(cp) && cp != '\u00A0') {
+                    break;
+                }
             }
         }
         per.spacesAtBegin = b;
 
-        int pos = len - 1;
-        int e = 0;
+        int e = len;
         if (removeSpaces) {
-            while (pos >= b && (Character.isWhitespace(r.charAt(pos)) || r.charAt(pos) == '\u00A0')) {
-                pos--;
-                e++;
+            for (int cp; e > b; e -= Character.charCount(cp)) {
+                cp = r.codePointBefore(e);
+                if (!Character.isWhitespace(cp) && cp != '\u00A0') {
+                    break;
+                }
             }
         }
-        per.spacesAtEnd = e;
+        per.spacesAtEnd = len - e;
 
-        r = r.substring(b, pos + 1);
+        r = r.substring(b, e);
 
         /*
          * Replacing all occurrences of single CR (\r) or CRLF (\r\n) by LF
@@ -322,7 +327,7 @@ public abstract class ParseEntry implements IParseCallback {
             r = PatternConsts.OMEGAT_TAG.matcher(r).replaceAll("");
         }
 
-        r = StaticUtils.fixChars(r);
+        r = StringUtil.removeXMLInvalidChars(r);
 
         return r;
     }

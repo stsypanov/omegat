@@ -82,7 +82,7 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
         Matcher m = PatternConsts.OMEGAT_TAG.matcher(text);
         while (m.find()) {
             for (int i = m.start(), end = m.end(); i < end; i++) {
-                buffer.replace(i, i + 1, " ");
+                buffer.setCharAt(i, ' ');
             }
         }
         return buffer.toString();
@@ -105,9 +105,10 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
         private int startOffset = -1;
         
         private boolean buffering = false;
-        private boolean doReplay = false;
 
-        private final ArrayDeque<CachedToken> stack = new ArrayDeque<CachedToken>();
+        private final ArrayDeque<CachedToken> inputStack = new ArrayDeque<CachedToken>();
+        private final ArrayDeque<CachedToken> outputStack = new ArrayDeque<CachedToken>();
+        private final ArrayDeque<CachedToken> recoveryStack = new ArrayDeque<CachedToken>();
         
         protected TagJoiningFilter(TokenStream input) {
             super(input);
@@ -115,12 +116,11 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
 
         @Override
         public boolean incrementToken() throws IOException {
-            if (doReplay) {
-                replayCachedToken();
-                doReplay = !stack.isEmpty();
+            if (!outputStack.isEmpty()) {
+                replayToken(outputStack.poll());
                 return true;
             }
-            while (input.incrementToken()) {
+            while (getNextInput()) {
                 char[] chars = termAtt.buffer();
                 int len = termAtt.length();
                 if (buffering) {
@@ -130,7 +130,7 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
                     if (cancelBuffering(chars, len)) {
                         return true;
                     }
-                    cacheToken(chars, len);
+                    cacheRecoveryToken(chars, len);
                     buffer.append(chars, 0, len);
                     continue;
                 }
@@ -142,15 +142,37 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
             return finishToken();
         }
         
-        private boolean startBuffering(char[] chars, int len) {
-            if (len > 2 || !isTagOpen(chars[0])) {
-                return false;
+        private boolean getNextInput() throws IOException {
+            if (!inputStack.isEmpty()) {
+                replayToken(inputStack.poll());
+                return true;
             }
-            buffer.append(chars, 0, len);
-            startOffset = offsetAtt.startOffset();
-            cacheToken(chars, len);
-            buffering = true;
-            return true;
+            return input.incrementToken();
+        }
+        
+        private boolean startBuffering(char[] chars, int len) {
+            for (int i = 0; i < len; i++) {                
+                if (isTagOpen(chars[i])) {
+                    if (i > 0) {
+                        // return true for content up to start, then replay start
+                        cacheInputToken(Arrays.copyOfRange(chars, i, len), offsetAtt.startOffset() + i);
+                        truncateToken(i);
+                        return false;
+                    } else {
+                        buffer.append(chars, i, len);
+                        startOffset = offsetAtt.startOffset();
+                        cacheRecoveryToken(chars, len);
+                        buffering = true;  
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        private void truncateToken(int end) {
+            termAtt.setLength(end);
+            offsetAtt.setOffset(offsetAtt.startOffset(), offsetAtt.startOffset() + end);
         }
         
         private boolean isTagOpen(char c) {
@@ -160,10 +182,11 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
         private boolean cancelBuffering(char[] chars, int len) {
             for (int i = 0; i < len; i++) {
                 if (!isTagContent(chars[i])) {
-                    cacheToken(chars, len);
-                    replayCachedToken();
+                    cacheRecoveryToken(chars, len);
+                    outputStack.addAll(recoveryStack);
+                    recoveryStack.clear();
+                    replayToken(outputStack.poll());
                     clearBuffer();
-                    doReplay = true;
                     return true;
                 }
             }
@@ -174,19 +197,24 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
             return c == '/' || Character.isLetterOrDigit(c);
         }
         
-        private void replayCachedToken() {
-            CachedToken t = stack.poll();
+        private void replayToken(CachedToken t) {
             termAtt.copyBuffer(t.chars, 0, t.chars.length);
             termAtt.setLength(t.chars.length);
             offsetAtt.setOffset(t.startOffset, t.startOffset + t.chars.length);
         }
         
         private boolean finishBuffering(char[] chars, int len) {
-            if (len > 2 || !isTagClose(chars[len - 1])) {
-                return false;
+            for (int i = 0; i < len; i++) {
+                if (isTagClose(chars[i])) {
+                    if (i < len - 1) {
+                        // replay remainder afterwards
+                        cacheInputToken(Arrays.copyOfRange(chars, i + 1, len), offsetAtt.startOffset() + i + 1);
+                    }
+                    buffer.append(chars, 0, i + 1);
+                    return finishToken();
+                }
             }
-            buffer.append(chars, 0, len);
-            return finishToken();
+            return false;
         }
         
         private boolean isTagClose(char c) {
@@ -202,9 +230,9 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
             String token = buffer.toString();
             termAtt.copyBuffer(token.toCharArray(), 0, token.length());
             termAtt.setLength(token.length());
-            offsetAtt.setOffset(startOffset, offsetAtt.endOffset());
+            offsetAtt.setOffset(startOffset, startOffset + token.length());
             clearBuffer();
-            stack.clear();
+            recoveryStack.clear();
             return true;
         }
         
@@ -213,8 +241,12 @@ public class LuceneJapaneseTokenizer extends BaseTokenizer {
             buffering = false;
         }
         
-        private void cacheToken(char[] chars, int len) {
-            stack.add(new CachedToken(Arrays.copyOf(chars, len), offsetAtt.startOffset()));
+        private void cacheInputToken(char[] chars, int start) {
+            inputStack.add(new CachedToken(chars, start));
+        }
+        
+        private void cacheRecoveryToken(char[] chars, int len) {
+            recoveryStack.add(new CachedToken(Arrays.copyOf(chars, len), offsetAtt.startOffset()));
         }
         
         private static class CachedToken {

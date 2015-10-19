@@ -48,8 +48,13 @@ public class LuceneChineseTokenizer extends BaseTokenizer {
     }
     
     @Override
-    public Token[] tokenizeAllExactly(String strOrig) {
+    public Token[] tokenizeVerbatim(String strOrig) {
         return tokenizeByCodePoint(strOrig);
+    }
+    
+    @Override
+    public String[] tokenizeVerbatimToStrings(String strOrig) {
+        return tokenizeByCodePointToStrings(strOrig);
     }
     
     @Override
@@ -59,7 +64,7 @@ public class LuceneChineseTokenizer extends BaseTokenizer {
             return new ChineseAnalyzer().tokenStream("", new StringReader(
                     strOrig));
         } else {
-            return new ChineseTokenizer(new StringReader(strOrig.toLowerCase()));
+            return new ChineseTokenizer(new StringReader(strOrig));
         }
     }
 }

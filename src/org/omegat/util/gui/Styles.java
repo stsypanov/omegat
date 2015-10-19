@@ -29,6 +29,7 @@
 package org.omegat.util.gui;
 
 import java.awt.*;
+import java.util.MissingResourceException;
 import java.util.logging.Logger;
 
 import javax.swing.UIManager;
@@ -59,6 +60,8 @@ public final class Styles {
         COLOR_ACTIVE_SOURCE_FG((Color) null),
         COLOR_ACTIVE_TARGET((Color) null),
         COLOR_ACTIVE_TARGET_FG((Color) null),
+        COLOR_SEGMENT_MARKER_FG((Color) null),
+        COLOR_SEGMENT_MARKER_BG((Color) null),
         COLOR_SOURCE("#c0ffc0"),
         COLOR_SOURCE_FG((Color) null),
         COLOR_NOTED("#c0ffff"),
@@ -89,7 +92,8 @@ public final class Styles {
         COLOR_MATCHES_DEL_ACTIVE((Color) null),
         COLOR_MATCHES_DEL_INACTIVE((Color) null),
         COLOR_MATCHES_INS_ACTIVE("#0000ff"),
-        COLOR_MATCHES_INS_INACTIVE("#808080"); // Color.gray
+        COLOR_MATCHES_INS_INACTIVE("#808080"), // Color.gray
+        COLOR_HYPERLINK("#0000ff"); // Blue
 
         private static final String DEFAULT_COLOR = "__DEFAULT__";
         private Color color;
@@ -127,7 +131,12 @@ public final class Styles {
 
         @Override
         public String toString() {
-            return OStrings.getString(name());
+            try {
+                return OStrings.getString(name());
+            } catch (MissingResourceException ex) {
+                Log.log(ex);
+                return name();
+            }
         }
 
         public void setColor(Color newColor) {
@@ -193,11 +202,11 @@ public final class Styles {
 	public static void setupLAF() {
         Color backgroundColor = Styles.EditorColor.COLOR_BACKGROUND.getColor();
         Color foregroundColor = Styles.EditorColor.COLOR_FOREGROUND.getColor();
-        UIManager.put("TextPane.background",   backgroundColor);  
-        UIManager.put("TextPane.foreground",   foregroundColor);
+        UIManager.put("TextPane.background", backgroundColor);
+        UIManager.put("TextPane.foreground", foregroundColor);
         UIManager.put("TextPane.caretForeground", foregroundColor);
-        UIManager.put("TextArea.background",   backgroundColor);  
-        UIManager.put("TextArea.foreground",   foregroundColor);
+        UIManager.put("TextArea.background", backgroundColor);
+        UIManager.put("TextArea.foreground", foregroundColor);
         UIManager.put("TextArea.caretForeground", foregroundColor);
         UIManager.put("EditorPane.background", backgroundColor);
         UIManager.put("EditorPane.foreground", foregroundColor);

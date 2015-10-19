@@ -36,6 +36,7 @@ import javax.swing.text.Utilities;
 
 import org.omegat.core.Core;
 import org.omegat.gui.editor.IEditor.CHANGE_CASE_TO;
+import org.omegat.tokenizer.ITokenizer.StemmingMode;
 import org.omegat.util.StringUtil;
 import org.omegat.util.Token;
 
@@ -147,7 +148,7 @@ public class EditorUtils {
      */
     public static String doChangeCase(String input, CHANGE_CASE_TO toWhat) {
         // tokenize the selection
-        Token[] tokenList = Core.getProject().getTargetTokenizer().tokenizeWordsForSpelling(input);
+        Token[] tokenList = Core.getProject().getTargetTokenizer().tokenizeWords(input, StemmingMode.NONE);
 
         if (toWhat == CHANGE_CASE_TO.CYCLE) {
             int lower = 0;
@@ -189,10 +190,14 @@ public class EditorUtils {
 
             toWhat = determineTargetCase(lower, upper, title, mixed, ambiguous);
         }
+        
+        Locale locale = Core.getProject().getProjectProperties().getTargetLanguage().getLocale();
+        if (toWhat == CHANGE_CASE_TO.SENTENCE) {
+            return StringUtil.toTitleCase(input, locale);
+        }
 
         StringBuilder buffer = new StringBuilder(input);
         int lengthIncrement = 0;
-        Locale locale = Core.getProject().getProjectProperties().getTargetLanguage().getLocale();
         
         for (Token token : tokenList) {
             // find out the case and change to the selected
@@ -227,12 +232,16 @@ public class EditorUtils {
             presentCaseTypes++;
         }
         
+        if ((title > 0 || ambiguous > 0) && lower > 0 && upper == 0 && mixed == 0) {
+            return CHANGE_CASE_TO.TITLE;
+        }
+        
         if (mixed > 0 || presentCaseTypes > 1) {
             return CHANGE_CASE_TO.UPPER;
         }
 
         if (lower > 0) {
-            return CHANGE_CASE_TO.TITLE;
+            return CHANGE_CASE_TO.SENTENCE;
         }
 
         if (title > 0) {

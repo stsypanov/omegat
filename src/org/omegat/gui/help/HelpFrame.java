@@ -53,6 +53,7 @@ import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
 
@@ -212,10 +213,15 @@ public class HelpFrame extends PeroFrame {
      */
     private void gotoLink(String link) {
         if (link.startsWith("http://")) {
-            m_helpPane.setText("<html><body><p>" +
-                    StaticUtils.format(OStrings.getString("HF_ERROR_EXTLINK_TITLE"), "<b>" + link + "</b><p>") +
-                    StaticUtils.format(OStrings.getString("HF_ERROR_EXTLINK_MSG"), "<b>index.html</b>") +
-                    "</body></html>");
+            String txt = "<b>" + link + "</b>";
+            StringBuilder buf = new StringBuilder();
+            buf.append("<html><body><p>");
+            buf.append(StringUtil.format(OStrings.getString("HF_ERROR_EXTLINK_TITLE"), txt));
+            buf.append("<p>");
+            buf.append(StringUtil.format(OStrings.getString("HF_ERROR_EXTLINK_MSG"), "<b>index.html</b>"));
+            buf.append("</body></html>");
+
+            m_helpPane.setText(buf.toString());
         } else {
             try {
                 URL newPage = new URL(m_filename, link);
