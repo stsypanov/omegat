@@ -70,6 +70,7 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
+import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.*;
 
 import javax.swing.*;

@@ -54,7 +54,7 @@ public class PeroFileCopyUtils {
     /** Copies one file. Creates directories on the path to dest if necessary. */
     public static void copy(File src, File dest) throws IOException {
         if (!src.exists()) {
-            String message = StaticUtils.format(OStrings.getString("LFC_ERROR_FILE_DOESNT_EXIST"), src.getAbsolutePath());
+            String message = OStrings.getString("LFC_ERROR_FILE_DOESNT_EXIST") + src.getAbsolutePath();
             throw new IOException(message);
         }
         Files.copy(src.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -89,8 +89,7 @@ public class PeroFileCopyUtils {
      */
     public static void copy(File src, OutputStream dest) throws IOException {
         if (!src.exists()) {
-            throw new IOException(StaticUtils.format(OStrings.getString("LFC_ERROR_FILE_DOESNT_EXIST"),
-                    new Object[]{src.getAbsolutePath()}));
+            throw new IOException(OStrings.getString("LFC_ERROR_FILE_DOESNT_EXIST") + src.getAbsolutePath());
         }
         try (FileInputStream in = new FileInputStream(src)) {
             ReadableByteChannel readableByteChannel = Channels.newChannel(in);

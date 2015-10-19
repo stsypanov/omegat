@@ -165,14 +165,14 @@ public abstract class AbstractMyMemoryTranslate extends BaseTranslate {
 	 */
 	private int getLevensteinDistance(String text, String sourceSeg) {
         LevenshteinDistance leven = new LevenshteinDistance();
-            ITokenizer srcTokenizer = Core.getProject().getSourceTokenizer();
+        ITokenizer srcTokenizer = Core.getProject().getSourceTokenizer();
 
-            Token[] textTokenArray = srcTokenizer.tokenizeVerbatim(text);
-            Token[] sourceSegTokenArray = srcTokenizer.tokenizeVerbatim(sourceSeg);
-            
-            dist = leven.compute(textTokenArray, sourceSegTokenArray);
-            return dist;
-	}
+        Token[] textTokenArray = srcTokenizer.tokenizeVerbatim(text);
+        Token[] sourceSegTokenArray = srcTokenizer.tokenizeVerbatim(sourceSeg);
+
+        int dist = leven.compute(textTokenArray, sourceSegTokenArray);
+        return dist;
+    }
     
 
 	protected String getMyMemoryResponse(Language sLang, Language tLang, String text, String format) throws UnsupportedEncodingException, IOException {

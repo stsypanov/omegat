@@ -42,8 +42,8 @@ import org.omegat.util.TagUtil.Tag;
  */
 public class ErrorReport {
 
-    final public Map<String, TagError> srcErrors = new HashMap<>();
-    final public Map<String, TagError> transErrors = new HashMap<>();
+    final public Map<Tag, TagError> srcErrors = new HashMap<>();
+    final public Map<Tag, TagError> transErrors = new HashMap<>();
 
     final public SourceTextEntry ste;
     final public String source;
@@ -67,8 +67,8 @@ public class ErrorReport {
      * 
      * @return A map between errors and tags
      */
-    public Map<TagError, List<String>> inverseReport() {
-        Map<TagError, List<String>> result = new EnumMap<>(TagError.class);
+    public Map<TagError, List<Tag>> inverseReport() {
+        Map<TagError, List<Tag>> result = new HashMap<>();
         fillInverseReport(srcErrors, result);
         fillInverseReport(transErrors, result);
         return result;

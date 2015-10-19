@@ -177,7 +177,7 @@ public class TextFilter extends AbstractFilter {
             lpin.close();
         }
 
-        if (!nontrans.isEmpty())
+        if (!nontrans.isEmpty()) {
             out.write(nontrans);
         }
     }
@@ -209,9 +209,9 @@ public class TextFilter extends AbstractFilter {
                 }
             }
             lpin.close();
-        }
-        if (nontrans.length() >= 0)
-            out.write(nontrans.toString());
+            if (nontrans.length() >= 0) {
+                out.write(nontrans.toString());
+            }
         }
         if (trans.length() >= 0) {
             out.write(processEntry(trans.toString()));
