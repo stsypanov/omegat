@@ -18,6 +18,7 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.net.*;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by rad1kal on 30.10.2014.
@@ -94,24 +95,16 @@ public class ProxyDialog extends PeroFrame {
 			}
 		});
 
-		ActionListener applyConfigurationListener = new ActionListener() {
+		ActionListener configurationListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProxyDialog.this.dispose();
-				ProxyUtils.applyProxyPreferences();
-				saveProxyPreferences();
+				dispose();
 			}
 		};
 
-		okButton.addActionListener(applyConfigurationListener);
-		applyButton.addActionListener(applyConfigurationListener);
-
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ProxyDialog.this.dispose();
-			}
-		});
+		okButton.addActionListener(configurationListener);
+		applyButton.addActionListener(configurationListener);
+		cancelButton.addActionListener(configurationListener);
 
 		ProxyPolicy policy = Preferences.getPreferenceEnumDefault(Preferences.PROXY_POLICY, ProxyPolicy.NO_PROXY);
 		switch (policy) {
@@ -134,6 +127,13 @@ public class ProxyDialog extends PeroFrame {
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		saveProxyPreferences();
+		ProxyUtils.applyProxyPreferences();
+	}
+
+	@Override
 	public String getPreferenceBaseName() {
 		return "proxy_dialogue";
 	}
@@ -146,11 +146,13 @@ public class ProxyDialog extends PeroFrame {
 			policy = ProxyPolicy.AUTO_DETECT;
 			try {
 				Proxy proxy = ProxyUtils.getProxy("http://mail.ru");
+
 				String host = ((InetSocketAddress) proxy.address()).getHostName();
 				int port = ((InetSocketAddress) proxy.address()).getPort();
+				Proxy.Type type = proxy.type();
 
-				writePreferences(host, port);
-			} catch (URISyntaxException e) {
+				writePreferences(host, port, type);
+			} catch (URISyntaxException | InterruptedException | ExecutionException e) {
 				Log.log(e);
 			}
 		} else {
@@ -158,30 +160,48 @@ public class ProxyDialog extends PeroFrame {
 			String host = hostField.getText();
 			int port = (Integer) portSpinner.getValue();
 
-			writePreferences(host, port);
+			Proxy.Type proxyType = httpButton.isSelected() ? Proxy.Type.HTTP : Proxy.Type.SOCKS;
+
+			writePreferences(host, port, proxyType);
 		}
 		Preferences.setPreference(Preferences.PROXY_POLICY, policy);
 	}
 
-	private void writePreferences(String host, int port) {
+	private void writePreferences(String host, int port, Proxy.Type proxyType) {
+		Preferences.setPreference(Preferences.PROXY_SET, true);
+
 		Preferences.setPreference(Preferences.HTTP_PROXY_HOST, host);
 		Preferences.setPreference(Preferences.HTTP_PROXY_PORT, port);
 
-		Preferences.setPreference(Preferences.HTTPS_PROXY_PORT, port);
-		Preferences.setPreference(Preferences.HTTPS_PROXY_PORT, port);
+		Preferences.setPreference(Preferences.HTTP_PROXY_TYPE, proxyType);
 	}
 
 	private void loadProxyConfiguration() {
+		Proxy.Type proxyType = Preferences.getPreferenceEnumDefault(Preferences.HTTP_PROXY_TYPE, Proxy.Type.HTTP);
+
 		String host = Preferences.getPreference(Preferences.HTTP_PROXY_HOST);
 		int port = Integer.parseInt(Preferences.getPreference(Preferences.HTTP_PROXY_PORT));
+
+		switch (proxyType) {
+			case HTTP: {
+				httpButton.setSelected(true);
+				break;
+			}
+			case SOCKS: {
+				socksButton.setSelected(true);
+				break;
+			}
+		}
+
 		hostField.setText(host);
 		portSpinner.setValue(port);
 	}
 
 	private void checkConnection(String urlString) {
+		HttpURLConnection urlConn = null;
 		try {
 			URL url = new URL(urlString);
-			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+			urlConn = (HttpURLConnection) url.openConnection();
 			urlConn.connect();
 			int responseCode = urlConn.getResponseCode();
 			switch (responseCode) {
@@ -199,6 +219,10 @@ public class ProxyDialog extends PeroFrame {
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+		} finally {
+			if (urlConn != null) {
+				urlConn.disconnect();
+			}
 		}
 	}
 
@@ -207,7 +231,7 @@ public class ProxyDialog extends PeroFrame {
 	}
 
 
-	public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args) {
 		new ProxyDialog();
 	}
 

@@ -55,7 +55,7 @@ import gen.core.filters.Filters;
  * <p>
  * This class's static methods remain for compatibility, but now they wrap a
  * singleton instance of a concrete implementation of {@link IPreferences}.
- * 
+ *
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers
@@ -431,6 +431,19 @@ public class Preferences {
     public static final String PROPERTY_SRX = "srx";
     public static final String PROPERTY_FILTERS = "filters";
 
+	/** Proxy preferences */
+	public static final String PROXY_SET = "proxySet";
+
+	public static final String HTTP_PROXY_HOST = "httpProxyHost";
+	public static final String HTTP_PROXY_PORT = "httpProxyPort";
+
+	public static final String HTTP_PROXY_TYPE = "httpProxyType";
+
+	/**
+	 * Decide whether Omegat should show file list at project load
+	 */
+	public static final String HIDE_FILE_LIST_AT_PROJECT_LOAD = "hideFileListAtProjectLoad";
+
     /** Private constructor, because this file is singleton */
     private Preferences() {
     }
@@ -469,7 +482,7 @@ public class Preferences {
      * <p>
      * Returns true if the preference exists and is equal to "true", false
      * otherwise (no such preference, or it's equal to "false", etc).
-     * 
+     *
      * @param key
      *            preference key, usually a static string from this class
      * @return preference defaultValue as a boolean
@@ -484,7 +497,7 @@ public class Preferences {
      * <p>
      * If the key is not found, returns the default value provided and sets the
      * preference to the default value.
-     * 
+     *
      * @param key
      *            name of the key to look up, usually a static string from this
      *            class
@@ -502,7 +515,7 @@ public class Preferences {
      * <p>
      * If the key is not found, returns the default value provided and sets the
      * preference to the default value.
-     * 
+     *
      * @param key
      *            name of the key to look up, usually a static string from this
      *            class
