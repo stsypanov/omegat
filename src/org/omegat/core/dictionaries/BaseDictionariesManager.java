@@ -31,14 +31,14 @@ public class BaseDictionariesManager {
     public List<DictionaryEntry> findWords(Set<String> words) {
         List<DictionaryEntry> result = new ArrayList<>();
         for (String word : words) {
-            findWord(dictionaries, result, word);
+            findWord(result, word);
         }
         return result;
     }
 
     public List<DictionaryEntry> findWord(String word){
         List<DictionaryEntry> result = new ArrayList<>();
-        findWord(dictionaries, result, word);
+        findWord(result, word);
         return result;
     }
 
@@ -63,8 +63,8 @@ public class BaseDictionariesManager {
         }
     }
 
-    protected void findWord(List<DictionaryInfo> dictionaries, List<DictionaryEntry> result, String word) {
-        for (DictionaryInfo dictionary : dictionaries) {
+    protected void findWord(List<DictionaryEntry> result, String word) {
+        for (DictionaryInfo dictionary : infos.values()) {
             try {
                 synchronized (ignoreWords) {
                     if (ignoreWords.contains(word)) {
