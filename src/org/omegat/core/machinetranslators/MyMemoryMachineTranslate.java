@@ -83,6 +83,10 @@ public class MyMemoryMachineTranslate extends AbstractMyMemoryTranslate {
         // fixed by MyMemory; TODO: Use local DTD
         tmxResponse = tmxResponse.replace("<!DOCTYPE tmx SYSTEM \"tmx11.dtd\">", "");
         tmxResponse = tmxResponse.replace("&", "&amp;");
+
+        if (tmxResponse.startsWith("\n")) {
+            tmxResponse = tmxResponse.substring(1, tmxResponse.length());
+        }
         
         // Build DOM object from the returned XML string
         InputSource source = new InputSource(new StringReader(tmxResponse));
