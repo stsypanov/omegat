@@ -40,12 +40,22 @@ public class PreferencesTest extends TestCase {
     /**
      * Test that if an error is encountered when loading the
      * preferences file, the original file is backed up.
+     * <p>
+     * Note that this test can spuriously fail if run in a situation
+     * where the Preferences class has already been initialized, for
+     * instance when running the entire suite of tests in Eclipse. It
+     * behaves correctly when run individually, or with ant.
      */
     public void testPreferencesBackup() throws Exception {
         File tmpDir = FileUtil.createTempDir();
         try {
             assertTrue(tmpDir.isDirectory());
             
+            // Initialize the log first because if we don't then the log
+            // file will be put under our temp config dir, and on Windows
+            // the log file will be locked, so when we try to delete the
+            // temp dir at the end of the test it will fail.
+            Log.log("Dummy log line");
             StaticUtils.setConfigDir(tmpDir.getAbsolutePath());
             
             // We can't use Preferences.FILE_PREFERENCES here
