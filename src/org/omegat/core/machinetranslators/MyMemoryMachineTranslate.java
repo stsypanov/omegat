@@ -82,6 +82,10 @@ public class MyMemoryMachineTranslate extends AbstractMyMemoryTranslate {
         // fixed by MyMemory; TODO: Use local DTD
         tmxResponse = tmxResponse.replace("<!DOCTYPE tmx SYSTEM \"tmx11.dtd\">", "");
         tmxResponse = tmxResponse.replace("&", "&amp;");
+
+        if (tmxResponse.startsWith("\n")) {
+            tmxResponse = tmxResponse.substring(1, tmxResponse.length());
+        }
         
         // We must remove anything before the XML declaration, otherwise we get an exception when creating the
         // DOM object. Currently, MyMemory returns \r\n<?xml
