@@ -113,7 +113,9 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
 
         clear();
         for (IMachineTranslation mt : translators) {
-            new FindThread(mt, newEntry, force).start();
+            if (mt.isEnabled()) {
+                new FindThread(mt, newEntry, force).start();
+            }
         }
     }
 
