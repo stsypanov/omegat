@@ -68,9 +68,14 @@ import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.clipboard.ClipboardUtils;
 import org.omegat.gui.dictionaries.DictionaryPopupController;
+import org.omegat.gui.dictionaries.VoidCallback;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.main.IMainWindow;
 import org.omegat.gui.main.MainWindow;
+import org.omegat.gui.popup.*;
+import org.omegat.gui.popup.PopupFactory;
+import org.omegat.gui.popup.dictionary.DictionaryPopup;
+import org.omegat.util.Log;
 import org.omegat.util.Platform;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -112,10 +117,12 @@ public class EditorTextArea3 extends JEditorPane {
     public EditorTextArea3(EditorController controller) {
         this.controller = controller;
         setEditorKit(new StyledEditorKit() {
+            @Override
             public ViewFactory getViewFactory() {
                 return factory3;
             }
 
+            @Override
             protected void createInputAttributes(Element element, MutableAttributeSet set) {
                 set.removeAttributes(set);
                 EditorController c = EditorTextArea3.this.controller;
@@ -131,6 +138,7 @@ public class EditorTextArea3 extends JEditorPane {
         ClipboardUtils.bind(this, Core.getMainWindow().getApplicationFrame());
 
         addCaretListener(new CaretListener() {
+            @Override
             public void caretUpdate(CaretEvent e) {
                 try {
                     int start = EditorUtils.getWordStart(EditorTextArea3.this, e.getMark());
@@ -173,7 +181,22 @@ public class EditorTextArea3 extends JEditorPane {
                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                    boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
                    if (suits) {
+                       final DictionaryPopup popup = new DictionaryPopup();
+                       new DictionaryPopupController(popup, Core.getDictionariesTextArea());
 
+                       final Popup parentPopup = PopupFactory.showPopupCentered(EditorTextArea3.this, new ContentProvider<JComponent>() {
+                           @Override
+                           public JComponent getContent() {
+                               return popup.getRoot();
+                           }
+                       });
+
+                       popup.setParentPopupCallback(new VoidCallback() {
+                           @Override
+                           public void execute() {
+                               parentPopup.hide();
+                           }
+                       });
                    }
                    lastShiftStroke = System.currentTimeMillis();
                }
@@ -245,7 +268,7 @@ public class EditorTextArea3 extends JEditorPane {
     };
 
     private JPopupMenu makePopupMenu(int pos) {
-        
+
         PopupMenuConstructorInfo[] cons;
         synchronized (popupConstructors) {
             /**
@@ -283,6 +306,7 @@ public class EditorTextArea3 extends JEditorPane {
         synchronized (popupConstructors) {
             popupConstructors.add(new PopupMenuConstructorInfo(priority, constructor));
             Collections.sort(popupConstructors, new Comparator<PopupMenuConstructorInfo>() {
+                @Override
                 public int compare(PopupMenuConstructorInfo o1, PopupMenuConstructorInfo o2) {
                     return o1.priority - o2.priority;
                 }
@@ -755,6 +779,7 @@ public class EditorTextArea3 extends JEditorPane {
      * Factory for create own view.
      */
     public static ViewFactory factory3 = new ViewFactory() {
+        @Override
         public View create(Element elem) {
             String kind = elem.getName();
             if (kind != null) {

@@ -2,7 +2,7 @@ package org.omegat.gui.dictionaries;
 
 import org.omegat.core.dictionaries.BaseDictionariesManager;
 import org.omegat.core.dictionaries.DictionaryEntry;
-import org.omegat.gui.editor.autocompleter.DictionaryAutoCompleterView;
+import org.omegat.gui.popup.dictionary.DictionaryPopup;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -10,24 +10,22 @@ import java.util.Collections;
 import java.util.List;
 
 public class DictionaryPopupController {
-    private DictionaryAutoCompleterView popup;
-    private DictionaryPopupModel popupModel;
-    private DictionariesTextArea dictionariesTextArea;
-    private BaseDictionariesManager dictionariesManager;
+    protected DictionaryPopup popup;
+    protected SearchByKeyProvider popupModel;
+    protected DictionariesTextArea dictionariesTextArea;
 
-    public DictionaryPopupController(DictionaryAutoCompleterView popup) {
+    private DictionaryPopupController(DictionaryPopup popup) {
         this.popup = popup;
         init();
     }
 
-    public DictionaryPopupController(DictionaryAutoCompleterView dictionaryPopup, DictionariesTextArea dictionariesTextArea) {
+    public DictionaryPopupController(DictionaryPopup dictionaryPopup, DictionariesTextArea dictionariesTextArea) {
         this(dictionaryPopup);
         this.dictionariesTextArea = dictionariesTextArea;
     }
 
-    private void init() {
-        dictionariesManager = new BaseDictionariesManager();
-        popupModel = new DictionaryPopupModel(dictionariesManager);
+    protected void init() {
+        popupModel = getPopupModel();
         popup.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -37,26 +35,32 @@ public class DictionaryPopupController {
         popup.setCallback(new Callback<String>() {
             @Override
             public void execute(String str) {
-                List<DictionaryEntry> dictionaryEntries = dictionariesManager.findWord(str);
+                List<DictionaryEntry> dictionaryEntries = popupModel.findWord(str);
                 dictionariesTextArea.setFoundResult(dictionaryEntries);
             }
         });
     }
 
-    private void processKeyEvent(KeyEvent e) {
+    protected SearchByKeyProvider getPopupModel() {
+        return new DictionaryPopupModel(new BaseDictionariesManager());
+    }
+
+    protected void processKeyEvent(KeyEvent e) {
         if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-            popupModel.clear();
             popup.hide();
-        } else {
+        } else if (e.getKeyChar() != KeyEvent.VK_ENTER) {
             updatePopup();
         }
     }
 
-    public void updatePopup() {
+    protected void updatePopup() {
         List<String> byKey = popupModel.findByKey(popup.getText());
         if (byKey.size() != 0){
             popup.setModel(byKey);
             popup.redraw();
+            if (popup.notVisible()){
+                popup.showPopup();
+            }
         } else {
             popup.setModel(Collections.<String>emptyList());
             popup.redraw();
