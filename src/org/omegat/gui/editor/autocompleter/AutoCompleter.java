@@ -43,7 +43,6 @@ import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 
 import org.omegat.core.Core;
-import org.omegat.gui.dictionaries.DictionaryPopupController;
 import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.gui.editor.TagAutoCompleterView;
 import org.omegat.gui.editor.autotext.AutotextAutoCompleterView;
@@ -115,11 +114,7 @@ public class AutoCompleter implements IAutoCompleter {
         scroll.getHorizontalScrollBar().setFocusable(false); 
         
         // add any views here
-        DictionaryAutoCompleterView dictionaryAutoCompleterView = new DictionaryAutoCompleterView();
-        new DictionaryPopupController(dictionaryAutoCompleterView, Core.getDictionariesTextArea());
-
         views = new ArrayList<>(5);
-        addView(dictionaryAutoCompleterView);
         addView(new GlossaryAutoCompleterView());
         addView(new AutotextAutoCompleterView());
         addView(new TagAutoCompleterView());
