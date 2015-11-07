@@ -86,6 +86,7 @@ import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.SegmentExportImport;
 import org.omegat.gui.filters2.FiltersCustomizer;
+import org.omegat.gui.glossary.editor.GlossaryEditorDialogue;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
@@ -115,6 +116,7 @@ import org.omegat.util.TagUtil.Tag;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings({"unused", "MethodMayBeStatic"})
 public class MainWindowMenuHandler {
     private final MainWindow mainWindow;
 
@@ -921,6 +923,17 @@ public class MainWindowMenuHandler {
     public void optionsGlossaryReplacementCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT,
                 mainWindow.menu.optionsGlossaryReplacementCheckBoxMenuItem.isSelected());
+    }
+
+    public void optionsEditGlossaryMenuItemActionPerformed() {
+        String writeableGlossary = Core.getProject().getProjectProperties().getWriteableGlossary();
+        GlossaryEditorDialogue dialogue = new GlossaryEditorDialogue();
+        try {
+            dialogue.readGlossary(new File(writeableGlossary));
+            dialogue.setVisible(true);
+        } catch (IOException e) {
+            Core.getMainWindow().showErrorDialogRB("TF_ERROR", "FAILED_TO_READ_GLOSSARY", e);
+        }
     }
 
     public void optionsDictionaryFuzzyMatchingCheckBoxMenuItemActionPerformed() {

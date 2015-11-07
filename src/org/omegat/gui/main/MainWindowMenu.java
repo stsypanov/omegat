@@ -77,7 +77,7 @@ import org.openide.awt.Mnemonics;
 
 /**
  * Class for create main menu and handle main menu events.
- * 
+ *
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -92,14 +92,14 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
- 
+
 /**
  * Add newly created MenuItem items to
  * /src/org/omegat/gui/main/MainMenuShortcuts.properties and
  * /src/org/omegat/gui/main/MainMenuShortcuts.mac.properties
  * with the proper shortcuts if set.
  */
-  
+
 public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     private static final Logger LOGGER = Logger.getLogger(MainWindowMenu.class.getName());
 
@@ -160,7 +160,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Code for dispatching events from components to event handlers.
-     * 
+     *
      * @param evt
      *            event info
      */
@@ -397,6 +397,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsGlossaryMenu.add(optionsGlossaryTBXDisplayContextCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_TBX_DISPLAY_CONTEXT"));
         optionsGlossaryMenu.add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
         optionsGlossaryMenu.add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
+        optionsGlossaryMenu.add(optionsEditGlossaryMenuItem = createMenuItem("TF_OPTIONSMENU_EDIT_GLOSSARY"));
         optionsGlossaryMenu.add(optionsGlossaryReplacementCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_REPLACE_ON_INSERT"));
         optionsGlossaryMenu.addSeparator();
         // TaaS options come next (but are added from elsewhere)
@@ -437,7 +438,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
         helpMenu.add(helpLastChangesMenuItem = createMenuItem("TF_MENU_HELP_LAST_CHANGES"));
         helpMenu.add(helpLogMenuItem = createMenuItem("TF_MENU_HELP_LOG"));
-        
+
         setActionCommands();
         PropertiesShortcuts.MainMenuShortcuts.bindKeyStrokes(mainMenu);
 
@@ -559,7 +560,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu instance
@@ -573,7 +574,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu item instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu item instance
@@ -587,7 +588,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu item instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu item instance
@@ -601,7 +602,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Create menu item instance and set title.
-     * 
+     *
      * @param titleKey
      *            title name key in resource bundle
      * @return menu item instance
@@ -633,7 +634,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Enable or disable items depend of project open or close.
-     * 
+     *
      * @param isProjectOpened
      *            project open status: true if opened, false if closed
      */
@@ -657,7 +658,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
                 viewFileListMenuItem, toolsValidateTagsMenuItem, toolsSingleValidateTagsMenuItem,
                 toolsShowStatisticsStandardMenuItem, toolsShowStatisticsMatchesMenuItem,
-                toolsShowStatisticsMatchesPerFileMenuItem };
+                toolsShowStatisticsMatchesPerFileMenuItem,
+
+                baseFilteringMenuItem, optionsEditGlossaryMenuItem
+        };
 
         for (JMenuItem item : itemsToSwitchOff) {
             item.setEnabled(!isProjectOpened);
@@ -690,7 +694,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     public JMenu getProjectMenu() {
         return projectMenu;
     }
-    
+
     public JMenuItem getProjectRecentMenuItem() {
         return projectOpenRecentMenuItem;
     }
@@ -770,6 +774,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsGlossaryExactMatchCheckBoxMenuItem;
     JMenuItem optionsGlossaryStemmingCheckBoxMenuItem;
     JMenuItem optionsGlossaryReplacementCheckBoxMenuItem;
+    JMenuItem optionsEditGlossaryMenuItem;
     JMenu optionsDictionaryMenu;
     JMenuItem optionsDictionaryFuzzyMatchingCheckBoxMenuItem;
     JMenu optionsTransTipsMenu;

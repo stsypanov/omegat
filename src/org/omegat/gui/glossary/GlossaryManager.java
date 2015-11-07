@@ -29,12 +29,8 @@
 package org.omegat.gui.glossary;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.IOException;
+import java.util.*;
 
 import org.omegat.core.Core;
 import org.omegat.core.glossaries.IGlossary;
@@ -128,7 +124,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
             }
         }
     }
-    
+
     public void forceUpdateGlossary() {
         pane.refresh();
     }
@@ -158,7 +154,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
 
     /**
      * Get glossary entries.
-     * 
+     *
      * @return all entries
      * @param src
      */
@@ -179,7 +175,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
      * Get glossary entries for search operation. Almost the same as getGlossaryEntries(), except search
      * usually executed for every segment in project, i.e. should work enough fast. Then, search should be
      * produced by local files only.
-     * 
+     *
      * @return all entries
      * @param src
      */
@@ -207,4 +203,15 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
             }
         }
     }
+
+    public static Map<String, List<GlossaryEntry>> getGlossaries() {
+        return glossaries;
+    }
+
+    public static void append(File out, GlossaryEntry glossaryEntry) throws IOException {
+        String key = out.getPath();
+        glossaries.get(key).add(glossaryEntry);
+        GlossaryReaderTSV.append(out, glossaryEntry);
+    }
+
 }
