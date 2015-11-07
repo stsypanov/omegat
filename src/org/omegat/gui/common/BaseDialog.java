@@ -1,75 +1,111 @@
-package org.omegat.gui.clipboard;
+package org.omegat.gui.common;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.omegat.gui.common.PeroDialog;
+import org.omegat.gui.dictionaries.Callback;
+import org.omegat.gui.dictionaries.VoidCallback;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: stsypanov
- * Date: 23.07.2014
- * Time: 11:18
- */
+public abstract class BaseDialog extends PeroDialog {
+	protected JPanel contentPane;
+	protected JButton buttonOK;
+	protected JButton buttonCancel;
+	protected JPanel contentPanel;
+	protected Callback okCalback;
 
-public class ClipboardDialog extends PeroDialog {
-
-	private JPanel contentPane;
-	private JButton buttonOK;
-	private JButton buttonCancel;
-	private JTextPane textArea;
-
-	private static ClipboardDialog instance;
-
-	public static ClipboardDialog getInstance(Frame owner) {
-		if (instance == null) {
-			instance = new ClipboardDialog(owner);
-		}
-		return instance;
+	public BaseDialog(Frame owner) {
+		super(owner);
+		initLayout();
 	}
 
-	private ClipboardDialog(Frame owner) {
+	public BaseDialog(Frame owner, boolean modal) {
+		super(owner, modal);
+		initLayout();
+	}
+
+	public BaseDialog(Frame owner, String title) {
+		super(owner, title);
+		initLayout();
+	}
+
+	public BaseDialog(Frame owner, String title, boolean modal) {
+		super(owner, title, modal);
+		initLayout();
+	}
+
+	public BaseDialog(Dialog owner) {
 		super(owner);
-		setTitle("Clipboard");
+		initLayout();
+	}
+
+	public BaseDialog(Dialog owner, boolean modal) {
+		super(owner, modal);
+		initLayout();
+	}
+
+	protected void initLayout() {
 		setContentPane(contentPane);
 		setModal(true);
 		getRootPane().setDefaultButton(buttonOK);
-		setPreferredSize(new Dimension(600, 400));
-		pack();
 
-		new LinePainter(textArea);
+		buttonOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onOK();
+			}
+		});
 
-		textArea.setEditable(false);
-		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		buttonCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onCancel();
+			}
+		});
+
+// call onCancel() when cross is clicked
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				onCancel();
+			}
+		});
+
+// call onCancel() on ESCAPE
+		contentPane.registerKeyboardAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onCancel();
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
 
-	@Override
-	public JPanel getContentPane() {
-		return contentPane;
+	private void onOK() {
+// add your code here
+		dispose();
+		okAction();
 	}
 
-	public JTextPane getTextArea() {
-		return textArea;
+	private void onCancel() {
+// add your code here if necessary
+		dispose();
+		cancelAction();
 	}
 
-	public void showDialog() {
-		setVisible(true);
+	public abstract void okAction();
+
+	public abstract void cancelAction();
+
+	public JPanel getContentPanel() {
+		return contentPanel;
 	}
 
-	public void hideDialog() {
-		setVisible(false);
-	}
-
-	public void setOkButtonActionListener(ActionListener actionListener) {
-		buttonOK.addActionListener(actionListener);
-	}
-
-	public void setCancelButtonListener(ActionListener actionListener) {
-		buttonCancel.addActionListener(actionListener);
+	public void setOkCalback(Callback okCalback) {
+		this.okCalback = okCalback;
 	}
 
 	{
@@ -103,11 +139,9 @@ public class ClipboardDialog extends PeroDialog {
 		buttonCancel = new JButton();
 		buttonCancel.setText("Cancel");
 		panel2.add(buttonCancel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-		contentPane.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-		textArea = new JTextPane();
-		panel3.add(textArea, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+		contentPanel = new JPanel();
+		contentPanel.setLayout(new BorderLayout(0, 0));
+		contentPane.add(contentPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 	}
 
 	/**

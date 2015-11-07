@@ -377,6 +377,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsGlossaryMenu.add(optionsGlossaryTBXDisplayContextCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_TBX_DISPLAY_CONTEXT"));
         optionsGlossaryMenu.add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
         optionsGlossaryMenu.add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
+        optionsGlossaryMenu.add(optionsEditGlossaryMenuItem = createMenuItem("TF_OPTIONSMENU_EDIT_GLOSSARY"));
 
         optionsMenu.add(optionsDictionaryMenu= createMenu("TF_OPTIONSMENU_DICTIONARY"));
         optionsDictionaryMenu.add(optionsDictionaryFuzzyMatchingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_DICTIONARY_FUZZY"));
@@ -624,7 +625,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 toolsShowStatisticsStandardMenuItem, toolsShowStatisticsMatchesMenuItem,
                 toolsShowStatisticsMatchesPerFileMenuItem,
 
-                baseFilteringMenuItem
+                baseFilteringMenuItem, optionsEditGlossaryMenuItem
         };
 
         for (JMenuItem item : itemsToSwitchOff) {
@@ -727,6 +728,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsGlossaryTBXDisplayContextCheckBoxMenuItem;
     JMenuItem optionsGlossaryExactMatchCheckBoxMenuItem;
     JMenuItem optionsGlossaryStemmingCheckBoxMenuItem;
+    JMenuItem optionsEditGlossaryMenuItem;
     JMenu optionsDictionaryMenu;
     JMenuItem optionsDictionaryFuzzyMatchingCheckBoxMenuItem;
     JMenu optionsTransTipsMenu;
