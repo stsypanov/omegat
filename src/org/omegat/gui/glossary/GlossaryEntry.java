@@ -57,6 +57,10 @@ public class GlossaryEntry {
         return m_src;
     }
 
+    public void setSrcText(String m_src) {
+        this.m_src = m_src;
+    }
+
     /**
      * Return the first target-language term string.
      * 
@@ -68,6 +72,10 @@ public class GlossaryEntry {
      */
     public String getLocText() {
         return m_loc.length > 0 ? m_loc[0] : "";
+    }
+
+    public void setLocText(String[] m_loc) {
+        this.m_loc = m_loc;
     }
 
     /**
@@ -105,8 +113,12 @@ public class GlossaryEntry {
         return m_com;
     }
 
+    public void setComments(String[] m_com) {
+        this.m_com = m_com;
+    }
+
     public boolean getPriority() {
-        return m_priority.length > 0 ? m_priority[0] : false;
+        return m_priority.length > 0 && m_priority[0];
     }
 
     public boolean[] getPriorities() {
@@ -125,7 +137,7 @@ public class GlossaryEntry {
         for (int i = 0; i < m_loc.length; i++) {
             if (i > 0 && m_loc[i].equals(m_loc[i - 1])) {
                 if (!m_com[i].isEmpty()) {
-                    comments.append("\n");
+                    comments.append('\n');
                     comments.append(commentIndex);
                     comments.append(". ");
                     comments.append(m_com[i]);
@@ -142,7 +154,7 @@ public class GlossaryEntry {
             }
             commentIndex++;
             if (!m_com[i].isEmpty()) {
-                comments.append("\n");
+                comments.append('\n');
                 comments.append(commentIndex);
                 comments.append(". ");
                 comments.append(m_com[i]);

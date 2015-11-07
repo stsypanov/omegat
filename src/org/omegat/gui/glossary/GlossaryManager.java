@@ -29,12 +29,8 @@
 package org.omegat.gui.glossary;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.IOException;
+import java.util.*;
 
 import org.omegat.core.Core;
 import org.omegat.core.glossaries.IGlossary;
@@ -59,7 +55,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
     protected DirectoryMonitor monitor;
 
     private final GlossaryTextArea pane;
-    private final Map<String, List<GlossaryEntry>> glossaries = new TreeMap<>();
+    private static final Map<String, List<GlossaryEntry>> glossaries = new HashMap<>();
 
     protected File priorityGlossary;
     protected IGlossary[] externalGlossaries;
@@ -207,4 +203,15 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
             }
         }
     }
+
+    public static Map<String, List<GlossaryEntry>> getGlossaries() {
+        return glossaries;
+    }
+
+    public static void append(File out, GlossaryEntry glossaryEntry) throws IOException {
+        String key = out.getPath();
+        glossaries.get(key).add(glossaryEntry);
+        GlossaryReaderTSV.append(out, glossaryEntry);
+    }
+
 }
