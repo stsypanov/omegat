@@ -199,4 +199,21 @@ public final class Styles {
     	
     	return r;
     }
+
+    /** Apply Look and Feel modifications during inital setup and color modifications. */
+	public static void setupLAF() {
+        UIManager.put("MenuItem.acceleratorFont", UIManager.getLookAndFeel().getDefaults().get("MenuItem.font"));
+
+//        Color backgroundColor = Styles.EditorColor.COLOR_BACKGROUND.getColor();
+//        Color foregroundColor = Styles.EditorColor.COLOR_FOREGROUND.getColor();
+//        UIManager.put("TextPane.background", backgroundColor);
+//        UIManager.put("TextPane.foreground", foregroundColor);
+//        UIManager.put("TextPane.caretForeground", foregroundColor);
+//        UIManager.put("TextArea.background", backgroundColor);
+//        UIManager.put("TextArea.foreground", foregroundColor);
+//        UIManager.put("TextArea.caretForeground", foregroundColor);
+//        UIManager.put("EditorPane.background", backgroundColor);
+//        UIManager.put("EditorPane.foreground", foregroundColor);
+//        UIManager.put("EditorPane.caretForeground", foregroundColor);
+	}
 }
