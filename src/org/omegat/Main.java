@@ -73,6 +73,7 @@ import org.omegat.util.network.ProxyUtils;
 import com.vlsolutions.swing.docking.DockingDesktop;
 
 import org.omegat.util.Platform;
+import com.bulenkov.darcula.DarculaLaf;
 
 /**
  * The main OmegaT class, used to launch the program.
@@ -223,7 +224,7 @@ public class Main {
     }
 
 	private static void loadProxySettings() {
-		String setProxy = Preferences.getPreference(Preferences.SET_HTTP_PROXY);
+		String setProxy = Preferences.getPreference(Preferences.PROXY_SET);
 
 		if ("true".equals(setProxy)){
             ProxyUtils.applyProxyPreferences();
@@ -253,11 +254,11 @@ public class Main {
             for (String key : config.keySet()) {
                 String value = config.getString(key);
                 System.setProperty(key, value);
-                System.out.println("Read from config: " + key + "=" + value);
-                if (key.equals("user.language")) {
+                System.out.println("Read from config: " + key + '=' + value);
+                if ("user.language".equals(key)) {
                     userLanguage = value;
                 }
-                if (key.equals("user.country")) {
+                if ("user.country".equals(key)) {
                     userCountry = value;
                 }
             }
@@ -294,7 +295,7 @@ public class Main {
         Class<?> cls = toolkit.getClass();
         try
         {
-            if (cls.getName().equals("sun.awt.X11.XToolkit"))
+            if ("sun.awt.X11.XToolkit".equals(cls.getName()))
             {
                 Field field = cls.getDeclaredField("awtAppClassName");
                 field.setAccessible(true);
@@ -308,14 +309,12 @@ public class Main {
 
         try {
 
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            UIManager.setLookAndFeel(new DarculaLaf());
 
             System.setProperty("swing.aatext", "true");
+
+            //// TODO: 23.09.2015 investigate
+//            System.setProperty("awt.useSystemAAFontSettings","on");
             
             // Override LAF with custom colors, if any (they default to the LAF attributes)
             Styles.setupLAF();

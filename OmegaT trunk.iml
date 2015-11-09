@@ -63,24 +63,8 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library name="htmlparser.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/htmlparser.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="jna.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jna.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="Darcula" />
+    <orderEntry type="module" module-name="vldocking" />
     <orderEntry type="module-library" exported="">
       <library name="jmyspell-core-1.0.0-beta-2.jar">
         <CLASSES>
@@ -91,9 +75,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="xmlunit-1.1.jar">
+      <library name="xmlunit-1.6.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/test/lib/xmlunit-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/test/lib/xmlunit-1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -379,15 +363,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="vldocking-3.0.5-SNAPSHOT.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/vldocking-3.0.5-SNAPSHOT.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="forms_rt.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/forms_rt.jar!/" />
@@ -406,16 +381,31 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="juniversalchardet-1.0.3" level="project" />
-    <orderEntry type="library" name="vldocking-3.0.5-SNAPSHOT" level="project" />
     <orderEntry type="library" name="languagetool-core-2.2" level="project" />
     <orderEntry type="library" name="junit-4.12" level="project" />
     <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
     <orderEntry type="library" name="commons-io-2.4" level="project" />
     <orderEntry type="library" name="org.eclipse.jgit-3.7.1.201504261725-r" level="project" />
     <orderEntry type="library" name="org.eclipse.jgit-3.7.1.201504261725-r" level="project" />
-    <orderEntry type="library" name="laf-plugin-7.3.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="laf-widget-7.3.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="substance-7.3.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="trident-7.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library name="htmlparser.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/htmlparser.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="iconloader" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library name="jna.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jna.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="darcula" level="project" />
   </component>
 </module>

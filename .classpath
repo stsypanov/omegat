@@ -52,5 +52,6 @@
 	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.7.1.201504261725-r.jar"/>
 	<classpathentry exported="true" kind="lib" path="test/lib/xmlunit-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/darcula.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

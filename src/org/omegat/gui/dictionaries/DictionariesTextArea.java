@@ -105,11 +105,12 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
         setEditable(false);
         AlwaysVisibleCaret.apply(this);
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
     	applyFont();
         setMinimumSize(new Dimension(100, 50));
 
         CoreEvents.registerEditorEventListener(new IEditorEventListener() {
+            @Override
             public void onNewWord(String newWord) {
                 callDictionary(newWord);
             }
@@ -117,6 +118,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         
         // register font changes callback
         CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
+            @Override
             public void onFontChanged(Font newFont) {
  				applyFont(newFont);          
             }
@@ -132,8 +134,6 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 		MutableAttributeSet attr = new SimpleAttributeSet();
 		HTMLDocument doc = (HTMLDocument) getDocument();
 		
-		doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.BACKGROUND_COLOR, EditorColor.COLOR_BACKGROUND.toHex());
-		doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.COLOR, EditorColor.COLOR_FOREGROUND.toHex());
 
     	doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.FONT_FAMILY, font.getFontName());
     	doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.FONT_SIZE, font.getSize() + "pt");
@@ -151,7 +151,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     @Override
     protected void onProjectClose() {
         clear();
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
         applyFont();
         manager.stop();
         tokenizer = null;
@@ -199,6 +199,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     /**
      * Refresh content on dictionary file changed.
      */
+    @Override
     public void refresh() {
         SourceTextEntry ste = Core.getEditor().getCurrentEntry();
         if (ste != null) {
@@ -267,6 +268,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                             String hideW = StringUtil.format(OStrings.getString("DICTIONARY_HIDE"), w);
                             JMenuItem item = popup.add(hideW);
                             item.addActionListener(new ActionListener() {
+                                @Override
                                 public void actionPerformed(ActionEvent e) {
                                     manager.addIgnoreWord(w);
                                 }
@@ -309,6 +311,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             List<DictionaryEntry> result = manager.findWords(words);
 
             Collections.sort(result, new Comparator<DictionaryEntry>() {
+                @Override
                 public int compare(DictionaryEntry o1, DictionaryEntry o2) {
                     return o1.getWord().compareTo(o2.getWord());
                 }
