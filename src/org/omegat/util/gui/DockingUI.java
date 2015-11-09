@@ -192,7 +192,7 @@ public class DockingUI {
         Color standardBgColor = UIManager.getColor("Panel.background"); // #EEEEEE on Metal & OS X LAF
         Color activeTitleBgColor = adjustRGB(standardBgColor, 0xF6 - 0xEE); // #EEEEEE -> #F6F6F6; Lighter than standard background
         Color bottomAreaBgColor = adjustRGB(standardBgColor, 0xDE - 0xEE); // #EEEEEE -> #DEDEDE; Darkest background
-        Color borderColor = adjustRGB(standardBgColor, 0x9B - 0xEE); // #EEEEEE -> #9B9B9B; Standard border. Darker than standard background.
+        Color borderColor = new ColorUIResource(128, 128, 128); // #EEEEEE -> #9B9B9B; Standard border. Darker than standard background.
         UIManager.put("OmegaTBorder.color", borderColor);
         Color statusAreaColor = adjustRGB(standardBgColor, 0x57 - 0xEE); // #EEEEEE -> #575757; Darkest border
         
@@ -201,14 +201,14 @@ public class DockingUI {
         UIManager.put("VLDocking.shadow", statusAreaColor);
         
         // Main window main area
-        int outside = 5;
+        int outside = 1;
         UIManager.put("DockingDesktop.border", new EmptyBorder(outside, outside, outside, outside));
 
         // Docked, visible panels get two borders if we're not careful:
         // 1. Drawn by VLDocking. Surrounds panel content AND header. Set this to empty margin instead.
-        int panel = 2;
+        int panel = 1;
         UIManager.put("DockView.singleDockableBorder", new EmptyBorder(panel, panel, panel, panel));
-        int maxPanel = outside + panel;
+        int maxPanel = 1;
         UIManager.put("DockView.maximizedDockableBorder", new EmptyBorder(maxPanel, maxPanel, maxPanel, maxPanel));
         // 2. Drawn by OmegaT-defined Dockables. Make this a 1px line.
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
@@ -224,9 +224,9 @@ public class DockingUI {
         if (Platform.isMacOSX()) {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(0, 5, 5, 5, new Color(0xE6E6E6)));
         } else if (isWindowsLAF() && !isWindowsClassicLAF()) {
-            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
+            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(1, 1, 1, 1, Color.WHITE));
         } else {
-            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(5, 5, 5, 5, standardBgColor));
+            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(1, 1, 1, 1, standardBgColor));
         }
 
         // Windows 8+ is very square.
@@ -237,12 +237,15 @@ public class DockingUI {
         Color inactiveTitleText = adjustRGB(activeTitleText, 0x80); // #000000 -> #808080; GTK+ has Color.WHITE for Label.disabledForeground
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(cornerRadius, borderColor, RoundedCornerBorder.SIDE_TOP));
         UIManager.put("InternalFrame.activeTitleForeground", activeTitleText); // Windows 7 "Classic" has Color.WHITE for this
-        UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
-        UIManager.put("InternalFrame.inactiveTitleForeground", inactiveTitleText);
+        UIManager.put("InternalFrame.activeTitleBackground", new Color(0x2E547F));
+        UIManager.put("InternalFrame.activeTitleForeground", new ColorUIResource(166, 166, 166));
         UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
-        UIManager.put("InternalFrame.inactiveTitleForeground", Color.BLACK); // Label.disabledForeground on OS X LAF
+        UIManager.put("InternalFrame.inactiveTitleForeground", borderColor); // Label.disabledForeground on OS X LAF
         // Disable gradient on pane title bars
-        UIManager.put("DockViewTitleBar.disableCustomPaint", true);
+//        UIManager.put("DockViewTitleBar.disableCustomPaint", true);
+        UIManager.put("DockViewTitleBar.useGradientInHeader", false);
+        //use transparent icons in title bars
+        UIManager.put("DockViewTitleBar.useTransparentButtonsInHeader", true);
 
         // Main window bottom area
 
@@ -258,7 +261,7 @@ public class DockingUI {
         // Lowermost section margins
         UIManager.put("OmegaTMainWindowBottomMargin.border", new EmptyBorder(0, 2 * outside, 0, 2 * outside));
         
-        UIManager.put("OmegaTEditorFilter.border", new MatteBorder(1, 1, 0, 1, borderColor));
+        UIManager.put("OmegaTEditorFilter.border", new MatteBorder(0, 0, 0, 0, borderColor));
         
         // Undocked panel
         UIManager.put("activeCaption", Color.WHITE);

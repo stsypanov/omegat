@@ -90,7 +90,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     protected final List<String> displayedWords = new ArrayList<String>();
 
     protected ITokenizer tokenizer;
-    
+
     private final DockableScrollPane scrollPane;
 
     public DictionariesTextArea(IMainWindow mw) {
@@ -112,6 +112,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         setMinimumSize(new Dimension(100, 50));
 
         CoreEvents.registerEditorEventListener(new IEditorEventListener() {
+            @Override
             public void onNewWord(String newWord) {
                 callDictionary(newWord);
             }
@@ -188,7 +189,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             // shouldn't be throwed
         }
     }
-    
+
     @Override
     public void onEntryActivated(SourceTextEntry newEntry) {
         scrollPane.stopNotifying();
@@ -203,6 +204,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     /**
      * Refresh content on dictionary file changed.
      */
+    @Override
     public void refresh() {
         SourceTextEntry ste = Core.getEditor().getCurrentEntry();
         if (ste != null) {
@@ -227,7 +229,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         if (!data.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_DICTIONARY_HITS)) {
             scrollPane.notify(true);
         }
-        
+
         StringBuilder txt = new StringBuilder();
         boolean wasPrev = false;
         int i = 0;

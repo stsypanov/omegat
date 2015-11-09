@@ -87,6 +87,9 @@ import org.omegat.util.network.ProxyUtils;
 
 import com.vlsolutions.swing.docking.DockingDesktop;
 
+import org.omegat.util.Platform;
+import com.bulenkov.darcula.DarculaLaf;
+
 /**
  * The main OmegaT class, used to launch the program.
  *
@@ -232,6 +235,14 @@ public class Main {
         }
     }
 
+	private static void loadProxySettings() {
+		String setProxy = Preferences.getPreference(Preferences.PROXY_SET);
+
+		if ("true".equals(setProxy)){
+            ProxyUtils.applyProxyPreferences();
+		}
+	}
+
     /**
      * Load System properties from a specified .properties file. In order to
      * allow this to reliably change the display language, it must called before
@@ -301,7 +312,7 @@ public class Main {
         Class<?> cls = toolkit.getClass();
         try
         {
-            if (cls.getName().equals("sun.awt.X11.XToolkit"))
+            if ("sun.awt.X11.XToolkit".equals(cls.getName()))
             {
                 Field field = cls.getDeclaredField("awtAppClassName");
                 field.setAccessible(true);
@@ -319,10 +330,13 @@ public class Main {
             // Contributed by Masaki Katakai (SF: katakai)
             UIManager.getInstalledLookAndFeels();
 
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//            setNimbusLaF();
+            UIManager.setLookAndFeel(new DarculaLaf());
 
             System.setProperty("swing.aatext", "true");
+
+            //// TODO: 23.09.2015 investigate
+//            System.setProperty("awt.useSystemAAFontSettings","on");
+
             // Override LAF with custom colors, if any (they default to the LAF attributes)
             Styles.setupLAF();
 
