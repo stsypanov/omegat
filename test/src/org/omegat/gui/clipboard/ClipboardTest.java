@@ -1,6 +1,7 @@
 package org.omegat.gui.clipboard;
 
 import org.omegat.gui.common.PeroFrame;
+import org.omegat.util.gui.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,8 +77,13 @@ public class ClipboardTest extends PeroFrame {
 	}
 
 	public static void main(String[] args) {
-		ClipboardTest test = new ClipboardTest();
-		test.setVisible(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				ClipboardTest test = new ClipboardTest();
+				test.setVisible(true);
+			}
+		});
 	}
 
 
