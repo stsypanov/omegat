@@ -16,12 +16,13 @@ import java.awt.event.ActionListener;
  * Time: 11:18
  */
 
-public class ClipboardDialog extends PeroDialog {
+public final class ClipboardDialog extends PeroDialog {
 
 	private JPanel contentPane;
 	private JButton buttonOK;
 	private JButton buttonCancel;
-	private JTextPane textArea;
+	private JList<String> list;
+	private JTextPane textPane;
 
 	private static ClipboardDialog instance;
 
@@ -41,9 +42,7 @@ public class ClipboardDialog extends PeroDialog {
 		setPreferredSize(new Dimension(600, 400));
 		pack();
 
-		new LinePainter(textArea);
-
-		textArea.setEditable(false);
+		textPane.setEditable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 
@@ -52,8 +51,12 @@ public class ClipboardDialog extends PeroDialog {
 		return contentPane;
 	}
 
+	public JList<String> getList() {
+		return list;
+	}
+
 	public JTextPane getTextArea() {
-		return textArea;
+		return textPane;
 	}
 
 	public void showDialog() {
@@ -104,10 +107,12 @@ public class ClipboardDialog extends PeroDialog {
 		buttonCancel.setText("Cancel");
 		panel2.add(buttonCancel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+		panel3.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
 		contentPane.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-		textArea = new JTextPane();
-		panel3.add(textArea, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+		list = new JList();
+		panel3.add(list, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+		textPane = new JTextPane();
+		panel3.add(textPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
 	}
 
 	/**
