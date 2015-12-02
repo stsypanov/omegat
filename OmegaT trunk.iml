@@ -63,8 +63,6 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Darcula" />
-    <orderEntry type="module" module-name="vldocking" />
     <orderEntry type="module-library" exported="">
       <library name="jmyspell-core-1.0.0-beta-2.jar">
         <CLASSES>
@@ -407,5 +405,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="darcula" level="project" />
+    <orderEntry type="library" name="vldocking-3.0.5-SNAPSHOT" level="project" />
   </component>
 </module>
