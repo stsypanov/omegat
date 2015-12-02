@@ -65,8 +65,8 @@ public class NewTeamProject extends PeroDialog {
     /**
      * Creates new form NewTeamProject
      */
-    public NewTeamProject(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public NewTeamProject(java.awt.Frame parent) {
+        super(parent, true);
         initComponents();
         
         txtRepositoryURL.getDocument().addDocumentListener(new DocumentListener() {

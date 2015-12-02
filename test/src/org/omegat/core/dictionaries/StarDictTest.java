@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2010 Alex Buloichik
+               2015 Hiroshi Miura, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -26,6 +27,9 @@
 package org.omegat.core.dictionaries;
 
 import java.io.File;
+import java.util.Map;
+
+import org.junit.Test;
 
 import org.omegat.core.TestCore;
 
@@ -33,10 +37,34 @@ import org.omegat.core.TestCore;
  * Dictionary test
  *
  * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Hiroshi Miura
+ * @author Aaron Madlon-Kay
  */
 public class StarDictTest extends TestCore {
-    public void testStarDict() throws Exception {
+
+    @Test
+    public void testReadFileDict() throws Exception {
         StarDict s = new StarDict(new File("test/data/dicts/latin-francais.ifo"));
-        s.readHeader();
+        Map<String, Object> map = s.readHeader();
+        assertEquals(10451, map.size());
+        
+        String word = "testudo";
+        Object data = map.get(word);
+        assertNotNull(data);
+        String result = s.readArticle(word, data);
+        assertEquals("dinis, f. : tortue", result);
+    }
+    
+    @Test
+    public void testReadZipDict() throws Exception {
+        StarDict s = new StarDict(new File("test/data/dicts-zipped/latin-francais.ifo"));
+        Map<String, Object> map = s.readHeader();
+        assertEquals(10451, map.size());
+        
+        String word = "testudo";
+        Object data = map.get(word);
+        assertNotNull(data);
+        String result = s.readArticle(word, data);
+        assertEquals("dinis, f. : tortue", result);
     }
 }

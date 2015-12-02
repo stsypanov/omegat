@@ -73,7 +73,7 @@ import org.openide.awt.Mnemonics;
 
 /**
  * Class for create main menu and handle main menu events.
- *
+ * 
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -88,14 +88,14 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-
+ 
 /**
  * Add newly created MenuItem items to
  * /src/org/omegat/gui/main/MainMenuShortcuts.properties and
  * /src/org/omegat/gui/main/MainMenuShortcuts.mac.properties
  * with the proper shortcuts if set.
  */
-
+  
 public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     private static final Logger LOGGER = Logger.getLogger(MainWindowMenu.class.getName());
 
@@ -112,7 +112,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Code for dispatching events from components to event handlers.
-     *
+     * 
      * @param evt
      *            event info
      */
@@ -154,7 +154,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Code for dispatching events from components to event handlers.
-     *
+     * 
      * @param evt
      *            event info
      */
@@ -378,6 +378,9 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsGlossaryMenu.add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
         optionsGlossaryMenu.add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
         optionsGlossaryMenu.add(optionsEditGlossaryMenuItem = createMenuItem("TF_OPTIONSMENU_EDIT_GLOSSARY"));
+        optionsGlossaryMenu.add(optionsGlossaryReplacementCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_REPLACE_ON_INSERT"));
+        optionsGlossaryMenu.addSeparator();
+        // TaaS options come next (but are added from elsewhere)
 
         optionsMenu.add(optionsDictionaryMenu= createMenu("TF_OPTIONSMENU_DICTIONARY"));
         optionsDictionaryMenu.add(optionsDictionaryFuzzyMatchingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_DICTIONARY_FUZZY"));
@@ -497,6 +500,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 Preferences.GLOSSARY_NOT_EXACT_MATCH, true));
         optionsGlossaryStemmingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_STEMMING, true));
+        optionsGlossaryReplacementCheckBoxMenuItem.setSelected(Preferences.isPreference(
+                Preferences.GLOSSARY_REPLACE_ON_INSERT));
         optionsDictionaryFuzzyMatchingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.DICTIONARY_FUZZY_MATCHING, true));
     }
@@ -729,6 +734,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsGlossaryExactMatchCheckBoxMenuItem;
     JMenuItem optionsGlossaryStemmingCheckBoxMenuItem;
     JMenuItem optionsEditGlossaryMenuItem;
+    JMenuItem optionsGlossaryReplacementCheckBoxMenuItem;
     JMenu optionsDictionaryMenu;
     JMenuItem optionsDictionaryFuzzyMatchingCheckBoxMenuItem;
     JMenu optionsTransTipsMenu;

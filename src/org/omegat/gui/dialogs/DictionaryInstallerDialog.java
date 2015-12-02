@@ -28,7 +28,8 @@
 package org.omegat.gui.dialogs;
 
 import java.awt.Cursor;
-import java.io.IOException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -70,7 +71,7 @@ public class DictionaryInstallerDialog extends JDialog {
     private InstallerWorker installer = null;
 
     /** Creates new form DictionaryInstallerDialog */
-    public DictionaryInstallerDialog(JDialog parent, DictionaryManager dicMan) throws IOException {
+    public DictionaryInstallerDialog(JDialog parent, DictionaryManager dicMan) {
         super(parent, true);
 
         StaticUIUtils.setEscapeClosable(this);
@@ -83,8 +84,13 @@ public class DictionaryInstallerDialog extends JDialog {
         
         dictionaryListValueChanged(null);
         
-        loader = new LoaderWorker();
-        loader.execute();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                loader = new LoaderWorker();
+                loader.execute();
+            }
+        });
     }
 
     private class LoaderWorker extends SwingWorker<List<String>,Object> {

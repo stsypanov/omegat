@@ -225,7 +225,7 @@ public class MainWindow extends PeroFrame implements IMainWindow {
      * Sets the title of the main window appropriately
      */
     private void updateTitle() {
-        String s = OStrings.getDisplayVersion();
+        String s = OStrings.getDisplayNameAndVersion();
         if (Core.getProject().isProjectLoaded()) {
             s += " :: " + Core.getProject().getProjectProperties().getProjectName();
         }

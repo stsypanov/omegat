@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool
-          with fuzzy matching, translation memory, keyword search,
+ OmegaT - Computer Assisted Translation (CAT) tool 
+          with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
@@ -186,7 +186,7 @@ public class Main {
         Log.logRB("LOG_STARTUP_INFO", System.getProperty("java.vendor"), System.getProperty("java.version"),
                 System.getProperty("java.home"));
 
-        System.setProperty("http.user", OStrings.getDisplayVersion());
+        System.setProperty("http.user", OStrings.getDisplayNameAndVersion());
 
         ConvertConfigs.convert();
         PluginUtils.loadPlugins(params);
@@ -315,7 +315,7 @@ public class Main {
 
             //// TODO: 23.09.2015 investigate
 //            System.setProperty("awt.useSystemAAFontSettings","on");
-            
+
             // Override LAF with custom colors, if any (they default to the LAF attributes)
             Styles.setupLAF();
 
