@@ -88,7 +88,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
                 long st = System.currentTimeMillis();
 
                 if (file.getName().equals(IGNORE_FILE)) {
-                    loadIgnoreWords(file);
+                    loadIgnoredWords(file);
                 } else if (fn.endsWith(".ifo")) {
                     IDictionary dict = new StarDict(file);
                     Map<String, Object> header = dict.readHeader();
@@ -132,10 +132,10 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
      * Add new ignore word.
      */
     public void addIgnoreWord(final String word) {
-        Collection<String> words = Collections.emptyList();
-        synchronized (ignoreWords) {
-            ignoreWords.add(word);
-            words = new ArrayList<String>(ignoreWords);
+        Collection<String> words;
+        synchronized (ignoredWords) {
+            ignoredWords.add(word);
+            words = new ArrayList<>(ignoredWords);
         }
         saveIgnoreWords(words);
     }
@@ -149,8 +149,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             File outFile = new File(monitor.getDir(), "ignore.txt");
             File outFileTmp = new File(monitor.getDir(), "ignore.txt.new");
             try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp), OConsts.UTF8))) {
-                ignoredWords.add(word);
-                for (String w : ignoredWords) {
+                for (String w : words) {
                     wr.write(w + System.getProperty("line.separator"));
                 }
                 wr.flush();
@@ -172,22 +171,22 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     public List<DictionaryEntry> findWords(Collection<String> words) {
         List<DictionaryInfo> dicts;
         synchronized (this) {
-            dicts = new ArrayList<DictionaryInfo>(infos.values());
+            dicts = new ArrayList<>(infos.values());
         }
-        List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
+        List<DictionaryEntry> result = new ArrayList<>();
         for (String word : words) {
             for (DictionaryInfo di : dicts) {
                 try {
-                    synchronized (ignoreWords) {
-                        if (ignoreWords.contains(word)) {
+                    synchronized (ignoredWords) {
+                        if (ignoredWords.contains(word)) {
                             continue;
                         }
                     }
                     Object data = di.info.get(word);
                     if (data == null) {
                         String lowerCaseWord = word.toLowerCase();
-                        synchronized (ignoreWords) {
-                            if (ignoreWords.contains(lowerCaseWord)) {
+                        synchronized (ignoredWords) {
+                            if (ignoredWords.contains(lowerCaseWord)) {
                                 continue;
                             }
                         }
@@ -210,15 +209,5 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             }
         }
         return result;
-    }
-
-    protected static class DictionaryInfo {
-        public final IDictionary dict;
-        public final Map<String, Object> info;
-
-        public DictionaryInfo(final IDictionary dict, final Map<String, Object> info) {
-            this.dict = dict;
-            this.info = info;
-        }
     }
 }

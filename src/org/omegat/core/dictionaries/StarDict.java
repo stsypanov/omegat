@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
@@ -74,7 +75,6 @@ public class StarDict implements IDictionary {
     }
 
     private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n", Pattern.LITERAL);
-    protected final File ifoFile;
     protected static final String UTF8 = "UTF-8";
     protected static final int BUFFER_SIZE = 64 * 1024;
 
@@ -133,25 +133,26 @@ public class StarDict implements IDictionary {
         File file = new File(dictName + ".idx");
         byte[] idxBytes = readFile(file);
 
-        DataInputStream idx = new DataInputStream(new ByteArrayInputStream(idxBytes));
+        try (DataInputStream idx = new DataInputStream(new ByteArrayInputStream(idxBytes));
+             ByteArrayOutputStream mem = new ByteArrayOutputStream()) {
 
-        ByteArrayOutputStream mem = new ByteArrayOutputStream();
-        while (true) {
-            int b = idx.read();
-            if (b == -1) {
-                break;
+            while (true) {
+                int b = idx.read();
+                if (b == -1) {
+                    break;
+                }
+                if (b == 0) {
+                    String key = new String(mem.toByteArray(), 0, mem.size(), OConsts.UTF8);
+                    mem.reset();
+                    int bodyOffset = idx.readInt();
+                    int bodyLength = idx.readInt();
+                    addIndex(key, bodyOffset, bodyLength, result);
+                } else {
+                    mem.write(b);
+                }
             }
-            if (b == 0) {
-                String key = new String(mem.toByteArray(), 0, mem.size(), OConsts.UTF8);
-                mem.reset();
-                int bodyOffset = idx.readInt();
-                int bodyLength = idx.readInt();
-                addIndex(key, bodyOffset, bodyLength, result);
-            } else {
-                mem.write(b);
-            }
+            return result;
         }
-        return result;
     }
 
     /**
@@ -233,9 +234,8 @@ public class StarDict implements IDictionary {
      * @return Raw article text
      */
     private String readDictArticleText(int start, int len) {
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(dataFile);
+
+        try (FileInputStream in = new FileInputStream(dataFile)){
             byte[] data = new byte[len];
             in.skip(start);
             in.read(data);
@@ -243,12 +243,6 @@ public class StarDict implements IDictionary {
         } catch (IOException e) {
             System.err.println(e);
             return null;
-        } finally {
-            try {
-                in.close();
-            } catch (Throwable t) {
-            }
-            in = null;
         }
     }
 
@@ -274,11 +268,12 @@ public class StarDict implements IDictionary {
      * @return Raw article text
      */
     private String readDictZipArticleText(int start, int len) {
-        RandomAccessInputStream in = null;
-        DictZipInputStream din = null;
-        try {
-            in = new RandomAccessInputStream(dataFile, "r");
-            din = new DictZipInputStream(in);
+
+
+        try (RandomAccessInputStream in = new RandomAccessInputStream(dataFile, "r");
+             DictZipInputStream din = new DictZipInputStream(in)){
+
+
             DictZipHeader h = getDZHeader(din);
             int off = h.getOffset(start);
             int pos = h.getPosition(start);
@@ -288,17 +283,9 @@ public class StarDict implements IDictionary {
             byte[] data = new byte[len];
             System.arraycopy(b, off, data, 0, len);
             return new String(data, OConsts.UTF8);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             System.err.println(e);
             return null;
-        } finally {
-            try {
-                din.close();
-                in.close();
-            } catch (Throwable t) {
-            }
-            din = null;
-            in = null;
         }
     }
 
@@ -336,7 +323,7 @@ public class StarDict implements IDictionary {
      */
     private Map<String, String> readIFO(File ifoFile) throws Exception {
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(ifoFile), UTF8))) {
-            String line = null;
+            String line;
             String first = rd.readLine();
             if (!"StarDict's dict ifo file".equals(first)) {
                 throw new Exception("Invalid header of .ifo file: " + first);
@@ -380,7 +367,7 @@ public class StarDict implements IDictionary {
         }
 
         private String loadArticle() {
-            return readArticle(start, len).replace("\n", "<br>");
+            return NEW_LINE_PATTERN.matcher(readArticle(start, len)).replaceAll(Matcher.quoteReplacement("<br>"));
         }
     }
 }

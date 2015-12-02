@@ -181,7 +181,7 @@ public class Main {
         }
 
         Log.log('\n' + "===================================================================" + '\n'
-                + OStrings.getDisplayVersion() + " (" + new Date() + ") " + " Locale " + Locale.getDefault());
+                + OStrings.getNameAndVersion() + " (" + new Date() + ") " + " Locale " + Locale.getDefault());
 
         Log.logRB("LOG_STARTUP_INFO", System.getProperty("java.vendor"), System.getProperty("java.version"),
                 System.getProperty("java.home"));

@@ -406,5 +406,6 @@
     </orderEntry>
     <orderEntry type="library" name="darcula" level="project" />
     <orderEntry type="library" name="vldocking-3.0.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="dictzip" level="project" />
   </component>
 </module>

@@ -73,7 +73,7 @@ public class DialogsTest extends TestCore {
 
     public void testCreateGlossaryEntryDialog() {
         try {
-            new CreateGlossaryEntry(null);
+            new CreateGlossaryEntryDialog(null);
         } catch (HeadlessException ignore) {
             // Can't do this test when headless
         }
