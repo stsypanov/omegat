@@ -479,20 +479,33 @@ public class MainWindowMenuHandler {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        String selection = getTrimmedSelectedTextInMainWindow();
-
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.SEARCH);
+        SearchWindowController search = new SearchWindowController(SearchMode.SEARCH);
         mainWindow.addSearchWindow(search);
+
+        search.makeVisible(getTrimmedSelectedTextInMainWindow());
+    }
+
+    void findInProjectReuseLastWindow() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+
+        SearchWindowController search = mainWindow.peekLastSearchWindow();
+        if (search == null) {
+            editFindInProjectMenuItemActionPerformed();
+        } else {
+            search.makeVisible(getTrimmedSelectedTextInMainWindow());
+        }
     }
 
     public void editReplaceInProjectMenuItemActionPerformed() {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        String selection = getTrimmedSelectedTextInMainWindow();
-
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.REPLACE);
+        SearchWindowController search = new SearchWindowController(SearchMode.REPLACE);
         mainWindow.addSearchWindow(search);
+
+        search.makeVisible(getTrimmedSelectedTextInMainWindow());
     }
 
     private String getTrimmedSelectedTextInMainWindow() {

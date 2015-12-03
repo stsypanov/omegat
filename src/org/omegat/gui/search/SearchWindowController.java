@@ -40,6 +40,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -48,11 +49,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -74,8 +73,6 @@ import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.IEditorFilter;
 import org.omegat.gui.editor.filter.ReplaceFilter;
 import org.omegat.gui.editor.filter.SearchFilter;
-import org.omegat.gui.main.MainWindow;
-import org.omegat.gui.shortcuts.PropertiesShortcuts;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -108,13 +105,12 @@ public class SearchWindowController {
     private final int initialEntry;
     private final CaretPosition initialCaret;
 
-    public SearchWindowController(MainWindow par, String startText, SearchMode mode) {
+    public SearchWindowController(SearchMode mode) {
         form = new SearchWindowForm();
+        form.setJMenuBar(new SearchWindowMenu(form, this));
         this.mode = mode;
         initialEntry = Core.getEditor().getCurrentEntryNumber();
         initialCaret = getCurrentPositionInEntryTranslationInEditor(Core.getEditor());
-
-        m_parent = par;
 
         m_dateFormat = new SimpleDateFormat(SAVED_DATE_FORMAT);
 
@@ -185,9 +181,6 @@ public class SearchWindowController {
                 form.m_panelReplace.setVisible(true);
                 break;
         }
-
-        form.setVisible(true);
-        form.m_searchField.requestFocus();
     }
 
     final void initActions() {
@@ -288,29 +281,6 @@ public class SearchWindowController {
             }
         });
 
-        ActionMap actionMap = form.getRootPane().getActionMap();
-        InputMap  inputMap  = form.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        // Make Search shortcut re-focus on search field
-        actionMap.put("editFindInProjectMenuItem", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                form.m_searchField.requestFocus();
-                form.m_searchField.getEditor().selectAll();
-            }
-        });
-
-        // Show create glossary entry dialog
-        actionMap.put("editCreateGlossaryEntryMenuItem", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                Core.getGlossary().showCreateGlossaryEntryDialog(form);
-            }
-        });
-
-        PropertiesShortcuts shortcuts = new PropertiesShortcuts("/org/omegat/gui/main/MainMenuShortcuts.properties");
-        shortcuts.bindKeyStrokes(inputMap, actionMap.keys());
-
         // Set search and replace combo boxes' actions, undo, key handling
         configureHistoryComboBox(form.m_searchField);
         configureHistoryComboBox(form.m_replaceField);
@@ -392,9 +362,6 @@ public class SearchWindowController {
             public void windowClosed(WindowEvent e) {
                 // save user preferences
                 savePreferences();
-
-                // notify main window
-                m_parent.removeSearchWindow(SearchWindowController.this);
 
                 if (m_thread != null) {
                     m_thread.fin();
@@ -898,7 +865,7 @@ public class SearchWindowController {
         m_thread.start();
     }
 
-    private void doCancel() {
+    void doCancel() {
         UIThreadsUtil.mustBeSwingThread();
         if (m_thread != null) {
             m_thread.fin();
@@ -908,6 +875,21 @@ public class SearchWindowController {
 
     public void dispose() {
         form.dispose();
+    }
+
+    /**
+     * Make Search window visible on screen, with optional initial query (may be
+     * null).
+     *
+     * @param query
+     *            Initial query string (may be empty or null)
+     */
+    public void makeVisible(String query) {
+        if (!StringUtil.isEmpty(query)) {
+            ((JTextField) form.m_searchField.getEditor().getEditorComponent()).setText(query);
+        }
+        form.setVisible(true);
+        form.m_searchField.requestFocus();
     }
 
     private boolean isSegmentDisplayed(int entry) {
@@ -1081,6 +1063,10 @@ public class SearchWindowController {
         } else {
             return CaretPosition.startOfEntry();
         }
+    }
+
+    public void addWindowListener(WindowListener listener) {
+        form.addWindowListener(listener);
     }
 
     /**
