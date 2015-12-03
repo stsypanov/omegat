@@ -6,6 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2007-2008 Didier Briel
                2013 Didier Briel, Alex Buloichik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -46,7 +47,6 @@ import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.TranslationException;
 import org.omegat.util.Language;
-import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.PatternConsts;
 import org.xml.sax.Attributes;
@@ -60,6 +60,7 @@ import org.xml.sax.SAXException;
  * @author Maxym Mykhalchuk
  * @author Didier Briel
  * @author Alex Buloichik
+ * @author Aaron Madlon-Kay
  */
 public abstract class XMLFilter extends AbstractFilter implements Translator {
     /** Factory for SAX parsers. */
@@ -160,17 +161,16 @@ public abstract class XMLFilter extends AbstractFilter implements Translator {
             inEncodingLastParsedFile = this.encoding;
             targetLanguage = fc.getTargetLang();
             InputSource source = new InputSource(inReader);
-            source.setSystemId("file:///" + inFile.getCanonicalPath().replace(File.separatorChar, '/'));
+            source.setSystemId(inFile.toURI().toString());
             SAXParser parser = parserFactory.newSAXParser();
             Handler handler = new Handler(this, dialect, inFile, outFile, fc.getOutEncoding());
             parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
             parser.setProperty("http://xml.org/sax/properties/declaration-handler", handler);
             parser.parse(source, handler);
         } catch (ParserConfigurationException e) {
-            throw new TranslationException(e.getLocalizedMessage());
+            throw new TranslationException(e);
         } catch (SAXException e) {
-            Log.log(e);
-            throw new TranslationException(e.getLocalizedMessage());
+            throw new TranslationException(e);
         }
     }
     @Override

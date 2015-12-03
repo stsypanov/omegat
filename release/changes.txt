@@ -1,9 +1,27 @@
 ----------------------------------------------------------------------
- OmegaT 3.5.3
+ OmegaT 3.5.3 update 1
 ----------------------------------------------------------------------
-  15 Enhancements
-   4 Bug fixes
-   1 Localisation update
+  3 Enhancements
+----------------------------------------------------------------------
+3.5.3 update 1 vs 3.5.3
+
+  Implemented requests:  
+
+  - Re-use search window(s) with a shortcut
+  https://sourceforge.net/p/omegat/feature-requests/142/
+
+  - Allow moving the cursor anywhere in the editor
+  https://sourceforge.net/p/omegat/feature-requests/821/
+
+  - Add menus to the Search window 
+  https://sourceforge.net/p/omegat/feature-requests/1164/
+
+----------------------------------------------------------------------
+ OmegaT 3.5.3 (2015-12-02)
+----------------------------------------------------------------------
+  23 Enhancements
+   6 Bug fixes
+   8 Localisation updates
 ----------------------------------------------------------------------
 3.5.3 vs 3.5.2 update 1
 
@@ -37,6 +55,21 @@
 Resource Bundle filter
   https://sourceforge.net/p/omegat/feature-requests/1144/
 
+  - Lazily load StarDict dictionary contents
+  https://sourceforge.net/p/omegat/feature-requests/1148/
+
+  - Improve explanation text in the Search window
+  https://sourceforge.net/p/omegat/feature-requests/1116/
+
+  - Automatically replace glossary hits when inserting source text
+  https://sourceforge.net/p/omegat/feature-requests/1152/
+
+  - Allow excluding orphan segments from search results
+  https://sourceforge.net/p/omegat/feature-requests/1026/
+
+  - Show revision number in version string 
+  https://sourceforge.net/p/omegat/feature-requests/1159/
+
   Other changes:
 
   - Mac OS X: It is now possible to make the project files list 
@@ -55,6 +88,18 @@ the translation is the same but the note is different
   - The Open XML filter now loads Visio 2013 files with the extension
 *.vsdx.
 
+  - In the online help, external links will open in the user default
+browser
+
+  - In the Resource Bundler filter (.properties) whitespace-only lines
+are not modified anymore
+
+  - The About dialog now indicates whether the current Java VM is
+32-bit or 64-bit
+
+  - A new script (nbsp.groovy) replaces spaces with non-breaking
+spaces where appropriate in French
+
   Bug fixes:
 
   - Spell Checking issue with a Turkish character 
@@ -70,10 +115,23 @@ Scripting window
   - Tag validation could wrongly mention bad nesting for custom tags.
 Tag nesting is now only tested for OmegaT tags.
 
+  - MyMemory machine and human translation not working
+  https://sourceforge.net/p/omegat/bugs/773/
+
+  - Fragments to be removed not colored correctly
+  https://sourceforge.net/p/omegat/bugs/549/
+
   Localisation Updates:
 
- - German localisation updated to 3.5.2 (UI)
-
+  - Belarusian localisation updated to 3.5.3 (UI, tutorial, scripts, readme)
+  - Czech localisation updated to 3.5.3 (UI, documentation, scripts, readme)
+  - Dutch localisation updated to 3.5.3 (UI, documentation, scripts, readme)
+  - German localisation updated to 3.5.2 (UI)
+  - Interlingua localisation updated to 3.5.3 (UI, documentation, scripts, readme)
+  - Japanese localisation updated to 3.5.3 (UI, documentation, scripts, readme)
+  - Norwegian localisation updated to 3.5.3 (UI, tutorial, scripts, readme)
+  - Spanish localisation updated to 3.5.3 (UI, tutorial)
+ 
 ----------------------------------------------------------------------
  OmegaT 3.5.2 update 1 (2015-09-25)
 ----------------------------------------------------------------------
@@ -88,7 +146,7 @@ Tag nesting is now only tested for OmegaT tags.
   - No dictionaries show up in the Spellchecker Setup window 
   https://sourceforge.net/p/omegat/bugs/766/
 
-  - Fails to buid OmegaT users guide on Linux 
+  - Fails to build OmegaT users guide on Linux 
   https://sourceforge.net/p/omegat/bugs/769/
 
   - Wrong encoding of the Portugal Portuguese UI strings

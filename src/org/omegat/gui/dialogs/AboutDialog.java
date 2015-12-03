@@ -26,10 +26,13 @@
 package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
+
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+
 import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
@@ -54,13 +57,8 @@ public class AboutDialog extends JDialog {
         StaticUIUtils.setEscapeClosable(this);
 
         initComponents();
-        if ((OStrings.UPDATE != null) && !OStrings.UPDATE.equals("0")) {
-            versionLabel.setText(StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE"),
-                    OStrings.VERSION, OStrings.UPDATE));
-        } else {
-            versionLabel.setText(StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION"),
-                    OStrings.VERSION));
-        }
+        versionLabel.setText(getVersionString());
+
         Object[] args = { Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024,
                 Runtime.getRuntime().maxMemory() / 1024 / 1024 };
@@ -68,7 +66,7 @@ public class AboutDialog extends JDialog {
         memoryusage.setText(memoryUsage);
         
         String javaVersion = StringUtil.format(OStrings.getString("JAVA_VERSION"),
-                System.getProperty("java.version"));
+                System.getProperty("java.version"), Platform.is64Bit() ? 64 : 32);
         javaversion.setText(javaVersion);
 
         invalidate();
@@ -76,6 +74,16 @@ public class AboutDialog extends JDialog {
 
         StaticUIUtils.fitInScreen(this);
         DockingUI.displayCentered(this);
+    }
+
+    private String getVersionString() {
+        if (!StringUtil.isEmpty(OStrings.UPDATE) && !OStrings.UPDATE.equals("0")) {
+            return StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE_REVISION"),
+                    OStrings.VERSION, OStrings.UPDATE, OStrings.REVISION);
+        } else {
+            return StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_REVISION"),
+                    OStrings.VERSION, OStrings.REVISION);
+        }
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -151,7 +159,7 @@ public class AboutDialog extends JDialog {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         versionLabel.setIcon(new ImageIcon(OmegaTIcons.ICONS.get(1)));
-        org.openide.awt.Mnemonics.setLocalizedText(versionLabel, OStrings.getString("ABOUTDIALOG_VERSION")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(versionLabel, OStrings.getString("ABOUTDIALOG_VERSION_REVISION")); // NOI18N
         versionLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         getContentPane().add(versionLabel, java.awt.BorderLayout.NORTH);
 

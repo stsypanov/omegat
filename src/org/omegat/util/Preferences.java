@@ -71,8 +71,7 @@ import org.omegat.util.xml.XMLStreamReader;
  */
 public class Preferences {
     /** OmegaT-wide Preferences Filename */
-    public static final String FILE_PREFERENCES = OStrings.BRANDING.isEmpty() ? "omegat.prefs"
-            : "omegat-" + OStrings.BRANDING + ".prefs";
+    public static final String FILE_PREFERENCES = "omegat" + OStrings.getBrandingToken() + ".prefs";
 
     // preference names
     public static final String SOURCE_LOCALE = "source_lang";
@@ -93,6 +92,7 @@ public class Preferences {
     public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
     public static final String GLOSSARY_NOT_EXACT_MATCH = "glossary_not_exact_match";
     public static final String GLOSSARY_STEMMING = "glossary_stemming";
+    public static final String GLOSSARY_REPLACE_ON_INSERT = "glossary_replace_on_insert";
     public static final String DICTIONARY_FUZZY_MATCHING = "dictionary_fuzzy_matching";
 
 	public static final String MAINWINDOW_WIDTH = "screen_width";
@@ -143,6 +143,7 @@ public class Preferences {
     public static final String SEARCHWINDOW_RECURSIVE = "search_window_search_recursive";
     public static final String SEARCHWINDOW_AUTO_SYNC = "search_window_auto_sync";
     public static final String SEARCHWINDOW_BACK_TO_INITIAL_SEGMENT = "search_window_back_to_initial_segment";
+    public static final String SEARCHWINDOW_EXCLUDE_ORPHANS = "search_window_exclude_orphans";
 
     // Search history
     public static final String SEARCHWINDOW_HISTORY_SIZE = "search_window_history_size";
@@ -679,7 +680,13 @@ public class Preferences {
         }
     }
 
-    private static void doLoad() {
+    /**
+     * Loads the preferences from disk, from a location determined by {@link #getPreferencesFile()}.
+     * This method is package-private for unit testing purposes. Otherwise it is only meant to be
+     * called from the static initializer in this class. DO NOT CALL IT UNLESS YOU KNOW WHAT YOU'RE
+     * DOING.
+     */
+    static void doLoad() {
         // mark as loaded - if the load fails, there's no use
         // trying again later
         m_loaded = true;

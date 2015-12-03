@@ -45,8 +45,10 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -118,11 +120,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
      */
     @Override
     public void actionPerformed(ActionEvent evt) {
-        // Item what perform event.
-        JMenuItem menuItem = (JMenuItem) evt.getSource();
-
         // Get item name from actionCommand.
-        String action = menuItem.getActionCommand();
+        String action = evt.getActionCommand();
 
         Log.logInfoRB("LOG_MENU_CLICK", action);
 
@@ -378,6 +377,9 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsGlossaryMenu.add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
         optionsGlossaryMenu.add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
         optionsGlossaryMenu.add(optionsEditGlossaryMenuItem = createMenuItem("TF_OPTIONSMENU_EDIT_GLOSSARY"));
+        optionsGlossaryMenu.add(optionsGlossaryReplacementCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_REPLACE_ON_INSERT"));
+        optionsGlossaryMenu.addSeparator();
+        // TaaS options come next (but are added from elsewhere)
 
         optionsMenu.add(optionsDictionaryMenu= createMenu("TF_OPTIONSMENU_DICTIONARY"));
         optionsDictionaryMenu.add(optionsDictionaryFuzzyMatchingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_DICTIONARY_FUZZY"));
@@ -418,7 +420,17 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         helpMenu.add(helpLogMenuItem = createMenuItem("TF_MENU_HELP_LOG"));
 
         setActionCommands();
-        new PropertiesShortcuts("/org/omegat/gui/main/MainMenuShortcuts.properties").bindKeyStrokes(mainMenu);
+        PropertiesShortcuts shortcuts = new PropertiesShortcuts("/org/omegat/gui/main/MainMenuShortcuts.properties");
+        shortcuts.bindKeyStrokes(mainMenu);
+
+        String key = "findInProjectReuseLastWindow";
+        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcuts.getKeyStroke(key), key);
+        mainWindow.getRootPane().getActionMap().put(key, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainWindowMenuHandler.findInProjectReuseLastWindow();
+            }
+        });
 
         if (Platform.isMacOSX()) {
             initMacSpecific();
@@ -497,6 +509,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 Preferences.GLOSSARY_NOT_EXACT_MATCH, true));
         optionsGlossaryStemmingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_STEMMING, true));
+        optionsGlossaryReplacementCheckBoxMenuItem.setSelected(Preferences.isPreference(
+                Preferences.GLOSSARY_REPLACE_ON_INSERT));
         optionsDictionaryFuzzyMatchingCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.DICTIONARY_FUZZY_MATCHING, true));
     }
@@ -729,6 +743,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsGlossaryExactMatchCheckBoxMenuItem;
     JMenuItem optionsGlossaryStemmingCheckBoxMenuItem;
     JMenuItem optionsEditGlossaryMenuItem;
+    JMenuItem optionsGlossaryReplacementCheckBoxMenuItem;
     JMenu optionsDictionaryMenu;
     JMenuItem optionsDictionaryFuzzyMatchingCheckBoxMenuItem;
     JMenu optionsTransTipsMenu;

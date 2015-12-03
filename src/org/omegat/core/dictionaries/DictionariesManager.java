@@ -34,9 +34,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-import org.omegat.gui.dictionaries.DictionariesTextArea;
+import org.omegat.gui.dictionaries.IDictionaries;
 import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
@@ -49,9 +53,10 @@ import org.omegat.util.OConsts;
  * @author Didier Briel
  */
 public class DictionariesManager extends BaseDictionariesManager implements DirectoryMonitor.Callback {
-    private final DictionariesTextArea pane;
+    private static final String IGNORE_FILE = "ignore.txt";
+    private final IDictionaries pane;
 
-    public DictionariesManager(final DictionariesTextArea pane) {
+    public DictionariesManager(final IDictionaries pane) {
         super();
         this.pane = pane;
     }
@@ -77,7 +82,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             try {
                 long st = System.currentTimeMillis();
 
-                if (file.getName().equals("ignore.txt")) {
+                if (file.getName().equals(IGNORE_FILE)) {
                     loadIgnoredWords(file);
                 } else if (fn.endsWith(".ifo")) {
                     IDictionary dict = new StarDict(file);
@@ -119,12 +124,23 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     }
 
     /**
-     * Add new ignore word.
+     * Add new ignored word.
      */
-    public void addIgnoreWord(final String word) {
+    public void addIgnoredWord(final String word) {
+        ignoredWords.add(word);
+        saveIgnoredWords(ignoredWords);
+    }
+
+    private synchronized void saveIgnoreWords(Collection<String> words) {
+        if (monitor == null) {
+            Log.log("Could not save ignored words because no dictionary dir has been set.");
+            return;
+        }
         try {
-            File outFile = new File(monitor.getDir(), "ignore.txt");
-            File outFileTmp = new File(monitor.getDir(), "ignore.txt.new");
+            File outFile = new File(monitor.getDir(), IGNORE_FILE);
+            File outFileTmp = new File(monitor.getDir(), IGNORE_FILE + ".new");
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp),
+                    OConsts.UTF8));
             try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp), OConsts.UTF8))) {
                 ignoredWords.add(word);
                 for (String w : ignoredWords) {
@@ -135,8 +151,57 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             outFile.delete();
             FileUtil.rename(outFileTmp, outFile);
         } catch (Exception ex) {
-            Log.log("Error save ignore words:" + ex.getMessage());
+            Log.log("Error saving ignored words: " + ex.getMessage());
         }
     }
 
+    /**
+     * Find words list in all dictionaries.
+     * 
+     * @param words
+     *            words list
+     * @return articles list
+     */
+    public List<DictionaryEntry> findWords(Collection<String> words) {
+        List<DictionaryInfo> dicts;
+        synchronized (this) {
+            dicts = new ArrayList<DictionaryInfo>(infos.values());
+        }
+        List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
+        for (String word : words) {
+            for (DictionaryInfo di : dicts) {
+                try {
+                    synchronized (ignoredWords) {
+                        if (ignoredWords.contains(word)) {
+                            continue;
+                        }
+                    }
+                    Object data = di.info.get(word);
+                    if (data == null) {
+                        String lowerCaseWord = word.toLowerCase();
+                        synchronized (ignoredWords) {
+                            if (ignoredWords.contains(lowerCaseWord)) {
+                                continue;
+                            }
+                        }
+                        data = di.info.get(lowerCaseWord);
+                    }
+                    if (data != null) {
+                        if (data.getClass().isArray()) {
+                            for (Object d : (Object[]) data) {
+                                String a = di.dict.readArticle(word, d);
+                                result.add(new DictionaryEntry(word, a));
+                            }
+                        } else {
+                            String a = di.dict.readArticle(word, data);
+                            result.add(new DictionaryEntry(word, a));
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.log(ex);
+                }
+            }
+        }
+        return result;
+    }
 }

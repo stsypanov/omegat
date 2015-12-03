@@ -431,7 +431,11 @@ public class MainWindowMenuHandler {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Core.getEditor().replaceEditText(Core.getEditor().getCurrentEntry().getSrcText());
+        String toInsert = Core.getEditor().getCurrentEntry().getSrcText();
+        if (Preferences.isPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT)) {
+            toInsert = EditorUtils.replaceGlossaryEntries(toInsert);
+        }
+        Core.getEditor().replaceEditText(toInsert);
     }
 
     /** inserts the source text of a segment at cursor position */
@@ -439,7 +443,11 @@ public class MainWindowMenuHandler {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Core.getEditor().insertText(Core.getEditor().getCurrentEntry().getSrcText());
+        String toInsert = Core.getEditor().getCurrentEntry().getSrcText();
+        if (Preferences.isPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT)) {
+            toInsert = EditorUtils.replaceGlossaryEntries(toInsert);
+        }
+        Core.getEditor().insertText(toInsert);
     }
 
     public void editExportSelectionMenuItemActionPerformed() {
@@ -471,20 +479,33 @@ public class MainWindowMenuHandler {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        String selection = getTrimmedSelectedTextInMainWindow();
-
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.SEARCH);
+        SearchWindowController search = new SearchWindowController(SearchMode.SEARCH);
         mainWindow.addSearchWindow(search);
+
+        search.makeVisible(getTrimmedSelectedTextInMainWindow());
+    }
+
+    void findInProjectReuseLastWindow() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+
+        SearchWindowController search = mainWindow.peekLastSearchWindow();
+        if (search == null) {
+            editFindInProjectMenuItemActionPerformed();
+        } else {
+            search.makeVisible(getTrimmedSelectedTextInMainWindow());
+        }
     }
 
     public void editReplaceInProjectMenuItemActionPerformed() {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        String selection = getTrimmedSelectedTextInMainWindow();
-
-        SearchWindowController search = new SearchWindowController(mainWindow, selection, SearchMode.REPLACE);
+        SearchWindowController search = new SearchWindowController(SearchMode.REPLACE);
         mainWindow.addSearchWindow(search);
+
+        search.makeVisible(getTrimmedSelectedTextInMainWindow());
     }
 
     private String getTrimmedSelectedTextInMainWindow() {
@@ -610,7 +631,7 @@ public class MainWindowMenuHandler {
      */
     public void gotoSegmentMenuItemActionPerformed() {
         // Create a dialog for input
-        GoToSegmentDialog dialog = new GoToSegmentDialog(mainWindow, true);
+        GoToSegmentDialog dialog = new GoToSegmentDialog(mainWindow);
         dialog.setVisible(true);
 
         int jumpTo = dialog.getResult();
@@ -841,6 +862,11 @@ public class MainWindowMenuHandler {
         }
     }
 
+    public void optionsGlossaryReplacementCheckBoxMenuItemActionPerformed() {
+        Preferences.setPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT,
+                mainWindow.menu.optionsGlossaryReplacementCheckBoxMenuItem.isSelected());
+    }
+
     public void optionsDictionaryFuzzyMatchingCheckBoxMenuItemActionPerformed() {
         Preferences.setPreference(Preferences.DICTIONARY_FUZZY_MATCHING,
                 mainWindow.menu.optionsDictionaryFuzzyMatchingCheckBoxMenuItem.isSelected());
@@ -865,7 +891,7 @@ public class MainWindowMenuHandler {
      * Displays the color dialog selection. It needs an application restart after color changes.
      */
     public void optionsColorsSelectionMenuItemActionPerformed() {
-        CustomColorSelectionDialog dlg = new CustomColorSelectionDialog(Core.getMainWindow().getApplicationFrame(), true);
+        CustomColorSelectionDialog dlg = new CustomColorSelectionDialog(Core.getMainWindow().getApplicationFrame());
         dlg.setVisible(true);
     }
 

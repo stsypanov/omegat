@@ -110,7 +110,7 @@ public class Core {
     private static INotes notes;
     private static IComments comments;
 
-    private static Map<String, String> cmdLineParams;
+    private static Map<String, String> cmdLineParams = Collections.emptyMap();
 
     private static List<String> pluginsLoadingErrors = Collections.synchronizedList(new ArrayList<String>());
 
@@ -136,6 +136,10 @@ public class Core {
     /** Get editor instance. */
     public static IEditor getEditor() {
         return editor;
+    }
+
+    public static void setEditor(IEditor theEditor) {
+        editor = theEditor;
     }
 
     /** Get tag validation component instance. */

@@ -40,6 +40,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -48,11 +49,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -74,8 +73,6 @@ import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.IEditorFilter;
 import org.omegat.gui.editor.filter.ReplaceFilter;
 import org.omegat.gui.editor.filter.SearchFilter;
-import org.omegat.gui.main.MainWindow;
-import org.omegat.gui.shortcuts.PropertiesShortcuts;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -84,6 +81,7 @@ import org.omegat.util.StringUtil;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.UIThreadsUtil;
+import org.openide.awt.Mnemonics;
 
 /**
  * This is a window that appears when user'd like to search for something. For
@@ -107,13 +105,12 @@ public class SearchWindowController {
     private final int initialEntry;
     private final CaretPosition initialCaret;
 
-    public SearchWindowController(MainWindow par, String startText, SearchMode mode) {
+    public SearchWindowController(SearchMode mode) {
         form = new SearchWindowForm();
+        form.setJMenuBar(new SearchWindowMenu(form, this));
         this.mode = mode;
         initialEntry = Core.getEditor().getCurrentEntryNumber();
         initialCaret = getCurrentPositionInEntryTranslationInEditor(Core.getEditor());
-
-        m_parent = par;
 
         m_dateFormat = new SimpleDateFormat(SAVED_DATE_FORMAT);
 
@@ -121,11 +118,8 @@ public class SearchWindowController {
         if (form.m_searchField.getModel().getSize() > 0) {
             form.m_searchField.setSelectedIndex(-1);
         }
-        if (!StringUtil.isEmpty(startText)) {
-            ((JTextField) form.m_searchField.getEditor().getEditorComponent()).setText(startText);
-        }
 
-        form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
+        form.m_replaceField.setModel(new DefaultComboBoxModel(HistoryManager.getReplaceItems()));
         if (form.m_replaceField.getModel().getSize() > 0) {
             form.m_replaceField.setSelectedIndex(-1);
         }
@@ -184,9 +178,6 @@ public class SearchWindowController {
                 form.m_panelReplace.setVisible(true);
                 break;
         }
-
-        form.setVisible(true);
-        form.m_searchField.requestFocus();
     }
 
     final void initActions() {
@@ -227,7 +218,7 @@ public class SearchWindowController {
         form.m_advancedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                toggleAdvancedOptions();
+                setAdvancedOptionsVisible(!form.m_advancedVisiblePane.isVisible());
             }
         });
 
@@ -286,29 +277,6 @@ public class SearchWindowController {
                 doCancel();
             }
         });
-
-        ActionMap actionMap = form.getRootPane().getActionMap();
-        InputMap  inputMap  = form.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        // Make Search shortcut re-focus on search field
-        actionMap.put("editFindInProjectMenuItem", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                form.m_searchField.requestFocus();
-                form.m_searchField.getEditor().selectAll();
-            }
-        });
-
-        // Show create glossary entry dialog
-        actionMap.put("editCreateGlossaryEntryMenuItem", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                Core.getGlossary().showCreateGlossaryEntryDialog(form);
-            }
-        });
-
-        PropertiesShortcuts shortcuts = new PropertiesShortcuts("/org/omegat/gui/main/MainMenuShortcuts.properties");
-        shortcuts.bindKeyStrokes(inputMap, actionMap.keys());
 
         // Set search and replace combo boxes' actions, undo, key handling
         configureHistoryComboBox(form.m_searchField);
@@ -391,9 +359,6 @@ public class SearchWindowController {
             public void windowClosed(WindowEvent e) {
                 // save user preferences
                 savePreferences();
-
-                // notify main window
-                m_parent.removeSearchWindow(SearchWindowController.this);
 
                 if (m_thread != null) {
                     m_thread.fin();
@@ -656,6 +621,7 @@ public class SearchWindowController {
         Preferences.setPreference(Preferences.SEARCHWINDOW_DATE_TO_VALUE, m_dateFormat.format(m_dateToModel.getDate()));
         Preferences.setPreference(Preferences.SEARCHWINDOW_NUMBER_OF_RESULTS,
                 ((Integer) form.m_numberOfResults.getValue()));
+        Preferences.setPreference(Preferences.SEARCHWINDOW_EXCLUDE_ORPHANS, form.m_excludeOrphans.isSelected());
 
         // search dir options
         Preferences.setPreference(Preferences.SEARCHWINDOW_DIR, form.m_dirField.getText());
@@ -888,6 +854,7 @@ public class SearchWindowController {
         s.dateBefore = m_dateToModel.getDate().getTime();
         s.numberOfResults = mode == SearchMode.SEARCH ? ((Integer) form.m_numberOfResults.getValue())
                 : Integer.MAX_VALUE;
+        s.excludeOrphans = form.m_excludeOrphans.isSelected();
 
         Searcher searcher = new Searcher(Core.getProject(), s);
         // start the search in a separate thread
@@ -895,7 +862,7 @@ public class SearchWindowController {
         m_thread.start();
     }
 
-    private void doCancel() {
+    void doCancel() {
         UIThreadsUtil.mustBeSwingThread();
         if (m_thread != null) {
             m_thread.fin();
@@ -905,6 +872,21 @@ public class SearchWindowController {
 
     public void dispose() {
         form.dispose();
+    }
+
+    /**
+     * Make Search window visible on screen, with optional initial query (may be
+     * null).
+     *
+     * @param query
+     *            Initial query string (may be empty or null)
+     */
+    public void makeVisible(String query) {
+        if (!StringUtil.isEmpty(query)) {
+            ((JTextField) form.m_searchField.getEditor().getEditorComponent()).setText(query);
+        }
+        form.setVisible(true);
+        form.m_searchField.requestFocus();
     }
 
     private boolean isSegmentDisplayed(int entry) {
@@ -917,8 +899,11 @@ public class SearchWindowController {
         }
     }
 
-    private void toggleAdvancedOptions() {
-        form.m_advancedVisiblePane.setVisible(!form.m_advancedVisiblePane.isVisible());
+    private void setAdvancedOptionsVisible(boolean visible) {
+        form.m_advancedVisiblePane.setVisible(visible);
+        Mnemonics.setLocalizedText(form.m_advancedButton,
+                visible ? OStrings.getString("SW_HIDE_ADVANCED_OPTIONS")
+                        : OStrings.getString("SW_SHOW_ADVANCED_OPTIONS"));
         updateAdvancedOptionStatus();
     }
 
@@ -979,7 +964,7 @@ public class SearchWindowController {
 
     private void loadAdvancedOptionPreferences() {
         // advanced options visibility
-        form.m_advancedVisiblePane.setVisible(Preferences.isPreference(Preferences.SEARCHWINDOW_ADVANCED_VISIBLE));
+        setAdvancedOptionsVisible(Preferences.isPreference(Preferences.SEARCHWINDOW_ADVANCED_VISIBLE));
 
         // author options
         form.m_authorCB.setSelected(Preferences.isPreference(Preferences.SEARCHWINDOW_SEARCH_AUTHOR));
@@ -1008,11 +993,14 @@ public class SearchWindowController {
         form.m_numberOfResults.setValue(Preferences.getPreferenceDefault(Preferences.SEARCHWINDOW_NUMBER_OF_RESULTS,
                 OConsts.ST_MAX_SEARCH_RESULTS));
 
+        form.m_excludeOrphans.setSelected(Preferences.isPreference(Preferences.SEARCHWINDOW_EXCLUDE_ORPHANS));
+
         // if advanced options are enabled (e.g. author/date search),
         // let the user see them anyway. This is important because
         // search results will be affected by these settings
-        if (form.m_authorCB.isSelected() || form.m_dateFromCB.isSelected() || form.m_dateToCB.isSelected()) {
-            form.m_advancedVisiblePane.setVisible(true);
+        if (form.m_authorCB.isSelected() || form.m_dateFromCB.isSelected() || form.m_dateToCB.isSelected()
+                || form.m_excludeOrphans.isSelected()) {
+            setAdvancedOptionsVisible(true);
         }
     }
 
@@ -1074,6 +1062,10 @@ public class SearchWindowController {
         }
     }
 
+    public void addWindowListener(WindowListener listener) {
+        form.addWindowListener(listener);
+    }
+
     /**
      * Display message dialog with the error as message
      *
@@ -1102,8 +1094,6 @@ public class SearchWindowController {
             }
         });
     }
-
-    private MainWindow m_parent;
 
     private SimpleDateFormat m_dateFormat;
     private SpinnerDateModel m_dateFromModel, m_dateToModel;
