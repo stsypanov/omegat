@@ -42,7 +42,7 @@ import org.omegat.tokenizer.ITokenizer;
 import org.omegat.tokenizer.LuceneEnglishTokenizer;
 import org.omegat.util.Language;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class EditorUtilsTest {
     

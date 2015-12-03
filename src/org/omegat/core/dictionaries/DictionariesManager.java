@@ -53,7 +53,7 @@ import org.omegat.util.OConsts;
  * @author Didier Briel
  */
 public class DictionariesManager extends BaseDictionariesManager implements DirectoryMonitor.Callback {
-    private static final String IGNORE_FILE = "ignore.txt";
+    public static final String IGNORE_FILE = "ignore.txt";
     private final IDictionaries pane;
 
     public DictionariesManager(final IDictionaries pane) {
@@ -131,7 +131,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
         saveIgnoredWords(ignoredWords);
     }
 
-    private synchronized void saveIgnoreWords(Collection<String> words) {
+    private synchronized void saveIgnoredWords(Collection<String> words) {
         if (monitor == null) {
             Log.log("Could not save ignored words because no dictionary dir has been set.");
             return;
@@ -139,10 +139,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
         try {
             File outFile = new File(monitor.getDir(), IGNORE_FILE);
             File outFileTmp = new File(monitor.getDir(), IGNORE_FILE + ".new");
-            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp),
-                    OConsts.UTF8));
             try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp), OConsts.UTF8))) {
-                ignoredWords.add(word);
                 for (String w : ignoredWords) {
                     wr.write(w + System.getProperty("line.separator"));
                 }
@@ -165,9 +162,9 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     public List<DictionaryEntry> findWords(Collection<String> words) {
         List<DictionaryInfo> dicts;
         synchronized (this) {
-            dicts = new ArrayList<DictionaryInfo>(infos.values());
+            dicts = new ArrayList<>(infos.values());
         }
-        List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
+        List<DictionaryEntry> result = new ArrayList<>();
         for (String word : words) {
             for (DictionaryInfo di : dicts) {
                 try {

@@ -34,12 +34,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 
 import javax.swing.JMenuItem;
@@ -270,7 +265,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                             item.addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    manager.addIgnoreWord(w);
+                                    manager.addIgnoredWord(w);
                                 }
                             });
                         }
@@ -303,7 +298,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             StemmingMode mode = Preferences.isPreferenceDefault(Preferences.DICTIONARY_FUZZY_MATCHING, true)
                     ? StemmingMode.MATCHING : StemmingMode.NONE;
             String[] tokenList = tok.tokenizeWordsToStrings(src, mode);
-            Set<String> words = new TreeSet<String>();
+            Set<String> words = new HashSet<>();
             for (String tok : tokenList) {
                 checkEntryChanged();
                 words.add(tok);

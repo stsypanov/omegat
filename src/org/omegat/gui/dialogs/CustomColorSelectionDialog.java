@@ -293,7 +293,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CustomColorSelectionDialog dialog = new CustomColorSelectionDialog(new javax.swing.JFrame(), true);
+                CustomColorSelectionDialog dialog = new CustomColorSelectionDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
