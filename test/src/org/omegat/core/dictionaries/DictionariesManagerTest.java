@@ -123,7 +123,7 @@ public class DictionariesManagerTest extends TestCase {
         List<DictionaryEntry> result = manager.findWords(Arrays.asList(word));
         assertFalse(result.isEmpty());
         
-        manager.addIgnoreWord(word);
+        manager.addIgnoredWord(word);
         result = manager.findWords(Arrays.asList(word));
         assertTrue(result.isEmpty());
     }

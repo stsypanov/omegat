@@ -180,7 +180,7 @@ public class Main {
             RuntimePreferences.setLocationSaveEnabled(false);
         }
 
-        Log.log('\n' + "===================================================================" + '\n'
+        Log.log("\n" + "===================================================================" + "\n"
                 + OStrings.getNameAndVersion() + " (" + new Date() + ") " + " Locale " + Locale.getDefault());
 
         Log.logRB("LOG_STARTUP_INFO", System.getProperty("java.vendor"), System.getProperty("java.version"),

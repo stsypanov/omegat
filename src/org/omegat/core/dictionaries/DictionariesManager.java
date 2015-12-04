@@ -39,9 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.omegat.gui.dictionaries.IDictionaries;
 import org.omegat.util.DirectoryMonitor;
@@ -56,9 +53,7 @@ import org.omegat.util.OConsts;
  * @author Didier Briel
  */
 public class DictionariesManager extends BaseDictionariesManager implements DirectoryMonitor.Callback {
-    protected static final String IGNORE_FILE = "ignore.txt";
-    protected static final String DICTIONARY_SUBDIR = "dictionary";
-
+    public static final String IGNORE_FILE = "ignore.txt";
     private final IDictionaries pane;
 
     public DictionariesManager(final IDictionaries pane) {
@@ -78,7 +73,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     }
 
     /**
-     * Executed on file changed.
+     * Executed if file is changed.
      */
     public synchronized void fileChanged(File file) {
         String fn = file.getPath();
@@ -129,27 +124,23 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     }
 
     /**
-     * Add new ignore word.
+     * Add new ignored word.
      */
-    public void addIgnoreWord(final String word) {
-        Collection<String> words;
-        synchronized (ignoredWords) {
-            ignoredWords.add(word);
-            words = new ArrayList<>(ignoredWords);
-        }
-        saveIgnoreWords(words);
+    public void addIgnoredWord(final String word) {
+        ignoredWords.add(word);
+        saveIgnoredWords(ignoredWords);
     }
 
-    private synchronized void saveIgnoreWords(Collection<String> words) {
+    private synchronized void saveIgnoredWords(Collection<String> words) {
         if (monitor == null) {
-            Log.log("Could not save ignore words because no dictionary dir has been set.");
+            Log.log("Could not save ignored words because no dictionary dir has been set.");
             return;
         }
         try {
-            File outFile = new File(monitor.getDir(), "ignore.txt");
-            File outFileTmp = new File(monitor.getDir(), "ignore.txt.new");
+            File outFile = new File(monitor.getDir(), IGNORE_FILE);
+            File outFileTmp = new File(monitor.getDir(), IGNORE_FILE + ".new");
             try (BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTmp), OConsts.UTF8))) {
-                for (String w : words) {
+                for (String w : ignoredWords) {
                     wr.write(w + System.getProperty("line.separator"));
                 }
                 wr.flush();
@@ -157,7 +148,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             outFile.delete();
             FileUtil.rename(outFileTmp, outFile);
         } catch (Exception ex) {
-            Log.log("Error saving ignore words: " + ex.getMessage());
+            Log.log("Error saving ignored words: " + ex.getMessage());
         }
     }
 

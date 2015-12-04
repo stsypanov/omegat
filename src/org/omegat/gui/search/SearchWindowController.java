@@ -118,11 +118,8 @@ public class SearchWindowController {
         if (form.m_searchField.getModel().getSize() > 0) {
             form.m_searchField.setSelectedIndex(-1);
         }
-        if (!StringUtil.isEmpty(startText)) {
-            ((JTextField) form.m_searchField.getEditor().getEditorComponent()).setText(startText);
-        }
 
-        form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
+        form.m_replaceField.setModel(new DefaultComboBoxModel(HistoryManager.getReplaceItems()));
         if (form.m_replaceField.getModel().getSize() > 0) {
             form.m_replaceField.setSelectedIndex(-1);
         }
@@ -997,7 +994,7 @@ public class SearchWindowController {
                 OConsts.ST_MAX_SEARCH_RESULTS));
 
         form.m_excludeOrphans.setSelected(Preferences.isPreference(Preferences.SEARCHWINDOW_EXCLUDE_ORPHANS));
-        
+
         // if advanced options are enabled (e.g. author/date search),
         // let the user see them anyway. This is important because
         // search results will be affected by these settings
@@ -1097,8 +1094,6 @@ public class SearchWindowController {
             }
         });
     }
-
-    private MainWindow m_parent;
 
     private SimpleDateFormat m_dateFormat;
     private SpinnerDateModel m_dateFromModel, m_dateToModel;

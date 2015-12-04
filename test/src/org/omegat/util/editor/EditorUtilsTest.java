@@ -25,19 +25,26 @@
  **************************************************************************/
 package org.omegat.util.editor;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.junit.Before;
+import org.omegat.core.Core;
+import org.omegat.core.data.NotLoadedProject;
+import org.omegat.core.data.ProjectProperties;
 import org.junit.Test;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor.CHANGE_CASE_TO;
 import org.omegat.gui.glossary.GlossaryEntry;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.tokenizer.LuceneEnglishTokenizer;
+import org.omegat.util.Language;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import static org.junit.Assert.*;
 
-public class EditorUtilsTest extends TestCase {
+public class EditorUtilsTest {
     
     @Test
     public void testRemoveDirectionChars() {

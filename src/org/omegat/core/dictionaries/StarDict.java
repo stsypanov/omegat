@@ -40,7 +40,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
@@ -133,26 +132,25 @@ public class StarDict implements IDictionary {
         File file = new File(dictName + ".idx");
         byte[] idxBytes = readFile(file);
 
-        try (DataInputStream idx = new DataInputStream(new ByteArrayInputStream(idxBytes));
-             ByteArrayOutputStream mem = new ByteArrayOutputStream()) {
+        DataInputStream idx = new DataInputStream(new ByteArrayInputStream(idxBytes));
 
-            while (true) {
-                int b = idx.read();
-                if (b == -1) {
-                    break;
-                }
-                if (b == 0) {
-                    String key = new String(mem.toByteArray(), 0, mem.size(), OConsts.UTF8);
-                    mem.reset();
-                    int bodyOffset = idx.readInt();
-                    int bodyLength = idx.readInt();
-                    addIndex(key, bodyOffset, bodyLength, result);
-                } else {
-                    mem.write(b);
-                }
+        ByteArrayOutputStream mem = new ByteArrayOutputStream();
+        while (true) {
+            int b = idx.read();
+            if (b == -1) {
+                break;
             }
-            return result;
+            if (b == 0) {
+                String key = new String(mem.toByteArray(), 0, mem.size(), OConsts.UTF8);
+                mem.reset();
+                int bodyOffset = idx.readInt();
+                int bodyLength = idx.readInt();
+                addIndex(key, bodyOffset, bodyLength, result);
+            } else {
+                mem.write(b);
+            }
         }
+        return result;
     }
 
     /**
@@ -234,8 +232,9 @@ public class StarDict implements IDictionary {
      * @return Raw article text
      */
     private String readDictArticleText(int start, int len) {
-
-        try (FileInputStream in = new FileInputStream(dataFile)){
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(dataFile);
             byte[] data = new byte[len];
             in.skip(start);
             in.read(data);
@@ -243,6 +242,12 @@ public class StarDict implements IDictionary {
         } catch (IOException e) {
             System.err.println(e);
             return null;
+        } finally {
+            try {
+                in.close();
+            } catch (Throwable t) {
+            }
+            in = null;
         }
     }
 
@@ -268,12 +273,11 @@ public class StarDict implements IDictionary {
      * @return Raw article text
      */
     private String readDictZipArticleText(int start, int len) {
-
-
-        try (RandomAccessInputStream in = new RandomAccessInputStream(dataFile, "r");
-             DictZipInputStream din = new DictZipInputStream(in)){
-
-
+        RandomAccessInputStream in = null;
+        DictZipInputStream din = null;
+        try {
+            in = new RandomAccessInputStream(dataFile, "r");
+            din = new DictZipInputStream(in);
             DictZipHeader h = getDZHeader(din);
             int off = h.getOffset(start);
             int pos = h.getPosition(start);
@@ -283,9 +287,17 @@ public class StarDict implements IDictionary {
             byte[] data = new byte[len];
             System.arraycopy(b, off, data, 0, len);
             return new String(data, OConsts.UTF8);
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             System.err.println(e);
             return null;
+        } finally {
+            try {
+                din.close();
+                in.close();
+            } catch (Throwable t) {
+            }
+            din = null;
+            in = null;
         }
     }
 
@@ -323,12 +335,12 @@ public class StarDict implements IDictionary {
      */
     private Map<String, String> readIFO(File ifoFile) throws Exception {
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(ifoFile), UTF8))) {
-            String line;
+            String line = null;
             String first = rd.readLine();
             if (!"StarDict's dict ifo file".equals(first)) {
                 throw new Exception("Invalid header of .ifo file: " + first);
             }
-            Map<String, String> result = new TreeMap<String, String>();
+            Map<String, String> result = new TreeMap<>();
             while ((line = rd.readLine()) != null) {
                 if (line.trim().isEmpty()) {
                     continue;
@@ -367,7 +379,7 @@ public class StarDict implements IDictionary {
         }
 
         private String loadArticle() {
-            return NEW_LINE_PATTERN.matcher(readArticle(start, len)).replaceAll(Matcher.quoteReplacement("<br>"));
+            return readArticle(start, len).replace("\n", "<br>");
         }
     }
 }
