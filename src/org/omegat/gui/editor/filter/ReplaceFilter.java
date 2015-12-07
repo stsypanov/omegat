@@ -41,6 +41,8 @@ import org.omegat.core.data.TMXEntry;
 import org.omegat.core.search.SearchMatch;
 import org.omegat.core.search.Searcher;
 import org.omegat.gui.editor.EditorController;
+import org.omegat.gui.editor.IEditor;
+import org.omegat.gui.editor.IEditor.CaretPosition;
 import org.omegat.gui.editor.IEditorFilter;
 
 /**
@@ -150,7 +152,7 @@ public class ReplaceFilter implements IEditorFilter {
         if (found != null) {
             for (SearchMatch m : found) {
                 if (m.getStart() > pos) {
-                    ec.setCaretPosition(new EditorController.CaretPosition(m.getStart(), m.getEnd()));
+                    ec.setCaretPosition(new IEditor.CaretPosition(m.getStart(), m.getEnd()));
                     ec.requestFocus();
                     return;
                 }
@@ -162,34 +164,45 @@ public class ReplaceFilter implements IEditorFilter {
 
         // find to the end of project
         for (int i = currentEntryNumber + 1; i <= maxEntryNum; i++) {
-            find(i, found, ec);
+            SourceTextEntry ste = entries.get(i);
+            if (ste == null) {
+                continue; // entry not filtered
+            }
+            TMXEntry en = Core.getProject().getTranslationInfo(ste);
+            String trans = getEntryText(ste, en);
+            if (trans == null) {
+                continue;
+            }
+            found = getReplacementsForEntry(trans);
+            if (found == null) {
+                continue; // no replacements
+            }
+            for (SearchMatch m : found) {
+                ec.gotoEntry(i, new CaretPosition(m.getStart(), m.getEnd()));
+                ec.requestFocus();
+                return;
+            }
         }
         // find from the beginning of project
         for (int i = minEntryNum; i < currentEntryNumber; i++) {
-            find(i, found, ec);
-        }
-        // not found
-        ec.activateEntry();
-    }
-
-    protected void find(int i, List<SearchMatch> found, EditorController ec){
-        SourceTextEntry ste = entries.get(i);
-        if (ste == null) {
-            return; // entry not filtered
-        }
-        TMXEntry en = Core.getProject().getTranslationInfo(ste);
-        String trans = getEntryText(ste, en);
-        if (trans == null) {
-            return;
-        }
-        found = getReplacementsForEntry(trans);
-        if (found == null) {
-            return; // no replacements
-        }
-        for (SearchMatch m : found) {
-            ec.gotoEntry(i, new EditorController.CaretPosition(m.getStart(), m.getEnd()));
-            ec.requestFocus();
-            return;
+            SourceTextEntry ste = entries.get(i);
+            if (ste == null) {
+                continue; // entry not filtered
+            }
+            TMXEntry en = Core.getProject().getTranslationInfo(ste);
+            String trans = getEntryText(ste, en);
+            if (trans == null) {
+                continue;
+            }
+            found = getReplacementsForEntry(trans);
+            if (found == null) {
+                continue; // no replacements
+            }
+            for (SearchMatch m : found) {
+                ec.gotoEntry(i, new CaretPosition(m.getStart(), m.getEnd()));
+                ec.requestFocus();
+                return;
+            }
         }
     }
 
