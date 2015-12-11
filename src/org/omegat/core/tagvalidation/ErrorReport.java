@@ -68,7 +68,7 @@ public class ErrorReport {
      * @return A map between errors and tags
      */
     public Map<TagError, List<Tag>> inverseReport() {
-        Map<TagError, List<Tag>> result = new HashMap<>();
+        Map<TagError, List<Tag>> result = new EnumMap<TagError, List<Tag>>(TagError.class);
         fillInverseReport(srcErrors, result);
         fillInverseReport(transErrors, result);
         return result;
