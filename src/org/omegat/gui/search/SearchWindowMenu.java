@@ -143,7 +143,6 @@ public class SearchWindowMenu extends JMenuBar {
             }
         });
 
-        PropertiesShortcuts shortcuts = new PropertiesShortcuts("/org/omegat/gui/main/MainMenuShortcuts.properties");
-        shortcuts.bindKeyStrokes(this);
+        PropertiesShortcuts.MainMenuShortcuts.bindKeyStrokes(this);
     }
 }

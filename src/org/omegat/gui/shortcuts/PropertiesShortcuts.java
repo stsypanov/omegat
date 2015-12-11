@@ -51,8 +51,12 @@ import org.omegat.util.StringUtil;
  */
 public class PropertiesShortcuts {
 
+    public static final PropertiesShortcuts MainMenuShortcuts = new PropertiesShortcuts(MAIN_MENU_SHORTCUTS_FILE);
+
+    private static final String MAIN_MENU_SHORTCUTS_FILE = "/org/omegat/gui/main/MainMenuShortcuts.properties";
+    private static final Properties properties = new Properties();
+
     private static final Pattern PATTERN = Pattern.compile("\\.properties$");
-    private final Properties properties = new Properties();
 
     /**
      * Creates shortcut list with the specified defaults and user shortcuts. Load defaults from properties
