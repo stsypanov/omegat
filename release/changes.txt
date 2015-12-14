@@ -17,6 +17,27 @@
   https://sourceforge.net/p/omegat/feature-requests/1164/
 
 ----------------------------------------------------------------------
+ OmegaT 3.5.3 update 1
+----------------------------------------------------------------------
+   0 Enhancement
+   2 Bug fixes
+   1 Localisation update
+----------------------------------------------------------------------
+3.5.3 update 1 vs 3.5.3
+
+ Bug fixes:
+
+  - Stop searching when Find window is closed
+  https://sourceforge.net/p/omegat/bugs/412/
+
+  - An error was fixed with -Dhttp.proxyHost and -Dhttp.proxyPort in 
+Linux kaptain launcher
+
+  Localisation Updates:
+
+  - Italian localisation updated to 3.5.3 (UI, documentation, scripts, readme)
+
+----------------------------------------------------------------------
  OmegaT 3.5.3 (2015-12-02)
 ----------------------------------------------------------------------
   23 Enhancements
