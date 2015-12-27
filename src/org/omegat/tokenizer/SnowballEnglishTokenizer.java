@@ -29,8 +29,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
@@ -40,25 +41,31 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("deprecation")
 @Tokenizer(languages = { "en" })
 public class SnowballEnglishTokenizer extends BaseTokenizer {
-    public static final String[] STOP_WORDS;
+    public static final Set<String> STOP_WORDS;
 
     static {
         // Load stopwords
-            try (InputStream in = SnowballEnglishTokenizer.class.getResourceAsStream("StopList_en.txt");
-                 BufferedReader rd = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
-
+        try {
+            InputStream in = SnowballEnglishTokenizer.class
+                    .getResourceAsStream("StopList_en.txt");
+            try {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(
+                        in, "UTF-8"));
                 String s;
-                List<String> words = new ArrayList<>();
+                STOP_WORDS = new HashSet<String>();
                 while ((s = rd.readLine()) != null) {
                     s = s.trim();
                     if (s.isEmpty() || s.startsWith("#")) {
                         continue;
                     }
-                    words.add(s);
+                    STOP_WORDS.add(s);
                 }
-                STOP_WORDS = words.toArray(new String[words.size()]);
+            } finally {
+                in.close();
+            }
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(
                     "Error load stopwords in SnowballEnglishTokenizer: "
@@ -66,13 +73,14 @@ public class SnowballEnglishTokenizer extends BaseTokenizer {
         }
     }
 
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             return new SnowballAnalyzer(getBehavior(),
                     "English",
-                    stopWordsAllowed ? STOP_WORDS : new String[0]).tokenStream(
+                    stopWordsAllowed ? STOP_WORDS : Collections.emptySet()).tokenStream(
                     null, new StringReader(strOrig));
         } else {
             return new StandardTokenizer(getBehavior(),

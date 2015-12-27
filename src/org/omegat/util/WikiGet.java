@@ -301,6 +301,7 @@ public class WikiGet {
     /**
      * HTTP response error storage.
      */
+    @SuppressWarnings("serial")
     public static class ResponseError extends IOException {
         public final int code;
         public final String message;

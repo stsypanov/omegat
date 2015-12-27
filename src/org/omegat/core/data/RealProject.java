@@ -32,8 +32,6 @@
 
 package org.omegat.core.data;
 
-import gen.core.filters.Filters;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -102,6 +100,8 @@ import org.omegat.util.TagUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 import org.xml.sax.SAXParseException;
 
+import gen.core.filters.Filters;
+
 /**
  * Loaded project implementation. Only translation could be changed after project will be loaded and set by
  * Core.setProject.
@@ -130,6 +130,7 @@ public class RealProject implements IProject {
     private final IRemoteRepository repository;
     private boolean isOnlineMode;
 
+    private RandomAccessFile raFile;
     private FileChannel lockChannel;
     private FileLock lock;
 
@@ -454,7 +455,8 @@ public class RealProject implements IProject {
         }
         try {
             File lockFile = new File(m_config.getProjectRoot(), OConsts.FILE_PROJECT);
-            lockChannel = new RandomAccessFile(lockFile, "rw").getChannel();
+            raFile = new RandomAccessFile(lockFile, "rw");
+            lockChannel = raFile.getChannel();
             lock = lockChannel.tryLock();
         } catch (Throwable ex) {
             Log.log(ex);
@@ -490,6 +492,9 @@ public class RealProject implements IProject {
             }
             if (lockChannel != null) {
                 lockChannel.close();
+            }
+            if (raFile != null) {
+                raFile.close();
             }
         } catch (Throwable ex) {
             Log.log(ex);
@@ -1464,6 +1469,7 @@ public class RealProject implements IProject {
         setProjectModified(true);
     }
 
+    @SuppressWarnings("unchecked")
     public void iterateByDefaultTranslations(DefaultTranslationsIterator it) {
         Map.Entry<String, TMXEntry>[] entries;
         synchronized (projectTMX) {
@@ -1475,6 +1481,7 @@ public class RealProject implements IProject {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void iterateByMultipleTranslations(MultipleTranslationsIterator it) {
         Map.Entry<EntryKey, TMXEntry>[] entries;
         synchronized (projectTMX) {

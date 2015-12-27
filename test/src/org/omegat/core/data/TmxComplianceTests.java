@@ -30,15 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.html2.HTMLFilter2;
 import org.omegat.filters2.html2.HTMLOptions;
-import org.omegat.filters2.po.PoFilter;
 import org.omegat.filters2.rc.RcFilter;
 import org.omegat.filters2.text.bundles.ResourceBundleFilter;
+
+import junit.framework.Assert;
 
 /**
  * TMX Compliance tests as described on http://www.localization.org/fileadmin/standards/tmx1.4/comp.htm
@@ -223,26 +222,24 @@ public class TmxComplianceTests extends TmxComplianceBase {
      */
     @Test
     public void testExport1D() throws Exception {
-        if (true) {
-            /**
-             * Test data contains .po files, which doesn't compliance with PO
-             * specification
-             * (https://www.gnu.org/savannah-checkouts/gnu/gettext/
-             * manual/html_node/PO-Files.html). By the specification, msgid
-             * should contain "untranslated-string", but in the ExportTest1D.po
-             * file it contains ID.
-             */
-            return;
-        }
-        File tmxFile = new File("test/data/tmx/TMXComplianceKit/ExportTest1D.tmx");
-        File sourceFile = new File("test/data/tmx/TMXComplianceKit/ExportTest1D.po");
-        File translatedFile = new File("test/data/tmx/TMXComplianceKit/ExportTest1D_fr.po");
-
-        ProjectProperties props = new TestProjectProperties("EN-US", "FR-CA");
-
-        align(new PoFilter(), sourceFile, "iso-8859-1", translatedFile, "iso-8859-1", props);
-
-        compareTMX(tmxFile, outFile, 8);
+        /*
+         * Test data contains .po files, which doesn't compliance with PO
+         * specification
+         * (https://www.gnu.org/savannah-checkouts/gnu/gettext/
+         * manual/html_node/PO-Files.html). By the specification, msgid
+         * should contain "untranslated-string", but in the ExportTest1D.po
+         * file it contains ID.
+         */
+        
+//        File tmxFile = new File("test/data/tmx/TMXComplianceKit/ExportTest1D.tmx");
+//        File sourceFile = new File("test/data/tmx/TMXComplianceKit/ExportTest1D.po");
+//        File translatedFile = new File("test/data/tmx/TMXComplianceKit/ExportTest1D_fr.po");
+//
+//        ProjectProperties props = new TestProjectProperties("EN-US", "FR-CA");
+//
+//        align(new PoFilter(), sourceFile, "iso-8859-1", translatedFile, "iso-8859-1", props);
+//
+//        compareTMX(tmxFile, outFile, 8);
     }
 
     /**

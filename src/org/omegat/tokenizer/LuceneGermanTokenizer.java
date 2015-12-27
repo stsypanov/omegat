@@ -26,8 +26,10 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
-import java.util.EnumMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.de.GermanAnalyzer;
@@ -46,9 +48,10 @@ public class LuceneGermanTokenizer extends BaseTokenizer {
         defaultBehavior = Version.LUCENE_30;
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     public Map<Version, String> getSupportedBehaviors() {
-        Map<Version, String> result = new EnumMap<>(Version.class);
+        Map<Version, String> result = new LinkedHashMap<Version, String>();
         result.putAll(super.getSupportedBehaviors());
         result.put(Version.LUCENE_36, result.get(Version.LUCENE_36) + " (UniNE)");
         result.put(Version.LUCENE_31, result.get(Version.LUCENE_31) + " (Snowball)");
@@ -56,12 +59,13 @@ public class LuceneGermanTokenizer extends BaseTokenizer {
         return result;
     }
     
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            String[] stopWords = stopWordsAllowed ? GermanAnalyzer.GERMAN_STOP_WORDS
-                    : EMPTY_STRING_LIST;
+            Set<?> stopWords = stopWordsAllowed ? GermanAnalyzer.getDefaultStopSet()
+                    : Collections.emptySet();
             return new GermanAnalyzer(getBehavior(), stopWords).tokenStream("", new StringReader(
                     strOrig));
         } else {

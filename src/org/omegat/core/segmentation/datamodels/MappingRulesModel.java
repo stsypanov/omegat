@@ -25,6 +25,13 @@
 
 package org.omegat.core.segmentation.datamodels;
 
+import java.beans.ExceptionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.table.AbstractTableModel;
+
 import org.omegat.core.segmentation.MapRule;
 import org.omegat.core.segmentation.Rule;
 import org.omegat.core.segmentation.SRX;
@@ -116,16 +123,14 @@ public class MappingRulesModel extends AbstractModel {
 
     /** Moves a mapping rule up an order. */
     public void moveRowUp(int row) {
-        MapRule maprulePrev = srx.getMappingRules().get(row - 1);
-        srx.getMappingRules().remove(row - 1);
+        MapRule maprulePrev = srx.getMappingRules().remove(row - 1);
         srx.getMappingRules().add(row, maprulePrev);
         fireTableRowsUpdated(row - 1, row);
     }
 
     /** Moves a mapping rule down an order. */
     public void moveRowDown(int row) {
-        MapRule mapruleNext = srx.getMappingRules().get(row + 1);
-        srx.getMappingRules().remove(row + 1);
+        MapRule mapruleNext = srx.getMappingRules().remove(row + 1);
         srx.getMappingRules().add(row, mapruleNext);
         fireTableRowsUpdated(row, row + 1);
     }

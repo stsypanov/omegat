@@ -39,6 +39,7 @@ import org.omegat.util.Token;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("deprecation")
 @Tokenizer(languages = { "zh" })
 public class LuceneChineseTokenizer extends BaseTokenizer {
     
@@ -57,6 +58,7 @@ public class LuceneChineseTokenizer extends BaseTokenizer {
         return tokenizeByCodePointToStrings(strOrig);
     }
     
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {

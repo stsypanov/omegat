@@ -64,7 +64,7 @@ import org.omegat.tokenizer.ITokenizer.StemmingMode;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.AlwaysVisibleCaret;
+import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.Styles.EditorColor;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -99,8 +99,8 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         addMouseListener(mouseCallback);
 
         setEditable(false);
-        AlwaysVisibleCaret.apply(this);
-        setText(EXPLANATION);
+        StaticUIUtils.makeCaretAlwaysVisible(this);
+        this.setText(EXPLANATION);
     	applyFont();
         setMinimumSize(new Dimension(100, 50));
 
@@ -128,7 +128,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 	private void applyFont(Font font) {
 		MutableAttributeSet attr = new SimpleAttributeSet();
 		HTMLDocument doc = (HTMLDocument) getDocument();
-		
+
 
     	doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.FONT_FAMILY, font.getFontName());
     	doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.FONT_SIZE, font.getSize() + "pt");

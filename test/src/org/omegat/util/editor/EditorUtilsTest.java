@@ -25,7 +25,6 @@
  **************************************************************************/
 package org.omegat.util.editor;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +39,8 @@ import org.omegat.gui.editor.IEditor.CHANGE_CASE_TO;
 import org.omegat.gui.glossary.GlossaryEntry;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.tokenizer.LuceneEnglishTokenizer;
-import org.omegat.util.Language;
+
+import junit.framework.TestCase;
 
 import static org.junit.Assert.*;
 

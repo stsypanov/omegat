@@ -26,10 +26,6 @@
 
 package org.omegat.core.segmentation;
 
-import gen.core.segmentation.Languagemap;
-import gen.core.segmentation.Languagerule;
-import gen.core.segmentation.Srx;
-
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -50,6 +46,10 @@ import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
+import gen.core.segmentation.Languagemap;
+import gen.core.segmentation.Languagerule;
+import gen.core.segmentation.Srx;
+
 /**
  * The class with all the segmentation data possible -- rules, languages, etc.
  * It loads and saves its data from/to SRX file.
@@ -57,6 +57,8 @@ import org.omegat.util.OStrings;
  * @author Maxym Mykhalchuk
  */
 public class SRX implements Serializable, Cloneable {
+
+    private static final long serialVersionUID = 2182125877925944613L;
 
     public static final String CONF_SENTSEG = "segmentation.conf";
 

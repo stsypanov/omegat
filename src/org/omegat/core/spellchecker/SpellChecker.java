@@ -87,6 +87,8 @@ public class SpellChecker implements ISpellChecker {
                 case CLOSE:
                     destroy();
                     break;
+                default:
+                    // Nothing
                 }
                 resetCache();
             }

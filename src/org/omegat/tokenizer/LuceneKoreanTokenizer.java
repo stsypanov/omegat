@@ -49,12 +49,13 @@ import org.apache.lucene.analysis.kr.KoreanTokenizer;
 @Tokenizer(languages = { "ko" })
 public class LuceneKoreanTokenizer extends BaseTokenizer {
 
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            Set<String> stopWords = stopWordsAllowed ? KoreanAnalyzer.STOP_WORDS_SET
-                    : Collections.EMPTY_SET;
+            Set<?> stopWords = stopWordsAllowed ? KoreanAnalyzer.STOP_WORDS_SET
+                    : Collections.emptySet();
             return new KoreanAnalyzer(getBehavior(), stopWords).tokenStream("",
             		new StringReader(strOrig));
         } else {
