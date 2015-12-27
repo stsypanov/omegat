@@ -157,7 +157,7 @@ public class ScriptItem implements Comparable<ScriptItem> {
     public String getText() throws IOException {
         String ret;
 
-        try (LinebreakPreservingReader lpin = getUTF8LinebreakPreservingReader(this)) {
+        try (LinebreakPreservingReader lpin = getUTF8LinebreakPreservingReader(m_file)) {
             StringBuilder sb = new StringBuilder();
             String s = lpin.readLine();
             startsWithBOM = s.startsWith(BOM);
@@ -192,7 +192,7 @@ public class ScriptItem implements Comparable<ScriptItem> {
         }
 
         try (InputStream is = new ByteArrayInputStream(text.getBytes(OConsts.UTF8))) {
-            LFileCopy.copy(is, this);
+            LFileCopy.copy(is, m_file);
         }
     }
 
