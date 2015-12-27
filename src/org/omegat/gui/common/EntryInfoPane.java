@@ -64,8 +64,6 @@ public abstract class EntryInfoPane extends JTextPane implements IProjectEventLi
             setDragEnabled(true);
         }
         getDocument().addDocumentListener(new FontFallbackListener(this));
-        setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
-        setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
     }
 
     public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
