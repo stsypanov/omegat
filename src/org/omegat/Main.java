@@ -97,7 +97,7 @@ public class Main {
                 return GUI;
             }
         }
-    }
+    };
 
     /**
      * Choice of types of translation for all segments in the optional, special
@@ -113,7 +113,7 @@ public class Main {
                 return EQUAL;
             }
         }
-    }
+    };
 
     /** Regexp for parse parameters. */
     protected static final Pattern PARAM = Pattern.compile("\\-\\-([A-Za-z\\-]+)(=(.+))?");
@@ -122,7 +122,7 @@ public class Main {
     protected static File projectLocation = null;
 
     /** Execution command line parameters. */
-    protected static final Map<String, String> params = new TreeMap<>();
+    protected static final Map<String, String> params = new TreeMap<String, String>();
 
     /** Execution mode. */
     protected static RUN_MODE runMode = RUN_MODE.GUI;
@@ -175,7 +175,7 @@ public class Main {
         if (params.containsKey("disable-project-locking")) {
             RuntimePreferences.setProjectLockingEnabled(false);
         }
-
+        
         if (params.containsKey("disable-location-save")) {
             RuntimePreferences.setLocationSaveEnabled(false);
         }
@@ -254,11 +254,11 @@ public class Main {
             for (String key : config.keySet()) {
                 String value = config.getString(key);
                 System.setProperty(key, value);
-                System.out.println("Read from config: " + key + '=' + value);
-                if ("user.language".equals(key)) {
+                System.out.println("Read from config: " + key + "=" + value);
+                if (key.equals("user.language")) {
                     userLanguage = value;
                 }
-                if ("user.country".equals(key)) {
+                if (key.equals("user.country")) {
                     userCountry = value;
                 }
             }
@@ -277,7 +277,7 @@ public class Main {
         }
     }
     
-	/**
+    /**
      * Execute standard GUI.
      */
     protected static int runGUI() {
@@ -333,12 +333,12 @@ public class Main {
         }
 
         if (!Core.getPluginsLoadingErrors().isEmpty()) {
-            StringBuilder err = new StringBuilder();
+            String err = "";
             for (int i = 0; i < Core.getPluginsLoadingErrors().size(); i++) {
-                err.append('\n').append(Core.getPluginsLoadingErrors().get(i));
+                err += "\n" + Core.getPluginsLoadingErrors().get(i);
             }
-            String errorMessage = err.toString().substring(1);
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), errorMessage,
+            err = err.substring(1);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), err,
                     OStrings.getString("STARTUP_ERRORBOX_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
 
@@ -357,20 +357,6 @@ public class Main {
         });
         return 0;
     }
-
-    protected static void setNimbusLaF(){
-//        try {
-//            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (Exception e) {
-//            Log.log(e);
-//        }
-    }
-
 
     /**
      * Execute in console mode for translate.
@@ -394,22 +380,22 @@ public class Main {
         else
             p.compileProject(".*", false);
 
-        // Called *after* executing post processing command (unlike the
+        // Called *after* executing post processing command (unlike the 
         // regular PROJECT_CHANGE_TYPE.COMPILE)
         executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
 
         p.closeProject();
         executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.CLOSE);
         System.out.println(OStrings.getString("CONSOLE_FINISHED"));
-
+        
         return 0;
     }
-
+    
     /**
      * Validates tags according to command line specs:
      * --tag-validation=[abort|warn]
-     *
-     * On abort, the program is aborted when tag validation finds errors.
+     * 
+     * On abort, the program is aborted when tag validation finds errors. 
      * On warn the errors are printed but the program continues.
      * In all other cases no tag validation is done.
      */
@@ -471,7 +457,7 @@ public class Main {
         }
 
         // prepare tmx
-        Map<String, PrepareTMXEntry> data = new HashMap<>();
+        Map<String, PrepareTMXEntry> data = new HashMap<String, PrepareTMXEntry>();
         for (SourceTextEntry ste : entries) {
             PrepareTMXEntry entry = new PrepareTMXEntry();
             entry.source = ste.getSrcText();
@@ -523,7 +509,7 @@ public class Main {
         System.out.println(StringUtil.format(OStrings.getString("CONSOLE_ALIGN_AGAINST"), dir));
 
         Map<String, TMXEntry> data = p.align(p.getProjectProperties(), new File(dir));
-        Map<String, PrepareTMXEntry> result = new TreeMap<>();
+        Map<String, PrepareTMXEntry> result = new TreeMap<String, PrepareTMXEntry>();
         for (Map.Entry<String, TMXEntry> en : data.entrySet()) {
             result.put(en.getKey(), new PrepareTMXEntry(en.getValue()));
         }
@@ -541,7 +527,7 @@ public class Main {
      * creates the project class and adds it to the Core. Loads the project if
      * specified. An exit occurs on error loading the project. This method is
      * for the different console modes, to prevent code duplication.
-     *
+     * 
      * @param loadProject
      *            load the project or not
      * @return the project.
@@ -575,10 +561,10 @@ public class Main {
         }
         return p;
     }
-
-    /** Execute script as PROJECT_CHANGE events. We can't use the regular project listener because
+    
+    /** Execute script as PROJECT_CHANGE events. We can't use the regular project listener because 
      *  the SwingUtilities.invokeLater method used in CoreEvents doesn't stop the project processing
-     *  in console mode.
+     *  in console mode. 
      */
     private static void executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
         if (params.containsKey("script")) {
