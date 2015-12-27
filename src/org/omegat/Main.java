@@ -64,7 +64,7 @@ import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.main.ProjectUICommands;
 import org.omegat.gui.scripting.ScriptItem;
-import org.omegat.gui.scripting.ScriptingWindow;
+import org.omegat.gui.scripting.ScriptRunner;
 import org.omegat.util.*;
 import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.Styles;
@@ -581,15 +581,18 @@ public class Main {
      *  in console mode.
      */
     private static void executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
-    	if (params.containsKey("script"))
-    	{
+        if (params.containsKey("script")) {
     		File script = new File(params.get("script").toString());
 
-    		if (script.exists())
-    		{
-    			HashMap<String, Object> binding = new HashMap<>();
+            if (script.isFile()) {
+    			HashMap<String, Object> binding = new HashMap<String, Object>();
     			binding.put("eventType", eventType);
-    			ScriptingWindow.executeScriptFileHeadless(new ScriptItem(script), true, binding);
+                try {
+                    String result = ScriptRunner.executeScript(new ScriptItem(script), binding);
+                    Log.log(result);
+                } catch (Exception ex) {
+                    Log.log(ex);
+                }
     		}
     	}
     }

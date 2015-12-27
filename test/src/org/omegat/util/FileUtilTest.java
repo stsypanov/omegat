@@ -46,7 +46,7 @@ public class FileUtilTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         base = FileUtil.createTempDir();
-        System.err.println("Base: " + base.getAbsolutePath());
+        System.out.println("Base: " + base.getAbsolutePath());
     }
 
     @Override
@@ -152,7 +152,27 @@ public class FileUtilTest extends TestCase {
         }
     }
     
-    private abstract static class CountingCallback implements ICollisionCallback {
+    public void testGetFileExtension() {
+        assertEquals("js", FileUtil.getFileExtension("foo.js"));
+        assertEquals("zip", FileUtil.getFileExtension("foo.js/bar.zip"));
+        assertEquals("zip", FileUtil.getFileExtension("C:\\foo.js\\bar.zip"));
+        assertEquals("tar.gz", FileUtil.getFileExtension("foo.tar.gz"));
+        assertEquals("", FileUtil.getFileExtension("foo"));
+        assertEquals("", FileUtil.getFileExtension("foo/.bar"));
+        assertEquals("", FileUtil.getFileExtension("foo\\.bar"));
+    }
+
+    public void testStripFileExtension() {
+        assertEquals("foo", FileUtil.stripFileExtension("foo.js"));
+        assertEquals("foo.js/bar", FileUtil.stripFileExtension("foo.js/bar.zip"));
+        assertEquals("C:/foo.js/bar", FileUtil.stripFileExtension("C:\\foo.js\\bar.zip"));
+        assertEquals("foo", FileUtil.stripFileExtension("foo.tar.gz"));
+        assertEquals("foo", FileUtil.stripFileExtension("foo"));
+        assertEquals("foo/.bar", FileUtil.stripFileExtension("foo/.bar"));
+        assertEquals("foo/.bar", FileUtil.stripFileExtension("foo\\.bar"));
+    }
+
+    private abstract class CountingCallback implements ICollisionCallback {
         int calledTimes = 0;
     }
     

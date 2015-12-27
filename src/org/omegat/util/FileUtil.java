@@ -7,6 +7,7 @@
                2009 Didier Briel
                2012 Alex Buloichik, Didier Briel
                2014 Alex Buloichik, Aaron Madlon-Kay
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -421,4 +422,28 @@ public class FileUtil {
     }
 
     private static int TEMP_DIR_ATTEMPTS = 10000;
+
+    /**
+     * Returns the extension of file.
+     */
+    public static String getFileExtension(String path) {
+        // Backslash works on Windows but not other systems, while
+        // forwardslash works everywhere.
+        String basename = new File(path.replace('\\', '/')).getName();
+        int i = basename.indexOf('.');
+        return i < 1 ? "" : basename.substring(i + 1);
+    }
+
+    /**
+     * Returns the filename without the extension
+     */
+    public static String stripFileExtension(String path) {
+        File file = new File(path.replace('\\', '/'));
+
+        String basename = file.getName();
+        int i = basename.indexOf('.');
+        String stripped = i < 1 ? basename : basename.substring(0, i);
+
+        return new File(file.getParent(), stripped).getPath();
+    }
 }

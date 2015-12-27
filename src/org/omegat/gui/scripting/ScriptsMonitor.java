@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2014 Briac Pilpre
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -28,8 +29,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
-import javax.swing.JList;
-
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.events.IApplicationEventListener;
@@ -37,6 +36,7 @@ import org.omegat.core.events.IEditorEventListener;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.util.DirectoryMonitor;
+import org.omegat.util.FileUtil;
 
 /**
  * Monitor to check changes in the script directory.
@@ -47,17 +47,21 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 	private static final boolean SCRIPTING_EVENTS = true;
 	private static boolean applicationStartupEventScriptsExecuted = false;
 	
-	public ScriptsMonitor(final ScriptingWindow scriptingWindow, final JList list, List<String> extensions) {
-		this.m_list = list;
+    private static final FilenameFilter FILTER;
+
+    static {
+        final List<String> extensions = ScriptRunner.getAvailableScriptExtensions();
+        FILTER = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                String ext = FileUtil.getFileExtension(name);
+                return extensions.contains(ext.toLowerCase());
+            }
+        };
+    }
+
+    public ScriptsMonitor(final ScriptingWindow scriptingWindow) {
 		this.m_scriptingWindow = scriptingWindow;
-		this.m_extensions = extensions;
-		this.m_filter = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				String ext = ScriptingWindow.getFileExtension(name);
-				return m_extensions.contains(ext.toLowerCase());
-			}
-		};
 
 		if (SCRIPTING_EVENTS) {
 			// Initialize the events script list for all the events
@@ -109,15 +113,14 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
     	// Only display files with an extension supported by the engines 
     	// currently installed.
 		// Replace the script filename by its description, if available
-		File[] files = m_scriptDir.listFiles(m_filter);
+		File[] files = m_scriptDir.listFiles(FILTER);
 		ArrayList<ScriptItem> scriptsList = new ArrayList<>(files.length);
 		for (File script : files) {
         	scriptsList.add(new ScriptItem(script));
         }
 
-		Collections.sort(scriptsList, new ScriptItem.ScriptItemComparator());
-        m_list.setListData(scriptsList.toArray(new ScriptItem[scriptsList.size()]));
-        
+        Collections.sort(scriptsList);
+        m_scriptingWindow.setScriptItems(scriptsList);
 
         if (SCRIPTING_EVENTS) {
             hookApplicationEvent();
@@ -250,7 +253,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
     	// Avoid executing scripts that may be deleted during the directory change.
     	eventScripts.clear();
 
-        for (File script : entryActivatedDir.listFiles(m_filter)) {
+        for (File script : entryActivatedDir.listFiles(FILTER)) {
         	ScriptItem scriptItem = new ScriptItem(script);
         	if (!eventScripts.contains(scriptItem)) {
         		eventScripts.add(scriptItem);
@@ -259,7 +262,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 	}
 	
 	
-	private enum EventType {
+    private enum EventType {
 		// ApplicationEvent
 		APPLICATION_STARTUP,
 		APPLICATION_SHUTDOWN,
@@ -278,10 +281,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 		NEW_FILE
 	}
 
-    private final JList m_list;
-    private final FilenameFilter m_filter;
     private File m_scriptDir;
-	private List<String> m_extensions;
 	protected DirectoryMonitor m_monitor;
 	private ScriptingWindow m_scriptingWindow;
 
