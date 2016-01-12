@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -282,8 +283,6 @@ public class HelpFrame extends PeroFrame {
      * 
      * If the latest manual is not available in the system locale language, it
      * returns null, i.e. show a language selection screen.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     private static String detectInitialLanguage() {
         // Get the system locale (language and country)
@@ -309,8 +308,6 @@ public class HelpFrame extends PeroFrame {
     /**
      * Returns the version of (a translation of) the user manual. If there is no
      * translation for the specified locale, null is returned.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     private static String getDocVersion(String locale) {
         // Check if there's a manual for the specified locale

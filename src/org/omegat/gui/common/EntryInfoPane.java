@@ -35,6 +35,7 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.util.gui.FontFallbackListener;
+import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.Styles;
 
 /**
@@ -66,6 +67,13 @@ public abstract class EntryInfoPane extends JTextPane implements IProjectEventLi
         getDocument().addDocumentListener(new FontFallbackListener(this));
     }
 
+    @Override
+    public void setEditable(boolean isEditable) {
+        StaticUIUtils.setCaretUpdateEnabled(this, isEditable);
+        super.setEditable(isEditable);
+    }
+
+    @Override
     public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
         switch (eventType) {
         case CREATE:

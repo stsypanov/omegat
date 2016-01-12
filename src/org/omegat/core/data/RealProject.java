@@ -64,6 +64,7 @@ import javax.swing.SwingUtilities;
 import org.apache.lucene.util.Version;
 import org.madlonkay.supertmxmerge.StmProperties;
 import org.madlonkay.supertmxmerge.SuperTmxMerge;
+import org.omegat.CLIParameters;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
@@ -196,8 +197,9 @@ public class RealProject implements IProject {
     private Stack<Process> processCache = new Stack<>();
 
     /**
-     * Create new project instance. It required to call {@link #createProject() createProject} or
-     * {@link #loadProject() loadProject} methods just after constructor before use project.
+     * Create new project instance. It required to call {@link #createProject()}
+     * or {@link #loadProject(boolean)} methods just after constructor before
+     * use project.
      * 
      * @param props
      *            project properties
@@ -216,12 +218,12 @@ public class RealProject implements IProject {
         m_config = props;
         this.repository = repository;
 
-        sourceTokenizer = createTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_SOURCE), props.getSourceTokenizer());
-        configTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_SOURCE_BEHAVIOR), sourceTokenizer);
-        Log.log("Source tokenizer: " + sourceTokenizer.getClass().getName() + " (" + sourceTokenizer.getBehavior() + ')');
-        targetTokenizer = createTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_TARGET), props.getTargetTokenizer());
-        configTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_TARGET_BEHAVIOR), targetTokenizer);
-        Log.log("Target tokenizer: " + targetTokenizer.getClass().getName() + " (" + targetTokenizer.getBehavior() + ')');
+        sourceTokenizer = createTokenizer(Core.getParams().get(CLIParameters.TOKENIZER_SOURCE), props.getSourceTokenizer());
+        configTokenizer(Core.getParams().get(CLIParameters.TOKENIZER_BEHAVIOR_SOURCE), sourceTokenizer);
+        Log.log("Source tokenizer: " + sourceTokenizer.getClass().getName() + " (" + sourceTokenizer.getBehavior() + ")");
+        targetTokenizer = createTokenizer(Core.getParams().get(CLIParameters.TOKENIZER_TARGET), props.getTargetTokenizer());
+        configTokenizer(Core.getParams().get(CLIParameters.TOKENIZER_BEHAVIOR_TARGET), targetTokenizer);
+        Log.log("Target tokenizer: " + targetTokenizer.getClass().getName() + " (" + targetTokenizer.getBehavior() + ")");
     }
     
     public IRemoteRepository getRepository() {
@@ -758,9 +760,6 @@ public class RealProject implements IProject {
      * synchronized around memory TMX, so, all edits are stopped. Since it's enough fast step, it's okay.
      *
      * 4. Upload new revision into repository.
-     *
-     * @author Alex Buloichik <alex73mail@gmail.com>
-     * @author Martin Fleurke
      */
     private void rebaseProject() throws Exception {
         File filenameTMXwithLocalChangesOnBase, filenameTMXwithLocalChangesOnHead;
@@ -1166,9 +1165,6 @@ public class RealProject implements IProject {
         Log.log("Load project source files: " + (en - st) + "ms");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected void findNonUniqueSegments() {
         Map<String, SourceTextEntry> exists = new HashMap<>(16384);
 
@@ -1652,8 +1648,8 @@ public class RealProject implements IProject {
      * @return normalized filename
      */
     protected String patchFileNameForEntryKey(String filename) {
-        String f = Core.getParams().get("alternate-filename-from");
-        String t = Core.getParams().get("alternate-filename-to");
+        String f = Core.getParams().get(CLIParameters.ALTERNATE_FILENAME_FROM);
+        String t = Core.getParams().get(CLIParameters.ALTERNATE_FILENAME_TO);
         String fn = filename.replace('\\', '/');
         if (f != null && t != null) {
             fn = fn.replaceAll(f, t);

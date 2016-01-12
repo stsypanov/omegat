@@ -70,6 +70,7 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -296,6 +297,10 @@ public class ProjectFilesListController {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
                 switch (eventType) {
                 case CLOSE:
+                    list.tableFiles.setModel(new DefaultTableModel());
+                    list.tableFiles.repaint();
+                    updateTitle("-");
+                    modelTotal.fireTableDataChanged();
                     list.setVisible(false);
                     break;
                 case LOAD:
@@ -388,6 +393,10 @@ public class ProjectFilesListController {
         list.btnDown.addActionListener(moveAction);
         list.btnFirst.addActionListener(moveAction);
         list.btnLast.addActionListener(moveAction);
+    }
+
+    private void updateTitle(Object numFiles) {
+        list.setTitle(StringUtil.format(OStrings.getString("PF_WINDOW_TITLE"), numFiles));
     }
 
     private final KeyListener filterTrigger = new KeyAdapter() {
@@ -622,7 +631,7 @@ public class ProjectFilesListController {
         list.statLabel.setText(statText);
 
         uiUpdateImportButtonStatus();
-        list.setTitle(StringUtil.format(OStrings.getString("PF_WINDOW_TITLE"), files.size()));
+        updateTitle(files.size());
 
         OSXIntegration.setProxyIcon(list.getRootPane(), new File(Core.getProject().getProjectProperties().getSourceRoot()));
 
@@ -725,6 +734,9 @@ public class ProjectFilesListController {
                 } else if (columnIndex == 3) {
                     return "";
                 } else if (columnIndex == 4) {
+                    if (!Core.getProject().isProjectLoaded()) {
+                        return "-";
+                    }
                     StatisticsInfo stat = Core.getProject().getStatistics();
                     switch (rowIndex) {
                     case 0:
@@ -776,9 +788,6 @@ public class ProjectFilesListController {
 
     /**
      * Imports the file/files/folder into project's source files.
-     *
-     * @author Kim Bruning
-     * @author Maxym Mykhalchuk
      */
     private void doImportSourceFiles() {
         m_parent.doPromptImportSourceFiles();
@@ -795,6 +804,9 @@ public class ProjectFilesListController {
     }
 
     private void gotoFile(int row) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
         int modelRow;
         try {
             modelRow = list.tableFiles.convertRowIndexToModel(row);

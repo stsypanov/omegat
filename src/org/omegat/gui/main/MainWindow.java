@@ -329,9 +329,6 @@ public class MainWindow extends PeroFrame implements IMainWindow {
 
     /**
      * Imports the file/files/folder into project's source files.
-     *
-     * @author Kim Bruning
-     * @author Maxym Mykhalchuk
      */
     public void doPromptImportSourceFiles() {
         OmegaTFileChooser chooser = new OmegaTFileChooser();
@@ -394,8 +391,6 @@ public class MainWindow extends PeroFrame implements IMainWindow {
 
     /**
      * Does wikiread
-     * 
-     * @author Kim Bruning
      */
     public void doWikiImport() {
         String remote_url = JOptionPane.showInputDialog(this, OStrings.getString("TF_WIKI_IMPORT_PROMPT"),
@@ -626,7 +621,9 @@ public class MainWindow extends PeroFrame implements IMainWindow {
 
     /**
      * {@inheritDoc}
-     * @see JOptionPane.showConfirmDialog
+     *
+     * @see JOptionPane#showConfirmDialog(java.awt.Component, Object, String,
+     *      int, int)
      */
     public int showConfirmDialog(Object message, String title, int optionType,
             int messageType) throws HeadlessException {

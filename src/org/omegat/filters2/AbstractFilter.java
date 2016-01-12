@@ -29,7 +29,6 @@
 
 package org.omegat.filters2;
 
-import org.omegat.util.EncodingDetector;
 import java.awt.Dialog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,6 +42,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Map;
 
+import org.omegat.util.EncodingDetector;
 import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OStrings;
 
@@ -413,8 +413,6 @@ public abstract class AbstractFilter implements IFilter {
      *             In case of any I/O error.
      * @throws TranslationException
      *             Should be thrown when processed file has any format defects.
-     * 
-     * @author Martin Wunderlich
      */
     protected void processFile(File inFile, File outFile, FilterContext fc) throws IOException,
             TranslationException {
@@ -440,7 +438,7 @@ public abstract class AbstractFilter implements IFilter {
     }
     
     /**
-     * Get the input encoding. If it's not set in the FilterContext (setting is "&lt;auto>")
+     * Get the input encoding. If it's not set in the FilterContext (setting is "&lt;auto&gt;")
      * and the filter allows ({@link #isSourceEncodingVariable()}), try to detect it. The result may be null.
      * @param fc
      * @param inFile
@@ -456,7 +454,7 @@ public abstract class AbstractFilter implements IFilter {
     }
     
     /**
-     * Get the output encoding. If it's not set in the FilterContext (setting is "&lt;auto>")
+     * Get the output encoding. If it's not set in the FilterContext (setting is "&lt;auto&gt;")
      * and the filter allows ({@link #isTargetEncodingVariable()}):
      * <ul><li>Reuse the input encoding if it's Unicode
      * <li>If the input was not Unicode, fall back to UTF-8.

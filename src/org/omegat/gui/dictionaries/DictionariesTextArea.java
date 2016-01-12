@@ -27,6 +27,7 @@
 
 package org.omegat.gui.dictionaries;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -41,10 +42,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
 
 import org.jetbrains.annotations.NotNull;
 import org.omegat.core.Core;
@@ -100,8 +99,8 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
         setEditable(false);
         StaticUIUtils.makeCaretAlwaysVisible(this);
-        this.setText(EXPLANATION);
-    	applyFont();
+        setText(EXPLANATION);
+        applyFont(Core.getMainWindow().getApplicationFont());
         setMinimumSize(new Dimension(100, 50));
 
         CoreEvents.registerEditorEventListener(new IEditorEventListener() {
@@ -120,20 +119,17 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         });
     }
 
-    private void applyFont() {
-    	applyFont(Core.getMainWindow().getApplicationFont());
-		
-	}
-
 	private void applyFont(Font font) {
-		MutableAttributeSet attr = new SimpleAttributeSet();
 		HTMLDocument doc = (HTMLDocument) getDocument();
-
-
-    	doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.FONT_FAMILY, font.getFontName());
-    	doc.getStyleSheet().addCSSAttribute(attr, CSS.Attribute.FONT_SIZE, font.getSize() + "pt");
-    	doc.setCharacterAttributes(0, doc.getLength(), attr, false);
-	}
+        StyleSheet styleSheet = doc.getStyleSheet();
+        styleSheet.addRule("body { font-family: " + font.getName() + "; "
+                + " font-size: " + font.getSize() + "; "
+                + " font-style: " + (font.getStyle() == Font.BOLD ? "bold" :
+                    font.getStyle() == Font.ITALIC ? "italic" : "normal") + "; "
+                + " color: " + EditorColor.COLOR_FOREGROUND.toHex() + "; "
+                + " background: " + EditorColor.COLOR_BACKGROUND.toHex() + "; "
+                + " }");
+    }
 
     @Override
     protected void onProjectOpen() {
@@ -147,7 +143,6 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     protected void onProjectClose() {
         clear();
         setText(EXPLANATION);
-        applyFont();
         manager.stop();
         tokenizer = null;
     }
@@ -168,20 +163,21 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         HTMLDocument doc = (HTMLDocument) getDocument();
 
         int i = displayedWords.indexOf(word.toLowerCase());
-        if (i >= 0) {
-            final Element el = doc.getElement(Integer.toString(i));
-            if (el != null) {
-                try {
-                    // rectangle to be visible
-                    Rectangle rect = getUI().modelToView(this, el.getStartOffset());
-                    // show 2 lines
-                    if (rect != null) {
-                        rect.height *= 2;
-                        scrollRectToVisible(rect);
-                    }
-                } catch (BadLocationException ex) {
-                    Log.log(Level.SEVERE, "callDictionary", ex);
+        if (i == -1) {
+            return;
+        }
+        Element el = doc.getElement(Integer.toString(i));
+        if (el != null) {
+            try {
+                // rectangle to be visible
+                Rectangle rect = modelToView(el.getStartOffset());
+                // show 2 lines
+                if (rect != null) {
+                    rect.height *= 2;
+                    scrollRectToVisible(rect);
                 }
+            } catch (BadLocationException ex) {
+                // shouldn't be throwed
             }
         }
     }
@@ -243,7 +239,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             displayedWords.add(de.getWord().toLowerCase());
             i++;
         }
-        return txt.toString();
+        setText(txt.toString());
     }
 
     protected final MouseAdapter mouseCallback = new MouseAdapter() {
@@ -254,27 +250,33 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
                 JPopupMenu popup = new JPopupMenu();
                 int mousepos = viewToModel(e.getPoint());
-                HTMLDocument doc = (HTMLDocument) getDocument();
-                for (int i = 0; i < displayedWords.size(); i++) {
-                    Element el = doc.getElement(Integer.toString(i));
-                    if (el != null) {
-                        if (el.getStartOffset() <= mousepos && el.getEndOffset() >= mousepos) {
-                            final String w = displayedWords.get(i);
-                            String hideW = StringUtil.format(OStrings.getString("DICTIONARY_HIDE"), w);
-                            JMenuItem item = popup.add(hideW);
-                            item.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    manager.addIgnoredWord(w);
-                                }
-                            });
-                        }
-                    }
+                final String word = getWordAtOffset(mousepos);
+                if (word != null) {
+                    JMenuItem item = popup.add(StringUtil.format(OStrings.getString("DICTIONARY_HIDE"), word));
+                    item.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            manager.addIgnoreWord(word);
+                        };
+                    });
+                    popup.show(DictionariesTextArea.this, e.getX(), e.getY());
                 }
-                popup.show(DictionariesTextArea.this, e.getX(), e.getY());
             }
         }
     };
+
+    private String getWordAtOffset(int offset) {
+        HTMLDocument doc = (HTMLDocument) getDocument();
+        for (int i = 0; i < displayedWords.size(); i++) {
+            Element el = doc.getElement(Integer.toString(i));
+            if (el == null) {
+                continue;
+            }
+            if (el.getStartOffset() <= offset && el.getEndOffset() >= offset) {
+                return displayedWords.get(i);
+            }
+        }
+        return null;
+    }
 
     /**
      * Thread for search data in dictionaries.
