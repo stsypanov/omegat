@@ -79,18 +79,15 @@ import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.IProject;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.*;
-import org.omegat.util.gui.DragTargetOverlay;
+import org.omegat.util.gui.*;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
-import org.omegat.util.gui.OSXIntegration;
-import org.omegat.util.gui.StaticUIUtils;
-import org.omegat.util.gui.TableColumnSizer;
-import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * Controller for showing all the files of the project.
@@ -181,7 +178,7 @@ public class ProjectFilesListController {
     private void initAndShow() {
         init();
 
-        List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+        List<IProject.FileInfo> projectFiles = Core.getProject().getProjectFiles();
         buildDisplay(projectFiles);
         if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
             return;
@@ -357,7 +354,7 @@ public class ProjectFilesListController {
 
             @Override
             public void onApplicationShutdown() {
-                saveWindowLayout();
+//                saveWindowLayout();
             }
         });
 
@@ -559,7 +556,7 @@ public class ProjectFilesListController {
 
         if (active) {
             // moved current file selection here so it will be properly set on each activation
-            List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+            List<IProject.FileInfo> projectFiles = Core.getProject().getProjectFiles();
             buildDisplay(projectFiles);
             if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
                 return;
