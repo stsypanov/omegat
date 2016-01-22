@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
@@ -53,7 +54,6 @@ import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.dictionaries.DictionariesManager;
 import org.omegat.core.dictionaries.DictionaryEntry;
 import org.omegat.core.events.IEditorEventListener;
-import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.main.DockableScrollPane;
@@ -81,7 +81,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
     protected final DictionariesManager manager = new DictionariesManager(this);
 
-    protected final List<String> displayedWords = new ArrayList<>();
+    protected final List<String> displayedWords = new ArrayList<String>();
 
     protected ITokenizer tokenizer;
 
@@ -90,6 +90,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
         setContentType("text/html");
         ((HTMLDocument) getDocument()).setPreservesUnknownTags(false);
+        setFont(getFont());
 
         // setEditable(false);
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
@@ -100,7 +101,6 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         setEditable(false);
         StaticUIUtils.makeCaretAlwaysVisible(this);
         setText(EXPLANATION);
-        applyFont(Core.getMainWindow().getApplicationFont());
         setMinimumSize(new Dimension(100, 50));
 
         CoreEvents.registerEditorEventListener(new IEditorEventListener() {
@@ -109,19 +109,16 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                 callDictionary(newWord);
             }
         });
-        
-        // register font changes callback
-        CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
-            @Override
-            public void onFontChanged(Font newFont) {
- 				applyFont(newFont);          
-            }
-        });
     }
 
-	private void applyFont(Font font) {
-		HTMLDocument doc = (HTMLDocument) getDocument();
-        StyleSheet styleSheet = doc.getStyleSheet();
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        Document doc = getDocument();
+        if (!(doc instanceof HTMLDocument)) {
+            return;
+        }
+        StyleSheet styleSheet = ((HTMLDocument) doc).getStyleSheet();
         styleSheet.addRule("body { font-family: " + font.getName() + "; "
                 + " font-size: " + font.getSize() + "; "
                 + " font-style: " + (font.getStyle() == Font.BOLD ? "bold" :
@@ -148,8 +145,8 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     /** Clears up the pane. */
     protected void clear() {
         UIThreadsUtil.mustBeSwingThread();
-
-        setText("");
+        displayedWords.clear();
+        setText(null);
     }
 
     /**
@@ -204,10 +201,9 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     protected void setFoundResult(final SourceTextEntry se, final List<DictionaryEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
 
-        displayedWords.clear();
+        clear();
 
         if (data == null) {
-            setText("");
             return;
         }
 

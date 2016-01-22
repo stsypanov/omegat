@@ -46,12 +46,17 @@ import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -60,6 +65,16 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JComponent;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -86,6 +101,7 @@ import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.autocompleter.IAutoCompleter;
 import org.omegat.gui.dialogs.ConflictDialogController;
+import org.omegat.gui.editor.autocompleter.IAutoCompleter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromTMMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -141,6 +157,8 @@ public class EditorController implements IEditor {
     private static final Logger LOGGER = Logger.getLogger(EditorController.class.getName());
     private QuickSearchController quickSearchController;
 
+    private static final double PAGE_LOAD_THRESHOLD = 0.25;
+
     /** Some predefined translations that OmegaT can assign by popup. */
     enum ForceTranslation {
         UNTRANSLATED, EMPTY, EQUALS_TO_SOURCE
@@ -166,6 +184,11 @@ public class EditorController implements IEditor {
 
     /** Currently displayed segments info. */
     protected SegmentBuilder[] m_docSegList;
+
+    protected int firstLoaded;
+    protected int lastLoaded;
+
+    protected Timer lazyLoadTimer = new Timer(200, null);
 
     /** Current displayed file. */
     protected int displayedFileIndex, previousDisplayedFileIndex;
@@ -233,6 +256,7 @@ public class EditorController implements IEditor {
                     setInitialOrientation();
                     break;
                 case CLOSE:
+                    m_docSegList = null;
                     history.clear();
                     quickSearchController.hide();
                     removeFilter();
@@ -290,6 +314,48 @@ public class EditorController implements IEditor {
         initActionMap();
 
         EditorPopups.init(this);
+
+        lazyLoadTimer.setRepeats(false);
+        lazyLoadTimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JScrollBar bar = scrollPane.getVerticalScrollBar();
+                double scrollPercent = bar.getValue() / (double) bar.getMaximum();
+                int unitsPerSeg = (bar.getMaximum() - bar.getMinimum()) / (lastLoaded - firstLoaded + 1);
+                if (firstLoaded > 0 && scrollPercent <= PAGE_LOAD_THRESHOLD) {
+                    int docSize = editor.getDocument().getLength();
+                    int visiblePos = editor.viewToModel(scrollPane.getViewport().getViewPosition());
+                    // Try to load enough segments to restore scrollbar value to
+                    // the range (PAGE_LOAD_THRESHOLD, 1 - PAGE_LOAD_THRESHOLD).
+                    // Formula is obtained by solving the following equations for loadCount:
+                    //   PAGE_LOAD_THRESHOLD = newVal / newMax
+                    //   newVal = curVal + loadCount * unitsPerSeg
+                    //   newMax = curMax + loadCount * unitsPerSeg
+                    double loadCount = (PAGE_LOAD_THRESHOLD * bar.getMaximum() - bar.getValue())
+                            / (unitsPerSeg * (1 - PAGE_LOAD_THRESHOLD));
+                    loadUp((int) Math.ceil(loadCount));
+                    // If we leave the viewport at the same location then we are
+                    // not looking at the same content, because what we were
+                    // looking at is now further down the document. Calculate
+                    // the correct location and scroll there.
+                    int sizeDelta = editor.getDocument().getLength() - docSize;
+                    try {
+                        scrollPane.getViewport()
+                                .setViewPosition(editor.modelToView(visiblePos + sizeDelta).getLocation());
+                    } catch (BadLocationException ex) {
+                        Log.log(ex);
+                    }
+                } else if (lastLoaded < m_docSegList.length - 1 && scrollPercent >= 1 - PAGE_LOAD_THRESHOLD) {
+                    // Load enough segments to restore scrollbar value to the
+                    // range (PAGE_LOAD_THRESHOLD, 1 - PAGE_LOAD_THRESHOLD).
+                    // Formula is obtained by solving the following equations for loadCount:
+                    //   (1 - PAGE_LOAD_THRESHOLD) = curVal / newMax
+                    //   newMax = curMax + loadCount * unitsPerSeg
+                    double loadCount = (bar.getValue() / (1 - PAGE_LOAD_THRESHOLD) - bar.getMaximum()) / unitsPerSeg;
+                    loadDown((int) Math.ceil(loadCount));
+                }
+            }
+        });
     }
 
     private void initActionMap() {
@@ -319,6 +385,8 @@ public class EditorController implements IEditor {
 
         scrollPane = new JScrollPane(editor);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(scrollListener);
 
         pane.setLayout(new BorderLayout());
         pane.add(scrollPane, BorderLayout.CENTER);
@@ -340,6 +408,64 @@ public class EditorController implements IEditor {
             }
         });
     }
+
+    private final AdjustmentListener scrollListener = new AdjustmentListener() {
+        @Override
+        public void adjustmentValueChanged(AdjustmentEvent e) {
+            if (m_docSegList == null) {
+                return;
+            }
+
+            if (e.getValueIsAdjusting()) {
+                return;
+            }
+
+            if (lazyLoadTimer.isRunning()) {
+                return;
+            }
+
+            double pos = e.getValue() / (double) scrollPane.getVerticalScrollBar().getMaximum();
+
+            if (pos <= PAGE_LOAD_THRESHOLD || pos >= 1.0 - PAGE_LOAD_THRESHOLD) {
+                lazyLoadTimer.restart();
+            }
+        }
+    };
+
+    private synchronized void loadDown(int count) {
+        if (lastLoaded == m_docSegList.length - 1) {
+            return;
+        }
+        int loadFrom = lastLoaded + 1;
+        int loadTo = Math.min(m_docSegList.length - 1, loadFrom + count - 1);
+        for (int i = loadFrom; i <= loadTo; i++) {
+            SegmentBuilder builder = m_docSegList[i];
+            builder.createSegmentElement(false, Core.getProject().getTranslationInfo(builder.ste));
+            builder.addSegmentSeparator();
+        }
+        lastLoaded = loadTo;
+        SegmentBuilder[] loaded = Arrays.copyOfRange(m_docSegList, loadFrom, loadTo + 1);
+        markerController.process(loaded);
+    };
+
+    private synchronized void loadUp(int count) {
+        if (firstLoaded == 0) {
+            return;
+        }
+        int loadFrom = firstLoaded - 1;
+        int loadTo = Math.max(0, loadFrom - count + 1);
+        for (int i = loadFrom; i >= loadTo; i--) {
+            SegmentBuilder builder = m_docSegList[i];
+            builder.prependSegmentSeparator();
+            builder.prependSegmentElement(false, Core.getProject().getTranslationInfo(builder.ste));
+            // We need to re-mark each segment immediately as it's added or else
+            // the marks are placed incorrectly. This probably has to do with
+            // offsets changing as content is prepended, but I (AMK) have not
+            // properly investigated.
+            markerController.reprocessImmediately(builder);
+        }
+        firstLoaded = loadTo;
+    };
 
     private void updateState(SHOW_TYPE showType) {
         UIThreadsUtil.mustBeSwingThread();
@@ -365,8 +491,7 @@ public class EditorController implements IEditor {
                     // need to run later because some other event listeners
                     // should be called before
                     loadDocument();
-                    activateEntry();
-                    LastSegmentManager.restoreLastSegment(EditorController.this);
+                    gotoEntry(LastSegmentManager.getLastSegmentNumber());
                 }
             });
             break;
@@ -541,9 +666,7 @@ public class EditorController implements IEditor {
 
         applyOrientationToEditor();
 
-        int activeSegment = displayedEntryIndex;
-        loadDocument();
-        displayedEntryIndex = activeSegment;
+        loadDocument(displayedEntryIndex);
         activateEntry();
     }
 
@@ -604,12 +727,24 @@ public class EditorController implements IEditor {
     }
 
     /**
-     * Displays all segments in current document.
-     * <p>
-     * Displays translation for each segment if it's available, otherwise displays source text. Also stores
-     * length of each displayed segment plus its starting offset.
+     * Displays the first {@link Preferences#EDITOR_INITIAL_SEGMENT_LOAD_COUNT}
+     * segments of the current document. Convenience method for
+     * {@link #loadDocument(int)}.
      */
     protected void loadDocument() {
+        loadDocument(0);
+    }
+
+    /**
+     * Displays the {@link Preferences#EDITOR_INITIAL_SEGMENT_LOAD_COUNT}
+     * segments surrounding the specified index. If the segment at the specified
+     * index has not been loaded yet, the document is reloaded centered at that
+     * index.
+     *
+     * @param initialIndex
+     *            The index around which to load the document
+     */
+    protected void loadDocument(int initialIndex) {
         UIThreadsUtil.mustBeSwingThread();
 
         // Currently displayed file
@@ -637,7 +772,17 @@ public class EditorController implements IEditor {
         Document3 doc = new Document3(this);
         entriesFilter = new BaseFilter(Core.getProject());
 
-        ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<>(file.entries.size());
+        // Clamp initialSegment to actually available entries.
+        initialIndex = Math.max(0, Math.min(file.entries.size() - 1, initialIndex));
+        // Calculate start, end indices of a span of initialSegCount segments
+        // centered around initialIndex and clamped to [0, file.entries.size()).
+        final int initialSegCount = Preferences.getPreferenceDefault(Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT,
+                Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT_DEFAULT);
+        firstLoaded = Math.max(0, initialIndex - initialSegCount / 2);
+        lastLoaded = Math.min(file.entries.size() - 1, firstLoaded + initialSegCount - 1);
+
+        // Create all SegmentBuilders now...
+        ArrayList<SegmentBuilder> temp_docSegList2 = new ArrayList<SegmentBuilder>(file.entries.size());
         for (int i = 0; i < file.entries.size(); i++) {
             SourceTextEntry ste = file.entries.get(i);
             boolean notAllowedDuplicate = ste.hasDuplicates() && ste.notFirstDuplicate();
@@ -648,9 +793,11 @@ public class EditorController implements IEditor {
                 SegmentBuilder sb = new SegmentBuilder(this, doc, settings, ste, ste.entryNum(), hasRTL);
                 temp_docSegList2.add(sb);
 
-                sb.createSegmentElement(false, Core.getProject().getTranslationInfo(ste));
-
-                sb.addSegmentSeparator();
+                // ...but only display the ones in [firstLoaded, lastLoaded]
+                if (i >= firstLoaded && i <= lastLoaded) {
+                    sb.createSegmentElement(false, Core.getProject().getTranslationInfo(ste));
+                    sb.addSegmentSeparator();
+                }
             }
         }
         m_docSegList = temp_docSegList2.toArray(new SegmentBuilder[temp_docSegList2.size()]);
@@ -686,6 +833,8 @@ public class EditorController implements IEditor {
         markerController.process(m_docSegList);
 
         editor.repaint();
+
+        displayedEntryIndex = initialIndex;
     }
 
     /*
@@ -717,20 +866,32 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
+        SegmentBuilder builder = m_docSegList[displayedEntryIndex];
+
+        // If the builder has not been created then we are trying to jump to a
+        // segment that is in the current document but not yet loaded. To avoid
+        // loading large swaths of the document at once, we then re-load the
+        // document centered at the destination segment.
+        if (!builder.hasBeenCreated()) {
+            loadDocument(displayedEntryIndex);
+            activateEntry(pos);
+            return;
+        }
+
         previousTranslations = Core.getProject().getAllTranslations(ste);
         TMXEntry currentTranslation = previousTranslations.getCurrentTranslation();
         // forget about old marks
-        m_docSegList[displayedEntryIndex].createSegmentElement(true, currentTranslation);
+        builder.createSegmentElement(true, currentTranslation);
 
         Core.getNotes().setNoteText(currentTranslation.note);
 
         // then add new marks
-        markerController.reprocessImmediately(m_docSegList[displayedEntryIndex]);
+        markerController.reprocessImmediately(builder);
 
         editor.undoManager.reset();
 
-        history.insertNew(m_docSegList[displayedEntryIndex].segmentNumberInProject);
-
+        history.insertNew(builder.segmentNumberInProject);
+        
         setMenuEnabled();
 
         showStat();
@@ -935,7 +1096,8 @@ public class EditorController implements IEditor {
     protected int getSegmentIndexAtLocation(int location) {
         int segmentAtLocation = m_docSegList.length - 1;
         for (int i = 0; i < m_docSegList.length; i++) {
-            if (location < m_docSegList[i].getStartPosition()) {
+            SegmentBuilder builder = m_docSegList[i];
+            if (builder.hasBeenCreated() && location < builder.getStartPosition()) {
                 segmentAtLocation = i - 1;
                 break;
             }
@@ -1078,12 +1240,13 @@ public class EditorController implements IEditor {
                 // current entry, skip
                 continue;
             }
-            if (m_docSegList[i].ste.getSrcText().equals(entry.getSrcText())) {
+            SegmentBuilder builder = m_docSegList[i];
+            if (builder.ste.getSrcText().equals(entry.getSrcText())) {
                 // the same source text - need to update
-                m_docSegList[i].createSegmentElement(false,
-                        Core.getProject().getTranslationInfo(m_docSegList[i].ste));
+                builder.createSegmentElement(false,
+                        Core.getProject().getTranslationInfo(builder.ste));
                 // then add new marks
-                markerController.reprocessImmediately(m_docSegList[i]);
+                markerController.reprocessImmediately(builder);
             }
         }
 
@@ -1150,9 +1313,9 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
 
         commitAndDeactivate();
 
@@ -1194,7 +1357,7 @@ public class EditorController implements IEditor {
         }
 
         activateEntry();
-        this.editor.setCursor(oldCursor);
+        editor.setCursor(oldCursor);
     }
 
     public void prevEntry() {
@@ -1203,9 +1366,9 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
 
         commitAndDeactivate();
 
@@ -1262,9 +1425,9 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
 
         // save the current entry
         commitAndDeactivate();
@@ -1319,7 +1482,7 @@ public class EditorController implements IEditor {
 
         activateEntry();
 
-        this.editor.setCursor(oldCursor);
+        editor.setCursor(oldCursor);
     }
 
     /**
@@ -1346,9 +1509,9 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
 
         // Save the current entry.
         commitAndDeactivate();
@@ -1391,7 +1554,7 @@ public class EditorController implements IEditor {
 
         activateEntry();
 
-        this.editor.setCursor(oldCursor);
+        editor.setCursor(oldCursor);
     }
 
     /**
@@ -1404,9 +1567,9 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
 
         // Save the current entry.
         commitAndDeactivate();
@@ -1445,7 +1608,7 @@ public class EditorController implements IEditor {
 
         activateEntry();
 
-        this.editor.setCursor(oldCursor);
+        editor.setCursor(oldCursor);
     }
 
     /**
@@ -1459,9 +1622,9 @@ public class EditorController implements IEditor {
         if (Core.getProject().isProjectLoaded() == false)
             return;
 
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
 
         // save the current entry
         commitAndDeactivate();
@@ -1501,7 +1664,7 @@ public class EditorController implements IEditor {
 
         activateEntry();
 
-        this.editor.setCursor(oldCursor);
+        editor.setCursor(oldCursor);
     }
 
     /**
@@ -1552,9 +1715,9 @@ public class EditorController implements IEditor {
             // document didn't loaded yet
             return;
         }
-        Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-        Cursor oldCursor = this.editor.getCursor();
-        this.editor.setCursor(hourglassCursor);
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = editor.getCursor();
+        editor.setCursor(hourglassCursor);
         commitAndDeactivate();
 
         if (entryNum == 0) {
@@ -1587,7 +1750,7 @@ public class EditorController implements IEditor {
             }
         }
         activateEntry(pos);
-        this.editor.setCursor(oldCursor);
+        editor.setCursor(oldCursor);
     }
 
     public void gotoEntry(String srcString, EntryKey key) {
@@ -2057,6 +2220,10 @@ public class EditorController implements IEditor {
     public void removeFilter() {
         UIThreadsUtil.mustBeSwingThread();
 
+        if (entriesFilter == null && entriesFilterControlComponent == null) {
+            return;
+        }
+
         entriesFilter = null;
         if (entriesFilterControlComponent != null) {
             pane.remove(entriesFilterControlComponent);
@@ -2174,6 +2341,9 @@ public class EditorController implements IEditor {
 
                 Point viewPosition = viewport.getViewPosition();
                 for (SegmentBuilder sb : m_docSegList) {
+                    if (!sb.hasBeenCreated()) {
+                        continue;
+                    }
                     try {
                         Point location = editor.modelToView(sb.getStartPosition()).getLocation();
                         if (viewRect.contains(location)) { // location is viewable

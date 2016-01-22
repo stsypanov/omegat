@@ -78,7 +78,7 @@ import javax.swing.*;
 
 /**
  * Handler for main menu items.
- *
+ * 
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -92,7 +92,6 @@ import javax.swing.*;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-@SuppressWarnings({"unused", "MethodMayBeStatic"})
 public class MainWindowMenuHandler {
     private final MainWindow mainWindow;
     private BaseFilteringController baseFilteringController;
@@ -707,6 +706,11 @@ public class MainWindowMenuHandler {
     public void viewMarkAutoPopulatedCheckBoxMenuItemActionPerformed() {
         Core.getEditor().getSettings()
                 .setMarkAutoPopulated(mainWindow.menu.viewMarkAutoPopulatedCheckBoxMenuItem.isSelected());
+    }
+
+    public void viewMarkLanguageCheckerCheckBoxMenuItemActionPerformed() {
+        Core.getEditor().getSettings()
+                .setMarkLanguageChecker(mainWindow.menu.viewMarkLanguageCheckerCheckBoxMenuItem.isSelected());
     }
 
     public void viewMarkFontFallbackCheckBoxMenuItemActionPerformed() {

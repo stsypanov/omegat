@@ -43,7 +43,7 @@ import org.omegat.util.Log;
  */
 public class CalcMarkersThread extends Thread {
 
-    private final Queue<EntryMarks> forCheck = new LinkedList<>();
+    private final Queue<EntryMarks> forCheck = new LinkedList<EntryMarks>();
 
     private final MarkerController mController;
     private final int markerIndex;
@@ -62,10 +62,14 @@ public class CalcMarkersThread extends Thread {
     }
 
     public void add(SegmentBuilder[] entryBuilders) {
-        List<EntryMarks> vers = new ArrayList<>(entryBuilders.length);
+        List<EntryMarks> vers = new ArrayList<EntryMarks>(entryBuilders.length);
 
-        for (SegmentBuilder entryBuilder : entryBuilders) {
-            EntryMarks v = new EntryMarks(entryBuilder, entryBuilder.getDisplayVersion(), markerIndex);
+        for (int i = 0; i < entryBuilders.length; i++) {
+            SegmentBuilder builder = entryBuilders[i];
+            if (!builder.hasBeenCreated()) {
+                continue;
+            }
+            EntryMarks v = new EntryMarks(builder, builder.getDisplayVersion(), markerIndex);
             vers.add(v);
         }
 

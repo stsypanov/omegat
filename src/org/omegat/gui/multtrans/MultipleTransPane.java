@@ -63,7 +63,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
 
     private static final String EXPLANATION = OStrings.getString("GUI_MULTIPLETRANSLATIONSWINDOW_explanation");
 
-    private List<DisplayedEntry> entries = new ArrayList<>();
+    private List<DisplayedEntry> entries = new ArrayList<DisplayedEntry>();
 
     public MultipleTransPane() {
         super(true);
@@ -73,7 +73,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
 
         setEditable(false);
         StaticUIUtils.makeCaretAlwaysVisible(this);
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
         setMinimumSize(new Dimension(100, 50));
 
         Core.getEditor().registerPopupMenuConstructors(600, new IPopupMenuConstructor() {
@@ -108,15 +108,15 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
     protected void setFoundResult(SourceTextEntry processedEntry, List<MultipleTransFoundEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
 
-        entries.clear();
-        StringBuilder o = new StringBuilder();
+        clear();
         
         // Check case if current segment has default translation and there are no alternative translations.
         if (data.size() == 1 && data.get(0).key == null) {
-            setText("");
             return;
         }
         
+        StringBuilder o = new StringBuilder();
+
         for (MultipleTransFoundEntry e : data) {
             DisplayedEntry de = new DisplayedEntry();
             de.entry = e;
@@ -130,10 +130,8 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
                 }
                 o.append(">\n");
                 if (e.key.prev != null && e.key.next != null) {
-                    o.append('(').append(StringUtil.firstN(e.key.prev, 10))
-                            .append(" <...> ")
-                            .append(StringUtil.firstN(e.key.next, 10))
-                            .append(")\n");
+                    o.append('(').append(StringUtil.truncate(e.key.prev, 10));
+                    o.append(" <...> ").append(StringUtil.truncate(e.key.next, 10)).append(")\n");
                 }
             } else {
                 o.append(e.entry.translation).append('\n');
@@ -145,21 +143,27 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
 
         setText(o.toString());
     }
-    
+
+    public void clear() {
+        UIThreadsUtil.mustBeSwingThread();
+
+        entries.clear();
+        setText(null);
+    }
+
     @Override
     protected void onProjectOpen() {
         UIThreadsUtil.mustBeSwingThread();
 
-        entries.clear();
-        setText("");
+        clear();
     }
 
     @Override
     protected void onProjectClose() {
         UIThreadsUtil.mustBeSwingThread();
 
-        entries.clear();
-        this.setText(EXPLANATION);
+        clear();
+        setText(EXPLANATION);
     }
 
     @Override

@@ -116,7 +116,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
 
         setEditable(false);
         StaticUIUtils.makeCaretAlwaysVisible(this);
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
         setMinimumSize(new Dimension(100, 50));
 
         //prepare popup menu
@@ -174,7 +174,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     @Override
     protected void onProjectClose() {
         clear();
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
         Core.getGlossaryManager().stop();
     }
 
@@ -193,12 +193,6 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         }
     }
 
-    @Override
-    public void onEntryActivated(SourceTextEntry newEntry) {
-        setText("");
-        super.onEntryActivated(newEntry);
-    }
-
     /**
      * Sets the list of glossary entries to show in the pane. Each element of the list should be an instance
      * of {@link GlossaryEntry}.
@@ -207,8 +201,9 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     protected void setFoundResult(SourceTextEntry en, List<GlossaryEntry> entries) {
         UIThreadsUtil.mustBeSwingThread();
 
+        clear();
+
         if (entries == null) {
-            clear();
             return;
         }
 
@@ -238,7 +233,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     /** Clears up the pane. */
     public void clear() {
         nowEntries.clear();
-        setText("");
+        setText(null);
     }
 
     List<GlossaryEntry> getDisplayedEntries() {

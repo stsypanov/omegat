@@ -104,11 +104,11 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     private static final AttributeSet ATTRIBUTES_INSERTED_ACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_INS_ACTIVE.getColor(), null, true, null, null, true);
     private static final AttributeSet ATTRIBUTES_INSERTED_INACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_INS_INACTIVE.getColor(), null, null, null, null, true);
     
-    private final List<NearString> matches = new ArrayList<>();
+    private final List<NearString> matches = new ArrayList<NearString>();
 
-    private final List<Integer> delimiters = new ArrayList<>();
-    private final List<Integer> sourcePos = new ArrayList<>();
-    private final List<Map<Integer, List<TextRun>>> diffInfos = new ArrayList<>();
+    private final List<Integer> delimiters = new ArrayList<Integer>();
+    private final List<Integer> sourcePos = new ArrayList<Integer>();
+    private final List<Map<Integer, List<TextRun>>> diffInfos = new ArrayList<Map<Integer, List<TextRun>>>();
     private int activeMatch;
 
     private final MainWindow mw;
@@ -166,18 +166,13 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     protected void setFoundResult(final SourceTextEntry se, List<NearString> newMatches) {
         UIThreadsUtil.mustBeSwingThread();
         
+        clear();
+
         if (newMatches == null) {
-            setText("");
             return;
         }
         
         Collections.sort(newMatches, Collections.reverseOrder(new NearString.NearStringComparator()));
-
-        activeMatch = -1;
-        matches.clear();
-        delimiters.clear();
-        sourcePos.clear();
-        diffInfos.clear();
 
         matches.addAll(newMatches);
         delimiters.add(0);
@@ -211,7 +206,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     @Override
     protected void onProjectClose() {
         clear();
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
         // We clean the ATTRIBUTE_SELECTED style set by the last displayed match
         StyledDocument doc = (StyledDocument) getDocument();
         doc.setCharacterAttributes(0, doc.getLength(), ATTRIBUTES_EMPTY, true);
@@ -262,8 +257,8 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             return targetMatch; 
         }
 
-        List<Integer> matchingNumbers = new ArrayList<>();
-        List<Integer> foundLocation = new ArrayList<>();
+        List<Integer> matchingNumbers = new ArrayList<Integer>();
+        List<Integer> foundLocation = new ArrayList<Integer>();
 
         // Compute the location of numbers in the target match
         for (String oneNumber : sourceMatchNumbers) {
@@ -330,21 +325,8 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             return;
         }
         if (Preferences.isPreference(Preferences.BEST_MATCH_INSERT)) {
-            String percentage_s = Preferences.getPreferenceDefault(Preferences.BEST_MATCH_MINIMAL_SIMILARITY,
+            int percentage = Preferences.getPreferenceDefault(Preferences.BEST_MATCH_MINIMAL_SIMILARITY,
                     Preferences.BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT);
-            // <HP-experiment>
-            int percentage;
-            try {
-                // int
-                percentage = Integer.parseInt(percentage_s);
-            } catch (Exception exception) {
-                Log.log("ERROR: exception while parsing percentage:");
-                Log.log("Please report to the OmegaT developers (omegat-development@lists.sourceforge.net)");
-                Log.log(exception);
-                return; // deliberately breaking, to simulate previous behaviour
-                // FIX: unknown, but expect number parsing errors
-            }
-            // </HP-experiment>
             NearString thebest = matches.get(0);
             if (thebest.scores[0].score >= percentage) {
                 SourceTextEntry currentEntry = Core.getEditor().getCurrentEntry();
@@ -460,7 +442,12 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     public void clear() {
         UIThreadsUtil.mustBeSwingThread();
 
-        setFoundResult(null, Collections.<NearString>emptyList());
+        activeMatch = -1;
+        matches.clear();
+        delimiters.clear();
+        sourcePos.clear();
+        diffInfos.clear();
+        setText(null);
     }
 
     protected MouseListener mouseListener = new MouseAdapter() {

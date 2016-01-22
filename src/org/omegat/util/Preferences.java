@@ -58,7 +58,7 @@ import org.omegat.util.xml.XMLStreamReader;
 
 /**
  * Class to load & save OmegaT preferences. All methods are static here.
- *
+ * 
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers
@@ -84,23 +84,23 @@ public class Preferences {
     public static final String DICT_FOLDER = "dict_folder";
     public static final String GLOSSARY_FOLDER = "glossary_folder";
     public static final String GLOSSARY_FILE = "glossary_file";
-
+    
     /** Whether to automatically perform MT requests on entering segment */
     public static final String MT_AUTO_FETCH = "mt_auto_fetch";
     /** Whether to restrict automatic MT requests to only untranslated segments */
     public static final String MT_ONLY_UNTRANSLATED = "mt_only_untranslated";
-
+    
     public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
     public static final String GLOSSARY_NOT_EXACT_MATCH = "glossary_not_exact_match";
     public static final String GLOSSARY_STEMMING = "glossary_stemming";
     public static final String GLOSSARY_REPLACE_ON_INSERT = "glossary_replace_on_insert";
     public static final String DICTIONARY_FUZZY_MATCHING = "dictionary_fuzzy_matching";
 
-	public static final String MAINWINDOW_WIDTH = "screen_width";
-	public static final String MAINWINDOW_HEIGHT = "screen_height";
-	public static final String MAINWINDOW_X = "screen_x";
-	public static final String MAINWINDOW_Y = "screen_y";
-	public static final String MAINWINDOW_LAYOUT = "docking_layout";
+    public static final String MAINWINDOW_WIDTH = "screen_width";
+    public static final String MAINWINDOW_HEIGHT = "screen_height";
+    public static final String MAINWINDOW_X = "screen_x";
+    public static final String MAINWINDOW_Y = "screen_y";
+    public static final String MAINWINDOW_LAYOUT = "docking_layout";
 
     // Project files window size and position
     public static final String PROJECT_FILES_WINDOW_WIDTH = "project_files_window_width";
@@ -195,43 +195,46 @@ public class Preferences {
 	/** Mark the untranslated segments with a different color */
 	public static final String MARK_UNTRANSLATED_SEGMENTS = "mark_untranslated_segments";
 
-	/** Workflow Option: Don't Insert Source Text Into Translated Segment */
-	public static final String DONT_INSERT_SOURCE_TEXT = "wf_noSourceText";
-	/** Workflow Option: Allow translation to be equal to source */
-	public static final String ALLOW_TRANS_EQUAL_TO_SRC = "wf_allowTransEqualToSrc";
-	/** Workflow Option: Insert Best Match Into Translated Segment */
-	public static final String BEST_MATCH_INSERT = "wf_insertBestMatch";
-	/** Workflow Option: Minimal Similarity Of the Best Fuzzy Match to insert */
-	public static final String BEST_MATCH_MINIMAL_SIMILARITY = "wf_minimalSimilarity";
-	/**
-	 * Default Value of Workflow Option: Minimal Similarity Of the Best Fuzzy
-	 * Match to insert
-	 */
-	public static final String BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = "80";
-	/** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
-	public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";
-	/** Workflow Option: Export current segment */
-	public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment";
-	/** Workflow Option: Go To Next Untranslated Segment stops when there is at least one
-	 alternative translation */
-	public static final String STOP_ON_ALTERNATIVE_TRANSLATION = "wf_stopOnAlternativeTranslation";
-	/** Workflow Option: Attempt to convert numbers when inserting a fuzzy match */
-	public static final String CONVERT_NUMBERS = "wf_convertNumbers";
-	/** Workflow Option: Save auto-populated status */
-	public static final String SAVE_AUTO_STATUS = "save_auto_status";
-
-	/** Tag Validation Option: Don't check printf-tags */
-	public static final String DONT_CHECK_PRINTF_TAGS = "tagValidation_noCheck";
-	/** Tag Validation Option: check simple printf-tags */
-	public static final String CHECK_SIMPLE_PRINTF_TAGS = "tagValidation_simpleCheck";
-	/** Tag Validation Option: check all printf-tags */
-	public static final String CHECK_ALL_PRINTF_TAGS = "tagValidation_elaborateCheck";
-	/** Tag Validation Option: check simple java MessageFormat pattern tags */
-	public static final String CHECK_JAVA_PATTERN_TAGS = "tagValidation_javaMessageFormatSimplePatternCheck";
-	/** Tag Validation Option: check user defined tags according to regexp.*/
-	public static final String CHECK_CUSTOM_PATTERN = "tagValidation_customPattern";
-	/** Tag Validation Option: check target for text that should have been removed according to regexp.*/
-	public static final String CHECK_REMOVE_PATTERN = "tagValidation_removePattern";
+    /** Workflow Option: Don't Insert Source Text Into Translated Segment */
+    public static final String DONT_INSERT_SOURCE_TEXT = "wf_noSourceText";
+    /** Workflow Option: Allow translation to be equal to source */
+    public static final String ALLOW_TRANS_EQUAL_TO_SRC = "wf_allowTransEqualToSrc";
+    /** Workflow Option: Insert Best Match Into Translated Segment */
+    public static final String BEST_MATCH_INSERT = "wf_insertBestMatch";
+    /** Workflow Option: Minimal Similarity Of the Best Fuzzy Match to insert */
+    public static final String BEST_MATCH_MINIMAL_SIMILARITY = "wf_minimalSimilarity";
+    /**
+     * Default Value of Workflow Option: Minimal Similarity Of the Best Fuzzy
+     * Match to insert
+     */
+    public static final int BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = 80;
+    /** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
+    public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";
+    /** Workflow Option: Export current segment */
+    public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment";
+    /** Workflow Option: Go To Next Untranslated Segment stops when there is at least one
+    alternative translation */
+    public static final String STOP_ON_ALTERNATIVE_TRANSLATION="wf_stopOnAlternativeTranslation";
+    /** Workflow Option: Attempt to convert numbers when inserting a fuzzy match */
+    public static final String CONVERT_NUMBERS = "wf_convertNumbers";
+    /** Workflow Option: Save auto-populated status */
+    public static final String SAVE_AUTO_STATUS = "save_auto_status";
+    /** Workflow Option: Number of segments to load initially in editor */
+    public static final String EDITOR_INITIAL_SEGMENT_LOAD_COUNT = "editor_initial_segment_load_count";
+    public static final int EDITOR_INITIAL_SEGMENT_LOAD_COUNT_DEFAULT = 2000;
+    
+    /** Tag Validation Option: Don't check printf-tags */
+    public static final String DONT_CHECK_PRINTF_TAGS = "tagValidation_noCheck";
+    /** Tag Validation Option: check simple printf-tags */
+    public static final String CHECK_SIMPLE_PRINTF_TAGS = "tagValidation_simpleCheck";
+    /** Tag Validation Option: check all printf-tags */
+    public static final String CHECK_ALL_PRINTF_TAGS = "tagValidation_elaborateCheck";
+    /** Tag Validation Option: check simple java MessageFormat pattern tags */
+    public static final String CHECK_JAVA_PATTERN_TAGS = "tagValidation_javaMessageFormatSimplePatternCheck";
+    /** Tag Validation Option: check user defined tags according to regexp.*/
+    public static final String CHECK_CUSTOM_PATTERN = "tagValidation_customPattern";
+    /** Tag Validation Option: check target for text that should have been removed according to regexp.*/
+    public static final String CHECK_REMOVE_PATTERN = "tagValidation_removePattern";
 
 	/** Tag Validation Option: allow tag editing in editor. */
 	public static final String ALLOW_TAG_EDITING = "allowTagEditing";

@@ -54,6 +54,7 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
 import org.omegat.util.Platform;
+import org.omegat.util.StringUtil;
 
 /**
  * @author Henry Pijffers
@@ -138,8 +139,6 @@ public class StaticUIUtils {
         pane.getActionMap().put("ESCAPE", action);
     }
 
-    private final static char TRUNCATE_CHAR = '\u2026';
-    
     /**
      * Truncate the supplied text so that it fits within the width (minus margin) 
      * of the supplied component. Truncation is achieved by replacing a chunk from
@@ -173,7 +172,7 @@ public class StaticUIUtils {
             return text;
         }
         
-        final int truncateCharWidth = metrics.charWidth(TRUNCATE_CHAR);
+        final int truncateCharWidth = metrics.charWidth(StringUtil.TRUNCATE_CHAR);
         final int middle = text.offsetByCodePoints(0, text.codePointCount(0, text.length()) / 2);
         int chompStart = middle, chompEnd = middle;
         String chomp = null;
@@ -193,7 +192,7 @@ public class StaticUIUtils {
         }
         
         if (chomp != null) {
-            text = text.substring(0, chompStart) + TRUNCATE_CHAR + text.substring(chompEnd, text.length());
+            text = text.substring(0, chompStart) + StringUtil.TRUNCATE_CHAR + text.substring(chompEnd, text.length());
         }
         return text;
     }

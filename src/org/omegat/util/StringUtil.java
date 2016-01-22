@@ -45,6 +45,8 @@ import java.util.Locale;
  */
 public class StringUtil {
 
+    public static final char TRUNCATE_CHAR = '\u2026';
+
     /**
      * Check if string is empty, i.e. null or length==0
      */
@@ -275,30 +277,48 @@ public class StringUtil {
         return v1 == null && v2 == null || v1 != null && v2 != null && v1.equals(v2);
     }
 
-	/**
-	 * Compare two values, which could be null.
-	 */
-	public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
-		if (v1 == null && v2 == null) {
-			return 0;
-		} else if (v1 == null) {
-			return -1;
-		} else if (v2 == null) {
-			return 1;
-		} else {
-			return v1.compareTo(v2);
-		}
-	}
+    /**
+     * Compare two values, which could be null.
+     */
+    public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
+        if (v1 == null && v2 == null) {
+            return 0;
+        } else if (v1 == null && v2 != null) {
+            return -1;
+        } else if (v1 != null && v2 == null) {
+            return 1;
+        } else {
+            return v1.compareTo(v2);
+        }
+    }
 
     /**
-     * Extracts first N chars from string.
+     * Extracts first N codepoints from string.
      */
     public static String firstN(String str, int len) {
-        if (str.length() < len) {
+        if (str.codePointCount(0, str.length()) <= len) {
             return str;
         } else {
-            return str.substring(0, len) + "...";
+            return str.substring(0, str.offsetByCodePoints(0, len));
         }
+    }
+
+    /**
+     * Truncate the supplied text to a maximum of len codepoints. If truncated,
+     * the result will be the first (len - 1) codepoints plus a trailing
+     * ellipsis.
+     *
+     * @param text
+     *            The text to truncate
+     * @param len
+     *            The desired length (in codepoints) of the result
+     * @return The truncated string
+     */
+    public static String truncate(String text, int len) {
+        if (text.codePointCount(0, text.length()) <= len) {
+            return text;
+        }
+        return firstN(text, len - 1) + TRUNCATE_CHAR;
     }
 
     /**
