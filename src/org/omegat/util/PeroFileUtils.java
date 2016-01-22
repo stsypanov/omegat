@@ -51,14 +51,6 @@ public class PeroFileUtils {
         }
     }
 
-    /**
-     * Create file backup with datetime suffix.
-     */
-    public static void backupFile(File f) throws IOException {
-        long fileMillis = f.lastModified();
-        String str = new SimpleDateFormat("yyyyMMddHHmm").format(new Date(fileMillis));
-        LFileCopy.copy(f, new File(f.getPath() + "." + str + OConsts.BACKUP_EXTENSION));
-    }
 
     /**
      * Renames file, with checking errors and 3 seconds retry against external programs (like antivirus or
@@ -105,20 +97,6 @@ public class PeroFileUtils {
         return outFile;
     }
 
-    public static String readScriptFile(File file) {
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))){
-
-            try (StringWriter out = new StringWriter()){
-                LFileCopy.copy(rd, out);
-                return out.toString().replace(System.getProperty("line.separator"), "\n");
-            } finally {
-                rd.close();
-            }
-        } catch (Exception ex) {
-            Log.log(ex);
-            return null;
-        }
-    }
 
     /**
      * Read file as UTF-8 text.
@@ -211,28 +189,6 @@ public class PeroFileUtils {
         return fileAbs.substring(rootAbs.length());
     }
 
-    /**
-     * Load a text file from the root of help.
-     * @param The name of the text file
-     * @return The content of the text file
-     */
-    public static String loadTextFileFromDoc(String textFile) {
-
-        // Get the license
-        URL url = HelpFrame.getHelpFileURL(null, textFile);
-        if (url == null) {
-            return HelpFrame.errorHaiku();
-        }
-
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8))) {
-            StringWriter out = new StringWriter();
-            LFileCopy.copy(rd, out);
-            return out.toString();
-        } catch (IOException ex) {
-            return HelpFrame.errorHaiku();
-        }
-
-    }
 
     /**
      * Recursively delete a directory and all of its contents.
@@ -252,32 +208,6 @@ public class PeroFileUtils {
             }
         }
         dir.delete();
-    }
-
-    public static void copyFilesTo(File destination, File[] toImport) throws IOException {
-        if (destination.exists() && !destination.isDirectory()) {
-            throw new RuntimeException("Copy-to destination exists and is not a directory.");
-        }
-        copyFilesTo(destination, toImport, null);
-    }
-
-    private static void copyFilesTo(File destination, File[] toImport, File root) throws IOException {
-        for (File file : toImport) {
-            if (file.isDirectory()) {
-                if (file.getPath().startsWith(destination.getPath())) {
-                    continue;
-                }
-                copyFilesTo(destination, file.listFiles(), root == null ? file.getParentFile() : root);
-            } else {
-                if (root == null) {
-                    root = file.getParentFile();
-                }
-                String filePath = file.getPath();
-                String relPath = filePath.substring(root.getPath().length(), filePath.length());
-                File dest = new File(destination, relPath);
-                LFileCopy.copy(file, dest);
-            }
-        }
     }
 
     /**

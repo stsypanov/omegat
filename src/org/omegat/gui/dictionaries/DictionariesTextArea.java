@@ -126,8 +126,6 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                 + " font-size: " + font.getSize() + "; "
                 + " font-style: " + (font.getStyle() == Font.BOLD ? "bold" :
                     font.getStyle() == Font.ITALIC ? "italic" : "normal") + "; "
-                + " color: " + EditorColor.COLOR_FOREGROUND.toHex() + "; "
-                + " background: " + EditorColor.COLOR_BACKGROUND.toHex() + "; "
                 + " }");
     }
 
@@ -216,7 +214,6 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         String text = buildStringFromDictionaryData(data);
 
         setText(text);
-        applyFont();
         setCaretPosition(0);
     }
 
@@ -239,7 +236,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             displayedWords.add(de.getWord().toLowerCase());
             i++;
         }
-        setText(txt.toString());
+       return txt.toString();
     }
 
     protected final MouseAdapter mouseCallback = new MouseAdapter() {
@@ -255,7 +252,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                     JMenuItem item = popup.add(StringUtil.format(OStrings.getString("DICTIONARY_HIDE"), word));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            manager.addIgnoreWord(word);
+                            manager.addIgnoredWord(word);
                         };
                     });
                     popup.show(DictionariesTextArea.this, e.getX(), e.getY());
