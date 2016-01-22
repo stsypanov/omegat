@@ -34,7 +34,6 @@ package org.omegat.util;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -58,6 +57,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.util.Platform.OsType;
 
 /**
@@ -133,17 +133,13 @@ public class StaticUtils {
     /**
      * Returns a list of all files under the root directory by absolute path.
      */
-    public static void buildFileList(final List<String> lst, File rootDir, boolean recursive) {
-        try {
-            iterateFileTree(rootDir.getCanonicalFile(), recursive, new ITreeIteratorCallback() {
-                @Override
-                public void processFile(File file) {
-                    lst.add(file.getPath());
-                }
-            });
-        } catch (Exception ex) {
-            // Ignore
-        }
+    public static void buildFileList(final List<String> lst, File rootDir, boolean recursive) throws Exception {
+        iterateFileTree(rootDir.getCanonicalFile(), recursive, new ITreeIteratorCallback() {
+            @Override
+            public void processFile(File file) {
+                lst.add(file.getPath());
+            }
+        });
 
         // Get the local collator and set its strength to PRIMARY
         final Collator localCollator = Collator.getInstance(Locale.getDefault());
@@ -154,6 +150,105 @@ public class StaticUtils {
                 return localCollator.compare(o1, o2);
             }
         });
+    }
+
+    public static List<String> buildRelativeFilesList(File rootDir, List<String> includes,
+            List<String> excludes) throws Exception {
+        List<String> files = new ArrayList<String>();
+        buildFileList(files, rootDir, true);
+        Pattern[] includesMasks;
+        if (includes != null) {
+            includesMasks = new Pattern[includes.size()];
+            for (int i = 0; i < includes.size(); i++) {
+                includesMasks[i] = compileFileMask(includes.get(i));
+            }
+        } else {
+            includesMasks = new Pattern[0];
+        }
+        Pattern[] excludesMasks;
+        if (excludes != null) {
+            excludesMasks = new Pattern[excludes.size()];
+            for (int i = 0; i < excludes.size(); i++) {
+                excludesMasks[i] = compileFileMask(excludes.get(i));
+            }
+        } else {
+            excludesMasks = new Pattern[0];
+        }
+        String prefix = rootDir.getCanonicalPath().replace('\\', '/');
+        List<String> result = new ArrayList<String>();
+        for (String f : files) {
+            String fn = f.replace('\\', '/');
+            if (fn.startsWith(prefix)) {
+                // file path should starts from '/' for checking.
+                fn = fn.substring(prefix.length());
+            }
+            boolean add = false;
+            // check include masks
+            for (Pattern p : includesMasks) {
+                if (p.matcher(fn).matches()) {
+                    add = true;
+                    break;
+                }
+            }
+            if (!add) {
+                add = true;
+                // check exclude masks
+                for (Pattern p : excludesMasks) {
+                    if (p.matcher(fn).matches()) {
+                        add = false;
+                        break;
+                    }
+                }
+            }
+            if (add) {
+                result.add(fn);
+            }
+        }
+        return result;
+    }
+
+    public static boolean checkFileInclude(String filePath, List<String> includes, List<String> excludes) {
+        if (!filePath.startsWith("/")) {
+            // file path should starts from '/' for checking.
+            filePath = '/' + filePath;
+        }
+        Pattern[] includesMasks;
+        if (includes != null) {
+            includesMasks = new Pattern[includes.size()];
+            for (int i = 0; i < includes.size(); i++) {
+                includesMasks[i] = compileFileMask(includes.get(i));
+            }
+        } else {
+            includesMasks = new Pattern[0];
+        }
+        Pattern[] excludesMasks;
+        if (excludes != null) {
+            excludesMasks = new Pattern[excludes.size()];
+            for (int i = 0; i < excludes.size(); i++) {
+                excludesMasks[i] = compileFileMask(excludes.get(i));
+            }
+        } else {
+            excludesMasks = new Pattern[0];
+        }
+        boolean add = false;
+        // check include masks
+        for (Pattern p : includesMasks) {
+            if (p.matcher(filePath).matches()) {
+                add = true;
+                break;
+            }
+        }
+        if (!add) {
+            add = true;
+            // check exclude masks
+            for (Pattern p : excludesMasks) {
+                if (p.matcher(filePath).matches()) {
+                    add = false;
+                    break;
+                }
+            }
+        }
+        return add;
     }
 
     /**
@@ -655,17 +750,11 @@ public class StaticUtils {
         urlConn.setConnectTimeout(10000);
         in = urlConn.getInputStream();
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            LFileCopy.copy(in, out);
+            return IOUtils.toString(in, "UTF-8");
         } finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
-                // munch this
-            }
+            in.close();
         }
-        return new String(out.toByteArray(), "UTF-8");
     }
 
     /**

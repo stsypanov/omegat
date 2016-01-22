@@ -94,4 +94,8 @@ public final class Platform {
         }
         return false;
     }
+
+    public static String getEOL() {
+        return System.getProperty("line.separator");
+    }
 }

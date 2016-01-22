@@ -26,15 +26,13 @@
 package org.omegat.core.machinetranslators;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.core.Core;
-import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -99,12 +97,12 @@ public class BelazarTranslate extends BaseTranslate {
             out.write(db);
             out.flush();
         }
-        StringWriter result = new StringWriter();
-        try (InputStreamReader rd = new InputStreamReader(conn.getInputStream(), CHARSET)){
-            LFileCopy.copy(rd, result);
+        String result;
+        try (InputStream in = conn.getInputStream()) {
+            result = IOUtils.toString(in, CHARSET);
         }
 
-        putToCache(sLang, tLang, text, result.toString());
-        return result.toString();
+        putToCache(sLang, tLang, text, result);
+        return result;
     }
 }

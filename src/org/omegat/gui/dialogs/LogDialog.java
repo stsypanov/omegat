@@ -34,8 +34,8 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
 
 import org.omegat.gui.common.PeroDialog;
+import org.apache.commons.io.FileUtils;
 import org.omegat.util.FileUtil;
-import org.omegat.util.LFileCopy;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -176,7 +176,7 @@ public class LogDialog extends PeroDialog {
             return;
         }
         try {
-            LFileCopy.copy(new File (Log.getLogFilePath()), chooser.getSelectedFile());
+            FileUtils.copyFile(new File (Log.getLogFilePath()), chooser.getSelectedFile());
         } catch (IOException ex) {
             Log.log(ex);
         }

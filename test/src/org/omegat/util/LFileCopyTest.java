@@ -1,129 +1,70 @@
+/**************************************************************************
+ OmegaT - Computer Assisted Translation (CAT) tool 
+          with fuzzy matching, translation memory, keyword search, 
+          glossaries, and translation leveraging into updated projects.
+
+ Copyright (C) 2015 Aaron Madlon-Kay
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
+
+ This file is part of OmegaT.
+
+ OmegaT is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ OmegaT is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**************************************************************************/
+
 package org.omegat.util;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import java.io.File;
+import java.io.PrintWriter;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.omegat.filters.TestFilterBase;
 
-import static org.junit.Assert.assertEquals;
+import junit.framework.TestCase;
 
-/**
- * Created by stsypanov on 25.05.2015.
- */
-@SuppressWarnings("deprecation")
-public class LFileCopyTest {
-    protected static final Charset CS = Charset.forName(OConsts.UTF8);
-    protected File tempFileSrc;
-    protected File tempFileDestination;
+public class LFileCopyTest extends TestCase {
 
-    @Rule
-    public TestName name = new TestName();
+    private File tempDir;
 
-    @Before
-    public void setUp() throws Exception {
-        tempFileSrc = File.createTempFile("tempFileSrc", ".tmp");
-        List<String> lines = Arrays.asList("Line1", "Line2");
-        Files.write(tempFileSrc.toPath(), lines, CS, StandardOpenOption.WRITE);
-
-        tempFileDestination = File.createTempFile("tempFileDestination", ".tmp");
+    @Override
+    protected void setUp() throws Exception {
+        tempDir = FileUtil.createTempDir();
+        assertTrue(tempDir.isDirectory());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Files.delete(tempFileSrc.toPath());
-        Files.delete(tempFileDestination.toPath());
+    public void testFileCopy() throws Exception {
+        // Create file "a" with contents "foobar".
+        File a = new File(tempDir, "a");
+        PrintWriter fw = new PrintWriter(a, "UTF-8");
+        fw.println("foobar");
+        fw.close();
+        assertFalse(fw.checkError());
+
+        File b = new File(tempDir, "b");
+
+        // Copy file "a" to file "b". Contents should be identical.
+        FileUtils.copyFile(a, b);
+        TestFilterBase.compareBinary(a, b);
+
+        // Copy file "a" to itself. Contents should remain identical
+        // and not get clobbered per https://sourceforge.net/p/omegat/bugs/787/
+        FileUtils.copyFile(a, a);
+        TestFilterBase.compareBinary(a, b);
     }
 
-    @Test
-    public void testCopy() throws Exception {
-        String from = tempFileSrc.getAbsolutePath();
-        String to = tempFileDestination.getAbsolutePath();
-        LFileCopy.copy(new File(from), new File(to));
-
-        testResult();
-    }
-
-    /**
-     * For LFileCopy.copy(File src, File dest)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCopy1() throws Exception {
-        LFileCopy.copy(tempFileSrc, tempFileDestination);
-
-        testResult();
-    }
-
-    /**
-     * For LFileCopy.copy(InputStream src, File dest)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCopy2() throws Exception {
-        try (InputStream is = new FileInputStream(tempFileSrc)) {
-            LFileCopy.copy(is, tempFileDestination);
-
-        }
-        testResult();
-    }
-
-    /**
-     * For LFileCopy.copy(InputStream src, OutputStream dest)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCopy3() throws Exception {
-        try (InputStream is = new FileInputStream(tempFileSrc);
-             OutputStream os = new FileOutputStream(tempFileDestination)) {
-
-            LFileCopy.copy(is, os);
-        }
-        testResult();
-    }
-
-    /**
-     * For LFileCopy.copy(Reader src, Writer dest)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCopy4() throws Exception {
-        try (Reader reader = new InputStreamReader(new FileInputStream(tempFileSrc), CS);
-             Writer writer = new OutputStreamWriter(new FileOutputStream(tempFileDestination), CS)) {
-
-            LFileCopy.copy(reader, writer);
-        }
-        testResult();
-    }
-
-    /**
-     * For LFileCopy.copy(File src, OutputStream dest)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCopy5() throws Exception {
-        try (OutputStream os = new FileOutputStream(tempFileDestination)) {
-
-            LFileCopy.copy(tempFileSrc, os);
-        }
-        testResult();
-    }
-
-    private void testResult() throws IOException {
-        List<String> strings1 = Files.readAllLines(tempFileSrc.toPath(), CS);
-        List<String> strings2 = Files.readAllLines(tempFileDestination.toPath(), CS);
-        assertEquals(strings1, strings2);
+    @Override
+    protected void tearDown() throws Exception {
+        assertTrue(FileUtil.deleteTree(tempDir));
     }
 }
