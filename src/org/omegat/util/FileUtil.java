@@ -36,10 +36,11 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URL;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.omegat.gui.help.HelpFrame;
+import org.omegat.help.Help;
 
 /**
  * Files processing utilities.
@@ -339,18 +340,33 @@ public class FileUtil {
      */
     public static String loadTextFileFromDoc(String textFile) {
 
-        // Get the license
-        URL url = HelpFrame.getHelpFileURL(null, textFile);
-        if (url == null) {
-            return HelpFrame.errorHaiku();
+        // Get the file
+        URI uri = Help.getHelpFileURI(null, textFile);
+        if (uri == null) {
+            return null;
         }
 
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8))) {
-            return IOUtils.toString(rd);
+        String result = null;
+        BufferedReader rd = null;
+        InputStream is = null;
+        InputStreamReader isr = null;
+        try {
+            is = uri.toURL().openStream();
+            isr = new InputStreamReader(is, OConsts.UTF8);
+            rd = new BufferedReader(isr);
+            result = IOUtils.toString(rd);
+            rd.close();
+            isr.close();
+            is.close();
         } catch (IOException ex) {
-            return HelpFrame.errorHaiku();
+            Log.log(ex);
+        } finally {
+            IOUtils.closeQuietly(rd);
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(isr);
         }
 
+        return result;
     }
 
     /**

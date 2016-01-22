@@ -71,6 +71,16 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
+import org.omegat.help.Help;
+import org.omegat.util.FileUtil;
+import org.omegat.util.Language;
+import org.omegat.util.Log;
+import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
+import org.omegat.util.TagUtil;
 import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.*;
 
@@ -1081,9 +1091,11 @@ public class MainWindowMenuHandler {
      * Show help.
      */
     public void helpContentsMenuItemActionPerformed() {
-        HelpFrame hf = HelpFrame.getInstance();
-        hf.setVisible(true);
-        hf.toFront();
+        try {
+            Help.showHelp();
+        } catch (Exception ex) {
+            Log.log(ex);
+        }
     }
 
     /**
