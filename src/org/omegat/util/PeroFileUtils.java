@@ -1,7 +1,6 @@
 package org.omegat.util;
 
 import org.apache.commons.io.IOUtils;
-import org.omegat.gui.help.HelpFrame;
 
 import java.io.*;
 import java.net.URL;

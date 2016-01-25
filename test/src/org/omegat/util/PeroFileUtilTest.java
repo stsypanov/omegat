@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 /**
  * Created by stsypanov on 25.05.2015.
  */
-public class PeroFileUtilTest extends LFileCopyTest {
+public class PeroFileUtilTest {
     public static final Logger logger = Logger.getLogger(PeroFileUtilTest.class.getName());
 
     public static final String PARENT = "test/data";
