@@ -26,6 +26,8 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cz.CzechAnalyzer;
@@ -37,12 +39,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 @Tokenizer(languages = { "cs" })
 public class LuceneCzechTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            String[] stopWords = stopWordsAllowed ? CzechAnalyzer.CZECH_STOP_WORDS
-                    : EMPTY_STRING_LIST;
+            Set<?> stopWords = stopWordsAllowed ? CzechAnalyzer.getDefaultStopSet()
+                    : Collections.emptySet();
             return new CzechAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

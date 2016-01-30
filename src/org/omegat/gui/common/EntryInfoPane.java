@@ -35,6 +35,8 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.util.gui.FontFallbackListener;
+import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.Styles;
 
 /**
  * Base class for show information about currently selected entry. It can be used for glossaries, dictionaries
@@ -54,7 +56,7 @@ public abstract class EntryInfoPane extends JTextPane implements IProjectEventLi
             setFont(Core.getMainWindow().getApplicationFont());
             CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
                 public void onFontChanged(Font newFont) {
-                    EntryInfoPane.this.setFont(newFont);
+                    setFont(newFont);
                 }
             });
         }
@@ -65,6 +67,13 @@ public abstract class EntryInfoPane extends JTextPane implements IProjectEventLi
         getDocument().addDocumentListener(new FontFallbackListener(this));
     }
 
+    @Override
+    public void setEditable(boolean isEditable) {
+        StaticUIUtils.setCaretUpdateEnabled(this, isEditable);
+        super.setEditable(isEditable);
+    }
+
+    @Override
     public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
         switch (eventType) {
         case CREATE:
@@ -74,6 +83,8 @@ public abstract class EntryInfoPane extends JTextPane implements IProjectEventLi
         case CLOSE:
             onProjectClose();
             break;
+        default:
+            // Nothing
         }
     }
 

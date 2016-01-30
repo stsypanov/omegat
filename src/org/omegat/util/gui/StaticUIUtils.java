@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2006 Henry Pijffers
+               2013 Yu Tang
                2014-2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
@@ -34,6 +35,9 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
@@ -49,8 +53,12 @@ import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
+import org.omegat.util.Platform;
+import org.omegat.util.StringUtil;
+
 /**
- *
+ * @author Henry Pijffers
+ * @author Yu-Tang
  * @author Aaron Madlon-Kay
  */
 public class StaticUIUtils {
@@ -83,6 +91,7 @@ public class StaticUIUtils {
      * @param window
      * @return action
      */
+    @SuppressWarnings("serial")
     public static AbstractAction makeCloseAction(final Window window) {
         return new AbstractAction() {
             @Override
@@ -130,8 +139,6 @@ public class StaticUIUtils {
         pane.getActionMap().put("ESCAPE", action);
     }
 
-    private final static char TRUNCATE_CHAR = '\u2026';
-    
     /**
      * Truncate the supplied text so that it fits within the width (minus margin) 
      * of the supplied component. Truncation is achieved by replacing a chunk from
@@ -165,7 +172,7 @@ public class StaticUIUtils {
             return text;
         }
         
-        final int truncateCharWidth = metrics.charWidth(TRUNCATE_CHAR);
+        final int truncateCharWidth = metrics.charWidth(StringUtil.TRUNCATE_CHAR);
         final int middle = text.offsetByCodePoints(0, text.codePointCount(0, text.length()) / 2);
         int chompStart = middle, chompEnd = middle;
         String chomp = null;
@@ -185,7 +192,7 @@ public class StaticUIUtils {
         }
         
         if (chomp != null) {
-            text = text.substring(0, chompStart) + TRUNCATE_CHAR + text.substring(chompEnd, text.length());
+            text = text.substring(0, chompStart) + StringUtil.TRUNCATE_CHAR + text.substring(chompEnd, text.length());
         }
         return text;
     }
@@ -204,11 +211,48 @@ public class StaticUIUtils {
             comp.setSize(comp.getWidth(), rect.height);
         }
     }
-    
-    public static void neverUpdateCaret(JTextComponent comp) {
+
+    public static void setCaretUpdateEnabled(JTextComponent comp, boolean updateEnabled) {
         Caret caret = comp.getCaret();
         if (caret instanceof DefaultCaret) {
-            ((DefaultCaret) caret).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+            ((DefaultCaret) caret).setUpdatePolicy(updateEnabled ? DefaultCaret.UPDATE_WHEN_ON_EDT
+                    : DefaultCaret.NEVER_UPDATE);
         }
+    }
+
+    /**
+     * Make caret visible even when the {@link JTextComponent} is not editable.
+     */
+    public static FocusListener makeCaretAlwaysVisible(final JTextComponent comp) {
+        FocusListener listener = new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                Caret caret = comp.getCaret();
+                caret.setVisible(true);
+                caret.setSelectionVisible(true);
+            }
+        };
+        comp.addFocusListener(listener);
+        return listener;
+    }
+
+    /**
+     * Ensure the frame width is OK. This is really just a workaround for
+     * <a href="https://bugs.openjdk.java.net/browse/JDK-8065739">JDK-8065739
+     * </a>, a Java bug specific to Java 1.8 on OS X whereby a frame too close
+     * to the width of the screen will warp to one corner with tiny dimensions.
+     * 
+     * @param width
+     *            Proposed window width
+     * @return A safe window width
+     */
+    public static int correctFrameWidth(int width) {
+        if (Platform.isMacOSX() && System.getProperty("java.version").startsWith("1.8")) {
+            int screenWidth = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
+            // 50 is a magic number. Can be as low as 11 (tested on OS X
+            // 10.10.2, Java 1.8.0_31).
+            width = Math.min(width, screenWidth - 50);
+        }
+        return width;
     }
 }

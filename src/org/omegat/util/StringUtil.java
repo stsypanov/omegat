@@ -45,6 +45,8 @@ import java.util.Locale;
  */
 public class StringUtil {
 
+    public static final char TRUNCATE_CHAR = '\u2026';
+
     /**
      * Check if string is empty, i.e. null or length==0
      */
@@ -215,8 +217,8 @@ public class StringUtil {
         if (StringUtil.isTitleCase(matchTo)) {
             return capitalizeFirst(text, locale);
         }
-        // If matching to lower when input is upper, turn into lower.
-        if (StringUtil.isLowerCase(matchTo) && StringUtil.isUpperCase(text)) {
+        // If matching to lower, turn into lower.
+        if (StringUtil.isLowerCase(matchTo)) {
             return text.toLowerCase(locale);
         }
         // If matching to upper (at least 2 chars; otherwise would have hit isTitleCase()
@@ -275,30 +277,48 @@ public class StringUtil {
         return v1 == null && v2 == null || v1 != null && v2 != null && v1.equals(v2);
     }
 
-	/**
-	 * Compare two values, which could be null.
-	 */
-	public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
-		if (v1 == null && v2 == null) {
-			return 0;
-		} else if (v1 == null) {
-			return -1;
-		} else if (v2 == null) {
-			return 1;
-		} else {
-			return v1.compareTo(v2);
-		}
-	}
+    /**
+     * Compare two values, which could be null.
+     */
+    public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
+        if (v1 == null && v2 == null) {
+            return 0;
+        } else if (v1 == null && v2 != null) {
+            return -1;
+        } else if (v1 != null && v2 == null) {
+            return 1;
+        } else {
+            return v1.compareTo(v2);
+        }
+    }
 
     /**
-     * Extracts first N chars from string.
+     * Extracts first N codepoints from string.
      */
     public static String firstN(String str, int len) {
-        if (str.length() < len) {
+        if (str.codePointCount(0, str.length()) <= len) {
             return str;
         } else {
-            return str.substring(0, len) + "...";
+            return str.substring(0, str.offsetByCodePoints(0, len));
         }
+    }
+
+    /**
+     * Truncate the supplied text to a maximum of len codepoints. If truncated,
+     * the result will be the first (len - 1) codepoints plus a trailing
+     * ellipsis.
+     *
+     * @param text
+     *            The text to truncate
+     * @param len
+     *            The desired length (in codepoints) of the result
+     * @return The truncated string
+     */
+    public static String truncate(String text, int len) {
+        if (text.codePointCount(0, text.length()) <= len) {
+            return text;
+        }
+        return firstN(text, len - 1) + TRUNCATE_CHAR;
     }
 
     /**
@@ -499,8 +519,6 @@ public class StringUtil {
      *            Arguments to use in formatting the string
      *
      * @return The formatted string
-     *
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static String format(String str, Object... arguments) {
         // MessageFormat.format expects single quotes to be escaped

@@ -37,12 +37,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 @Tokenizer(languages = { "es" }, isDefault = true)
 public class LuceneSpanishTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             Set<?> stopWords = stopWordsAllowed ? SpanishAnalyzer.getDefaultStopSet()
-                    : Collections.EMPTY_SET;
+                    : Collections.emptySet();
             return new SpanishAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

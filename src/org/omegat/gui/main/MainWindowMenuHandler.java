@@ -71,6 +71,16 @@ import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
+import org.omegat.help.Help;
+import org.omegat.util.FileUtil;
+import org.omegat.util.Language;
+import org.omegat.util.Log;
+import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
+import org.omegat.util.TagUtil;
 import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.*;
 
@@ -78,7 +88,7 @@ import javax.swing.*;
 
 /**
  * Handler for main menu items.
- *
+ * 
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -92,7 +102,6 @@ import javax.swing.*;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-@SuppressWarnings({"unused", "MethodMayBeStatic"})
 public class MainWindowMenuHandler {
     private final MainWindow mainWindow;
     private BaseFilteringController baseFilteringController;
@@ -124,9 +133,6 @@ public class MainWindowMenuHandler {
 
     /**
      * Imports the file/files/folder into project's source files.
-     *
-     * @author Kim Bruning
-     * @author Maxym Mykhalchuk
      */
     public void projectImportMenuItemActionPerformed() {
         mainWindow.doPromptImportSourceFiles();
@@ -626,8 +632,6 @@ public class MainWindowMenuHandler {
 
     /**
      * Asks the user for a segment number and then displays the segment.
-     *
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public void gotoSegmentMenuItemActionPerformed() {
         // Create a dialog for input
@@ -712,6 +716,11 @@ public class MainWindowMenuHandler {
     public void viewMarkAutoPopulatedCheckBoxMenuItemActionPerformed() {
         Core.getEditor().getSettings()
                 .setMarkAutoPopulated(mainWindow.menu.viewMarkAutoPopulatedCheckBoxMenuItem.isSelected());
+    }
+
+    public void viewMarkLanguageCheckerCheckBoxMenuItemActionPerformed() {
+        Core.getEditor().getSettings()
+                .setMarkLanguageChecker(mainWindow.menu.viewMarkLanguageCheckerCheckBoxMenuItem.isSelected());
     }
 
     public void viewMarkFontFallbackCheckBoxMenuItemActionPerformed() {
@@ -1082,9 +1091,11 @@ public class MainWindowMenuHandler {
      * Show help.
      */
     public void helpContentsMenuItemActionPerformed() {
-        HelpFrame hf = HelpFrame.getInstance();
-        hf.setVisible(true);
-        hf.toFront();
+        try {
+            Help.showHelp();
+        } catch (Exception ex) {
+            Log.log(ex);
+        }
     }
 
     /**

@@ -73,6 +73,7 @@ import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.SwingUtils;
+import org.omegat.util.gui.Styles;
 
 /**
  * Changes of standard JEditorPane implementation for support custom behavior.
@@ -90,7 +91,7 @@ public class EditorTextArea3 extends JEditorPane {
 
     protected final EditorController controller;
 
-    protected final List<PopupMenuConstructorInfo> popupConstructors = new ArrayList<>();
+    protected final List<PopupMenuConstructorInfo> popupConstructors = new ArrayList<PopupMenuConstructorInfo>();
 
     protected String currentWord;
 
@@ -100,8 +101,8 @@ public class EditorTextArea3 extends JEditorPane {
     /**
      * Whether or not we are confining the cursor to the editable part of the
      * text area. The user can optionally allow the caret to roam freely.
-     *
-     * @see {@link #checkAndFixCaret(boolean)}
+     * 
+     * @see #checkAndFixCaret(boolean)
      */
     protected boolean lockCursorToInputArea = true;
 
@@ -152,8 +153,10 @@ public class EditorTextArea3 extends JEditorPane {
         });
         setToolTipText("");
         setDragEnabled(true);
+//        setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
+//        setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
     }
-
+    
     @Override
     public void setFont(Font font) {
         super.setFont(font);
@@ -245,7 +248,7 @@ public class EditorTextArea3 extends JEditorPane {
     };
 
     private JPopupMenu makePopupMenu(int pos) {
-
+        
         PopupMenuConstructorInfo[] cons;
         synchronized (popupConstructors) {
             /**
@@ -387,10 +390,10 @@ public class EditorTextArea3 extends JEditorPane {
             processed = true;
         } else if (StaticUtils.isKey(e, KeyEvent.VK_O, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)) {
             // handle Ctrl+Shift+O - toggle orientation LTR-RTL
-            Cursor oldCursor = getCursor();
-            setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            Cursor oldCursor = this.getCursor();
+            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             controller.toggleOrientation();
-            setCursor(oldCursor);
+            this.setCursor(oldCursor);
 
             IMainWindow mainWindow = Core.getMainWindow();
             // Timed warning is not available for console window
@@ -438,12 +441,15 @@ public class EditorTextArea3 extends JEditorPane {
         } else if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_UP,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
             // Ctrl+PgUp - to the begin of document(Cmd+PgUp for MacOS)
-            setCaretPosition(0);
+            int segNum = controller.m_docSegList[0].segmentNumberInProject;
+            controller.gotoEntry(segNum);
             processed = true;
         } else if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_DOWN,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
             // Ctrl+PgDn - to the end of document(Cmd+PgDn for MacOS)
-            setCaretPosition(getOmDocument().getLength());
+            int lastSegIndex = controller.m_docSegList.length - 1;
+            int segNum = controller.m_docSegList[lastSegIndex].segmentNumberInProject;
+            controller.gotoEntry(segNum);
             processed = true;
         } else if (StaticUtils.isKey(e, KeyEvent.VK_LEFT, mac ? InputEvent.ALT_MASK : InputEvent.CTRL_MASK)
                 || StaticUtils.isKey(e, KeyEvent.VK_LEFT, (mac ? InputEvent.ALT_MASK : InputEvent.CTRL_MASK) | InputEvent.SHIFT_MASK)) {
@@ -518,15 +524,28 @@ public class EditorTextArea3 extends JEditorPane {
      */
     boolean moveCursorOverTag(boolean withShift, boolean checkTagStart) {
         Document3 doc = getOmDocument();
+        int caret = getCaretPosition();
+        int start = doc.getTranslationStart();
+        int end = doc.getTranslationEnd();
+        if (caret < start || caret > end) {
+            // We are outside the translation (maybe cursor lock is off).
+            // Don't try to jump over tags.
+            return false;
+        }
+        if ((caret == start && !checkTagStart) || (caret == end && checkTagStart)) {
+            // We are at the edge of the translation but moving toward the outside.
+            // Don't try to jump over tags.
+            return false;
+        }
         SourceTextEntry ste = doc.controller.getCurrentEntry();
         String text = doc.extractTranslation();
-        int off = getCaretPosition() - doc.getTranslationStart();
+        int off = caret - start;
         // iterate by 'protected parts'
         if (ste != null) {
             for (ProtectedPart pp : ste.getProtectedParts()) {
                 if (checkTagStart) {
                     if (StringUtil.isSubstringAfter(text, off, pp.getTextInSourceSegment())) {
-                        int pos = off + doc.getTranslationStart() + pp.getTextInSourceSegment().length();
+                        int pos = off + start + pp.getTextInSourceSegment().length();
                         if (withShift) {
                             getCaret().moveDot(pos);
                         } else {
@@ -536,7 +555,7 @@ public class EditorTextArea3 extends JEditorPane {
                     }
                 } else {
                     if (StringUtil.isSubstringBefore(text, off, pp.getTextInSourceSegment())) {
-                        int pos = off + doc.getTranslationStart() - pp.getTextInSourceSegment().length();
+                        int pos = off + start - pp.getTextInSourceSegment().length();
                         if (withShift) {
                             getCaret().moveDot(pos);
                         } else {
@@ -637,7 +656,7 @@ public class EditorTextArea3 extends JEditorPane {
     /**
      * Checks whether the selection & caret is inside editable text, and changes
      * their positions accordingly if not.
-     *
+     * 
      * @param force
      *            When true, ignore {@link #lockCursorToInputArea} and always
      *            fix the caret even if the user has enabled free roaming
@@ -744,7 +763,7 @@ public class EditorTextArea3 extends JEditorPane {
     }
 
     public AutoCompleter getAutoCompleter(){
-        if (autoCompleter ==null){
+        if (autoCompleter == null){
             autoCompleter = new AutoCompleter(this);
         }
         return autoCompleter;
@@ -758,17 +777,16 @@ public class EditorTextArea3 extends JEditorPane {
         public View create(Element elem) {
             String kind = elem.getName();
             if (kind != null) {
-                switch (kind) {
-                    case AbstractDocument.ContentElementName:
-                        return new ViewLabel(elem);
-                    case AbstractDocument.ParagraphElementName:
-                        return new ViewParagraph(elem);
-                    case AbstractDocument.SectionElementName:
-                        return new BoxView(elem, View.Y_AXIS);
-                    case StyleConstants.ComponentElementName:
-                        return new ComponentView(elem);
-                    case StyleConstants.IconElementName:
-                        return new IconView(elem);
+                if (kind.equals(AbstractDocument.ContentElementName)) {
+                    return new ViewLabel(elem);
+                } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
+                    return new ViewParagraph(elem);
+                } else if (kind.equals(AbstractDocument.SectionElementName)) {
+                    return new BoxView(elem, View.Y_AXIS);
+                } else if (kind.equals(StyleConstants.ComponentElementName)) {
+                    return new ComponentView(elem);
+                } else if (kind.equals(StyleConstants.IconElementName)) {
+                    return new IconView(elem);
                 }
             }
 

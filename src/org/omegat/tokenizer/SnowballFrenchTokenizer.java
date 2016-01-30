@@ -35,8 +35,10 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("deprecation")
 @Tokenizer(languages = { "fr" })
 public class SnowballFrenchTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {

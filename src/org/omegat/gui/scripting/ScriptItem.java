@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2014 Briac Pilpre, Didier Briel
-               2015 Yu Tang
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -26,7 +26,6 @@
 package org.omegat.gui.scripting;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +35,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -45,30 +43,33 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+import org.omegat.util.FileUtil;
+import org.omegat.util.LinebreakPreservingReader;
+import org.omegat.util.OConsts;
 import org.jetbrains.annotations.NotNull;
 import org.omegat.util.*;
 
 /**
- * A script file in the script list is represented as ScriptListFile to allow for localization, description and
- * reordering.
+ * A script file in the script list is represented as ScriptListFile to allow
+ * for localization, description and reordering.
  * 
  * @author Briac Pilpre
  * @author Didier Briel
+ * @author Aaron Madlon-Kay
  */
-public class ScriptItem extends File {
+public class ScriptItem implements Comparable<ScriptItem> {
 
-    private static final long serialVersionUID = -257191026120285430L;
-    
     private static final String PROPERTIES = "properties/";
     private static final Pattern PATTERN = Pattern.compile("\n");
 
     public ScriptItem(File scriptFile) {
-        super(scriptFile.getParentFile(), scriptFile.getName());
+        m_file = scriptFile;
 
         if (scriptFile.getParentFile() == null) return;
         try (URLClassLoader loader = new URLClassLoader(new URL[]{scriptFile.getParentFile().toURI().toURL()})){
 
-            String shortName = ScriptingWindow.getBareFileName(scriptFile.getName());
+            String shortName = FileUtil.stripFileExtension(scriptFile.getName());
             try { // Try first at the root of the script dir, for compatibility
                 m_res = ResourceBundle.getBundle(shortName, Locale.getDefault(), loader); 
             } catch (MissingResourceException e) {
@@ -119,17 +120,21 @@ public class ScriptItem extends File {
     }
 
     public String getScriptName() {
-        if (m_scriptName != null) {
-            return m_scriptName;
+        if (m_scriptName == null) {
+            String name = m_file.getName();
+            if (m_res != null) {
+                try {
+                    name = m_res.getString("name");
+                } catch (MissingResourceException ignore) {
+                }
+            }
+            m_scriptName = name;
         }
-
-        try {
-            m_scriptName = m_res == null ? getName() : m_res.getString("name"); //OStrings.getString("SCRIPT." + fileName + ".name");
-        } catch (MissingResourceException e) {
-            m_scriptName = getName();
-        }
-
         return m_scriptName;
+    }
+
+    public File getFile() {
+        return m_file;
     }
 
     public String getDescription() {
@@ -138,7 +143,7 @@ public class ScriptItem extends File {
         }
 
         try {
-            m_description = m_res == null ? "" : m_res.getString("description"); //OStrings.getString("SCRIPT." + fileName + ".description");
+            m_description = m_res == null ? "" : m_res.getString("description");
         } catch (MissingResourceException e) {
             m_description = "";
         }
@@ -155,7 +160,7 @@ public class ScriptItem extends File {
     public String getText() throws IOException {
         String ret;
 
-        try (LinebreakPreservingReader lpin = getUTF8LinebreakPreservingReader(this)) {
+        try (LinebreakPreservingReader lpin = getUTF8LinebreakPreservingReader(m_file)) {
             StringBuilder sb = new StringBuilder();
             String s = lpin.readLine();
             startsWithBOM = s.startsWith(BOM);
@@ -189,9 +194,7 @@ public class ScriptItem extends File {
             text = BOM + text;
         }
 
-        try (InputStream is = new ByteArrayInputStream(text.getBytes(OConsts.UTF8))) {
-            LFileCopy.copy(is, this);
-        }
+        FileUtils.writeStringToFile(m_file, text, OConsts.UTF8);
     }
 
     @Override
@@ -199,18 +202,16 @@ public class ScriptItem extends File {
         return getScriptName();
     }
 
-    public static class ScriptItemComparator implements Comparator<ScriptItem> {
-
-        @Override
-        public int compare(ScriptItem o1, ScriptItem o2) {
-            return o1.getScriptName().compareTo(o2.getScriptName());
-        }
+    @Override
+    public int compareTo(ScriptItem o) {
+        return getScriptName().compareTo(o.getScriptName());
     }
 
     private static final String BOM = "\uFEFF";
     private boolean startsWithBOM = false;
     private String lineBreak = System.getProperty("line.separator");
 
+    private File m_file = null;
     private String m_scriptName = null;
     private String m_description = null;
     private ResourceBundle m_res = null;

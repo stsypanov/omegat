@@ -40,6 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+
 import org.omegat.util.logging.OmegaTFileHandler;
 
 /**
@@ -168,8 +169,6 @@ public class Log {
      * @param parameters
      *            Parameters for the message. These are inserted by using
      *            StaticUtils.format.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static void logRB(String key, Object... parameters) {
         if (LOGGER.isLoggable(Level.INFO)) {
@@ -189,8 +188,6 @@ public class Log {
      * 
      * @param throwable
      *            The exception or error to log
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static void log(Throwable throwable) {
         LOGGER.log(Level.SEVERE, "", throwable);
@@ -199,17 +196,16 @@ public class Log {
     /**
      * Writes a warning message to the log (to be retrieved from the resource
      * bundle)
+     * <p>
+     * While the warning message can be localized, the warning key is also
+     * logged, so developers can determine what warning was given by looking at
+     * the error key, instead of trying to interpret localized messages.
      *
      * @param key
      *            The key of the error message in the resource bundle
      * @param parameters
      *            Parameters for the error message. These are inserted by using
      *            StaticUtils.format.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
-     * @internal While the warning message can be localized, the warning key is also
-     * logged, so developers can determine what warning was given by looking at the
-     * error key, instead of trying to interpret localized messages.
      */
     public static void logWarningRB(String key, Object... parameters) {
         if (LOGGER.isLoggable(Level.WARNING)) {
@@ -224,18 +220,16 @@ public class Log {
     /**
      * Writes an info message to the log (to be retrieved from the resource
      * bundle)
+     * <p>
+     * While the info message can be localized, the info key is also logged, so
+     * developers can determine what info was given by looking at the error key,
+     * instead of trying to interpret localized messages.
      *
      * @param key
      *            The key of the error message in the resource bundle
      * @param parameters
      *            Parameters for the error message. These are inserted by using
      *            StaticUtils.format.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
-     * @author Alex Buloichik (alex73mail@gmail.com)
-     * @internal While the info message can be localized, the info key is also
-     * logged, so developers can determine what info was given by looking at the
-     * error key, instead of trying to interpret localized messages.
      */
     public static void logInfoRB(String id, Object... parameters) {
         if (LOGGER.isLoggable(Level.INFO)) {
@@ -250,17 +244,16 @@ public class Log {
     /**
      * Writes an error message to the log (to be retrieved from the resource
      * bundle)
+     * <p>
+     * While the error message can be localized, the error key is also logged,
+     * so developers can determine what error was given by looking at the error
+     * key, instead of trying to interpret localized messages.
      *
      * @param key
      *            The key of the error message in the resource bundle
      * @param parameters
      *            Parameters for the error message. These are inserted by using
      *            StaticUtils.format.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
-     * @internal While the error message can be localized, the error key is also
-     * logged, so developers can determine what error was given by looking at the
-     * error key, instead of trying to interpret localized messages.
      */
     public static void logErrorRB(String key, Object... parameters) {
         if (LOGGER.isLoggable(Level.SEVERE)) {
@@ -275,18 +268,18 @@ public class Log {
     /**
      * Writes an error message to the log (to be retrieved from the resource
      * bundle)
+     * <p>
+     * While the error message can be localized, the error key is also logged,
+     * so developers can determine what error was given by looking at the error
+     * key, instead of trying to interpret localized messages.
      *
-     * @param ex  The error that was thrown
+     * @param ex
+     *            The error that was thrown
      * @param key
      *            The key of the error message in the resource bundle
      * @param parameters
      *            Parameters for the error message. These are inserted by using
      *            StaticUtils.format.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
-     * @internal While the error message can be localized, the error key is also
-     * logged, so developers can determine what error was given by looking at the
-     * error key, instead of trying to interpret localized messages.
      */
     public static void logErrorRB(Throwable ex, String key, Object... parameters) {
         if (LOGGER.isLoggable(Level.SEVERE)) {
@@ -300,7 +293,7 @@ public class Log {
     }
 
     /**
-     * Writes debug message to log(without localization)
+     * Writes debug message to log (without localization)
      * 
      * @param message
      *            message text

@@ -27,6 +27,7 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
+import java.util.Collections;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ar.ArabicAnalyzer;
@@ -39,13 +40,14 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 @Tokenizer(languages = { "ar" })
 public class LuceneArabicTokenizer extends BaseTokenizer {
 
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             ArabicAnalyzer analyzer = stopWordsAllowed ?
                     new ArabicAnalyzer(getBehavior()) :
-                        new ArabicAnalyzer(getBehavior(), new String[] {});
+                        new ArabicAnalyzer(getBehavior(), Collections.emptySet());
             return analyzer.tokenStream("", new StringReader(strOrig));
         } else {
             return new StandardTokenizer(getBehavior(),

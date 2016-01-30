@@ -65,10 +65,8 @@ public class WorkflowOptionsDialog extends PeroDialog {
 
         insertFuzzyCheckBox.setSelected(Preferences.isPreference(Preferences.BEST_MATCH_INSERT));
         similarityLabel.setEnabled(insertFuzzyCheckBox.isSelected());
-        similaritySpinner
-                .setValue(Integer.parseInt(Preferences.getPreferenceDefault(
-                        Preferences.BEST_MATCH_MINIMAL_SIMILARITY,
-                        Preferences.BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT)));
+        similaritySpinner.setValue(Preferences.getPreferenceDefault(Preferences.BEST_MATCH_MINIMAL_SIMILARITY,
+                Preferences.BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT));
         similaritySpinner.setEnabled(insertFuzzyCheckBox.isSelected());
         prefixLabel.setEnabled(insertFuzzyCheckBox.isSelected());
         if (!Preferences.existsPreference(Preferences.BEST_MATCH_EXPLANATORY_TEXT)) {
@@ -88,6 +86,8 @@ public class WorkflowOptionsDialog extends PeroDialog {
         allowTagEditing.setSelected(Preferences.isPreference(Preferences.ALLOW_TAG_EDITING));
         tagValidateOnLeave.setSelected(Preferences.isPreference(Preferences.TAG_VALIDATE_ON_LEAVE));
         cbSaveAutoStatus.setSelected(Preferences.isPreference(Preferences.SAVE_AUTO_STATUS));
+        initialSegCountSpinner.setValue(Preferences.getPreferenceDefault(Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT,
+                Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT_DEFAULT));
         DockingUI.displayCentered(this);
     }
 
@@ -123,6 +123,8 @@ public class WorkflowOptionsDialog extends PeroDialog {
         allowTagEditing = new javax.swing.JCheckBox();
         tagValidateOnLeave = new javax.swing.JCheckBox();
         cbSaveAutoStatus = new javax.swing.JCheckBox();
+        initialSegCountLabel = new javax.swing.JLabel();
+        initialSegCountSpinner = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -296,6 +298,21 @@ public class WorkflowOptionsDialog extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         jPanel1.add(cbSaveAutoStatus, gridBagConstraints);
 
+        initialSegCountLabel.setLabelFor(initialSegCountSpinner);
+        org.openide.awt.Mnemonics.setLocalizedText(initialSegCountLabel, OStrings.getString("WG_INITIAL_SEGMENT_LOAD_COUNT")); // NOI18N
+        initialSegCountLabel.setToolTipText(OStrings.getString("WG_INITIAL_SEGMENT_LOAD_COUNT_TOOLTIP")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 5);
+        jPanel1.add(initialSegCountLabel, gridBagConstraints);
+
+        initialSegCountSpinner.setToolTipText(OStrings.getString("WG_INITIAL_SEGMENT_LOAD_COUNT_TOOLTIP")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel1.add(initialSegCountSpinner, gridBagConstraints);
+
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -340,8 +357,8 @@ public class WorkflowOptionsDialog extends PeroDialog {
 
         Preferences.setPreference(Preferences.BEST_MATCH_INSERT, insertFuzzyCheckBox.isSelected());
         if (insertFuzzyCheckBox.isSelected()) {
-            Preferences.setPreference(Preferences.BEST_MATCH_MINIMAL_SIMILARITY, similaritySpinner.getValue()
-                    .toString());
+            int val = Math.max(0, Math.min(100, (Integer) similaritySpinner.getValue()));
+            Preferences.setPreference(Preferences.BEST_MATCH_MINIMAL_SIMILARITY, val);
             Preferences.setPreference(Preferences.BEST_MATCH_EXPLANATORY_TEXT, prefixText.getText());
         }
 
@@ -354,6 +371,9 @@ public class WorkflowOptionsDialog extends PeroDialog {
         Preferences.setPreference(Preferences.ALLOW_TAG_EDITING, allowTagEditing.isSelected());
         Preferences.setPreference(Preferences.TAG_VALIDATE_ON_LEAVE, tagValidateOnLeave.isSelected());
         Preferences.setPreference(Preferences.SAVE_AUTO_STATUS, cbSaveAutoStatus.isSelected());
+
+        int segCount = Math.max(0, (Integer) initialSegCountSpinner.getValue());
+        Preferences.setPreference(Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT, segCount);
 
         doClose(RET_OK);
     }// GEN-LAST:event_okButtonActionPerformed
@@ -384,6 +404,8 @@ public class WorkflowOptionsDialog extends PeroDialog {
     private javax.swing.JRadioButton defaultRadio;
     private javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JCheckBox exportCurrentSegment;
+    private javax.swing.JLabel initialSegCountLabel;
+    private javax.swing.JSpinner initialSegCountSpinner;
     private javax.swing.JCheckBox insertFuzzyCheckBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

@@ -37,12 +37,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 @Tokenizer(languages = { "fi" }, isDefault = true)
 public class LuceneFinnishTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             Set<?> stopWords = stopWordsAllowed ? FinnishAnalyzer.getDefaultStopSet()
-                    : Collections.EMPTY_SET;
+                    : Collections.emptySet();
             return new FinnishAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

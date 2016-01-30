@@ -46,6 +46,7 @@ public class OStrings {
     private static String __VERSION_KEY = "version";
     private static String __UPDATE_KEY = "update";
     private static String __REVISION_KEY = "revision";
+    private static String __BETA_KEY = "beta";
 
     /** For custom deployments of OmegaT that need to be distinguishable from "stock" OmegaT */
     public static String BRANDING = "";
@@ -62,6 +63,10 @@ public class OStrings {
     public static final String REVISION = ResourceBundle.getBundle("org/omegat/Version")
             .getString(__REVISION_KEY);
 
+    /** Indicates whether this is a "beta" (or "latest") version or a "standard" version. */
+    public static final boolean IS_BETA = !ResourceBundle.getBundle("org/omegat/Version")
+            .getString(__BETA_KEY).isEmpty();
+
     /** Resource bundle that contains all the strings */
     private static ResourceBundle bundle = ResourceBundle.getBundle("org/omegat/Bundle");
 
@@ -76,8 +81,6 @@ public class OStrings {
      * Loads resources from the specified file. If the file cannot be loaded,
      * resources are reverted to the default locale. Useful when testing
      * localisations outside the jar file.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static void loadBundle(String filename) {
         boolean loaded = false;
@@ -132,8 +135,6 @@ public class OStrings {
     /**
      * Returns the OmegaT "pretty" version for display (includes the application name).
      * Example: "OmegaT 3.5", "OmegaT 3.5.1_2"
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static String getDisplayNameAndVersion() {
         if (UPDATE != null && !UPDATE.equals("0")) {
@@ -175,8 +176,6 @@ public class OStrings {
      * NOTE: segment marker is assumed to contain "0000" string to overwrite
      * with entry number. If zeros not detected, entry number will not be
      * displayed
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     public static String getSegmentMarker() {
         return getString("TF_CUR_SEGMENT_START");

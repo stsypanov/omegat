@@ -34,6 +34,9 @@
 
 package org.omegat.util;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -50,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.TranslationException;
 import org.omegat.util.xml.XMLBlock;
@@ -57,7 +61,7 @@ import org.omegat.util.xml.XMLStreamReader;
 
 /**
  * Class to load & save OmegaT preferences. All methods are static here.
- *
+ * 
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers
@@ -83,23 +87,23 @@ public class Preferences {
     public static final String DICT_FOLDER = "dict_folder";
     public static final String GLOSSARY_FOLDER = "glossary_folder";
     public static final String GLOSSARY_FILE = "glossary_file";
-
+    
     /** Whether to automatically perform MT requests on entering segment */
     public static final String MT_AUTO_FETCH = "mt_auto_fetch";
     /** Whether to restrict automatic MT requests to only untranslated segments */
     public static final String MT_ONLY_UNTRANSLATED = "mt_only_untranslated";
-
+    
     public static final String GLOSSARY_TBX_DISPLAY_CONTEXT = "glossary_tbx_display_context";
     public static final String GLOSSARY_NOT_EXACT_MATCH = "glossary_not_exact_match";
     public static final String GLOSSARY_STEMMING = "glossary_stemming";
     public static final String GLOSSARY_REPLACE_ON_INSERT = "glossary_replace_on_insert";
     public static final String DICTIONARY_FUZZY_MATCHING = "dictionary_fuzzy_matching";
 
-	public static final String MAINWINDOW_WIDTH = "screen_width";
-	public static final String MAINWINDOW_HEIGHT = "screen_height";
-	public static final String MAINWINDOW_X = "screen_x";
-	public static final String MAINWINDOW_Y = "screen_y";
-	public static final String MAINWINDOW_LAYOUT = "docking_layout";
+    public static final String MAINWINDOW_WIDTH = "screen_width";
+    public static final String MAINWINDOW_HEIGHT = "screen_height";
+    public static final String MAINWINDOW_X = "screen_x";
+    public static final String MAINWINDOW_Y = "screen_y";
+    public static final String MAINWINDOW_LAYOUT = "docking_layout";
 
     // Project files window size and position
     public static final String PROJECT_FILES_WINDOW_WIDTH = "project_files_window_width";
@@ -194,43 +198,46 @@ public class Preferences {
 	/** Mark the untranslated segments with a different color */
 	public static final String MARK_UNTRANSLATED_SEGMENTS = "mark_untranslated_segments";
 
-	/** Workflow Option: Don't Insert Source Text Into Translated Segment */
-	public static final String DONT_INSERT_SOURCE_TEXT = "wf_noSourceText";
-	/** Workflow Option: Allow translation to be equal to source */
-	public static final String ALLOW_TRANS_EQUAL_TO_SRC = "wf_allowTransEqualToSrc";
-	/** Workflow Option: Insert Best Match Into Translated Segment */
-	public static final String BEST_MATCH_INSERT = "wf_insertBestMatch";
-	/** Workflow Option: Minimal Similarity Of the Best Fuzzy Match to insert */
-	public static final String BEST_MATCH_MINIMAL_SIMILARITY = "wf_minimalSimilarity";
-	/**
-	 * Default Value of Workflow Option: Minimal Similarity Of the Best Fuzzy
-	 * Match to insert
-	 */
-	public static final String BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = "80";
-	/** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
-	public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";
-	/** Workflow Option: Export current segment */
-	public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment";
-	/** Workflow Option: Go To Next Untranslated Segment stops when there is at least one
-	 alternative translation */
-	public static final String STOP_ON_ALTERNATIVE_TRANSLATION = "wf_stopOnAlternativeTranslation";
-	/** Workflow Option: Attempt to convert numbers when inserting a fuzzy match */
-	public static final String CONVERT_NUMBERS = "wf_convertNumbers";
-	/** Workflow Option: Save auto-populated status */
-	public static final String SAVE_AUTO_STATUS = "save_auto_status";
-
-	/** Tag Validation Option: Don't check printf-tags */
-	public static final String DONT_CHECK_PRINTF_TAGS = "tagValidation_noCheck";
-	/** Tag Validation Option: check simple printf-tags */
-	public static final String CHECK_SIMPLE_PRINTF_TAGS = "tagValidation_simpleCheck";
-	/** Tag Validation Option: check all printf-tags */
-	public static final String CHECK_ALL_PRINTF_TAGS = "tagValidation_elaborateCheck";
-	/** Tag Validation Option: check simple java MessageFormat pattern tags */
-	public static final String CHECK_JAVA_PATTERN_TAGS = "tagValidation_javaMessageFormatSimplePatternCheck";
-	/** Tag Validation Option: check user defined tags according to regexp.*/
-	public static final String CHECK_CUSTOM_PATTERN = "tagValidation_customPattern";
-	/** Tag Validation Option: check target for text that should have been removed according to regexp.*/
-	public static final String CHECK_REMOVE_PATTERN = "tagValidation_removePattern";
+    /** Workflow Option: Don't Insert Source Text Into Translated Segment */
+    public static final String DONT_INSERT_SOURCE_TEXT = "wf_noSourceText";
+    /** Workflow Option: Allow translation to be equal to source */
+    public static final String ALLOW_TRANS_EQUAL_TO_SRC = "wf_allowTransEqualToSrc";
+    /** Workflow Option: Insert Best Match Into Translated Segment */
+    public static final String BEST_MATCH_INSERT = "wf_insertBestMatch";
+    /** Workflow Option: Minimal Similarity Of the Best Fuzzy Match to insert */
+    public static final String BEST_MATCH_MINIMAL_SIMILARITY = "wf_minimalSimilarity";
+    /**
+     * Default Value of Workflow Option: Minimal Similarity Of the Best Fuzzy
+     * Match to insert
+     */
+    public static final int BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = 80;
+    /** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
+    public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";
+    /** Workflow Option: Export current segment */
+    public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment";
+    /** Workflow Option: Go To Next Untranslated Segment stops when there is at least one
+    alternative translation */
+    public static final String STOP_ON_ALTERNATIVE_TRANSLATION="wf_stopOnAlternativeTranslation";
+    /** Workflow Option: Attempt to convert numbers when inserting a fuzzy match */
+    public static final String CONVERT_NUMBERS = "wf_convertNumbers";
+    /** Workflow Option: Save auto-populated status */
+    public static final String SAVE_AUTO_STATUS = "save_auto_status";
+    /** Workflow Option: Number of segments to load initially in editor */
+    public static final String EDITOR_INITIAL_SEGMENT_LOAD_COUNT = "editor_initial_segment_load_count";
+    public static final int EDITOR_INITIAL_SEGMENT_LOAD_COUNT_DEFAULT = 2000;
+    
+    /** Tag Validation Option: Don't check printf-tags */
+    public static final String DONT_CHECK_PRINTF_TAGS = "tagValidation_noCheck";
+    /** Tag Validation Option: check simple printf-tags */
+    public static final String CHECK_SIMPLE_PRINTF_TAGS = "tagValidation_simpleCheck";
+    /** Tag Validation Option: check all printf-tags */
+    public static final String CHECK_ALL_PRINTF_TAGS = "tagValidation_elaborateCheck";
+    /** Tag Validation Option: check simple java MessageFormat pattern tags */
+    public static final String CHECK_JAVA_PATTERN_TAGS = "tagValidation_javaMessageFormatSimplePatternCheck";
+    /** Tag Validation Option: check user defined tags according to regexp.*/
+    public static final String CHECK_CUSTOM_PATTERN = "tagValidation_customPattern";
+    /** Tag Validation Option: check target for text that should have been removed according to regexp.*/
+    public static final String CHECK_REMOVE_PATTERN = "tagValidation_removePattern";
 
 	/** Tag Validation Option: allow tag editing in editor. */
 	public static final String ALLOW_TAG_EDITING = "allowTagEditing";
@@ -326,14 +333,14 @@ public class Preferences {
 	/** Automatic save interval in seconds */
 	public static final String AUTO_SAVE_INTERVAL = "auto_save_interval";
 
- 	/** Default number of seconds to auto save project */
-	public static final String AUTO_SAVE_DEFAULT = "180";
-
-	/** Custom external command for post-processing */
-	public static final String EXTERNAL_COMMAND = "external_command";
-
-	/** Allow per-project external commands */
-	public static final String ALLOW_PROJECT_EXTERN_CMD = "allow_project_extern_cmd";
+    /** Default number of seconds to auto save project */
+    public static final int AUTO_SAVE_DEFAULT = 180;
+    
+    /** Custom external command for post-processing */
+    public static final String EXTERNAL_COMMAND = "external_command";
+    
+    /** Allow per-project external commands */
+    public static final String ALLOW_PROJECT_EXTERN_CMD = "allow_project_extern_cmd";
 
 	/**
 	 * Version of file filters. Unfortunately cannot put it into filters itself
@@ -400,15 +407,16 @@ public class Preferences {
 	public static final String HIDE_FILE_LIST_AT_PROJECT_LOAD = "hideFileListAtProjectLoad";
 
 
-	/** Private constructor, because this file is singleton */
-	static {
-		m_loaded = false;
-		m_preferenceMap = new HashMap<>(64);
-		m_nameList = new ArrayList<>(32);
-		m_valList = new ArrayList<>(32);
-		m_changed = false;
-		doLoad();
-	}
+    /** Private constructor, because this file is singleton */
+    static {
+        m_loaded = false;
+        m_preferenceMap = new HashMap<String, Integer>(64);
+        m_nameList = new ArrayList<String>(32);
+        m_valList = new ArrayList<String>(32);
+        m_propChangeSupport = new PropertyChangeSupport(Preferences.class);
+        m_changed = false;
+        doLoad();
+    }
 
 	/**
 	 * Returns the defaultValue of some preference out of OmegaT's preferences
@@ -426,15 +434,15 @@ public class Preferences {
 		if (!m_loaded)
 			doLoad();
 
-		Integer i = m_preferenceMap.get(key);
-		String v = "";
-		if (i != null) {
-			// mapping exists - recover defaultValue
-			v = m_valList.get(i);
-		}
-		return v;
-	}
-
+        Integer i = m_preferenceMap.get(key);
+        Object v = "";
+        if (i != null) {
+            // mapping exists - recover defaultValue
+            v = m_valList.get(i);
+        }
+        return v.toString();
+    }
+    
 	/**
 	 * Returns true if the preference is in OmegaT's preferences
 	 * file.
@@ -578,81 +586,54 @@ public class Preferences {
     }
 
     /**
-     * Sets the value of some preference.
+     * Sets the value of some preference. The value will be persisted to disk as
+     * XML, serialized via value.toString().
      * 
      * @param name
      *            preference key name, usually Preferences.PREF_...
      * @param value
-     *            preference value as a string
+     *            preference value as an object
      */
-    public static void setPreference(String name, String value) {
-        m_changed = true;
-        if (!StringUtil.isEmpty(name) && value != null) {
-            if (!m_loaded)
-                doLoad();
-            Integer i = m_preferenceMap.get(name);
-            if (i == null) {
-                // defaultValue doesn't exist - add it
-                i = m_valList.size();
-                m_preferenceMap.put(name, i);
-                m_valList.add(value);
-                m_nameList.add(name);
-            } else {
-                // mapping exists - reset defaultValue to new
-                m_valList.set(i.intValue(), value);
+    public static void setPreference(String name, Object value) {
+        if (StringUtil.isEmpty(name) || value == null) {
+            return;
+        }
+        if (value instanceof Enum) {
+            if (!value.toString().equals(((Enum<?>) value).name())) {
+                throw new IllegalArgumentException("Enum prefs must return the same thing from toString() and name()");
             }
         }
-    }
-
-    /**
-     * Sets the value of some preference.
-     * 
-     * @param name
-     *            preference key name, usually Preferences.PREF_...
-     * @param value
-     *            preference value as enum
-     */
-    public static void setPreference(String name, Enum<?> value) {
         m_changed = true;
-        if (!StringUtil.isEmpty(name) && value != null) {
-            if (!m_loaded)
-                doLoad();
-            Integer i = m_preferenceMap.get(name);
-            if (i == null) {
-                // defaultValue doesn't exist - add it
-                i = m_valList.size();
-                m_preferenceMap.put(name, i);
-                m_valList.add(value.name());
-                m_nameList.add(name);
-            } else {
-                // mapping exists - reset defaultValue to new
-                m_valList.set(i.intValue(), value.name());
-            }
+        Object oldValue = null;
+        if (!m_loaded) {
+            doLoad();
         }
+        Integer i = m_preferenceMap.get(name);
+        if (i == null) {
+            // defaultValue doesn't exist - add it
+            i = m_valList.size();
+            m_preferenceMap.put(name, i);
+            m_valList.add(value.toString());
+            m_nameList.add(name);
+        } else {
+            // mapping exists - reset defaultValue to new
+            oldValue = m_valList.set(i.intValue(), value.toString());
+        }
+        m_propChangeSupport.firePropertyChange(name, oldValue, value);
     }
 
     /**
-     * Sets the boolean value of some preference.
+     * Register to receive notifications when preferences change.
+     * <p>
+     * Note: The value returned by {@link PropertyChangeEvent#getNewValue()}
+     * will be of the "correct" type (Integer, Boolean, Enum, etc.) but the
+     * value returned by {@link PropertyChangeEvent#getOldValue()} will be the
+     * String equivalent for storing in XML.
      * 
-     * @param name
-     *            preference key name, usually Preferences.PREF_...
-     * @param boolvalue
-     *            preference defaultValue as a boolean
+     * @param listener
      */
-    public static void setPreference(String name, boolean boolvalue) {
-        setPreference(name, String.valueOf(boolvalue));
-    }
-
-    /**
-     * Sets the int value of some preference.
-     * 
-     * @param name
-     *            preference key name, usually Preferences.PREF_...
-     * @param intvalue
-     *            preference value as an integer
-     */
-    public static void setPreference(String name, int intvalue) {
-        setPreference(name, String.valueOf(intvalue));
+    public static void addPropertyChangeListener(PropertyChangeListener listener) {
+        m_propChangeSupport.addPropertyChangeListener(listener);
     }
 
     public static SRX getSRX() {
@@ -821,7 +802,7 @@ public class Preferences {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
         File bakFile = new File(file.getAbsolutePath() + "." + timestamp + ".bak");
         try {
-            LFileCopy.copy(file, bakFile);
+            FileUtils.copyFile(file, bakFile);
             Log.logWarningRB("PM_BACKED_UP_PREFS_FILE", bakFile.getAbsolutePath());
         } catch (IOException ex) {
             Log.logErrorRB(ex, "PM_ERROR_BACKING_UP_PREFS_FILE");
@@ -838,7 +819,7 @@ public class Preferences {
 
             for (int i = 0; i < m_nameList.size(); i++) {
                 String name = m_nameList.get(i);
-                String val = StringUtil.makeValidXML(m_valList.get(i));
+                String val = StringUtil.makeValidXML(m_valList.get(i).toString());
                 out.write("    <" + name + ">");
                 out.write(val);
                 out.write("</" + name + ">\n");
@@ -859,6 +840,9 @@ public class Preferences {
     private static List<String> m_nameList;
     private static List<String> m_valList;
     private static Map<String, Integer> m_preferenceMap;
+
+    // Support for firing property change events
+    private static PropertyChangeSupport m_propChangeSupport;
 
     private static SRX srx;
 }

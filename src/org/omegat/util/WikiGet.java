@@ -40,6 +40,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Import pages from MediaWiki
  * 
@@ -288,19 +290,18 @@ public class WikiGet {
         String contentType = conn.getHeaderField("Content-Type");
         int cp = contentType != null ? contentType.indexOf(CHARSET_MARK) : -1;
         String charset = cp >= 0 ? contentType.substring(cp + CHARSET_MARK.length()) : "ISO8859-1";
-        ByteArrayOutputStream res = new ByteArrayOutputStream();
         InputStream in = conn.getInputStream();
         try {
-            LFileCopy.copy(in, res);
+            return IOUtils.toString(in, charset);
         } finally {
             in.close();
         }
-        return new String(res.toByteArray(), charset);
     }
 
     /**
      * HTTP response error storage.
      */
+    @SuppressWarnings("serial")
     public static class ResponseError extends IOException {
         public final int code;
         public final String message;

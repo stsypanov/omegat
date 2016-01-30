@@ -37,12 +37,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 @Tokenizer(languages = { "eu" })
 public class LuceneBasqueTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             Set<?> stopWords = stopWordsAllowed ? BasqueAnalyzer.getDefaultStopSet()
-                    : Collections.EMPTY_SET;
+                    : Collections.emptySet();
             return new BasqueAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

@@ -26,6 +26,8 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cjk.CJKAnalyzer;
@@ -35,14 +37,16 @@ import org.apache.lucene.analysis.cjk.CJKTokenizer;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("deprecation")
 @Tokenizer(languages = { "zh", "ja", "ko" })
 public class LuceneCJKTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            String[] stopWords = stopWordsAllowed ? CJKAnalyzer.STOP_WORDS
-                    : EMPTY_STRING_LIST;
+            Set<?> stopWords = stopWordsAllowed ? CJKAnalyzer.getDefaultStopSet()
+                    : Collections.emptySet();
             return new CJKAnalyzer(getBehavior(), stopWords).tokenStream("", new StringReader(
                     strOrig));
         } else {

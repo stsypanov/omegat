@@ -66,10 +66,10 @@ import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.DragTargetOverlay;
-import org.omegat.util.gui.JTextPaneLinkifier;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
+import org.omegat.util.gui.JTextPaneLinkifier;
+import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -115,8 +115,8 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         Core.getMainWindow().addDockable(scrollPane);
 
         setEditable(false);
-        AlwaysVisibleCaret.apply(this);
-        this.setText(EXPLANATION);
+        StaticUIUtils.makeCaretAlwaysVisible(this);
+        setText(EXPLANATION);
         setMinimumSize(new Dimension(100, 50));
 
         //prepare popup menu
@@ -174,7 +174,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     @Override
     protected void onProjectClose() {
         clear();
-        this.setText(EXPLANATION);
+        setText(EXPLANATION);
         Core.getGlossaryManager().stop();
     }
 
@@ -193,12 +193,6 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         }
     }
 
-    @Override
-    public void onEntryActivated(SourceTextEntry newEntry) {
-        setText("");
-        super.onEntryActivated(newEntry);
-    }
-
     /**
      * Sets the list of glossary entries to show in the pane. Each element of the list should be an instance
      * of {@link GlossaryEntry}.
@@ -207,8 +201,9 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     protected void setFoundResult(SourceTextEntry en, List<GlossaryEntry> entries) {
         UIThreadsUtil.mustBeSwingThread();
 
+        clear();
+
         if (entries == null) {
-            clear();
             return;
         }
 
@@ -227,7 +222,6 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
             buf.append("\n\n");
         }
         setText(buf.text.toString());
-        setCaretPosition(0);
         StyledDocument doc = getStyledDocument();
         doc.setCharacterAttributes(0, doc.getLength(), NO_ATTRIBUTES, true); // remove old bold settings first
         for (int i = 0; i < buf.boldStarts.size(); i++) {
@@ -239,7 +233,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     /** Clears up the pane. */
     public void clear() {
         nowEntries.clear();
-        setText("");
+        setText(null);
     }
 
     List<GlossaryEntry> getDisplayedEntries() {

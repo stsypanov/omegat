@@ -37,12 +37,13 @@ import org.apache.lucene.analysis.sv.SwedishAnalyzer;
  */
 @Tokenizer(languages = { "sv" }, isDefault = true)
 public class LuceneSwedishTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             Set<?> stopWords = stopWordsAllowed ? SwedishAnalyzer.getDefaultStopSet()
-                    : Collections.EMPTY_SET;
+                    : Collections.emptySet();
             return new SwedishAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

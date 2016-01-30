@@ -1,7 +1,8 @@
 ----------------------------------------------------------------------
  OmegaT 3.6.0
 ----------------------------------------------------------------------
-  3 Enhancements
+ 11 Enhancements
+  3 Bug fixes
 ----------------------------------------------------------------------
 3.6.0 vs 3.5.3
 
@@ -16,19 +17,71 @@
   - Add menus to the Search window 
   https://sourceforge.net/p/omegat/feature-requests/1164/
 
+  - Improve case matching in glossary auto-completer
+  https://sourceforge.net/p/omegat/feature-requests/1167/
+
+  - Keep top Machine Translation pane item visible
+  https://sourceforge.net/p/omegat/feature-requests/1168/
+
+  - Keep top Alternative Translation match visible 
+  https://sourceforge.net/p/omegat/feature-requests/1169/
+
+  - Open help in external browser 
+  https://sourceforge.net/p/omegat/feature-requests/397/
+
+  - Improve editor performance with very large files
+  https://sourceforge.net/p/omegat/feature-requests/1173/
+
+  - Immediately apply changes to automatic save interval
+  https://sourceforge.net/p/omegat/feature-requests/1174/
+
+  - Filters for Java Properties XML and Schematron 
+  https://sourceforge.net/p/omegat/feature-requests/1147/
+
+  Bug fixes:
+
+  - Custom text color used for text in dialogs
+  https://sourceforge.net/p/omegat/bugs/725/
+
+  - Jumping to a large entry makes it appear at the bottom of the editor
+  https://sourceforge.net/p/omegat/bugs/781/
+
+  - Files can be clobbered when creating translated documents
+  https://sourceforge.net/p/omegat/bugs/787/
+
+  Other changes:
+
+  - The appearance under Windows "high-contrast" themes is improved
+
 ----------------------------------------------------------------------
  OmegaT 3.5.3 update 1
 ----------------------------------------------------------------------
-   0 Enhancement
-   2 Bug fixes
-   1 Localisation update
+   3 Enhancements
+   4 Bug fixes
+   2 Localisation updates
 ----------------------------------------------------------------------
 3.5.3 update 1 vs 3.5.3
+
+  Other changes:
+
+ - Support 3.0.0 StarDict dictionaries
+
+ - To reflect TaaS's change of policy, a key is now mandatory to use the 
+service
+
+  - Exclude .DS_Store files from translation by default
 
  Bug fixes:
 
   - Stop searching when Find window is closed
   https://sourceforge.net/p/omegat/bugs/412/
+
+  - Trim whitespace on LingvoDSL dictionary entries
+  https://sourceforge.net/p/omegat/bugs/786/
+
+  - Closing Match Statistics window while it's updating the stats doesn't
+stop the calculations
+  https://sourceforge.net/p/omegat/bugs/789/
 
   - An error was fixed with -Dhttp.proxyHost and -Dhttp.proxyPort in 
 Linux kaptain launcher
@@ -36,6 +89,7 @@ Linux kaptain launcher
   Localisation Updates:
 
   - Italian localisation updated to 3.5.3 (UI, documentation, scripts, readme)
+  - Brazilian Portuguese updated to 3.5 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 3.5.3 (2015-12-02)

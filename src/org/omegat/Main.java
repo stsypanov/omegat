@@ -50,6 +50,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.omegat.CLIParameters.PSEUDO_TRANSLATE_TYPE;
+import org.omegat.CLIParameters.TAG_VALIDATION_MODE;
 import org.omegat.convert.ConvertConfigs;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
@@ -64,7 +66,7 @@ import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.main.ProjectUICommands;
 import org.omegat.gui.scripting.ScriptItem;
-import org.omegat.gui.scripting.ScriptingWindow;
+import org.omegat.gui.scripting.ScriptRunner;
 import org.omegat.util.*;
 import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.Styles;
@@ -86,34 +88,6 @@ import com.bulenkov.darcula.DarculaLaf;
  * @author Kyle Katarn
  */
 public class Main {
-    /** Application execution mode. */
-    enum RUN_MODE {
-        GUI, CONSOLE_TRANSLATE, CONSOLE_CREATEPSEUDOTRANSLATETMX, CONSOLE_ALIGN;
-        public static RUN_MODE parse(String s) {
-            try {
-                return valueOf(s.toUpperCase(Locale.ENGLISH).replace('-', '_'));
-            } catch (Exception ex) {
-                // default mode
-                return GUI;
-            }
-        }
-    }
-
-    /**
-     * Choice of types of translation for all segments in the optional, special
-     * TMX file that contains all segments of the project.
-     */
-    enum PSEUDO_TRANSLATE_TYPE {
-        EQUAL, EMPTY;
-        public static PSEUDO_TRANSLATE_TYPE parse(String s) {
-            try {
-                return valueOf(s.toUpperCase(Locale.ENGLISH).replace('-', '_'));
-            } catch (Exception ex) {
-                // default mode
-                return EQUAL;
-            }
-        }
-    }
 
     /** Regexp for parse parameters. */
     protected static final Pattern PARAM = Pattern.compile("\\-\\-([A-Za-z\\-]+)(=(.+))?");
@@ -122,12 +96,18 @@ public class Main {
     protected static File projectLocation = null;
 
     /** Execution command line parameters. */
-    protected static final Map<String, String> params = new TreeMap<>();
+    protected static final Map<String, String> params = new TreeMap<String, String>();
 
     /** Execution mode. */
-    protected static RUN_MODE runMode = RUN_MODE.GUI;
+    protected static CLIParameters.RUN_MODE runMode = CLIParameters.RUN_MODE.GUI;
 
     public static void main(String[] args) {
+        if (args.length > 0 && (CLIParameters.HELP_SHORT.equals(args[0])
+                || CLIParameters.HELP.equals(args[0]))) {
+            System.out.println(StringUtil.format(OStrings.getString("COMMAND_LINE_HELP"),
+                    OStrings.getNameAndVersion()));
+            System.exit(0);
+        }
 
         /*
          * Parse command line arguments info map.
@@ -137,9 +117,10 @@ public class Main {
             if (m.matches()) {
                 params.put(m.group(1), m.group(3));
             } else {
-                if (arg.startsWith("resource-bundle=")) {
+                if (arg.startsWith(CLIParameters.RESOURCE_BUNDLE + "=")) {
                     // backward compatibility
-                    params.put("resource-bundle", arg.substring(16));
+                    params.put(CLIParameters.RESOURCE_BUNDLE,
+                            arg.substring(CLIParameters.RESOURCE_BUNDLE.length()));
                 } else {
                     File f = new File(arg);
                     if (f.getName().equals(OConsts.FILE_PROJECT)) {
@@ -154,29 +135,29 @@ public class Main {
 
 		loadProxySettings();
 
-        applyConfigFile(params.get("config-file"));
+        applyConfigFile(params.get(CLIParameters.CONFIG_FILE));
 
-        runMode = RUN_MODE.parse(params.get("mode"));
+        runMode = CLIParameters.RUN_MODE.parse(params.get(CLIParameters.MODE));
 
-        String resourceBundle = params.get("resource-bundle");
+        String resourceBundle = params.get(CLIParameters.RESOURCE_BUNDLE);
         if (resourceBundle != null) {
             OStrings.loadBundle(resourceBundle);
         }
 
-        String configDir = params.get("config-dir");
+        String configDir = params.get(CLIParameters.CONFIG_DIR);
         if (configDir != null) {
             RuntimePreferences.setConfigDir(configDir);
         }
 
-        if (params.containsKey("quiet")) {
+        if (params.containsKey(CLIParameters.QUIET)) {
             RuntimePreferences.setQuietMode(true);
         }
 
-        if (params.containsKey("disable-project-locking")) {
+        if (params.containsKey(CLIParameters.DISABLE_PROJECT_LOCKING)) {
             RuntimePreferences.setProjectLockingEnabled(false);
         }
-
-        if (params.containsKey("disable-location-save")) {
+        
+        if (params.containsKey(CLIParameters.DISABLE_LOCATION_SAVE)) {
             RuntimePreferences.setLocationSaveEnabled(false);
         }
 
@@ -248,27 +229,22 @@ public class Main {
         System.out.println("Reading config from " + path);
         try {
             PropertyResourceBundle config = new PropertyResourceBundle(new FileInputStream(configFile));
-            String userLanguage = null;
-            String userCountry = null;
-            // Put config properties into system.
+            // Put config properties into System properties and into OmegaT params.
             for (String key : config.keySet()) {
                 String value = config.getString(key);
                 System.setProperty(key, value);
-                System.out.println("Read from config: " + key + '=' + value);
-                if ("user.language".equals(key)) {
-                    userLanguage = value;
-                }
-                if ("user.country".equals(key)) {
-                    userCountry = value;
-                }
+                params.put(key, value);
+                System.out.println("Read from config: " + key + "=" + value);
             }
             // Apply language preferences, if present.
-            if (userLanguage != null) {
-                if (userCountry != null) {
-                    Locale.setDefault(new Locale(userLanguage, userCountry));
-                } else {
-                    Locale.setDefault(new Locale(userLanguage));
-                }
+            // This must be done with Locale.setDefault(). Merely doing
+            // System.setProperty() will not work.
+            if (config.containsKey("user.language")) {
+                String userLanguage = config.getString("user.language");
+                Locale userLocale = config.containsKey("user.country")
+                        ? new Locale(userLanguage, config.getString("user.country"))
+                        : new Locale(userLanguage);
+                Locale.setDefault(userLocale);
             }
         } catch (FileNotFoundException exception) {
             System.err.println("Config file not found: " + path);
@@ -277,7 +253,7 @@ public class Main {
         }
     }
     
-	/**
+    /**
      * Execute standard GUI.
      */
     protected static int runGUI() {
@@ -333,12 +309,12 @@ public class Main {
         }
 
         if (!Core.getPluginsLoadingErrors().isEmpty()) {
-            StringBuilder err = new StringBuilder();
+            String err = "";
             for (int i = 0; i < Core.getPluginsLoadingErrors().size(); i++) {
-                err.append('\n').append(Core.getPluginsLoadingErrors().get(i));
+                err += "\n" + Core.getPluginsLoadingErrors().get(i);
             }
-            String errorMessage = err.toString().substring(1);
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), errorMessage,
+            err = err.substring(1);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), err,
                     OStrings.getString("STARTUP_ERRORBOX_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
 
@@ -358,20 +334,6 @@ public class Main {
         return 0;
     }
 
-    protected static void setNimbusLaF(){
-//        try {
-//            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (Exception e) {
-//            Log.log(e);
-//        }
-    }
-
-
     /**
      * Execute in console mode for translate.
      */
@@ -388,51 +350,56 @@ public class Main {
 
         System.out.println(OStrings.getString("CONSOLE_TRANSLATING"));
 
-        String sourceMask = params.get("source-pattern");
+        String sourceMask = params.get(CLIParameters.SOURCE_PATTERN);
         if (sourceMask != null)
             p.compileProject(sourceMask, false);
         else
             p.compileProject(".*", false);
 
-        // Called *after* executing post processing command (unlike the
+        // Called *after* executing post processing command (unlike the 
         // regular PROJECT_CHANGE_TYPE.COMPILE)
         executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
 
         p.closeProject();
         executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.CLOSE);
         System.out.println(OStrings.getString("CONSOLE_FINISHED"));
-
+        
         return 0;
     }
-
+    
     /**
      * Validates tags according to command line specs:
      * --tag-validation=[abort|warn]
-     *
-     * On abort, the program is aborted when tag validation finds errors.
+     * 
+     * On abort, the program is aborted when tag validation finds errors. 
      * On warn the errors are printed but the program continues.
      * In all other cases no tag validation is done.
      */
     private static void validateTagsConsoleMode() {
-        String tagValidation = params.get("tag-validation");
+        TAG_VALIDATION_MODE mode = TAG_VALIDATION_MODE.parse(params.get(CLIParameters.TAG_VALIDATION));
 
-        if ("abort".equalsIgnoreCase(tagValidation)) {
+        List<ErrorReport> stes;
+
+        switch (mode) {
+        case ABORT:
             System.out.println(OStrings.getString("CONSOLE_VALIDATING_TAGS"));
-            List<ErrorReport> stes = Core.getTagValidation().listInvalidTags();
+            stes = Core.getTagValidation().listInvalidTags();
             if (stes != null) {
                 Core.getTagValidation().displayTagValidationErrors(stes, null);
                 System.out.println(OStrings.getString("CONSOLE_TAGVALIDATION_FAIL"));
                 System.out.println(OStrings.getString("CONSOLE_TAGVALIDATION_ABORT"));
                 System.exit(1);
             }
-        } else if ("warn".equalsIgnoreCase(tagValidation)) {
+            break;
+        case WARN:
             System.out.println(OStrings.getString("CONSOLE_VALIDATING_TAGS"));
-            List<ErrorReport> stes = Core.getTagValidation().listInvalidTags();
+            stes = Core.getTagValidation().listInvalidTags();
             if (stes != null) {
                 Core.getTagValidation().displayTagValidationErrors(stes, null);
                 System.out.println(OStrings.getString("CONSOLE_TAGVALIDATION_FAIL"));
             }
-        } else {
+            break;
+        default:
             //do not validate tags = default
         }
     }
@@ -455,9 +422,9 @@ public class Main {
 
         ProjectProperties m_config = p.getProjectProperties();
         List<SourceTextEntry> entries = p.getAllEntries();
-        String pseudoTranslateTMXFilename = params.get("pseudotranslatetmx");
-        PSEUDO_TRANSLATE_TYPE pseudoTranslateType = PSEUDO_TRANSLATE_TYPE.parse(params
-                .get("pseudotranslatetype"));
+        String pseudoTranslateTMXFilename = params.get(CLIParameters.PSEUDOTRANSLATETMX);
+        PSEUDO_TRANSLATE_TYPE pseudoTranslateType = PSEUDO_TRANSLATE_TYPE
+                .parse(params.get(CLIParameters.PSEUDOTRANSLATETYPE));
 
         String fname;
         if (!StringUtil.isEmpty(pseudoTranslateTMXFilename)) {
@@ -471,7 +438,7 @@ public class Main {
         }
 
         // prepare tmx
-        Map<String, PrepareTMXEntry> data = new HashMap<>();
+        Map<String, PrepareTMXEntry> data = new HashMap<String, PrepareTMXEntry>();
         for (SourceTextEntry ste : entries) {
             PrepareTMXEntry entry = new PrepareTMXEntry();
             entry.source = ste.getSrcText();
@@ -508,7 +475,7 @@ public class Main {
             return 1;
         }
 
-        String dir = params.get("alignDir");
+        String dir = params.get(CLIParameters.ALIGNDIR);
         if (dir == null) {
             System.out.println(OStrings.getString("CONSOLE_TRANSLATED_FILES_LOC_UNDEFINED"));
             return 1;
@@ -523,7 +490,7 @@ public class Main {
         System.out.println(StringUtil.format(OStrings.getString("CONSOLE_ALIGN_AGAINST"), dir));
 
         Map<String, TMXEntry> data = p.align(p.getProjectProperties(), new File(dir));
-        Map<String, PrepareTMXEntry> result = new TreeMap<>();
+        Map<String, PrepareTMXEntry> result = new TreeMap<String, PrepareTMXEntry>();
         for (Map.Entry<String, TMXEntry> en : data.entrySet()) {
             result.put(en.getKey(), new PrepareTMXEntry(en.getValue()));
         }
@@ -541,7 +508,7 @@ public class Main {
      * creates the project class and adds it to the Core. Loads the project if
      * specified. An exit occurs on error loading the project. This method is
      * for the different console modes, to prevent code duplication.
-     *
+     * 
      * @param loadProject
      *            load the project or not
      * @return the project.
@@ -565,31 +532,32 @@ public class Main {
         if (loadProject) {
             p.loadProject(true);
             if (!p.isProjectLoaded()) {
-            	Core.setProject(new NotLoadedProject());
-            }
-            else
-            {
-            	executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.LOAD);
+                Core.setProject(new NotLoadedProject());
+            } else {
+                executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE.LOAD);
             }
 
         }
         return p;
     }
-
-    /** Execute script as PROJECT_CHANGE events. We can't use the regular project listener because
+    
+    /** Execute script as PROJECT_CHANGE events. We can't use the regular project listener because 
      *  the SwingUtilities.invokeLater method used in CoreEvents doesn't stop the project processing
-     *  in console mode.
+     *  in console mode. 
      */
     private static void executeConsoleScript(IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
-    	if (params.containsKey("script"))
-    	{
+        if (params.containsKey(CLIParameters.SCRIPT)) {
     		File script = new File(params.get("script").toString());
 
-    		if (script.exists())
-    		{
-    			HashMap<String, Object> binding = new HashMap<>();
+            if (script.isFile()) {
+    			HashMap<String, Object> binding = new HashMap<String, Object>();
     			binding.put("eventType", eventType);
-    			ScriptingWindow.executeScriptFileHeadless(new ScriptItem(script), true, binding);
+                try {
+                    String result = ScriptRunner.executeScript(new ScriptItem(script), binding);
+                    Log.log(result);
+                } catch (Exception ex) {
+                    Log.log(ex);
+                }
     		}
     	}
     }

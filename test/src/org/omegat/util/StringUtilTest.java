@@ -239,18 +239,46 @@ public class StringUtilTest {
         Locale locale = Locale.ENGLISH;
         String text = "foo";
         // matchTo is empty -> return original text
-        assertSame(text, StringUtil.matchCapitalization(text, null, locale));
-        assertSame(text, StringUtil.matchCapitalization(text, "", locale));
+        assertEquals(text, StringUtil.matchCapitalization(text, null, locale));
+        assertEquals(text, StringUtil.matchCapitalization(text, "", locale));
         // text starts with matchTo -> return original text
-        assertSame(text, StringUtil.matchCapitalization(text, text + "BAR", locale));
+        assertEquals(text, StringUtil.matchCapitalization(text, text + "BAR", locale));
         // matchTo is title case
         assertEquals("Foo", StringUtil.matchCapitalization(text, "Abc", locale));
         assertEquals("Foo", StringUtil.matchCapitalization(text, "A", locale));
-        // matchTo is lower case and text is upper case
+        // matchTo is lower case
         assertEquals("foo", StringUtil.matchCapitalization("FOO", "lower", locale));
+        assertEquals("foo", StringUtil.matchCapitalization("fOo", "l", locale));
         // matchTo is upper case
-        assertEquals("FOO", StringUtil.matchCapitalization("foo", "UPPER", locale));
-        // matchTo is mixed
-        assertSame(text, StringUtil.matchCapitalization(text, "bAzZ", locale));
+        assertEquals("FOO", StringUtil.matchCapitalization(text, "UPPER", locale));
+        assertEquals("FOO", StringUtil.matchCapitalization("fOo", "UP", locale));
+        assertEquals("FOo", StringUtil.matchCapitalization("fOo", "U", locale)); // Interpreted as title case
+        // matchTo is mixed or not cased
+        assertEquals(text, StringUtil.matchCapitalization(text, "bAzZ", locale));
+        assertEquals(text, StringUtil.matchCapitalization(text, ".", locale));
+    }
+
+    public void testFirstN() {
+        // MATHEMATICAL BOLD CAPITAL A (U+1D400) x2
+        String test = "\uD835\uDC00\uD835\uDC00";
+        assertTrue(StringUtil.firstN(test, 0).isEmpty());
+        assertEquals("\uD835\uDC00", StringUtil.firstN(test, 1));
+        assertEquals(test, StringUtil.firstN(test, 2));
+        assertEquals(test, StringUtil.firstN(test, 100));
+    }
+
+    public void testTruncateString() {
+        // MATHEMATICAL BOLD CAPITAL A (U+1D400) x3
+        String test = "\uD835\uDC00\uD835\uDC00\uD835\uDC00";
+        try {
+            StringUtil.truncate(test, 0);
+            fail();
+        } catch (IndexOutOfBoundsException ex) {
+            // Ignore
+        }
+        assertEquals(String.valueOf(StringUtil.TRUNCATE_CHAR), StringUtil.truncate(test, 1));
+        assertEquals("\uD835\uDC00" + StringUtil.TRUNCATE_CHAR, StringUtil.truncate(test, 2));
+        assertEquals(test, StringUtil.truncate(test, 3));
+        assertEquals(test, StringUtil.truncate(test, 100));
     }
 }

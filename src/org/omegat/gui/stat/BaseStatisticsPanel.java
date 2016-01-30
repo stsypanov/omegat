@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+
 import org.omegat.core.Core;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.DataTableStyling;
@@ -42,6 +43,7 @@ import org.omegat.util.gui.TableColumnSizer;
  *
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("serial")
 public abstract class BaseStatisticsPanel extends JPanel {
 
     private final StatisticsWindow window;

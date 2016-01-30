@@ -25,16 +25,7 @@
 
 package org.omegat.gui.glossary.taas;
 
-import gen.taas.TaasArrayOfTerm;
-import gen.taas.TaasCollection;
-import gen.taas.TaasCollections;
-import gen.taas.TaasDomain;
-import gen.taas.TaasDomains;
-import gen.taas.TaasExtractionResult;
-import gen.taas.TaasTerm;
-
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,17 +43,27 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.util.Base64;
-import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
+import org.omegat.util.OStrings;
 import org.omegat.util.StringUtil;
+
+import gen.taas.TaasArrayOfTerm;
+import gen.taas.TaasCollection;
+import gen.taas.TaasCollections;
+import gen.taas.TaasDomain;
+import gen.taas.TaasDomains;
+import gen.taas.TaasExtractionResult;
+import gen.taas.TaasTerm;
 
 /**
  * Client for TaaS REST service.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
+@SuppressWarnings("serial")
 public class TaaSClient {
     static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -87,13 +88,21 @@ public class TaaSClient {
     private final String taasUserKey;
 
     public TaaSClient() throws Exception {
-        this.basicAuth = "Basic " + Base64.encodeBytes((M_USERNAME + ':' + M_PASSWORD).getBytes("ISO-8859-1"));
         this.taasUserKey = System.getProperty("taas.user.key");
         if (this.taasUserKey == null || this.taasUserKey.isEmpty()) {
-            Log.logWarningRB("TAAS_API_KEY_NOT_FOUND");
+            // TaaS disabled without user key
+            basicAuth = null;
+            context = null;
+            return;
         }
+        this.basicAuth = "Basic "
+                + Base64.encodeBytes((M_USERNAME + ":" + M_PASSWORD).getBytes("ISO-8859-1"));
         context = JAXBContext.newInstance(TaasCollections.class, TaasArrayOfTerm.class,
                 TaasExtractionResult.class, TaasDomains.class);
+    }
+
+    public boolean isAllowed() {
+        return basicAuth != null;
     }
 
     /**
@@ -182,11 +191,9 @@ public class TaaSClient {
     /**
      * Read content as UTF-8 string.
      */
-    private String readUTF8(HttpURLConnection conn) throws IOException {
+    String readUTF8(HttpURLConnection conn) throws IOException {
         try (InputStream in = conn.getInputStream()) {
-            ByteArrayOutputStream o = new ByteArrayOutputStream();
-            LFileCopy.copy(in, o);
-            return new String(o.toByteArray(), UTF8);
+            return IOUtils.toString(in, UTF8);
         }
     }
 
@@ -288,6 +295,9 @@ public class TaaSClient {
     }
 
     public static class Unauthorized extends Exception {
+        public Unauthorized() {
+            super(OStrings.getString("TAAS_UNAUTHORIZED_ERROR"));
+        }
     }
 
     public static class FormatError extends Exception {

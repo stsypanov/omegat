@@ -39,8 +39,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -147,12 +148,12 @@ public class ScriptingWindow extends PeroFrame {
         addRunShortcutToOmegaT();
         setScriptsDirectory(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY, DEFAULT_SCRIPTS_DIR));
 
-        monitor = new ScriptsMonitor(this, m_scriptList, getAvailableScriptExtensions());
+        monitor = new ScriptsMonitor(this);
         if (m_scriptsDirectory != null) {
             monitor.start(m_scriptsDirectory);
         }
 
-        logResult(listScriptEngine().toString());
+        logResult(listScriptEngines());
 
     }
 
@@ -161,20 +162,9 @@ public class ScriptingWindow extends PeroFrame {
         return "script_window";
     }
 
-    private List<String> getAvailableScriptExtensions() {
-        ArrayList<String> extensions = new ArrayList<>();
-        for (ScriptEngineFactory engine : manager.getEngineFactories()) {
-            for (String ext : engine.getExtensions()) {
-                extensions.add(ext);
-            }
-        }
-
-        return extensions;
-    }
-
-    private StringBuilder listScriptEngine() {
-        StringBuilder sb = new StringBuilder(OStrings.getString("SCW_LIST_ENGINES") + '\n');
-        for (ScriptEngineFactory engine : manager.getEngineFactories()) {
+    private String listScriptEngines() {
+        StringBuilder sb = new StringBuilder(OStrings.getString("SCW_LIST_ENGINES") + "\n");
+        for (ScriptEngineFactory engine : ScriptRunner.MANAGER.getEngineFactories()) {
             sb.append(" - ");
             sb.append(engine.getEngineName());
             sb.append(' ');
@@ -194,7 +184,7 @@ public class ScriptingWindow extends PeroFrame {
             sb.append('\n');
         }
 
-        return sb;
+        return sb.toString();
     }
 
     private void addScriptCommandToOmegaT() {
@@ -218,7 +208,7 @@ public class ScriptingWindow extends PeroFrame {
             m_quickMenus[i] = menuItem;
 
             unsetQuickScriptMenu(i);
-
+            
             // Since the script is run while editing a segment, the shortcut should not interfere
             // with the segment content, so we set it to a Function key.
             m_quickMenus[i].setAccelerator(KeyStroke.getKeyStroke("shift ctrl F" + (i + 1)));
@@ -228,10 +218,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private int scriptKey(int i) {
-        if (NUMBERS_OF_QUICK_SCRIPTS != 10) {
-            return i + 1;
-        }
-        return i + 1 == NUMBERS_OF_QUICK_SCRIPTS ? 0 : i + 1;
+        return i + 1;
     }
 
     private void unsetQuickScriptMenu(int index) {
@@ -242,7 +229,7 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private void setQuickScriptMenu(ScriptItem scriptItem, int index) {
-        m_quickScripts[index] = scriptItem.getName();
+        m_quickScripts[index] = scriptItem.getFile().getName();
 
         removeAllQuickScriptActionListenersFrom(m_quickMenus[index]);
         m_quickMenus[index].addActionListener(new QuickScriptActionListener(index));
@@ -251,7 +238,7 @@ public class ScriptingWindow extends PeroFrame {
         // with the segment content, so we set it to a Function key.
         m_quickMenus[index].setAccelerator(KeyStroke.getKeyStroke("shift ctrl F" + (index + 1)));
         m_quickMenus[index].setEnabled(true);
-        if (scriptItem.getDescription() != null && scriptItem.getDescription().isEmpty()) {
+        if ("".equals(scriptItem.getDescription())) {
             m_quickMenus[index].setToolTipText(scriptItem.getDescription());
         }
 
@@ -348,7 +335,7 @@ public class ScriptingWindow extends PeroFrame {
                 try {
                     m_currentScriptItem.setText(m_txtScriptEditor.getText());
                     logResult(StringUtil.format(OStrings.getString("SCW_SAVE_OK"),
-                            m_currentScriptItem.getAbsolutePath()));
+                            m_currentScriptItem.getFile().getAbsolutePath()));
                 } catch (IOException e) {
                     logResult(OStrings.getString("SCW_SAVE_ERROR"));
                     logResult(e.getMessage());
@@ -456,7 +443,7 @@ public class ScriptingWindow extends PeroFrame {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     ScriptItem scriptItem = (ScriptItem) m_scriptList.getSelectedValue();
-                    Preferences.setPreference(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey, scriptItem.getName());
+                    Preferences.setPreference(Preferences.SCRIPTS_QUICK_PREFIX + scriptKey, scriptItem.getFile().getName());
                     m_quickScriptButtons[index].setToolTipText(scriptItem.getToolTip());
                     m_quickScriptButtons[index].setText("<" + scriptKey + '>');
 
@@ -518,14 +505,14 @@ public class ScriptingWindow extends PeroFrame {
             return;
         }
 
-        if (!m_currentScriptItem.canRead()) {
+        if (!m_currentScriptItem.getFile().canRead()) {
             logResult(OStrings.getString("SCW_CANNOT_READ_SCRIPT"));
             return;
         }
 
         m_txtResult.setText("");
         logResult(StringUtil.format(OStrings.getString("SCW_RUNNING_SCRIPT"),
-                m_currentScriptItem.getAbsolutePath()));
+                m_currentScriptItem.getFile().getAbsolutePath()));
 
         executeScriptFile(m_currentScriptItem, false);
 
@@ -535,68 +522,13 @@ public class ScriptingWindow extends PeroFrame {
         executeScriptFile(scriptItem, forceFromFile, null);
     }
 
-    public static Object executeScriptFileHeadless(ScriptItem scriptItem, boolean forceFromFile,
+    public void executeScriptFile(ScriptItem scriptItem, boolean forceFromFile,
             Map<String, Object> additionalBindings) {
-        ScriptEngineManager manager = new ScriptEngineManager(ScriptingWindow.class.getClassLoader());
-        ScriptEngine scriptEngine = manager.getEngineByExtension(getFileExtension(scriptItem.getName()));
-
-        if (scriptEngine == null) {
-            scriptEngine = manager.getEngineByName(DEFAULT_SCRIPT);
-        }
-
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put(VAR_PROJECT, Core.getProject());
-        bindings.put(VAR_EDITOR, Core.getEditor());
-        bindings.put(VAR_GLOSSARY, Core.getGlossary());
-        bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
-        bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
-
-        if (additionalBindings != null) {
-            bindings.putAll(additionalBindings);
-        }
-
-        Object eval = null;
-        try {
-            eval = scriptEngine.eval(scriptItem.getText(), bindings);
-            if (eval != null) {
-                Log.logRB("SCW_SCRIPT_RESULT");
-                Log.log(eval.toString());
-            }
-        } catch (Throwable e) {
-            Log.logErrorRB(e, "SCW_SCRIPT_ERROR");
-        }
-
-        return eval;
-    }
-
-    public void executeScriptFile(ScriptItem scriptItem, boolean forceFromFile, Map<String, Object> additionalBindings) {
-        ScriptLogger scriptLogger = new ScriptLogger(m_txtResult);
-
-        ScriptEngine scriptEngine = manager.getEngineByExtension(getFileExtension(scriptItem.getName()));
-
-        if (scriptEngine == null) {
-            scriptEngine = manager.getEngineByName(DEFAULT_SCRIPT);
-        }
-
-        //logResult(StaticUtils.format(OStrings.getString("SCW_SELECTED_LANGUAGE"), scriptEngine.getFactory().getEngineName()));
-        SimpleBindings bindings = new SimpleBindings();
-        bindings.put(VAR_PROJECT, Core.getProject());
-        bindings.put(VAR_EDITOR, Core.getEditor());
-        bindings.put(VAR_GLOSSARY, Core.getGlossary());
-        bindings.put(VAR_MAINWINDOW, Core.getMainWindow());
-        bindings.put(VAR_CONSOLE, scriptLogger);
-        bindings.put(VAR_RESOURCES, scriptItem.getResourceBundle());
-
-        if (additionalBindings != null) {
-            bindings.putAll(additionalBindings);
-        }
-
-        // evaluate JavaScript code from String
         try {
             String scriptString;
             if (forceFromFile) {
                 scriptString = scriptItem.getText();
-            } else if (m_txtScriptEditor.getText().trim() != null && m_txtScriptEditor.getText().trim().isEmpty()) {
+            } else if (m_txtScriptEditor.getText().trim().isEmpty()) {
                 scriptString = scriptItem.getText();
                 m_txtScriptEditor.setText(scriptString);
             } else {
@@ -607,11 +539,33 @@ public class ScriptingWindow extends PeroFrame {
                 scriptString += "\n";
             }
 
-            Object eval = scriptEngine.eval(scriptString, bindings);
-            if (eval != null) {
-                logResult(OStrings.getString("SCW_SCRIPT_RESULT"));
-                logResult(eval.toString());
+            Map<String, Object> bindings = new HashMap<String, Object>();
+            if (additionalBindings != null) {
+                bindings.putAll(additionalBindings);
             }
+            bindings.put(ScriptRunner.VAR_CONSOLE, new IScriptLogger() {
+                @Override
+                public void print(Object o) {
+                    Document doc = m_txtResult.getDocument();
+
+                    try {
+                        doc.insertString(doc.getLength(), o.toString(), null);
+                    } catch (BadLocationException e) {
+                        /* empty */
+                    }
+                }
+                @Override
+                public void println(Object o) {
+                    print(o.toString() + "\n");
+                }
+                @Override
+                public void clear() {
+                    m_txtResult.setText("");
+                }
+            });
+
+            String result = ScriptRunner.executeScript(scriptString, scriptItem, bindings);
+            logResult(result);
         } catch (Throwable e) {
             logResult(OStrings.getString("SCW_SCRIPT_ERROR"));
             logResult(e.getMessage());
@@ -678,13 +632,13 @@ public class ScriptingWindow extends PeroFrame {
         }
         updateQuickScripts();
     }
-
+    
     private void updateQuickScripts() {
         for (int i = 0; i < NUMBERS_OF_QUICK_SCRIPTS; i++) {
             int key = scriptKey(i);
             String scriptName = Preferences.getPreferenceDefault(
                     Preferences.SCRIPTS_QUICK_PREFIX + key, null);
-
+    
             if (m_scriptsDirectory != null && !StringUtil.isEmpty(scriptName)) {
                 setQuickScriptMenu(new ScriptItem(new File(m_scriptsDirectory, scriptName)), i);
                 m_quickScriptButtons[i].setToolTipText(scriptName);
@@ -695,6 +649,10 @@ public class ScriptingWindow extends PeroFrame {
                 m_quickScriptButtons[i].setText(String.valueOf(key));
             }
         }
+    }
+
+    void setScriptItems(Collection<ScriptItem> items) {
+        m_scriptList.setListData(items.toArray(new ScriptItem[items.size()]));
     }
 
     public HighlightPainter getPainter() {
@@ -719,47 +677,6 @@ public class ScriptingWindow extends PeroFrame {
         }
     }
 
-    /**
-     * Returns the filename without the extension
-     */
-    protected static String getBareFileName(String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-
-        String bare = fileName;
-        int i = fileName.lastIndexOf('.');
-
-        if (i >= 0) {
-            bare = fileName.substring(0, i);
-        }
-
-        return bare;
-    }
-
-    /**
-     * Returns the extension of file.
-     */
-    protected static String getFileExtension(String fileName) {
-        String extension = "";
-
-        int i = fileName.lastIndexOf('.');
-
-        if (i >= 0) {
-            extension = fileName.substring(i + 1);
-        }
-
-        return extension;
-    }
-
-    public static final String DEFAULT_SCRIPT = "javascript";
-    public static final String VAR_CONSOLE = "console";
-    public static final String VAR_MAINWINDOW = "mainWindow";
-    public static final String VAR_GLOSSARY = "glossary";
-    public static final String VAR_EDITOR = "editor";
-    public static final String VAR_PROJECT = "project";
-    public static final String VAR_RESOURCES = "res";
-
     private static final String DEFAULT_SCRIPTS_DIR = "scripts";
 
     private static final int NUMBERS_OF_QUICK_SCRIPTS = 12;
@@ -768,8 +685,6 @@ public class ScriptingWindow extends PeroFrame {
     private JEditorPane m_txtResult;
     private JTextArea m_txtScriptEditor;
     private JButton m_btnRunScript;
-
-    private final ScriptEngineManager manager = new ScriptEngineManager(getClass().getClassLoader());
 
     protected ScriptsMonitor monitor;
 

@@ -30,8 +30,6 @@
 
 package org.omegat.gui.dialogs;
 
-import gen.core.filters.Filters;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -63,6 +61,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.lucene.util.Version;
+import org.omegat.CLIParameters;
 import org.omegat.core.Core;
 import org.omegat.core.data.CommandVarExpansion;
 import org.omegat.core.data.ProjectProperties;
@@ -87,6 +87,8 @@ import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.TokenizerBehaviorComboBoxRenderer;
 import org.omegat.util.gui.TokenizerComboBoxRenderer;
 import org.openide.awt.Mnemonics;
+
+import gen.core.filters.Filters;
 
 /**
  * The dialog for customizing the OmegaT project (where project properties are
@@ -161,8 +163,8 @@ public class ProjectPropertiesDialog extends PeroDialog {
      * @param projFileName
      *            project file name
      * @param dialogTypeValue
-     *            type of the dialog ({@link #NEW_PROJECT},
-     *            {@link #RESOLVE_DIRS} or {@link #EDIT_PROJECT}).
+     *            type of the dialog ({@link Mode#NEW_PROJECT},
+     *            {@link Mode#RESOLVE_DIRS} or {@link Mode#EDIT_PROJECT}).
      */
     public ProjectPropertiesDialog(final ProjectProperties projectProperties, String projFileName,
             Mode dialogTypeValue) {
@@ -258,7 +260,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         m_sourceTokenizerField.setSelectedItem(projectProperties.getSourceTokenizer());
         bT.add(m_sourceTokenizerField);
 
-        String cliTokSrc = Core.getParams().get(ITokenizer.CLI_PARAM_SOURCE);
+        String cliTokSrc = Core.getParams().get(CLIParameters.TOKENIZER_SOURCE);
         if (cliTokSrc != null) {
             m_sourceTokenizerField.setEnabled(false);
             m_sourceTokenizerField.addItem(cliTokSrc);
@@ -295,7 +297,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         m_targetTokenizerField.setSelectedItem(projectProperties.getTargetTokenizer());
         bT.add(m_targetTokenizerField);
 
-        String cliTokTrg = Core.getParams().get(ITokenizer.CLI_PARAM_TARGET);
+        String cliTokTrg = Core.getParams().get(CLIParameters.TOKENIZER_TARGET);
         if (cliTokTrg != null) {
             m_targetTokenizerField.setEnabled(false);
             m_targetTokenizerField.addItem(cliTokTrg);
@@ -351,7 +353,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
             m_sourceTokenizerBehaviorField.setEnabled(false);
         }
 
-        final String cliTokSrcBehavior = Core.getParams().get(ITokenizer.CLI_PARAM_SOURCE_BEHAVIOR);
+        final String cliTokSrcBehavior = Core.getParams().get(CLIParameters.TOKENIZER_BEHAVIOR_SOURCE);
         if (cliTokSrcBehavior != null) {
             m_sourceTokenizerBehaviorField.setEnabled(false);
             m_sourceTokenizerBehaviorField.addItem(cliTokSrcBehavior);
@@ -422,7 +424,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
             m_targetTokenizerBehaviorField.setEnabled(false);
         }
 
-        final String cliTokTrgBehavior = Core.getParams().get(ITokenizer.CLI_PARAM_TARGET_BEHAVIOR);
+        final String cliTokTrgBehavior = Core.getParams().get(CLIParameters.TOKENIZER_BEHAVIOR_TARGET);
         if (cliTokTrgBehavior != null) {
             m_targetTokenizerBehaviorField.setEnabled(false);
             m_targetTokenizerBehaviorField.addItem(cliTokTrgBehavior);
@@ -862,6 +864,8 @@ public class ProjectPropertiesDialog extends PeroDialog {
             m_locBrowse.setEnabled(false);
             m_locRootField.setEnabled(false);
             m_srcExcludes.setEnabled(false);
+        default:
+            // Nothing
         }
 
         updateUIText(m_messageArea);

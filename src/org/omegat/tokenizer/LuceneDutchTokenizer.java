@@ -26,6 +26,8 @@
 package org.omegat.tokenizer;
 
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.nl.DutchAnalyzer;
@@ -37,12 +39,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 @Tokenizer(languages = { "nl" }, isDefault = true)
 public class LuceneDutchTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
-            String[] stopWords = stopWordsAllowed ? DutchAnalyzer.DUTCH_STOP_WORDS
-                    : EMPTY_STRING_LIST;
+            Set<?> stopWords = stopWordsAllowed ? DutchAnalyzer.getDefaultStopSet()
+                    : Collections.emptySet();
             return new DutchAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

@@ -1,6 +1,6 @@
 /**************************************************************************
- OmegaT - Computer Assisted Translation (CAT) tool
-          with fuzzy matching, translation memory, keyword search,
+ OmegaT - Computer Assisted Translation (CAT) tool 
+          with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
@@ -24,6 +24,13 @@
  **************************************************************************/
 
 package org.omegat.core.segmentation.datamodels;
+
+import java.beans.ExceptionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.table.AbstractTableModel;
 
 import org.omegat.core.segmentation.Rule;
 import org.omegat.util.OStrings;
@@ -142,8 +149,7 @@ public class SegmentationRulesModel extends AbstractModel {
 
     /** Moves a segmentation rule down an order. */
     public void moveRowDown(int row) {
-        Rule ruleNext = rules.get(row + 1);
-        rules.remove(row + 1);
+        Rule ruleNext = rules.remove(row + 1);
         rules.add(row, ruleNext);
         fireTableRowsUpdated(row, row + 1);
     }

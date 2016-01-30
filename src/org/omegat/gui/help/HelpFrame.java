@@ -43,14 +43,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.omegat.gui.common.PeroFrame;
+import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -69,7 +71,7 @@ import org.openide.awt.Mnemonics;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 @SuppressWarnings("serial")
-public class HelpFrame extends PeroFrame {
+public class HelpFrame extends JFrame {
     /*
      * The Singleton design pattern allows us to have just one instance of the
      * help frame at all times. In order to use this pattern, we need to prevent
@@ -82,7 +84,12 @@ public class HelpFrame extends PeroFrame {
 
     /** Creates the Help Frame */
     private HelpFrame() {
-        m_historyList = new ArrayList<>();
+        m_historyList = new ArrayList<URL>();
+
+        OmegaTIcons.setIconImages(this);
+
+        // set window size & position
+        initWindowLayout();
 
         Container cp = getContentPane();
         m_helpPane = new JEditorPane();
@@ -146,11 +153,6 @@ public class HelpFrame extends PeroFrame {
         displayHome();
     }
 
-    @Override
-    public String getPreferenceBaseName() {
-        return "help_window";
-    }
-
     /**
      * Gets the only instance of Help Frame
      */
@@ -183,8 +185,9 @@ public class HelpFrame extends PeroFrame {
         } else {
             path = filename;
         }
+        URL r = HelpFrame.class.getResource('/' + OConsts.HELP_DIR + '/' + path);
 
-        return HelpFrame.class.getResource('/' + OConsts.HELP_DIR + '/' + path);
+        return r;
     }
 
     public final void displayHome() {
@@ -207,8 +210,8 @@ public class HelpFrame extends PeroFrame {
      * If any exception thrown then say
      * 
      * <pre>
-     * User's Manual viewer does not support navigation to external links.
-     * To access this link, either copy and paste the URL to your Web browser,
+     * User's Manual viewer does not support navigation to external links. 
+     * To access this link, either copy and paste the URL to your Web browser, 
      * or open the User's Manual in your Web browser (index.html file).
      * </pre>
      * 
@@ -282,8 +285,6 @@ public class HelpFrame extends PeroFrame {
      * 
      * If the latest manual is not available in the system locale language, it
      * returns null, i.e. show a language selection screen.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     private static String detectInitialLanguage() {
         // Get the system locale (language and country)
@@ -291,7 +292,7 @@ public class HelpFrame extends PeroFrame {
         String country = Locale.getDefault().getCountry().toUpperCase(Locale.ENGLISH);
 
         // Check if there's a translation for the full locale (lang + country)
-        String locale = language + '_' + country;
+        String locale = language + "_" + country;
         String version = getDocVersion(locale);
         if (version != null && version.equals(OStrings.VERSION))
             return locale;
@@ -309,8 +310,6 @@ public class HelpFrame extends PeroFrame {
     /**
      * Returns the version of (a translation of) the user manual. If there is no
      * translation for the specified locale, null is returned.
-     * 
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
     private static String getDocVersion(String locale) {
         // Check if there's a manual for the specified locale
@@ -344,6 +343,48 @@ public class HelpFrame extends PeroFrame {
         // Get the doc version and return it
         // (null if the version entry is not present)
         return prop.getProperty("version");
+    }
+
+    /**
+     * Loads/sets the position and size of the help window.
+     */
+    private void initWindowLayout() {
+        // main window
+        try {
+            String dx = Preferences.getPreference(Preferences.HELPWINDOW_X);
+            String dy = Preferences.getPreference(Preferences.HELPWINDOW_Y);
+            int x = Integer.parseInt(dx);
+            int y = Integer.parseInt(dy);
+            setLocation(x, y);
+            String dw = Preferences.getPreference(Preferences.HELPWINDOW_WIDTH);
+            String dh = Preferences.getPreference(Preferences.HELPWINDOW_HEIGHT);
+            int w = Integer.parseInt(dw);
+            int h = Integer.parseInt(dh);
+            setSize(w, h);
+        } catch (NumberFormatException nfe) {
+            // set default size and position
+            setSize(600, 500);
+        }
+    }
+
+    /**
+     * Saves the size and position of the help window
+     */
+    private void saveWindowLayout() {
+        Preferences.setPreference(Preferences.HELPWINDOW_WIDTH, getWidth());
+        Preferences.setPreference(Preferences.HELPWINDOW_HEIGHT, getHeight());
+        Preferences.setPreference(Preferences.HELPWINDOW_X, getX());
+        Preferences.setPreference(Preferences.HELPWINDOW_Y, getY());
+    }
+
+    @Override
+    public void processWindowEvent(WindowEvent w) {
+        int evt = w.getID();
+        if (evt == WindowEvent.WINDOW_CLOSING || evt == WindowEvent.WINDOW_CLOSED) {
+            // save window size and position
+            saveWindowLayout();
+        }
+        super.processWindowEvent(w);
     }
 
     private final JEditorPane m_helpPane;

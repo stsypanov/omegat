@@ -35,11 +35,6 @@
 
 package org.omegat.filters2.master;
 
-import gen.core.filters.Files;
-import gen.core.filters.Filter;
-import gen.core.filters.Filter.Option;
-import gen.core.filters.Filters;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -55,8 +50,9 @@ import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.omegat.core.Core;
 
+import org.apache.commons.io.FileUtils;
+import org.omegat.core.Core;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.IAlignCallback;
@@ -65,10 +61,15 @@ import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.ITranslateCallback;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
-import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
+
+import gen.core.filters.Files;
+import gen.core.filters.Filter;
+import gen.core.filters.Filter.Option;
+import gen.core.filters.Filters;
 
 /**
  * A master class that registers and handles all the filters. Singleton - there can be only one instance of
@@ -106,7 +107,7 @@ public class FilterMaster {
     private final Filters config;
 
     /** Classes of all filters. */
-    private static List<Class<IFilter>> filtersClasses;
+    private static List<Class<?>> filtersClasses;
 
     static {
         try {
@@ -133,7 +134,7 @@ public class FilterMaster {
      */
     private static boolean addNewFiltersToConfig(final Filters conf) {
         boolean result = false;
-        for (Class<IFilter> fclass : filtersClasses) {
+        for (Class<?> fclass : filtersClasses) {
             boolean found = false;
             for (Filter fc : conf.getFilters()) {
                 if (fclass.getName().equals(fc.getClassName())) {
@@ -159,10 +160,10 @@ public class FilterMaster {
      * @return filter instance
      */
     public static IFilter getFilterInstance(final String classname) {
-        for (Class<IFilter> f : filtersClasses) {
+        for (Class<?> f : filtersClasses) {
             if (f.getName().equals(classname)) {
                 try {
-                    return f.newInstance();
+                    return (IFilter) f.newInstance();
                 } catch (Exception ex) {
                     Log.log(ex);
                 }
@@ -226,12 +227,17 @@ public class FilterMaster {
         if (lookup == null) {
             // The file is not supported by any of the filters.
             // Copying it
-            LFileCopy.copy(new File(sourcedir, filename), new File(targetdir, filename));
+            FileUtils.copyFile(new File(sourcedir, filename), new File(targetdir, filename));
             return;
         }
 
-        File inFile = new File(sourcedir, filename);
-        File outFile = new File(targetdir, getTargetForSource(filename, lookup, fc.getTargetLang()));
+        File inFile = new File(sourcedir, filename).getCanonicalFile();
+        File outFile = new File(targetdir, getTargetForSource(filename, lookup, fc.getTargetLang())).getCanonicalFile();
+
+        if (inFile.equals(outFile)) {
+            throw new TranslationException(
+                    StringUtil.format(OStrings.getString("FILTERMASTER_ERROR_SRC_TRG_SAME_FILE"), inFile.getPath()));
+        }
 
         fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
         fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());

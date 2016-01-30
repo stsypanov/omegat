@@ -37,12 +37,13 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 @Tokenizer(languages = { "ro" }, isDefault = true)
 public class LuceneRomanianTokenizer extends BaseTokenizer {
+    @SuppressWarnings("resource")
     @Override
     protected TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed) {
         if (stemsAllowed) {
             Set<?> stopWords = stopWordsAllowed ? RomanianAnalyzer.getDefaultStopSet()
-                    : Collections.EMPTY_SET;
+                    : Collections.emptySet();
             return new RomanianAnalyzer(getBehavior(), stopWords).tokenStream("",
                     new StringReader(strOrig));
         } else {

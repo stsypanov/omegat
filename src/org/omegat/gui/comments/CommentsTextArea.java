@@ -40,8 +40,8 @@ import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.JTextPaneLinkifier;
+import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -66,8 +66,8 @@ public class CommentsTextArea extends EntryInfoPane implements IEntryEventListen
         mw.addDockable(new DockableScrollPane("COMMENTS", title, this, true));
 
         setEditable(false);
-        AlwaysVisibleCaret.apply(this);
-        this.setText(EXPLANATION);
+        StaticUIUtils.makeCaretAlwaysVisible(this);
+        setText(EXPLANATION);
         setMinimumSize(new Dimension(100, 50));
 
         addCommentProvider(ENTRY_COMMENT_PROVIDER, 0);
@@ -145,7 +145,7 @@ public class CommentsTextArea extends EntryInfoPane implements IEntryEventListen
     public void clear() {
         UIThreadsUtil.mustBeSwingThread();
 
-        this.setText("");
+        setText(null);
     }
 
     @Override

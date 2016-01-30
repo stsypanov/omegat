@@ -26,12 +26,14 @@
 package org.omegat.gui.stat;
 
 import java.awt.BorderLayout;
+
 import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("serial")
 public class MatchStatisticsPanel extends BaseMatchStatisticsPanel {
 
     public MatchStatisticsPanel(StatisticsWindow window) {

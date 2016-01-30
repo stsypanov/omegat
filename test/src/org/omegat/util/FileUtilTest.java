@@ -3,7 +3,7 @@
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2015 Aaron Madlon-Kay
+ Copyright (C) 2015 Aaron Madlon-Kay, Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -32,12 +32,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import org.omegat.util.FileUtil.ICollisionCallback;
-
 import junit.framework.TestCase;
+
+import org.apache.commons.io.FileUtils;
+import org.omegat.util.FileUtil.ICollisionCallback;
 
 /**
  * @author Aaron Madlon-Kay
+ * @author Alex Buloichik
  */
 public class FileUtilTest extends TestCase {
 
@@ -46,7 +48,7 @@ public class FileUtilTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         base = FileUtil.createTempDir();
-        System.err.println("Base: " + base.getAbsolutePath());
+        System.out.println("Base: " + base.getAbsolutePath());
     }
 
     @Override
@@ -152,7 +154,27 @@ public class FileUtilTest extends TestCase {
         }
     }
     
-    private abstract static class CountingCallback implements ICollisionCallback {
+    public void testGetFileExtension() {
+        assertEquals("js", FileUtil.getFileExtension("foo.js"));
+        assertEquals("zip", FileUtil.getFileExtension("foo.js/bar.zip"));
+        assertEquals("zip", FileUtil.getFileExtension("C:\\foo.js\\bar.zip"));
+        assertEquals("tar.gz", FileUtil.getFileExtension("foo.tar.gz"));
+        assertEquals("", FileUtil.getFileExtension("foo"));
+        assertEquals("", FileUtil.getFileExtension("foo/.bar"));
+        assertEquals("", FileUtil.getFileExtension("foo\\.bar"));
+    }
+
+    public void testStripFileExtension() {
+        assertEquals("foo", FileUtil.stripFileExtension("foo.js"));
+        assertEquals("foo.js/bar", FileUtil.stripFileExtension("foo.js/bar.zip"));
+        assertEquals("C:/foo.js/bar", FileUtil.stripFileExtension("C:\\foo.js\\bar.zip"));
+        assertEquals("foo", FileUtil.stripFileExtension("foo.tar.gz"));
+        assertEquals("foo", FileUtil.stripFileExtension("foo"));
+        assertEquals("foo/.bar", FileUtil.stripFileExtension("foo/.bar"));
+        assertEquals("foo/.bar", FileUtil.stripFileExtension("foo\\.bar"));
+    }
+
+    private abstract class CountingCallback implements ICollisionCallback {
         int calledTimes = 0;
     }
     
@@ -190,6 +212,63 @@ public class FileUtilTest extends TestCase {
             }
             stream.close();
             return sb.toString();
+        }
+    }
+
+    public void testRelative() throws Exception {
+        assertFalse(FileUtil.isRelative("C:\\zz"));
+        assertFalse(FileUtil.isRelative("z:/zz"));
+        assertFalse(FileUtil.isRelative("c:\\zz"));
+        assertFalse(FileUtil.isRelative("z:/zz"));
+        assertTrue(FileUtil.isRelative("1:/zz"));
+        assertFalse(FileUtil.isRelative("/zz"));
+        assertFalse(FileUtil.isRelative("\\zz"));
+        assertTrue(FileUtil.isRelative("zz/"));
+    }
+
+    public void testAbsoluteForSystem() throws Exception {
+        assertEquals("C:/zzz", FileUtil.absoluteForSystem("C:\\zzz", Platform.OsType.WIN64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("C:\\zzz", Platform.OsType.LINUX64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("C:\\zzz", Platform.OsType.MAC64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.WIN64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.LINUX64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.MAC64));
+    }
+
+    public void testEOL() throws Exception {
+        File dir = new File("build/testdata/");
+        dir.mkdirs();
+
+        File in = new File(dir, "in.eol");
+        File out = new File(dir, "out.eol");
+
+        byte[] eoln = "12\n34\n56\n".getBytes("UTF-8");
+        byte[] eolr = "12\r34\r56\r".getBytes("UTF-8");
+        byte[] eolrn = "12\r\n34\r\n56\r\n".getBytes("UTF-8");
+        byte[][] eols = new byte[][] { eoln, eolr, eolrn };
+
+        FileUtils.writeByteArrayToFile(out, eoln);
+        assertEquals("\n", FileUtil.getEOL(out, "UTF-8"));
+        for (byte[] eolfrom : eols) {
+            FileUtils.writeByteArrayToFile(in, eolfrom);
+            FileUtil.copyFileWithEolConversion(in, out, "UTF-8");
+            assertEquals("\n", FileUtil.getEOL(out, "UTF-8"));
+        }
+
+        FileUtils.writeByteArrayToFile(out, eolr);
+        assertEquals("\r", FileUtil.getEOL(out, "UTF-8"));
+        for (byte[] eolfrom : eols) {
+            FileUtils.writeByteArrayToFile(in, eolfrom);
+            FileUtil.copyFileWithEolConversion(in, out, "UTF-8");
+            assertEquals("\r", FileUtil.getEOL(out, "UTF-8"));
+        }
+
+        FileUtils.writeByteArrayToFile(out, eolrn);
+        assertEquals("\r\n", FileUtil.getEOL(out, "UTF-8"));
+        for (byte[] eolfrom : eols) {
+            FileUtils.writeByteArrayToFile(in, eolfrom);
+            FileUtil.copyFileWithEolConversion(in, out, "UTF-8");
+            assertEquals("\r\n", FileUtil.getEOL(out, "UTF-8"));
         }
     }
 }

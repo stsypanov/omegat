@@ -39,7 +39,7 @@
 		</copy>
 
 		<copy todir="${root}/build/webstart" flatten="yes">
-			<fileset dir="${root}/lib" includes="**/*.jar" />
+			<fileset dir="${root}/lib" includes="**/*.jar" excludes="**/sources/**" />
 			<fileset dir="${root}/lib-mnemonics/dist" includes="**/*.jar" />
 			<fileset dir="${root}/dist" includes="OmegaT.jar" />
 		</copy>
@@ -48,8 +48,6 @@
 			 TODO: Automate detection and application of this. -->
 		<unsignjar jarFile="${root}/build/webstart/org.eclipse.jgit-3.7.1.201504261725-r.jar" />
 		
-		<jar jarfile="${root}/build/webstart/docs.jar" basedir="${root}" includes="docs/**" />
-
 		<jar jarfile="${root}/build/webstart/hunspell-linux64.jar" basedir="${root}/native" includes="libhunspell-linux64.so" />
 		<jar jarfile="${root}/build/webstart/hunspell-linux32.jar" basedir="${root}/native" includes="libhunspell-linux32.so" />
 		<jar jarfile="${root}/build/webstart/hunspell-macos64.jar" basedir="${root}/native" includes="libhunspell-macos64.dylib" />

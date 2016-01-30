@@ -111,7 +111,6 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         buttonPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -469,7 +468,6 @@ public class EditOpenXMLOptionsDialog extends PeroDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aggregateTagsCB;
     private javax.swing.JCheckBox breakOnBrCB;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;

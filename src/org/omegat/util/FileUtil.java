@@ -7,6 +7,7 @@
                2009 Didier Briel
                2012 Alex Buloichik, Didier Briel
                2014 Alex Buloichik, Aaron Madlon-Kay
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -35,11 +36,11 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +52,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.omegat.gui.help.HelpFrame;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.omegat.help.Help;
 
 /**
  * Files processing utilities.
@@ -106,7 +110,7 @@ public class FileUtil {
     public static void backupFile(File f) throws IOException {
         long fileMillis = f.lastModified();
         String str = new SimpleDateFormat("yyyyMMddHHmm").format(new Date(fileMillis));
-        LFileCopy.copy(f, new File(f.getPath() + "." + str + OConsts.BACKUP_EXTENSION));
+        FileUtils.copyFile(f, new File(f.getPath() + "." + str + OConsts.BACKUP_EXTENSION));
     }
 
     /**
@@ -155,10 +159,8 @@ public class FileUtil {
     }
 
     public static String readScriptFile(File file) {
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8));
-             StringWriter out = new StringWriter()){
-                LFileCopy.copy(rd, out);
-                return out.toString().replace(System.getProperty("line.separator"), "\n");
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))) {
+            return IOUtils.toString(rd).replace(System.getProperty("line.separator"), "\n");
         } catch (Exception ex) {
             Log.log(ex);
             return null;
@@ -169,10 +171,8 @@ public class FileUtil {
      * Read file as UTF-8 text.
      */
     public static String readTextFile(File file) throws IOException {
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8));
-             StringWriter out = new StringWriter()){
-            LFileCopy.copy(rd, out);
-            return out.toString();
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))) {
+            return IOUtils.toString(rd);
         }
     }
 
@@ -182,6 +182,72 @@ public class FileUtil {
     public static void writeTextFile(File file, String text) throws IOException {
         try (Writer wr = new OutputStreamWriter(new FileOutputStream(file), OConsts.UTF8)){
             wr.write(text);
+        }
+    }
+
+    /**
+     * Copy file and create output directory if need. EOL will be converted into target-specific or into
+     * platform-specific if target doesn't exist.
+     */
+    public static void copyFileWithEolConversion(File inFile, File outFile, String eolConversionCharset)
+            throws IOException {
+        File dir = outFile.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String eol;
+        if (outFile.exists()) {
+            // file exist - read EOL from file
+            eol = getEOL(outFile, eolConversionCharset);
+        } else {
+            // file not exist - use system-dependent
+            eol = Platform.getEOL();
+        }
+        if (eol == null) {
+            // EOL wasn't detected - just copy
+            FileUtils.copyFile(inFile, outFile, false);
+            return;
+        }
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inFile),
+                eolConversionCharset));
+        try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+                    eolConversionCharset));
+            try {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    // copy using known EOL
+                    out.write(s);
+                    out.write(eol);
+                }
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    public static String getEOL(File file, String eolConversionCharset) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
+                eolConversionCharset));
+        try {
+            while (true) {
+                int ch = in.read();
+                if (ch < 0) {
+                    return null;
+                }
+                if (ch == '\n' || ch == '\r') {
+                    String r = Character.toString((char) ch);
+                    int ch2 = in.read();
+                    if (ch2 == '\n' || ch2 == '\r') {
+                        r += Character.toString((char) ch2);
+                    }
+                    return r;
+                }
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
 
@@ -274,20 +340,33 @@ public class FileUtil {
      */
     public static String loadTextFileFromDoc(String textFile) {
 
-        // Get the license
-        URL url = HelpFrame.getHelpFileURL(null, textFile);
-        if (url == null) {
-            return HelpFrame.errorHaiku();
+        // Get the file
+        URI uri = Help.getHelpFileURI(null, textFile);
+        if (uri == null) {
+            return null;
         }
 
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8))){
-                StringWriter out = new StringWriter();
-                LFileCopy.copy(rd, out);
-                return out.toString();
+        String result = null;
+        BufferedReader rd = null;
+        InputStream is = null;
+        InputStreamReader isr = null;
+        try {
+            is = uri.toURL().openStream();
+            isr = new InputStreamReader(is, OConsts.UTF8);
+            rd = new BufferedReader(isr);
+            result = IOUtils.toString(rd);
+            rd.close();
+            isr.close();
+            is.close();
         } catch (IOException ex) {
-            return HelpFrame.errorHaiku();
+            Log.log(ex);
+        } finally {
+            IOUtils.closeQuietly(rd);
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(isr);
         }
 
+        return result;
     }
 
     /**
@@ -376,7 +455,7 @@ public class FileUtil {
             if (file.isDirectory()) {
                 copyFilesTo(destination, file.listFiles(), thisRoot);
             } else {
-                LFileCopy.copy(file, dest);
+                FileUtils.copyFile(file, dest);
             }
         }
         return collisions;
@@ -421,4 +500,61 @@ public class FileUtil {
     }
 
     private static int TEMP_DIR_ATTEMPTS = 10000;
+
+    /**
+     * Returns the extension of file.
+     */
+    public static String getFileExtension(String path) {
+        // Backslash works on Windows but not other systems, while
+        // forwardslash works everywhere.
+        String basename = new File(path.replace('\\', '/')).getName();
+        int i = basename.indexOf('.');
+        return i < 1 ? "" : basename.substring(i + 1);
+    }
+
+    /**
+     * Returns the filename without the extension
+     */
+    public static String stripFileExtension(String path) {
+        File file = new File(path.replace('\\', '/'));
+
+        String basename = file.getName();
+        int i = basename.indexOf('.');
+        String stripped = i < 1 ? basename : basename.substring(0, i);
+
+        return new File(file.getParent(), stripped).getPath();
+    }
+
+    private static final Pattern RE_ABSOLUTE_WINDOWS = Pattern.compile("[A-Za-z]\\:(/.*)");
+    private static final Pattern RE_ABSOLUTE_LINUX = Pattern.compile("/.*");
+
+    /**
+     * Checks if path starts with possible root on the Linux, MacOS, Windows.
+     */
+    public static boolean isRelative(String path) {
+        path = path.replace('\\', '/');
+        if (RE_ABSOLUTE_LINUX.matcher(path).matches()) {
+            return false;
+        } else if (RE_ABSOLUTE_WINDOWS.matcher(path).matches()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Converts Windows absolute path into current system's absolute path. It required for conversion like
+     * 'C:\zzz' into '/zzz' for be real absolute in Linux.
+     */
+    public static String absoluteForSystem(String path, Platform.OsType currentOsType) {
+        path = path.replace('\\', '/');
+        Matcher m = RE_ABSOLUTE_WINDOWS.matcher(path);
+        if (m.matches()) {
+            if (currentOsType != Platform.OsType.WIN32 && currentOsType != Platform.OsType.WIN64) {
+                // Windows' absolute file on non-Windows system
+                return m.group(1);
+            }
+        }
+        return path;
+    }
 }

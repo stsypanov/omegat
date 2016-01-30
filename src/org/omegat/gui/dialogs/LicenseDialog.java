@@ -34,14 +34,13 @@ import java.net.URL;
 
 
 import org.omegat.gui.common.PeroDialog;
-import org.omegat.gui.help.HelpFrame;
+import org.omegat.help.Help;
+import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
-import org.omegat.util.LFileCopy;
-import org.openide.awt.Mnemonics;
-import org.omegat.util.FileUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
+import org.openide.awt.Mnemonics;
 
 /**
  * Dialog showing GNU Public License.
@@ -106,11 +105,12 @@ public class LicenseDialog extends PeroDialog {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         licenseTextPane.setEditable(false);
-        licenseTextPane
-                .setText("===================================================\n\n"
-                        + OStrings.getString("LICENSEDIALOG_PREFACE")
-                        + "\n\n===================================================\n\n"
-                        + FileUtil.loadTextFileFromDoc(OConsts.LICENSE_FILE));
+        StringBuilder sb = new StringBuilder("===================================================\n\n");
+        sb.append(OStrings.getString("LICENSEDIALOG_PREFACE"));
+        sb.append("\n\n===================================================\n\n");
+        String license = FileUtil.loadTextFileFromDoc(OConsts.LICENSE_FILE);
+        sb.append(license == null ? Help.errorHaiku() : license);
+        licenseTextPane.setText(sb.toString());
         scroll.setViewportView(licenseTextPane);
 
         getContentPane().add(scroll, java.awt.BorderLayout.CENTER);
@@ -118,27 +118,6 @@ public class LicenseDialog extends PeroDialog {
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((screenSize.width - 600) / 2, (screenSize.height - 400) / 2, 600, 400);
         DockingUI.displayCentered(this);
-    }
-
-    /**
-     * Load license from file "license.txt" from the root of help.
-     */
-    private String loadLicense() {
-
-        // Get the license
-        URL url = HelpFrame.getHelpFileURL(null, OConsts.LICENSE_FILE);
-        if (url == null) {
-            return HelpFrame.errorHaiku();
-        }
-
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(url.openStream(), OConsts.UTF8));
-             StringWriter out = new StringWriter()) {
-            LFileCopy.copy(rd, out);
-            return out.toString();
-        } catch (IOException ex) {
-            return HelpFrame.errorHaiku();
-        }
-
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {

@@ -52,6 +52,7 @@ import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
+import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -156,13 +157,22 @@ public class SegmentBuilder {
      *            document
      * @return OmElementSegment
      */
-    public void createSegmentElement(final boolean isActive) {
+    public void createSegmentElement(final boolean isActive, TMXEntry trans) {
+        createSegmentElement(isActive, doc.getLength(), trans);
+    }
+
+    public void prependSegmentElement(final boolean isActive, TMXEntry trans) {
+        createSegmentElement(isActive, 0, trans);
+    }
+
+    public void createSegmentElement(final boolean isActive, int initialOffset, TMXEntry trans) {
         UIThreadsUtil.mustBeSwingThread();
 
         displayVersion = globalVersions.incrementAndGet();
         this.active = isActive;
 
         doc.trustedChangesInProgress = true;
+        StaticUIUtils.setCaretUpdateEnabled(controller.editor, false);
         try {
             try {
                 if (beginPosP1 != null && endPosM1 != null) {
@@ -173,16 +183,15 @@ public class SegmentBuilder {
                     offset = beginOffset;
                 } else {
                     // there is no segment in document yet - need to add
-                    offset = doc.getLength();
+                    offset = initialOffset;
                 }
 
-                TMXEntry trans = Core.getProject().getTranslationInfo(ste);
                 defaultTranslation = trans.defaultTranslation;
                 if (!Core.getProject().getProjectProperties().isSupportDefaultTranslations()) {
                     defaultTranslation = false;
                 }
                 transExist = trans.isTranslated();
-                noteExist  = trans.hasNote();
+                noteExist = trans.hasNote();
 
                 int beginOffset = offset;
                 if (isActive) {
@@ -199,24 +208,37 @@ public class SegmentBuilder {
             }
         } finally {
             doc.trustedChangesInProgress = false;
+            StaticUIUtils.setCaretUpdateEnabled(controller.editor, true);
         }
+    }
+
+    public boolean hasBeenCreated() {
+        return beginPosP1 != null && endPosM1 != null;
     }
 
     /**
      * Add separator between segments - one empty line.
-     *
-     * @param doc
      */
-    public static void addSegmentSeparator(final Document3 doc) {
+    public void addSegmentSeparator() {
+        addSegmentSeparator(doc.getLength());
+    }
+
+    public void prependSegmentSeparator() {
+        addSegmentSeparator(0);
+    }
+
+    public void addSegmentSeparator(int index) {
         doc.trustedChangesInProgress = true;
+        StaticUIUtils.setCaretUpdateEnabled(controller.editor, false);
         try {
             try {
-                doc.insertString(doc.getLength(), "\n", null);
+                doc.insertString(index, "\n", null);
             } catch (BadLocationException ex) {
                 throw new RuntimeException(ex);
             }
         } finally {
             doc.trustedChangesInProgress = false;
+            StaticUIUtils.setCaretUpdateEnabled(controller.editor, true);
         }
     }
 

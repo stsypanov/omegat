@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.namespace.QName;
@@ -174,6 +175,10 @@ public class TMXReader2 {
         }
         Log.logRB("TMXR_INFO_READING_COMPLETE");
         Log.log("");
+        if (errorsCount > 0 || warningsCount > 0) {
+            Log.logDebug(Logger.getLogger(getClass().getName()), "Errors: {0}, Warnings: {1}", errorsCount,
+                    warningsCount);
+        }
     }
 
     protected void parseHeader(StartElement element, final Language sourceLanguage) {
@@ -241,8 +246,8 @@ public class TMXReader2 {
         tuv.creationdate = parseISO8601date(getAttributeValue(element, "creationdate"));
 
         // find 'lang' or 'xml:lang' attribute
-        for (Iterator<Attribute> it = element.getAttributes(); it.hasNext();) {
-            Attribute a = it.next();
+        for (Iterator<?> it = element.getAttributes(); it.hasNext();) {
+            Attribute a = (Attribute) it.next();
             if ("lang".equals(a.getName().getLocalPart())) {
                 tuv.lang = a.getValue();
                 break;

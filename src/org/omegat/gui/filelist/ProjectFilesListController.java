@@ -70,6 +70,7 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -78,21 +79,16 @@ import javax.swing.text.BadLocationException;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.IProject;
-import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.*;
-import org.omegat.util.gui.DragTargetOverlay;
+import org.omegat.util.gui.*;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
-import org.omegat.util.gui.OSXIntegration;
-import org.omegat.util.gui.StaticUIUtils;
-import org.omegat.util.gui.TableColumnSizer;
-import org.omegat.util.gui.DataTableStyling;
-import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * Controller for showing all the files of the project.
@@ -183,7 +179,7 @@ public class ProjectFilesListController {
     private void initAndShow() {
         init();
 
-        List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+        List<IProject.FileInfo> projectFiles = Core.getProject().getProjectFiles();
         buildDisplay(projectFiles);
         if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
             return;
@@ -289,6 +285,84 @@ public class ProjectFilesListController {
             }
         });
 
+        StaticUIUtils.setEscapeAction(list, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                doCancel();
+            }
+        });
+
+        CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
+            @Override
+            public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+                switch (eventType) {
+                case CLOSE:
+                    list.tableFiles.setModel(new DefaultTableModel());
+                    list.tableFiles.repaint();
+                    updateTitle("-");
+                    modelTotal.fireTableDataChanged();
+                    list.setVisible(false);
+                    break;
+                case LOAD:
+                case CREATE:
+                    buildDisplay(Core.getProject().getProjectFiles());
+                    if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
+                        break;
+                    }
+                    list.setVisible(true);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            list.toFront();
+                            list.tableFiles.requestFocus();
+                        }
+                    });
+                    break;
+                default:
+                    // Nothing
+                }
+            }
+        });
+
+        CoreEvents.registerEntryEventListener(new IEntryEventListener() {
+            @Override
+            public void onNewFile(String activeFileName) {
+                list.tableFiles.repaint();
+                list.tableTotal.repaint();
+                modelTotal.fireTableDataChanged();
+            }
+
+            /**
+             * Updates the number of translated segments only, does not rebuild the whole display.
+             */
+            @Override
+            public void onEntryActivated(SourceTextEntry newEntry) {
+                UIThreadsUtil.mustBeSwingThread();
+                modelTotal.fireTableDataChanged();
+            }
+        });
+
+        CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
+            @Override
+            public void onFontChanged(Font newFont) {
+                if (!Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
+                    newFont = defaultFont;
+                }
+                setFont(newFont);
+            }
+        });
+
+        CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
+            @Override
+            public void onApplicationStartup() {
+            }
+
+            @Override
+            public void onApplicationShutdown() {
+//                saveWindowLayout();
+            }
+        });
+
         list.tableFiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -319,6 +393,10 @@ public class ProjectFilesListController {
         list.btnDown.addActionListener(moveAction);
         list.btnFirst.addActionListener(moveAction);
         list.btnLast.addActionListener(moveAction);
+    }
+
+    private void updateTitle(Object numFiles) {
+        list.setTitle(StringUtil.format(OStrings.getString("PF_WINDOW_TITLE"), numFiles));
     }
 
     private final KeyListener filterTrigger = new KeyAdapter() {
@@ -487,7 +565,7 @@ public class ProjectFilesListController {
 
         if (active) {
             // moved current file selection here so it will be properly set on each activation
-            List<FileInfo> projectFiles = Core.getProject().getProjectFiles();
+            List<IProject.FileInfo> projectFiles = Core.getProject().getProjectFiles();
             buildDisplay(projectFiles);
             if (!Preferences.isPreferenceDefault(Preferences.PROJECT_FILES_SHOW_ON_LOAD, true)) {
                 return;
@@ -553,7 +631,7 @@ public class ProjectFilesListController {
         list.statLabel.setText(statText);
 
         uiUpdateImportButtonStatus();
-        list.setTitle(StringUtil.format(OStrings.getString("PF_WINDOW_TITLE"), files.size()));
+        updateTitle(files.size());
 
         OSXIntegration.setProxyIcon(list.getRootPane(), new File(Core.getProject().getProjectProperties().getSourceRoot()));
 
@@ -580,61 +658,7 @@ public class ProjectFilesListController {
     }
 
     private void setTableFilesModel(final List<IProject.FileInfo> files) {
-        modelFiles = new AbstractTableModel() {
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                IProject.FileInfo fi;
-                try {
-                    fi = files.get(rowIndex);
-                } catch (IndexOutOfBoundsException ex) {
-                    // data changed
-                    return null;
-                }
-                switch (columnIndex) {
-                case 0:
-                    return fi.filePath;
-                case 1:
-                    return fi.filterFileFormatName;
-                case 2:
-                    return fi.fileEncoding;
-                case 3:
-                    return fi.entries.size();
-                case 4:
-                    StatisticsInfo stat = Core.getProject().getStatistics();
-                    return stat.uniqueCountsByFile.get(fi.filePath);
-                default:
-                    return null;
-                }
-            }
-
-            @Override
-            public int getColumnCount() {
-                return 5;
-            }
-
-            @Override
-            public int getRowCount() {
-                return files.size();
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                switch (columnIndex) {
-                case 0:
-                    return String.class;
-                case 1:
-                    return String.class;
-                case 2:
-                    return String.class;
-                case 3:
-                    return Integer.class;
-                case 4:
-                    return Integer.class;
-                default:
-                    return null;
-                }
-            }
-        };
+        modelFiles = new FileInfoModel(files);
 
         list.tableFiles.setModel(modelFiles);
 
@@ -684,7 +708,7 @@ public class ProjectFilesListController {
         list.tableFiles.setColumnModel(columns);
 
         currentSorter = new Sorter(files);
-        list.tableFiles.setRowSorter((RowSorter) currentSorter);
+        list.tableFiles.setRowSorter(currentSorter);
     }
 
     private void createTableTotal() {
@@ -710,6 +734,9 @@ public class ProjectFilesListController {
                 } else if (columnIndex == 3) {
                     return "";
                 } else if (columnIndex == 4) {
+                    if (!Core.getProject().isProjectLoaded()) {
+                        return "-";
+                    }
                     StatisticsInfo stat = Core.getProject().getStatistics();
                     switch (rowIndex) {
                     case 0:
@@ -761,9 +788,6 @@ public class ProjectFilesListController {
 
     /**
      * Imports the file/files/folder into project's source files.
-     *
-     * @author Kim Bruning
-     * @author Maxym Mykhalchuk
      */
     private void doImportSourceFiles() {
         m_parent.doPromptImportSourceFiles();
@@ -780,6 +804,9 @@ public class ProjectFilesListController {
     }
 
     private void gotoFile(int row) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
         int modelRow;
         try {
             modelRow = list.tableFiles.convertRowIndexToModel(row);
@@ -839,7 +866,69 @@ public class ProjectFilesListController {
         list.statLabel.setFont(font);
     }
 
-    private class Sorter extends RowSorter<IProject.FileInfo> {
+    class FileInfoModel extends AbstractTableModel {
+        private final List<IProject.FileInfo> files;
+
+        public FileInfoModel(List<IProject.FileInfo> files) {
+            this.files = files;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            IProject.FileInfo fi;
+            try {
+                fi = files.get(rowIndex);
+            } catch (IndexOutOfBoundsException ex) {
+                // data changed
+                return null;
+            }
+            switch (columnIndex) {
+            case 0:
+                return fi.filePath;
+            case 1:
+                return fi.filterFileFormatName;
+            case 2:
+                return fi.fileEncoding;
+            case 3:
+                return fi.entries.size();
+            case 4:
+                StatisticsInfo stat = Core.getProject().getStatistics();
+                return stat.uniqueCountsByFile.get(fi.filePath);
+            default:
+                return null;
+            }
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 5;
+        }
+
+        @Override
+        public int getRowCount() {
+            return files.size();
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+            case 0:
+                return String.class;
+            case 1:
+                return String.class;
+            case 2:
+                return String.class;
+            case 3:
+                return Integer.class;
+            case 4:
+                return Integer.class;
+            default:
+                return null;
+            }
+        }
+    };
+
+    class Sorter extends RowSorter<FileInfoModel> {
         private final List<IProject.FileInfo> files;
         private SortKey sortKey = new SortKey(0, SortOrder.UNSORTED);
         private Integer[] modelToView;
@@ -908,7 +997,7 @@ public class ProjectFilesListController {
         }
 
         @Override
-        public FileInfo getModel() {
+        public FileInfoModel getModel() {
             throw new RuntimeException("Not implemented");
         }
 

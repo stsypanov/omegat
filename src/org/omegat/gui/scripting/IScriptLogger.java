@@ -3,7 +3,9 @@
           with fuzzy matching, translation memory, keyword search,
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2013 Yu Tang
+ Copyright (C) 2011 Briac Pilpre 
+               2013 Alex Buloichik, Yu Tang
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -22,33 +24,21 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
-package org.omegat.util.gui;
-
-import java.awt.event.FocusEvent;
-import javax.swing.JTextPane;
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultCaret;
+package org.omegat.gui.scripting;
 
 /**
- * Make caret visible even if JTextPane is not editable
+ * Used to display results in the scripting window
  * 
- * @author Yu-Tang
+ * @author Briac Pilpre (briacp@gmail.com)
+ * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Yu Tang
+ * @author Aaron Madlon-Kay
  */
-public class AlwaysVisibleCaret extends DefaultCaret {
+public interface IScriptLogger {
 
-    public static void apply(JTextPane text) {
-        Caret caret = text.getCaret();
-        if (!(caret instanceof AlwaysVisibleCaret)) {
-            int rate = caret.getBlinkRate();
-            AlwaysVisibleCaret newCaret = new AlwaysVisibleCaret();
-            newCaret.setBlinkRate(rate);
-            text.setCaret(newCaret);
-        }
-    }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-        setVisible(true);
-        setSelectionVisible(true);
-    }
+    public void print(Object o);
+	
+    public void println(Object o);
+	
+    public void clear();
 }
