@@ -34,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.awt.Dimension;
 import java.util.*;
 import java.util.logging.Level;
@@ -53,6 +54,7 @@ import org.omegat.core.data.IProject;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.dictionaries.DictionariesManager;
 import org.omegat.core.dictionaries.DictionaryEntry;
+import org.omegat.core.dictionaries.IDictionaryFactory;
 import org.omegat.core.events.IEditorEventListener;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.common.EntryInfoThreadPane;
@@ -131,7 +133,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         clear();
         IProject project = Core.getProject();
         tokenizer = project.getSourceTokenizer();
-        manager.start(project.getProjectProperties().getDictRoot());
+        manager.start(new File(project.getProjectProperties().getDictRoot()));
     }
 
     @Override
@@ -308,5 +310,15 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             });
             return result;
         }
+    }
+
+    @Override
+    public void addDictionaryFactory(IDictionaryFactory factory) {
+        manager.addDictionaryFactory(factory);
+    }
+
+    @Override
+    public void removeDictionaryFactory(IDictionaryFactory factory) {
+        manager.removeDictionaryFactory(factory);
     }
 }
