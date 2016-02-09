@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2013 Alex Buloichik
+               2016 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -39,6 +40,7 @@ import static org.junit.Assert.fail;
  * Tests for (some) static utility methods.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Aaron Madlon-Kay
  */
 public class StringUtilTest {
 
@@ -113,7 +115,32 @@ public class StringUtilTest {
         assertFalse(StringUtil.isTitleCase(test));
     }
     
-    @Test
+    public void testAlphanumericStringCase() {
+        String test = "MQL5";
+        assertTrue(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        assertFalse(StringUtil.isMixedCase(test));
+
+        test = "mql5";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertTrue(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        assertFalse(StringUtil.isMixedCase(test));
+
+        test = "Mql5";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertTrue(StringUtil.isTitleCase(test));
+        assertFalse(StringUtil.isMixedCase(test));
+
+        test = "mQl5";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        assertTrue(StringUtil.isMixedCase(test));
+    }
+
     public void testEmptyStringCase() {
         String test = null;
         try {
@@ -198,6 +225,11 @@ public class StringUtilTest {
         assertEquals("\u01CB", StringUtil.toTitleCase("\u01CC", locale));
         // LATIN SMALL LETTER I (U+0069) -> LATIN CAPITAL LETTER I WITH DOT ABOVE (U+0130) in Turkish
         assertEquals("\u0130jk", StringUtil.toTitleCase("ijk", new Locale("tr")));
+        // Non-letters in front
+        assertEquals("'Good day, sir.'", StringUtil.toTitleCase("'GOOD DAY, SIR.'", locale));
+        // No letters at all
+        String test = "!@#$%^&*()-=\"\\";
+        assertEquals(test, StringUtil.toTitleCase(test, locale));
     }
     
     public void testCompressSpace() {
@@ -303,5 +335,21 @@ public class StringUtilTest {
         assertEquals("ABC.123$!", StringUtil.normalizeWidth(test));
         test = "\u30a2\uff71\u30ac\uff76\u3099\u3000";
         assertEquals("\u30a2\u30a2\u30ac\u30ac ", StringUtil.normalizeWidth(test));
+    }
+
+    public void testRstrip() {
+        assertEquals("", StringUtil.rstrip(""));
+        assertEquals("", StringUtil.rstrip(" "));
+        assertEquals("ABC", StringUtil.rstrip("ABC"));
+        assertEquals("ABC", StringUtil.rstrip("ABC "));
+        assertEquals(" ABC", StringUtil.rstrip(" ABC "));
+        assertEquals("ABC", StringUtil.rstrip("ABC       "));
+        assertEquals("ABC\u00a0", StringUtil.rstrip("ABC\u00a0")); // U+00A0 NO-BREAK SPACE
+        try {
+            StringUtil.rstrip(null);
+            fail();
+        } catch (NullPointerException ex) {
+            // Should fail when stripping null string.
+        }
     }
 }

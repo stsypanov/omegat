@@ -33,14 +33,20 @@ import junit.framework.TestCase;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.omegat.core.segmentation.SRX;
-import org.omegat.core.segmentation.Segmenter;
 import org.omegat.util.Language;
 
-public class TmxSegmentationTest {
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+public class TmxSegmentationTest extends TestCase {
+
     @Test
     public void testProjectTMX() throws Exception {
-		ProjectProperties props = getProjectProperties();
+        ProjectProperties props = new ProjectProperties();
+        props.setSupportDefaultTranslations(true);
+        props.setSourceLanguage(new Language("en"));
+        props.setTargetLanguage(new Language("fr"));
+        props.setSentenceSegmentingEnabled(true);
         ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), new File("test/data/tmx/resegmenting.tmx"),
                 new ProjectTMX.CheckOrphanedCallback() {
                     public boolean existSourceInProject(String src) {
@@ -59,7 +65,11 @@ public class TmxSegmentationTest {
 
     @Test
     public void testExternalTMX() throws Exception {
-		ProjectProperties props = getProjectProperties();
+        ProjectProperties props = new ProjectProperties();
+        props.setSupportDefaultTranslations(true);
+        props.setSourceLanguage(new Language("en"));
+        props.setTargetLanguage(new Language("fr"));
+        props.setSentenceSegmentingEnabled(true);
 
         ExternalTMX tmx = new ExternalTMX(props, new File("test/data/tmx/resegmenting.tmx"), false, false);
 

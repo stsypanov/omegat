@@ -8,6 +8,7 @@
                2011 Martin Fleurke
                2013-2014 Enrique Estevez, Didier Briel
                2015 Aaron Madlon-Kay, Enrique Estevez
+               2016 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -48,8 +49,8 @@ import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
-import org.omegat.util.Log;
 import org.omegat.util.LinebreakPreservingReader;
+import org.omegat.util.Log;
 import org.omegat.util.NullBufferedWriter;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -83,6 +84,14 @@ import org.omegat.util.TagUtil;
  */
 public class ResourceBundleFilter extends AbstractFilter {
 
+    /**
+     * Key=value pairs with a preceding comment containing this string are not
+     * translated, and are output verbatim.
+     * <p>
+     * TODO: Make this optional
+     */
+    public static final String DO_NOT_TRANSLATE_COMMENT = "NOI18N";
+    
     public static final String OPTION_REMOVE_STRINGS_UNTRANSLATED = "unremoveStringsUntranslated";
     public static final String OPTION_DONT_UNESCAPE_U_LITERALS = "dontUnescapeULiterals";
     public static final String DEFAULT_TARGET_ENCODING = OConsts.ASCII;
@@ -216,6 +225,10 @@ public class ResourceBundleFilter extends AbstractFilter {
         return result.toString();
     }
 
+    private enum EscapeMode {
+        KEY, VALUE, COMMENT
+    }
+
     /**
      * Converts normal strings to ascii-encoded ones.
      * 
@@ -229,14 +242,14 @@ public class ResourceBundleFilter extends AbstractFilter {
      *            If false, keep the text in the source encoding (if assume what
      *            it is UTF-8, what is the another supported encoding)
      */
-    private String toAscii(String text, boolean key) {
+    private String toAscii(String text, EscapeMode mode) {
         CharsetEncoder charsetEncoder = Charset.forName(targetEncoding).newEncoder();
         
         StringBuilder result = new StringBuilder();
 
         for (int cp, len = text.length(), i = 0; i < len; i += Character.charCount(cp)) {
             cp = text.codePointAt(i);
-            if (cp == '\\') {
+            if (mode != EscapeMode.COMMENT && cp == '\\') {
                 if (dontUnescapeULiterals && containsUEscapeAt(text, i)) {
                     result.append("\\");
                 } else {
@@ -248,11 +261,11 @@ public class ResourceBundleFilter extends AbstractFilter {
                 result.append("\\r");
             } else if (cp == '\t') {
                 result.append("\\t");
-            } else if (key && cp == ' ') {
+            } else if (mode == EscapeMode.KEY && cp == ' ') {
                 result.append("\\ ");
-            } else if (key && cp == '=') {
+            } else if (mode == EscapeMode.KEY && cp == '=') {
                 result.append("\\=");
-            } else if (key && cp == ':') {
+            } else if (mode == EscapeMode.KEY && cp == ':') {
                 result.append("\\:");
             } else if ((cp >= 32 && cp < 127) || charsetEncoder.canEncode(text.substring(i, i + Character.charCount(cp)))) {
                 result.appendCodePoint(cp);
@@ -293,10 +306,8 @@ public class ResourceBundleFilter extends AbstractFilter {
      * Removes extra slashes from, e.g. "\ ", "\=" and "\:" typical in
      * machine-generated resource bundles. A slash at the end of a string means
      * a mandatory space has been trimmed.
-     * <p>
-     * See also bugreport <a
-     * href="http://sourceforge.net/support/tracker.php?aid=1606595"
-     * >#1606595</a>.
+     * 
+     * @see <a href="https://sourceforge.net/p/omegat/bugs/266/">bug #266</a>
      */
     private String removeExtraSlashes(String string) {
         StringBuilder result = new StringBuilder(string.length());
@@ -374,11 +385,12 @@ public class ResourceBundleFilter extends AbstractFilter {
             // skipping comments
             int firstCp = trimmed.codePointAt(0);
             if (firstCp == '#' || firstCp == '!') {
-                outfile.write(toAscii(str, false) + lbpr.getLinebreak());
+                outfile.write(toAscii(str, EscapeMode.COMMENT));
+                outfile.write(lbpr.getLinebreak());
                 // Save the comments
                 comments = (comments == null ? str : comments + "\n" + str);
                 // checking if the next string shouldn't be internationalized
-                if (trimmed.indexOf("NOI18N") >= 0) {
+                if (trimmed.contains(DO_NOT_TRANSLATE_COMMENT)) {
                     noi18n = true;
                 }
                 continue;
@@ -433,7 +445,10 @@ public class ResourceBundleFilter extends AbstractFilter {
 
                 if (noi18n) {
                     // if we don't need to internationalize
-                    outfile.write(toAscii(value, false));
+                    outfile.write(toAscii(key, EscapeMode.KEY));
+                    outfile.write(equals);
+                    outfile.write(toAscii(value, EscapeMode.VALUE));
+                    outfile.write(lbpr.getLinebreak());
                     noi18n = false;
                 } else {
                     value = value.replaceAll("\\n\\n", "\n \n");
@@ -447,13 +462,13 @@ public class ResourceBundleFilter extends AbstractFilter {
                         trans = value;
                     }
                     trans = trans.replaceAll("\\n\\s\\n", "\n\n");
-                    trans = toAscii(trans, false);
+                    trans = toAscii(trans, EscapeMode.VALUE);
                     if (!trans.isEmpty() && trans.codePointAt(0) == ' ') {
                         trans = '\\' + trans;
                     }
                     // Non-translated segments are written based on the filter options 
-                    if (translatedSegment == true || removeStringsUntranslated == false) {
-                        outfile.write(toAscii(key, true));
+                    if (translatedSegment || !removeStringsUntranslated) {
+                        outfile.write(toAscii(key, EscapeMode.KEY));
                         outfile.write(equals);
                         outfile.write(trans);
                         outfile.write(lbpr.getLinebreak()); // fix for bug 1462566
@@ -467,15 +482,12 @@ public class ResourceBundleFilter extends AbstractFilter {
 
     /**
      * Looks for the key-value separator (=,: or ' ') in the string.
-     * <p>
-     * See also bugreport <a
-     * href="http://sourceforge.net/support/tracker.php?aid=1606595"
-     * >#1606595</a>.
      * 
      * @return The char number of key-value separator in a string. Not that if
      *         the string does not contain any separator this string is
      *         considered to be a key with empty string value, and this method
      *         returns <code>-1</code> to indicate there's no equals.
+     * @see <a href="https://sourceforge.net/p/omegat/bugs/266/">bug #266</a>
      */
     private int searchEquals(String str) {
         int prevCp = 'a';

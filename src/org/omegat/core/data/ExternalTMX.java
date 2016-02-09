@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.omegat.core.segmentation.Segmenter;
+import org.omegat.core.Core;
 import org.omegat.util.FileUtil;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
@@ -85,9 +85,9 @@ public class ExternalTMX {
                         tu.creationdate);
                 long created = StringUtil.nvlLong(tuvTarget.creationdate, tu.creationdate);
 
-                List<String> sources = new ArrayList<>();
-                List<String> targets = new ArrayList<>();
-                Segmenter.segmentEntries(props.isSentenceSegmentingEnabled() && isParagraphSegtype,
+                List<String> sources = new ArrayList<String>();
+                List<String> targets = new ArrayList<String>();
+                Core.getSegmenter().segmentEntries(props.isSentenceSegmentingEnabled() && isParagraphSegtype,
                         props.getSourceLanguage(), tuvSource.text, props.getTargetLanguage(), tuvTarget.text,
                         sources, targets);
 

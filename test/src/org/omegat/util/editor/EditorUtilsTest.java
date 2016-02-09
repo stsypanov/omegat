@@ -169,6 +169,30 @@ public class EditorUtilsTest {
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE, locale, tokenizer));
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE, locale, tokenizer));
         assertEquals("a", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE, locale, tokenizer));
+
+        // Includes number (https://sourceforge.net/p/omegat/bugs/612/)
+        input = "MQL5";
+        assertEquals("mql5", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER, locale, tokenizer));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER, locale, tokenizer));
+        assertEquals("Mql5", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE, locale, tokenizer));
+        assertEquals("Mql5", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE, locale, tokenizer));
+        assertEquals("mql5", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE, locale, tokenizer));
+
+        // Includes OmegaT tag
+        input = "<g0>Foo</g0>";
+        assertEquals("<g0>foo</g0>", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER, locale, tokenizer));
+        assertEquals("<g0>FOO</g0>", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER, locale, tokenizer));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE, locale, tokenizer));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE, locale, tokenizer));
+        assertEquals("<g0>FOO</g0>", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE, locale, tokenizer));
+        
+        // Includes surrounding punctuation
+        input = "\"Foo, Bar\"";
+        assertEquals("\"foo, bar\"", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.LOWER, locale, tokenizer));
+        assertEquals("\"FOO, BAR\"", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.UPPER, locale, tokenizer));
+        assertEquals("\"Foo, bar\"", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.SENTENCE, locale, tokenizer));
+        assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE, locale, tokenizer));
+        assertEquals("\"FOO, BAR\"", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE, locale, tokenizer));
     }
 
     public void testReplaceGlossaryEntries() {

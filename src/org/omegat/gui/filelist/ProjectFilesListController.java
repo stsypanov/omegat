@@ -30,6 +30,14 @@
 
 package org.omegat.gui.filelist;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,6 +62,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -66,6 +76,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuKeyListener;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -79,6 +91,7 @@ import javax.swing.text.BadLocationException;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.IProject;
+import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IEntryEventListener;
@@ -88,6 +101,15 @@ import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.*;
 import org.omegat.util.gui.*;
+import org.omegat.util.Log;
+import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
+import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
+import org.omegat.util.gui.DataTableStyling;
+import org.omegat.util.gui.DragTargetOverlay;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 
 /**
@@ -108,7 +130,8 @@ import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 public class ProjectFilesListController {
 
     private ProjectFilesList list;
-    private AbstractTableModel modelFiles, modelTotal;
+    private FileInfoModel modelFiles;
+    private AbstractTableModel modelTotal;
     private Sorter currentSorter;
 
     private TableFilterPanel filterPanel;
@@ -366,7 +389,11 @@ public class ProjectFilesListController {
         list.tableFiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                gotoFile(list.tableFiles.rowAtPoint(e.getPoint()));
+                if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
+                    showContextMenu(e.getPoint());
+                } else {
+                    gotoFile(list.tableFiles.rowAtPoint(e.getPoint()));
+                }
             }
         });
 
@@ -397,6 +424,61 @@ public class ProjectFilesListController {
 
     private void updateTitle(Object numFiles) {
         list.setTitle(StringUtil.format(OStrings.getString("PF_WINDOW_TITLE"), numFiles));
+    }
+
+    private void showContextMenu(Point p) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+        int row = list.tableFiles.rowAtPoint(p);
+        if (row == -1) {
+            return;
+        }
+        FileInfo info = modelFiles.getDataAtRow(row);
+        String sourceDir = Core.getProject().getProjectProperties().getSourceRoot();
+        File sourceFile = new File(sourceDir, info.filePath);
+        String targetDir = Core.getProject().getProjectProperties().getTargetRoot();
+        File targetFile = new File(targetDir, Core.getProject().getTargetPathForSourceFile(info.filePath));
+        JPopupMenu menu = new JPopupMenu();
+        addContextMenuItem(menu, sourceFile, "PF_OPEN_SOURCE_FILE", "PF_REVEAL_SOURCE_FILE");
+        addContextMenuItem(menu, targetFile, "PF_OPEN_TARGET_FILE", "PF_REVEAL_TARGET_FILE");
+        menu.show(list.tableFiles, p.x, p.y);
+    }
+
+    private void addContextMenuItem(final JPopupMenu menu, final File toOpen, final String defaultTitle,
+            final String modTitle) {
+        final JMenuItem item = menu.add(OStrings.getString(defaultTitle));
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean openParent = (e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0;
+                try {
+                    Desktop.getDesktop().open(openParent ? toOpen.getParentFile() : toOpen);
+                } catch (IOException ex) {
+                    Log.log(ex);
+                }
+            }
+        });
+        item.setEnabled(toOpen.isFile());
+        item.addMenuKeyListener(new MenuKeyListener() {
+            @Override
+            public void menuKeyTyped(MenuKeyEvent e) {
+            }
+            @Override
+            public void menuKeyReleased(MenuKeyEvent e) {
+                setText(defaultTitle);
+            }
+            @Override
+            public void menuKeyPressed(MenuKeyEvent e) {
+                if ((e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
+                    setText(modTitle);
+                }
+            }
+            private void setText(String key) {
+                item.setText(OStrings.getString(key));
+                menu.pack();
+            }
+        });
     }
 
     private final KeyListener filterTrigger = new KeyAdapter() {
@@ -866,7 +948,7 @@ public class ProjectFilesListController {
         list.statLabel.setFont(font);
     }
 
-    class FileInfoModel extends AbstractTableModel {
+    static class FileInfoModel extends AbstractTableModel {
         private final List<IProject.FileInfo> files;
 
         public FileInfoModel(List<IProject.FileInfo> files) {
@@ -926,7 +1008,11 @@ public class ProjectFilesListController {
                 return null;
             }
         }
-    };
+
+        public FileInfo getDataAtRow(int row) {
+            return files.get(row);
+        }
+    }
 
     class Sorter extends RowSorter<FileInfoModel> {
         private final List<IProject.FileInfo> files;

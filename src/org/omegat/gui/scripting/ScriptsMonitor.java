@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
+import org.apache.commons.io.FilenameUtils;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.events.IApplicationEventListener;
@@ -36,7 +37,6 @@ import org.omegat.core.events.IEditorEventListener;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.util.DirectoryMonitor;
-import org.omegat.util.FileUtil;
 
 /**
  * Monitor to check changes in the script directory.
@@ -54,7 +54,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
         FILTER = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                String ext = FileUtil.getFileExtension(name);
+                String ext = FilenameUtils.getExtension(name);
                 return extensions.contains(ext.toLowerCase());
             }
         };

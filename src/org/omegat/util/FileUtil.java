@@ -7,7 +7,7 @@
                2009 Didier Briel
                2012 Alex Buloichik, Didier Briel
                2014 Alex Buloichik, Aaron Madlon-Kay
-               2015 Aaron Madlon-Kay
+               2015-2016 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -134,54 +134,44 @@ public class FileUtil {
     }
 
     /**
-     * Writes a text into a UTF-8 text file in the script directory.
-     * 
-     * @param textToWrite
-     *            The text to write in the file
-     * @param fileName
-     *            The file name without path
-     */
-    public static File writeScriptFile(String textToWrite, String fileName) {
-
-        File outFile = new File(StaticUtils.getScriptDir(), fileName);
-        File outFileTemp = new File(StaticUtils.getScriptDir(), fileName + ".temp");
-        outFile.delete();
-
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileTemp), OConsts.UTF8))){
-            textToWrite = NEW_LINE_PATTERN.matcher(textToWrite).replaceAll(System.getProperty("line.separator"));
-
-            bw.write(textToWrite);
-        } catch (Exception ex) {
-            // Eat exception silently
-        }
-        outFileTemp.renameTo(outFile);
-        return outFile;
-    }
-
-    public static String readScriptFile(File file) {
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))) {
-            return IOUtils.toString(rd).replace(System.getProperty("line.separator"), "\n");
-        } catch (Exception ex) {
-            Log.log(ex);
-            return null;
-        }
-    }
-
-    /**
      * Read file as UTF-8 text.
      */
     public static String readTextFile(File file) throws IOException {
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), OConsts.UTF8))) {
-            return IOUtils.toString(rd);
+        String result = null;
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader rd = null;
+        try {
+            fis = new FileInputStream(file);
+            isr = new InputStreamReader(fis, OConsts.UTF8);
+            rd = new BufferedReader(isr);
+            result = IOUtils.toString(rd);
+            rd.close();
+            isr.close();
+            fis.close();
+        } finally {
+            IOUtils.closeQuietly(rd);
+            IOUtils.closeQuietly(isr);
+            IOUtils.closeQuietly(fis);
         }
+        return result;
     }
 
     /**
      * Write text in file using UTF-8.
      */
     public static void writeTextFile(File file, String text) throws IOException {
-        try (Writer wr = new OutputStreamWriter(new FileOutputStream(file), OConsts.UTF8)){
+        FileOutputStream fos = null;
+        Writer wr = null;
+        try {
+            fos = new FileOutputStream(file);
+            wr = new OutputStreamWriter(fos, OConsts.UTF8);
             wr.write(text);
+            wr.close();
+            fos.close();
+        } finally {
+            IOUtils.closeQuietly(wr);
+            IOUtils.closeQuietly(fos);
         }
     }
 
@@ -208,47 +198,76 @@ public class FileUtil {
             FileUtils.copyFile(inFile, outFile, false);
             return;
         }
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inFile),
-                eolConversionCharset));
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader in = null;
         try {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-                    eolConversionCharset));
+            fis = new FileInputStream(inFile);
+            isr = new InputStreamReader(fis, eolConversionCharset);
+            in = new BufferedReader(isr);
+            FileOutputStream fos = null;
+            OutputStreamWriter osw = null;
+            BufferedWriter out = null;
             try {
+                fos = new FileOutputStream(outFile);
+                osw = new OutputStreamWriter(fos, eolConversionCharset);
+                out = new BufferedWriter(osw);
                 String s;
                 while ((s = in.readLine()) != null) {
                     // copy using known EOL
                     out.write(s);
                     out.write(eol);
                 }
+                out.close();
+                osw.close();
+                fos.close();
             } finally {
                 IOUtils.closeQuietly(out);
+                IOUtils.closeQuietly(osw);
+                IOUtils.closeQuietly(fos);
             }
+            in.close();
+            isr.close();
+            fis.close();
         } finally {
             IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(isr);
+            IOUtils.closeQuietly(fis);
         }
     }
 
     public static String getEOL(File file, String eolConversionCharset) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
-                eolConversionCharset));
+        String r = null;
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader in = null;
         try {
+            fis = new FileInputStream(file);
+            isr = new InputStreamReader(fis, eolConversionCharset);
+            in = new BufferedReader(isr);
             while (true) {
                 int ch = in.read();
                 if (ch < 0) {
-                    return null;
+                    break;
                 }
                 if (ch == '\n' || ch == '\r') {
-                    String r = Character.toString((char) ch);
+                    r = Character.toString((char) ch);
                     int ch2 = in.read();
                     if (ch2 == '\n' || ch2 == '\r') {
                         r += Character.toString((char) ch2);
                     }
-                    return r;
+                    break;
                 }
             }
+            in.close();
+            isr.close();
+            fis.close();
         } finally {
             IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(isr);
+            IOUtils.closeQuietly(fis);
         }
+        return r;
     }
 
     /**
@@ -510,19 +529,6 @@ public class FileUtil {
         String basename = new File(path.replace('\\', '/')).getName();
         int i = basename.indexOf('.');
         return i < 1 ? "" : basename.substring(i + 1);
-    }
-
-    /**
-     * Returns the filename without the extension
-     */
-    public static String stripFileExtension(String path) {
-        File file = new File(path.replace('\\', '/'));
-
-        String basename = file.getName();
-        int i = basename.indexOf('.');
-        String stripped = i < 1 ? basename : basename.substring(0, i);
-
-        return new File(file.getParent(), stripped).getPath();
     }
 
     private static final Pattern RE_ABSOLUTE_WINDOWS = Pattern.compile("[A-Za-z]\\:(/.*)");

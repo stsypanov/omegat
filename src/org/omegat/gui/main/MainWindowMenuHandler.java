@@ -36,6 +36,7 @@ package org.omegat.gui.main;
 
 import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -65,16 +66,15 @@ import org.omegat.gui.dialogs.filter.BaseFilteringDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
+import org.omegat.gui.editor.SegmentExportImport;
 import org.omegat.gui.filters2.FiltersCustomizer;
 import org.omegat.gui.glossary.editor.GlossaryEditorDialogue;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
 import org.omegat.help.Help;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
-import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
@@ -225,14 +225,6 @@ public class MainWindowMenuHandler {
         mainWindow.m_projWin.setActive(!mainWindow.m_projWin.isActive());
     }
 
-    /**
-     * Empties the exported segments.
-     */
-    private void flushExportedSegments() {
-        FileUtil.writeScriptFile("", OConsts.SOURCE_EXPORT);
-        FileUtil.writeScriptFile("", OConsts.TARGET_EXPORT);
-    }
-
     public void projectAccessRootMenuItemActionPerformed() {
         if (!Core.getProject().isProjectLoaded()) {
             return;
@@ -362,7 +354,7 @@ public class MainWindowMenuHandler {
             }
         }
 
-        flushExportedSegments();
+        SegmentExportImport.flushExportedSegments();
 
         new SwingWorker<Object, Void>() {
             @Override
@@ -404,11 +396,21 @@ public class MainWindowMenuHandler {
     }
 
     public void editUndoMenuItemActionPerformed() {
-        Core.getEditor().undo();
+        Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        if (focused.equals(Core.getNotes())) {
+            Core.getNotes().undo();
+        } else {
+            Core.getEditor().undo();
+        }
     }
 
     public void editRedoMenuItemActionPerformed() {
-        Core.getEditor().redo();
+        Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        if (focused.equals(Core.getNotes())) {
+            Core.getNotes().redo();
+        } else {
+            Core.getEditor().redo();
+        }
     }
 
     public void editOverwriteTranslationMenuItemActionPerformed() {
@@ -468,8 +470,7 @@ public class MainWindowMenuHandler {
                 selection = ste.getSrcText();
             }
         }
-
-        FileUtil.writeScriptFile(selection, OConsts.SELECTION_EXPORT);
+        SegmentExportImport.exportCurrentSelection(selection);
     }
 
     public void editCreateGlossaryEntryMenuItemActionPerformed() {

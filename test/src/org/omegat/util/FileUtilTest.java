@@ -32,10 +32,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.omegat.util.FileUtil.ICollisionCallback;
+
+import junit.framework.TestCase;
 
 /**
  * @author Aaron Madlon-Kay
@@ -152,26 +152,6 @@ public class FileUtilTest extends TestCase {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-    
-    public void testGetFileExtension() {
-        assertEquals("js", FileUtil.getFileExtension("foo.js"));
-        assertEquals("zip", FileUtil.getFileExtension("foo.js/bar.zip"));
-        assertEquals("zip", FileUtil.getFileExtension("C:\\foo.js\\bar.zip"));
-        assertEquals("tar.gz", FileUtil.getFileExtension("foo.tar.gz"));
-        assertEquals("", FileUtil.getFileExtension("foo"));
-        assertEquals("", FileUtil.getFileExtension("foo/.bar"));
-        assertEquals("", FileUtil.getFileExtension("foo\\.bar"));
-    }
-
-    public void testStripFileExtension() {
-        assertEquals("foo", FileUtil.stripFileExtension("foo.js"));
-        assertEquals("foo.js/bar", FileUtil.stripFileExtension("foo.js/bar.zip"));
-        assertEquals("C:/foo.js/bar", FileUtil.stripFileExtension("C:\\foo.js\\bar.zip"));
-        assertEquals("foo", FileUtil.stripFileExtension("foo.tar.gz"));
-        assertEquals("foo", FileUtil.stripFileExtension("foo"));
-        assertEquals("foo/.bar", FileUtil.stripFileExtension("foo/.bar"));
-        assertEquals("foo/.bar", FileUtil.stripFileExtension("foo\\.bar"));
     }
 
     private abstract class CountingCallback implements ICollisionCallback {

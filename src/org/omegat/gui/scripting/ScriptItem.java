@@ -44,7 +44,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.omegat.util.FileUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.omegat.util.LinebreakPreservingReader;
 import org.omegat.util.OConsts;
 import org.jetbrains.annotations.NotNull;
@@ -65,11 +65,9 @@ public class ScriptItem implements Comparable<ScriptItem> {
 
     public ScriptItem(File scriptFile) {
         m_file = scriptFile;
-
-        if (scriptFile.getParentFile() == null) return;
-        try (URLClassLoader loader = new URLClassLoader(new URL[]{scriptFile.getParentFile().toURI().toURL()})){
-
-            String shortName = FileUtil.stripFileExtension(scriptFile.getName());
+        try {
+            ClassLoader loader = new URLClassLoader(new URL[]{scriptFile.getParentFile().toURI().toURL()});
+            String shortName = FilenameUtils.removeExtension(scriptFile.getName());
             try { // Try first at the root of the script dir, for compatibility
                 m_res = ResourceBundle.getBundle(shortName, Locale.getDefault(), loader); 
             } catch (MissingResourceException e) {

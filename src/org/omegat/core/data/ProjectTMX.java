@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.omegat.core.segmentation.Segmenter;
+import org.omegat.core.Core;
 import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
@@ -300,9 +300,9 @@ public class ProjectTMX {
                 translation = tuvTarget.text;
             }
 
-            List<String> sources = new ArrayList<>();
-            List<String> targets = new ArrayList<>();
-            Segmenter.segmentEntries(sentenceSegmentingEnabled && isParagraphSegtype, sourceLang,
+            List<String> sources = new ArrayList<String>();
+            List<String> targets = new ArrayList<String>();
+            Core.getSegmenter().segmentEntries(sentenceSegmentingEnabled && isParagraphSegtype, sourceLang,
                     tuvSource.text, targetLang, translation, sources, targets);
 
             synchronized (this) {
