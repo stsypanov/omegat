@@ -26,12 +26,7 @@
 package org.omegat.core.data;
 
 import java.io.File;
-import java.util.TreeMap;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.omegat.util.Language;
 
@@ -79,16 +74,4 @@ public class TmxSegmentationTest extends TestCase {
         Assert.assertEquals("Just a test.", tmx.getEntries().get(1).source);
         Assert.assertEquals("Juste un test.", tmx.getEntries().get(1).translation);
     }
-
-	@NotNull
-	private ProjectProperties getProjectProperties() {
-		Segmenter.srx = SRX.getDefault();
-
-		ProjectProperties props = new ProjectProperties();
-		props.setSupportDefaultTranslations(true);
-		props.setSourceLanguage(new Language("en"));
-		props.setTargetLanguage(new Language("fr"));
-		props.setSentenceSegmentingEnabled(true);
-		return props;
-	}
 }
