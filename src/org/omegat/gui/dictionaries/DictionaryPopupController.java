@@ -1,6 +1,7 @@
 package org.omegat.gui.dictionaries;
 
-import org.omegat.core.dictionaries.BaseDictionariesManager;
+import org.omegat.core.Core;
+import org.omegat.core.dictionaries.DictionariesManager;
 import org.omegat.core.dictionaries.DictionaryEntry;
 import org.omegat.gui.popup.dictionary.DictionaryPopup;
 
@@ -45,7 +46,7 @@ public class DictionaryPopupController {
     }
 
     protected SearchByKeyProvider getPopupModel() {
-        return new DictionaryPopupModel(new BaseDictionariesManager());
+        return new DictionaryPopupModel(new DictionariesManager(Core.getDictionaries()));
     }
 
     protected void processKeyEvent(KeyEvent e) {

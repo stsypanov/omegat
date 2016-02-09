@@ -1,13 +1,13 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool
-          with fuzzy matching, translation memory, keyword search,
-          glossaries, and translation leveraging into updated projects.
+ with fuzzy matching, translation memory, keyword search,
+ glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2009 Alex Buloichik
-               2011 Didier Briel
-               2015 Aaron Madlon-Kay
-               Home page: http://www.omegat.org/
-               Support center: http://groups.yahoo.com/group/OmegaT/
+ 2011 Didier Briel
+ 2015 Aaron Madlon-Kay
+ Home page: http://www.omegat.org/
+ Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -35,12 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.omegat.core.Core;
@@ -52,12 +47,12 @@ import org.omegat.util.OConsts;
 
 /**
  * Class for load dictionaries.
- * 
+ *
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
  * @author Aaron Madlon-Kay
  */
-public class DictionariesManager extends BaseDictionariesManager implements DirectoryMonitor.Callback {
+public class DictionariesManager implements DirectoryMonitor.Callback {
     public static final String IGNORE_FILE = "ignore.txt";
     public static final String DICTIONARY_SUBDIR = "dictionary";
 
@@ -66,9 +61,9 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     protected final List<IDictionaryFactory> factories = new ArrayList<IDictionaryFactory>();
     protected final Map<String, IDictionary> dictionaries = new TreeMap<String, IDictionary>();
     protected final Set<String> ignoreWords = new TreeSet<String>();
+    protected Set<String> loadedKeys;
 
     public DictionariesManager(final IDictionaries pane) {
-        super();
         this.pane = pane;
         factories.add(new LingvoDSL());
         factories.add(new StarDict());
@@ -103,7 +98,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     }
 
     /**
-     * Executed if file is changed.
+     * Executed on file changed.
      */
     public void fileChanged(File file) {
         synchronized (dictionaries) {
@@ -115,7 +110,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
         try {
             long st = System.currentTimeMillis();
             if (file.getName().equals(IGNORE_FILE)) {
-                loadIgnoreWords(file);
+                loadIgnoredWords(file);
             } else if (loadDictionary(file)) {
                 long en = System.currentTimeMillis();
                 Log.log("Loaded dictionary from '" + file.getPath() + "': " + (en - st) + "ms");
@@ -172,7 +167,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
                 ignoreWords.clear();
                 String line;
                 while ((line = rd.readLine()) != null) {
-                    ignoredWords.add(line.trim());
+                    ignoreWords.add(line.trim());
                 }
             }
             rd.close();
@@ -186,16 +181,20 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
     }
 
     /**
-     * Add new ignored word.
+     * Add new ignore word.
      */
     public void addIgnoredWord(final String word) {
-        ignoredWords.add(word);
-        saveIgnoredWords(ignoredWords);
+        Collection<String> words = Collections.emptyList();
+        synchronized (ignoreWords) {
+            ignoreWords.add(word);
+            words = new ArrayList<String>(ignoreWords);
+        }
+        saveIgnoredWords(words);
     }
 
     private synchronized void saveIgnoredWords(Collection<String> words) {
         if (monitor == null) {
-            Log.log("Could not save ignored words because no dictionary dir has been set.");
+            Log.log("Could not save ignore words because no dictionary dir has been set.");
             return;
         }
 
@@ -218,7 +217,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             osw.close();
             fos.close();
         } catch (Exception ex) {
-            Log.log("Error saving ignored words: " + ex.getMessage());
+            Log.log("Error saving ignore words: " + ex.getMessage());
         } finally {
             IOUtils.closeQuietly(wr);
             IOUtils.closeQuietly(osw);
@@ -234,7 +233,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
 
     /**
      * Find words list in all dictionaries.
-     * 
+     *
      * @param words
      *            words list
      * @return articles list
@@ -244,7 +243,7 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
         synchronized (this) {
             dicts = new ArrayList<IDictionary>(dictionaries.values());
         }
-        List<DictionaryEntry> result = new ArrayList<>();
+        List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
         for (String word : words) {
             for (IDictionary di : dicts) {
                 if (isIgnoreWord(word)) {
@@ -267,5 +266,26 @@ public class DictionariesManager extends BaseDictionariesManager implements Dire
             }
         }
         return result;
+    }
+
+    public Set<String> getKeys(String key) {
+        if (loadedKeys == null) {
+            loadKeys();
+        }
+        Set<String> possibleKeys = new TreeSet<>();
+        for (String loadedKey : loadedKeys) {
+            if (loadedKey.startsWith(key)) {
+                possibleKeys.add(loadedKey);
+            }
+        }
+        return possibleKeys;
+    }
+
+    private void loadKeys() {
+        loadedKeys = new HashSet<>();
+        for (IDictionary dictionary : dictionaries.values()) {
+            Set<String> strings = dictionary.getKeys();
+            loadedKeys.addAll(strings);
+        }
     }
 }
