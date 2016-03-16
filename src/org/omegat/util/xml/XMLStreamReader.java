@@ -26,6 +26,7 @@
 package org.omegat.util.xml;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,7 +46,7 @@ import org.omegat.util.StringUtil;
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
  */
-public class XMLStreamReader {
+public class XMLStreamReader implements Closeable {
     private DefaultEntityFilter entityFilter;
 
     public XMLStreamReader() {
@@ -1201,6 +1202,7 @@ public class XMLStreamReader {
     }
 
     /** Closes the TMX file */
+    @Override
     public void close() throws IOException {
         if (m_bufferedReader != null) {
             m_bufferedReader.close();

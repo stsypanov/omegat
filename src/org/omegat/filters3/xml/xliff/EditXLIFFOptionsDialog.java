@@ -37,7 +37,6 @@ import javax.swing.AbstractAction;
 import org.omegat.filters3.xml.xliff.XLIFFOptions.ID_TYPE;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -75,7 +74,7 @@ public class EditXLIFFOptionsDialog extends PeroDialog {
                 doClose(RET_CANCEL);
             }
         });
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     private final XLIFFOptions options;

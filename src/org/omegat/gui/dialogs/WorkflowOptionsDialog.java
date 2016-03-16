@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -72,8 +71,7 @@ public class WorkflowOptionsDialog extends PeroDialog {
         if (!Preferences.existsPreference(Preferences.BEST_MATCH_EXPLANATORY_TEXT)) {
             prefixText.setText(OStrings.getString("WF_DEFAULT_PREFIX"));
         } else {
-            prefixText.setText(Preferences.getPreferenceDefaultAllowEmptyString(
-                                         Preferences.BEST_MATCH_EXPLANATORY_TEXT));
+            prefixText.setText(Preferences.getPreference(Preferences.BEST_MATCH_EXPLANATORY_TEXT));
         }
         prefixText.setEnabled(insertFuzzyCheckBox.isSelected());
 
@@ -88,7 +86,7 @@ public class WorkflowOptionsDialog extends PeroDialog {
         cbSaveAutoStatus.setSelected(Preferences.isPreference(Preferences.SAVE_AUTO_STATUS));
         initialSegCountSpinner.setValue(Preferences.getPreferenceDefault(Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT,
                 Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT_DEFAULT));
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */

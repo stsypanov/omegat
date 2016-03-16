@@ -40,7 +40,6 @@ import javax.swing.JTextField;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -80,7 +79,7 @@ public class EditXOptionsDialog extends PeroDialog {
                 doClose(RET_CANCEL);
             }
         });
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     private final XHTMLOptions options;

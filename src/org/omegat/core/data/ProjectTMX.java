@@ -122,8 +122,11 @@ public class ProjectTMX {
     public void save(ProjectProperties props, String translationFile, boolean translationUpdatedByUser)
             throws Exception {
         if (!translationUpdatedByUser) {
-            Log.logInfoRB("LOG_DATAENGINE_SAVE_NONEED");
-            return;
+            if (new File(translationFile).exists()) {
+                // if there is no file - need to save it
+                Log.logInfoRB("LOG_DATAENGINE_SAVE_NONEED");
+                return;
+            }
         }
 
         File newFile = new File(translationFile + OConsts.NEWFILE_EXTENSION);
@@ -378,9 +381,11 @@ public class ProjectTMX {
 
         boolean existSourceInProject(String src);
     }
-    
+
     public void replaceContent(ProjectTMX tmx) {
-        defaults = tmx.defaults;
-        alternatives = tmx.alternatives;
+        synchronized (this) {
+            defaults = tmx.defaults;
+            alternatives = tmx.alternatives;
+        }
     }
 }

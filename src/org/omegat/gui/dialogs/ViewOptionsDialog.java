@@ -34,7 +34,6 @@ import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.ModificationInfoManager;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -79,7 +78,7 @@ public class ViewOptionsDialog extends PeroDialog {
 
         invalidate();
         pack();
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -103,12 +102,12 @@ public class ViewOptionsDialog extends PeroDialog {
         templateLabel = new javax.swing.JLabel();
         modInfoTemplate = new javax.swing.JTextField();
         variablesLabel = new javax.swing.JLabel();
-        variablesList = new javax.swing.JComboBox();
+        variablesList = new javax.swing.JComboBox<String>();
         insertButton = new javax.swing.JButton();
         templateLabelND = new javax.swing.JLabel();
         modInfoTemplateND = new javax.swing.JTextField();
         variablesLabelND = new javax.swing.JLabel();
-        variablesListND = new javax.swing.JComboBox();
+        variablesListND = new javax.swing.JComboBox<String>();
         insertButtonND = new javax.swing.JButton();
         simplifyPPTooltips = new javax.swing.JCheckBox();
         templateActivator = new javax.swing.JCheckBox();
@@ -200,7 +199,7 @@ public class ViewOptionsDialog extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 4, 0);
         getContentPane().add(variablesLabel, gridBagConstraints);
 
-        variablesList.setModel(new DefaultComboBoxModel(org.omegat.gui.editor.ModificationInfoManager.MOD_INFO_VARIABLES));
+        variablesList.setModel(new DefaultComboBoxModel<>(ModificationInfoManager.MOD_INFO_VARIABLES));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 10;
@@ -247,7 +246,7 @@ public class ViewOptionsDialog extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 4, 4);
         getContentPane().add(variablesLabelND, gridBagConstraints);
 
-        variablesListND.setModel(new DefaultComboBoxModel(org.omegat.gui.editor.ModificationInfoManager.MOD_INFO_VARIABLES_NO_DATE));
+        variablesListND.setModel(new DefaultComboBoxModel<>(ModificationInfoManager.MOD_INFO_VARIABLES_NO_DATE));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 13;
@@ -362,8 +361,8 @@ public class ViewOptionsDialog extends PeroDialog {
     private javax.swing.JLabel templateLabelND;
     private javax.swing.JLabel variablesLabel;
     private javax.swing.JLabel variablesLabelND;
-    private javax.swing.JComboBox variablesList;
-    private javax.swing.JComboBox variablesListND;
+    private javax.swing.JComboBox<String> variablesList;
+    private javax.swing.JComboBox<String> variablesListND;
     private javax.swing.JCheckBox viewSourceAllBold;
     // End of variables declaration//GEN-END:variables
 

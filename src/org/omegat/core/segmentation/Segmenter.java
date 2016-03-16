@@ -45,14 +45,14 @@ import org.omegat.util.PatternConsts;
  */
 public final class Segmenter {
     
-    private SRX srx;
+    private final SRX srx;
 
-    public Segmenter() {
-        setSRX(SRX.getDefault());
+    public Segmenter(SRX srx) {
+        this.srx = srx;
     }
 
-    public void setSRX(SRX srx) {
-        this.srx = srx;
+    public SRX getSRX() {
+        return srx;
     }
 
     /**
@@ -69,9 +69,9 @@ public final class Segmenter {
      * @param paragraph
      *            the paragraph text
      * @param spaces
-     *            list to store information about spaces between sentences
+     *            list to store information about spaces between sentences (can be null)
      * @param brules
-     *            list to store rules that account to breaks
+     *            list to store rules that account to breaks (can be null)
      * @return list of sentences (String objects)
      */
     public List<String> segment(Language lang, String paragraph, List<StringBuilder> spaces,
@@ -80,10 +80,10 @@ public final class Segmenter {
             return null;
         }
         List<String> segments = breakParagraph(lang, paragraph, brules);
-        List<String> sentences = new ArrayList<>(segments.size());
-        if (spaces == null)
-            spaces = new ArrayList<>();
-        spaces.clear();
+        List<String> sentences = new ArrayList<String>(segments.size());
+        if (spaces != null) {
+            spaces.clear();
+        }
         for (String one : segments) {
             int len = one.length();
             int b = 0;
@@ -127,12 +127,10 @@ public final class Segmenter {
      * @param paragraph
      *            the paragraph text
      * @param brules
-     *            list to store rules that account to breaks
+     *            list to store rules that account to breaks (can be null)
      */
     private List<String> breakParagraph(Language lang, String paragraph, List<Rule> brules) {
         List<Rule> rules = srx.lookupRulesForLanguage(lang);
-        if (brules == null)
-            brules = new ArrayList<>();
 
         // determining the applicable break positions
         Set<BreakPosition> dontbreakpositions = new TreeSet<>();
@@ -151,13 +149,17 @@ public final class Segmenter {
         breakpositions.removeAll(dontbreakpositions);
 
         // and now breaking the string according to the positions
-        List<String> segments = new ArrayList<>(breakpositions.size());
-        brules.clear();
+        List<String> segments = new ArrayList<String>();
+        if (brules != null) {
+            brules.clear();
+        }
         int prevpos = 0;
         for (BreakPosition bposition : breakpositions) {
             String oneseg = paragraph.substring(prevpos, bposition.position);
             segments.add(oneseg);
-            brules.add(bposition.reason);
+            if (brules != null) {
+                brules.add(bposition.reason);
+            }
             prevpos = bposition.position;
         }
         try {

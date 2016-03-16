@@ -45,7 +45,6 @@ import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -56,6 +55,8 @@ import org.omegat.util.gui.StaticUIUtils;
  */
 @SuppressWarnings("serial")
 public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
+
+    private static final String OLD_DICT_URL = "http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/";
 
     private final JFileChooser fileChooser = new JFileChooser();
 
@@ -79,7 +80,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
     /**
      * the language list model
      */
-    private final DefaultListModel languageListModel;
+    private final DefaultListModel<String> languageListModel;
 
     public int getReturnStatus() {
         return returnStatus;
@@ -104,7 +105,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
 
         currentLanguage = current;
 
-        languageListModel = new DefaultListModel();
+        languageListModel = new DefaultListModel<>();
 
         // initialize things from the preferences
         autoSpellcheckCheckBox.setSelected(Preferences.isPreference(Preferences.ALLOW_AUTO_SPELLCHECKING));
@@ -145,12 +146,12 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
         String dictionaryUrl = Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL);
         if (dictionaryUrl.isEmpty()
                 || //string below was default prior to 2.5.0 update 5, but is not working. Override with new default.
-                "http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/".equalsIgnoreCase(dictionaryUrl)) {
+                OLD_DICT_URL.equalsIgnoreCase(dictionaryUrl)) {
             dictionaryUrlTextField.setText(OConsts.REMOTE_SC_DICTIONARY_LIST_LOCATION);
         } else {
             dictionaryUrlTextField.setText(Preferences.getPreference(Preferences.SPELLCHECKER_DICTIONARY_URL));
         }
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
         updateDirectory();
         languageListValueChanged(null);
     }
@@ -240,7 +241,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         contentLabel = new javax.swing.JLabel();
         languageScrollPane = new javax.swing.JScrollPane();
-        languageList = new javax.swing.JList();
+        languageList = new javax.swing.JList<String>();
         jPanel4 = new javax.swing.JPanel();
         uninstallButton = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
@@ -381,8 +382,8 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void languageListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_languageListValueChanged
-        Object[] selection = languageList.getSelectedValues();
-        uninstallButton.setEnabled(selection.length > 0 && autoSpellcheckCheckBox.isSelected());
+        List<String> selection = languageList.getSelectedValuesList();
+        uninstallButton.setEnabled(!selection.isEmpty() && autoSpellcheckCheckBox.isSelected());
     }//GEN-LAST:event_languageListValueChanged
 
     private void directoryTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryTextFieldActionPerformed
@@ -442,10 +443,9 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
             return; // this should never happen - just in case it does
         }
         if (currentLanguage != null) {
-            Object[] selection = languageList.getSelectedValues();
-            for (Object item : selection) {
-                String selectedItem = (String) item;
-                String selectedLocaleName = selectedItem.substring(0, selectedItem.indexOf(' '));
+            List<String> selection = languageList.getSelectedValuesList();
+            for (String selectedItem : selection) {
+                String selectedLocaleName = selectedItem.substring(0, selectedItem.indexOf(" "));
 
                 if (selectedLocaleName.equals(currentLanguage.getLocaleCode())) {
                     if (JOptionPane.showConfirmDialog(this,
@@ -504,7 +504,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JList languageList;
+    private javax.swing.JList<String> languageList;
     private javax.swing.JScrollPane languageScrollPane;
     private javax.swing.JButton okButton;
     private javax.swing.JButton uninstallButton;

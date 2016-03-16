@@ -414,6 +414,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(new JSeparator());
         optionsMenu.add(optionsRestoreGUIMenuItem = createMenuItem("MW_OPTIONSMENU_RESTORE_GUI"));
         optionsMenu.add(optionsAccessConfigDirMenuItem = createMenuItem("MW_OPTIONSMENU_ACCESS_CONFIG_DIR"));
+        optionsMenu.add(optionsRepositoriesCredentialsItem = createMenuItem("TEAM_REPOSITORIES_DIALOG"));
         optionsMenu.add(new JSeparator());
         optionsMenu.add(baseFilteringMenuItem = createMenuItem("MW_OPTIONSMENU_BASE_FILTERING"));
         optionsMenu.add(hideFileListMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_HIDE_FILE_LIST"));
@@ -743,6 +744,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem baseFilteringMenuItem;
     JMenuItem hideFileListMenuItem;
     JMenuItem optionsAccessConfigDirMenuItem;
+    JMenuItem optionsRepositoriesCredentialsItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;
     JMenuItem optionsSpellCheckMenuItem;

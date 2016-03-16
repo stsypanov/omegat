@@ -38,7 +38,7 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * Utilities for string processing.
- *
+ * 
  * @author Maxym Mykhalchuk
  * @author Didier Briel
  * @author Tiago Saboga
@@ -259,18 +259,19 @@ public class StringUtil {
                     : text.substring(0, remainderOffset).toUpperCase(locale);
         return first + text.substring(remainderOffset).toLowerCase(locale);
     }
-
-	/**
-	 * Returns first not null object from list, or null if all values is null.
-	 */
-	public static <T> T nvl(T... values) {
-		for (T value : values) {
-			if (value != null) {
-				return value;
-			}
-		}
-		return null;
-	}
+    
+    /**
+     * Returns first not null object from list, or null if all values is null.
+     */
+    @SafeVarargs
+    public static <T> T nvl(T... values) {
+        for (T val : values) {
+            if (val != null) {
+                return val;
+            }
+        }
+        return null;
+    }
 
 	/**
 	 * Returns first non-zero object from list, or zero if all values is null.

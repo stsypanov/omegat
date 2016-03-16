@@ -67,9 +67,9 @@ public class SearchWindowForm extends javax.swing.JFrame {
         buttonGroupSearchState = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         m_searchLabel = new javax.swing.JLabel();
-        m_searchField = new javax.swing.JComboBox();
+        m_searchField = new javax.swing.JComboBox<String>();
         m_replaceLabel = new javax.swing.JLabel();
-        m_replaceField = new javax.swing.JComboBox();
+        m_replaceField = new javax.swing.JComboBox<String>();
         m_searchButton = new javax.swing.JButton();
         m_panelSearch = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -714,6 +714,7 @@ public class SearchWindowForm extends javax.swing.JFrame {
     javax.swing.JCheckBox m_excludeOrphans;
     javax.swing.JCheckBox m_fileNamesCB;
     javax.swing.JButton m_filterButton;
+    javax.swing.JCheckBox m_fullHalfWidthInsensitive;
     javax.swing.JLabel m_numberLabel;
     javax.swing.JSpinner m_numberOfResults;
     javax.swing.JPanel m_panelReplace;
@@ -725,7 +726,7 @@ public class SearchWindowForm extends javax.swing.JFrame {
     javax.swing.JButton m_replaceButton;
     javax.swing.JCheckBox m_replaceCase;
     javax.swing.JRadioButton m_replaceExactSearchRB;
-    javax.swing.JComboBox m_replaceField;
+    javax.swing.JComboBox<String> m_replaceField;
     javax.swing.JLabel m_replaceLabel;
     javax.swing.JRadioButton m_replaceRegexpSearchRB;
     javax.swing.JCheckBox m_replaceSpaceMatchNbsp;
@@ -736,7 +737,7 @@ public class SearchWindowForm extends javax.swing.JFrame {
     javax.swing.JCheckBox m_searchCase;
     javax.swing.JCheckBox m_searchCommentsCB;
     javax.swing.JRadioButton m_searchExactSearchRB;
-    javax.swing.JComboBox m_searchField;
+    javax.swing.JComboBox<String> m_searchField;
     javax.swing.JRadioButton m_searchKeywordSearchRB;
     javax.swing.JLabel m_searchLabel;
     javax.swing.JCheckBox m_searchNotesCB;
@@ -748,6 +749,5 @@ public class SearchWindowForm extends javax.swing.JFrame {
     javax.swing.JCheckBox m_searchTranslation;
     javax.swing.JRadioButton m_searchUntranslated;
     javax.swing.JTextPane m_viewer;
-    javax.swing.JCheckBox m_fullHalfWidthInsensitive;
     // End of variables declaration//GEN-END:variables
 }

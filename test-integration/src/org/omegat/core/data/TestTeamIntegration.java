@@ -1,11 +1,11 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool
- with fuzzy matching, translation memory, keyword search,
- glossaries, and translation leveraging into updated projects.
+          with fuzzy matching, translation memory, keyword search,
+          glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2014 Alex Buloichik
- Home page: http://www.omegat.org/
- Support center: http://groups.yahoo.com/group/OmegaT/
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -34,16 +34,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.omegat.core.data.ProjectTMX.CheckOrphanedCallback;
-import org.omegat.core.team.GITRemoteRepository;
-import org.omegat.core.team.IRemoteRepository;
-import org.omegat.core.team.SVNRemoteRepository;
+import org.omegat.core.team2.RemoteRepositoryProvider;
 import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
+import org.omegat.util.ProjectFileStorage;
 import org.omegat.util.TMXWriter2;
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -54,6 +54,9 @@ import org.tmatesoft.svn.core.wc.ISVNOptions;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
+
+import gen.core.project.RepositoryDefinition;
+import gen.core.project.RepositoryMapping;
 
 /**
  * This is test for team project concurrent modification. It doesn't simple junit test, but looks like
@@ -220,26 +223,44 @@ public class TestTeamIntegration {
 		File origDir = new File(tmp, "repo");
 		origDir.mkdir();
 
-		IRemoteRepository repo = TestTeamIntegration.createRepo(REPO, origDir.getPath());
-		repo.checkoutFullProject(REPO);
+        ProjectProperties config = createConfig(origDir);
+        RemoteRepositoryProvider remote = new RemoteRepositoryProvider(config.getProjectRootDir(), config.getRepositories());
+        remote.switchAllToLatest();
 
-		File f = new File(origDir, "omegat/project_save.tmx");
-		TMXWriter2 wr = new TMXWriter2(f, new Language("en"), new Language("be"), true, false, true);
-		wr.close();
+        new File(origDir, "omegat").mkdirs();
+        File f = new File(origDir, "omegat/project_save.tmx");
+        TMXWriter2 wr = new TMXWriter2(f, new Language("en"), new Language("be"), true, false, true);
+        wr.close();
 
-		repo.upload(f, "Prepare for team test");
-		return repo.getBaseRevisionId(f);
-	}
+        ProjectFileStorage.writeProjectFile(config);
 
-	static IRemoteRepository createRepo(String url, String dir) throws Exception {
-		if (url.startsWith("git")) {
-			return new GITRemoteRepository(new File(dir));
-		} else if (url.startsWith("svn") || url.startsWith("https")) {
-			return new SVNRemoteRepository(new File(dir));
-		} else {
-			throw new Exception("Unknown repo");
-		}
-	}
+        remote.copyFilesFromProjectToRepo("omegat.project", null);
+        remote.commitFiles("omegat.project", "Prepare for team test");
+        remote.copyFilesFromProjectToRepo("omegat/project_save.tmx", null);
+        remote.commitFiles("omegat/project_save.tmx", "Prepare for team test");
+
+        return remote.getVersion("omegat/project_save.tmx");
+    }
+
+    static ProjectProperties createConfig(File dir) throws Exception {
+        ProjectProperties config = new ProjectProperties(dir);
+        RepositoryDefinition def = new RepositoryDefinition();
+        if (REPO.startsWith("git")) {
+            def.setType("git");
+        } else if (REPO.startsWith("svn") || REPO.startsWith("https")) {
+            def.setType("svn");
+        } else {
+            throw new RuntimeException("Unknown repo");
+        }
+        def.setUrl(REPO);
+        RepositoryMapping m = new RepositoryMapping();
+        m.setLocal("");
+        m.setRepository("");
+        def.getMapping().add(m);
+        config.setRepositories(new ArrayList<RepositoryDefinition>());
+        config.getRepositories().add(def);
+        return config;
+    }
 
 	static Team createRepo2(String url, String dir) throws Exception {
 		if (url.startsWith("git")) {
@@ -260,14 +281,16 @@ public class TestTeamIntegration {
 		volatile boolean finished;
 		String source;
 
-		public Run(String source, File dir, int delay) throws Exception {
-			this.source = source;
-			URLClassLoader cl = (URLClassLoader) TestTeamIntegration.class.getClassLoader();
-			URL[] urls = cl.getURLs();
-			List<String> cp = new ArrayList<>(urls.length);
-			for (URL u : urls) {
-				cp.add(u.getFile());
-			}
+        public Run(String source, File dir, int delay) throws Exception {
+            this.source = source;
+            URLClassLoader cl = (URLClassLoader) TestTeamIntegration.class.getClassLoader();
+            List<String> cp = new ArrayList<String>();
+            for (URL u : cl.getURLs()) {
+                cp.add(u.getFile());
+            }
+            FileUtils.copyFile(new File(DIR + "/repo/omegat.project"), new File(DIR + "/" + source
+                    + "/omegat.project"));
+            new File(DIR + "/" + source + "/omegat/").mkdirs();
 
 			System.err.println("Execute: " + source + ' ' + (PROCESS_SECONDS * 1000) + ' '
 					+ dir.getAbsolutePath() + ' ' + REPO + ' ' + delay + ' ' + SEG_COUNT);

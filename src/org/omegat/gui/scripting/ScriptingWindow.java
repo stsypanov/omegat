@@ -308,7 +308,7 @@ public class ScriptingWindow extends PeroFrame {
 
         setupDirectorySelection(panelNorth);
 
-        m_scriptList = new JList();
+        m_scriptList = new JList<>();
         JScrollPane scrollPaneList = new JScrollPane(m_scriptList);
 
         m_scriptList.addListSelectionListener(new ListSelectionListener() {
@@ -681,7 +681,7 @@ public class ScriptingWindow extends PeroFrame {
 
     private static final int NUMBERS_OF_QUICK_SCRIPTS = 12;
 
-    private JList m_scriptList;
+    private JList<ScriptItem> m_scriptList;
     private JEditorPane m_txtResult;
     private JTextArea m_txtScriptEditor;
     private JButton m_btnRunScript;

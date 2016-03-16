@@ -48,7 +48,6 @@ import org.omegat.gui.editor.autotext.AutotextPair;
 import org.omegat.gui.editor.autotext.AutotextTableModel;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -99,7 +98,7 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         setPreferredSize(new Dimension(500, 500));
         pack();
         
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
     
     /**

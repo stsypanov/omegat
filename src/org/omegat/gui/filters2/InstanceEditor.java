@@ -36,7 +36,6 @@ import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
 
@@ -70,7 +69,6 @@ public class InstanceEditor extends PeroDialog {
         StaticUIUtils.setEscapeClosable(this);
 
         pack();
-        DockingUI.displayCentered(this);
     }
 
     /**
@@ -82,6 +80,7 @@ public class InstanceEditor extends PeroDialog {
         super(parent, true);
         initComponents();
         init2(sourceEncodingVariable, targetEncodingVariable, hint);
+        setLocationRelativeTo(parent);
         setTitle(OStrings.getString("INSTANCEEDITOR_TITLE_ADD"));
         Mnemonics.setLocalizedText(addOrUpdateButton, OStrings.getString("BUTTON_OK"));
     }
@@ -96,6 +95,7 @@ public class InstanceEditor extends PeroDialog {
         super(parent, true);
         initComponents();
         init2(sourceEncodingVariable, targetEncodingVariable, hint);
+        setLocationRelativeTo(parent);
         setTitle(OStrings.getString("INSTANCEEDITOR_TITLE_UPDATE"));
 
         Mnemonics.setLocalizedText(addOrUpdateButton, OStrings.getString("BUTTON_OK"));
@@ -150,15 +150,15 @@ public class InstanceEditor extends PeroDialog {
         hintTextArea = new javax.swing.JTextArea();
         tfnpPanel = new javax.swing.JPanel();
         insertButton = new javax.swing.JButton();
-        substitute = new javax.swing.JComboBox();
+        substitute = new javax.swing.JComboBox<String>();
         jLabel4 = new javax.swing.JLabel();
         targetFilenamePatternField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         sourceFilenameMaskField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        sourceEncodingField = new javax.swing.JComboBox();
+        sourceEncodingField = new javax.swing.JComboBox<String>();
         jLabel6 = new javax.swing.JLabel();
-        targetEncodingField = new javax.swing.JComboBox();
+        targetEncodingField = new javax.swing.JComboBox<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(OStrings.getString("INSTANCEEDITOR_TITLE_ADD")); // NOI18N
@@ -224,7 +224,7 @@ public class InstanceEditor extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         tfnpPanel.add(insertButton, gridBagConstraints);
 
-        substitute.setModel(new DefaultComboBoxModel(AbstractFilter.TARGET_FILENAME_PATTERNS));
+        substitute.setModel(new DefaultComboBoxModel<>(AbstractFilter.TARGET_FILENAME_PATTERNS));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -287,7 +287,7 @@ public class InstanceEditor extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(jLabel3, gridBagConstraints);
 
-        sourceEncodingField.setModel(new DefaultComboBoxModel(FilterMaster.getSupportedEncodings().toArray()));
+        sourceEncodingField.setModel(new DefaultComboBoxModel<>(FilterMaster.getSupportedEncodings().toArray(new String[0])));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -304,7 +304,7 @@ public class InstanceEditor extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(jLabel6, gridBagConstraints);
 
-        targetEncodingField.setModel(new DefaultComboBoxModel(FilterMaster.getSupportedEncodings().toArray()));
+        targetEncodingField.setModel(new DefaultComboBoxModel<>(FilterMaster.getSupportedEncodings().toArray(new String[0])));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -354,10 +354,10 @@ public class InstanceEditor extends PeroDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JComboBox sourceEncodingField;
+    private javax.swing.JComboBox<String> sourceEncodingField;
     private javax.swing.JTextField sourceFilenameMaskField;
-    private javax.swing.JComboBox substitute;
-    private javax.swing.JComboBox targetEncodingField;
+    private javax.swing.JComboBox<String> substitute;
+    private javax.swing.JComboBox<String> targetEncodingField;
     private javax.swing.JTextField targetFilenamePatternField;
     private javax.swing.JPanel tfnpPanel;
     // End of variables declaration//GEN-END:variables

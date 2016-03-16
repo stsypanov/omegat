@@ -30,6 +30,7 @@
 package org.omegat.core.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,13 +38,17 @@ import java.util.List;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
+import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
 
 import gen.core.filters.Filters;
+import gen.core.project.RepositoryDefinition;
 
 /**
  * Storage for project properties. May read and write project from/to disk.
@@ -75,16 +80,15 @@ public class ProjectProperties {
 
     /** Default constructor to initialize fields (to get no NPEs). */
     public ProjectProperties(File projectDir) throws Exception {
-        projectName = projectDir.getCanonicalFile().getName();
-        projectRoot = projectDir.getAbsolutePath() + File.separator;
-        setSourceRoot(projectRoot + OConsts.DEFAULT_SOURCE + File.separator);
+        projectRootDir = projectDir;
+        projectName = projectDir.getName();
+        setSourceRoot(getProjectRoot() + OConsts.DEFAULT_SOURCE + File.separator);
         sourceRootExcludes.addAll(Arrays.asList(DEFAULT_EXCLUDES));
-        setTargetRoot(projectRoot + OConsts.DEFAULT_TARGET + File.separator);
-        setGlossaryRoot(projectRoot + OConsts.DEFAULT_GLOSSARY + File.separator);
-        setWriteableGlossary(projectRoot + OConsts.DEFAULT_GLOSSARY + File.separator + OConsts.DEFAULT_W_GLOSSARY);
-        setTMRoot(projectRoot + OConsts.DEFAULT_TM + File.separator);
-        setDictRoot(projectRoot + OConsts.DEFAULT_DICT + File.separator);
-        baseFilteringItems = projectRoot + OConsts.FILTERING_ITEMS_FILE_NAME;
+        setTargetRoot(getProjectRoot() + OConsts.DEFAULT_TARGET + File.separator);
+        setGlossaryRoot(getProjectRoot() + OConsts.DEFAULT_GLOSSARY + File.separator);
+        setWriteableGlossary(getProjectRoot() + OConsts.DEFAULT_GLOSSARY + File.separator + OConsts.DEFAULT_W_GLOSSARY);
+        setTMRoot(getProjectRoot() + OConsts.DEFAULT_TM + File.separator);
+        setDictRoot(getProjectRoot() + OConsts.DEFAULT_DICT + File.separator);
 
         sentenceSegmentingOn = true;
         supportDefaultTranslations = true;
@@ -105,7 +109,7 @@ public class ProjectProperties {
         }
 
         projectSRX = SRX.loadSRX(new File(getProjectInternal(), SRX.CONF_SENTSEG));
-        projectFilters = FilterMaster.loadConfig(getProjectInternal());
+        projectFilters = FilterMaster.loadConfig(new File(getProjectInternal(), FilterMaster.FILE_FILTERS));
 
         sourceTokenizer = PluginUtils.getTokenizerClassForLanguage(sourceLanguage);
         targetTokenizer = PluginUtils.getTokenizerClassForLanguage(targetLanguage);
@@ -113,95 +117,135 @@ public class ProjectProperties {
 
 	/** Returns The Target (Compiled) Files Directory */
     public String getTargetRoot() {
-        return targetRoot;
+        return targetDir.getAsString();
     }
 
     /** Sets The Target (Compiled) Files Directory */
     public void setTargetRoot(String targetRoot) {
         if (!StringUtil.isEmpty(targetRoot)) {
-            this.targetRoot = targetRoot;
+            targetDir.setRelativeOrAbsolute(targetRoot);
         }
+    }
+
+    public void setTargetRootRelative(String targetRootRelative) {
+        targetDir.setRelativeOrAbsolute(targetRootRelative);
+    }
+
+    public ProjectPath getTargetDir() {
+        return targetDir;
     }
 
     /** Returns The Glossary Files Directory */
     public String getGlossaryRoot() {
-        return glossaryRoot;
+        return glossaryDir.getAsString();
     }
 
     /** Sets The Glossary Files Directory */
     public void setGlossaryRoot(String glossaryRoot) {
         if (!StringUtil.isEmpty(glossaryRoot)) {
-            this.glossaryRoot = glossaryRoot;
+            glossaryDir.setRelativeOrAbsolute(glossaryRoot);
         }
     }
 
+    public ProjectPath getGlossaryDir() {
+        return glossaryDir;
+    }
+
+    public void setGlossaryRootRelative(String glossaryRootRelative) {
+        glossaryDir.setRelativeOrAbsolute(glossaryRootRelative);
+    }
+
+    public ProjectPath getWritableGlossaryFile() {
+        return writableGlossaryFile;
+    }
     /** Returns The Glossary File Location */
     public String getWriteableGlossary() {
-        return writeableGlossaryFile;
+        return writableGlossaryFile.getAsString();
     }
 
     /** Returns The Glossary File Directory */
     public String getWriteableGlossaryDir() {
-        File fDir = new File(writeableGlossaryFile);
-        return fDir.getParent();
+        ProjectPath dir = new ProjectPath(true);
+        dir.setRelativeOrAbsolute(writableGlossaryFile.getAsFile().getParent());
+        return dir.getAsString();
     }
 
     /** Sets The Writeable Glossary File Location */
     public void setWriteableGlossary(String writeableGlossaryFile) {
         if (!StringUtil.isEmpty(writeableGlossaryFile)) {
-            this.writeableGlossaryFile = writeableGlossaryFile;
+            writableGlossaryFile.setRelativeOrAbsolute(writeableGlossaryFile);
         }
     }
 
     public boolean isDefaultWriteableGlossaryFile() {
-        return writeableGlossaryFile.equals(computeDefaultWriteableGlossaryFile());
+        return computeDefaultWriteableGlossaryFile().equals(writableGlossaryFile.getAsString());
     }
 
     public String computeDefaultWriteableGlossaryFile() {
         // Default glossary file name depends on where glossaryDir is:
         //  - Inside project folder: glossary.txt
         //  - Outside project folder: ${projectName}-glossary.txt
-        String glossaryDir = glossaryRoot;
-        if (glossaryDir.startsWith(projectRoot)) {
+        String glossaryDir = getGlossaryRoot();
+        if (glossaryDir.startsWith(getProjectRoot())) {
             return glossaryDir + OConsts.DEFAULT_W_GLOSSARY;
         } else {
             return glossaryDir + projectName + OConsts.DEFAULT_W_GLOSSARY_SUFF;
         }
     }
 
+    public ProjectPath getTmDir() {
+        return tmDir;
+    }
+
     /** Returns The Translation Memory (TMX) Files Directory */
     public String getTMRoot() {
-        return tmRoot;
+        return tmDir.getAsString();
+    }
+
+    public void setTMRootRelative(String tmRootRelative) {
+        tmDir.setRelativeOrAbsolute(tmRootRelative);
     }
 
     /** Sets The Translation Memory (TMX) Files Directory */
     public void setTMRoot(String tmRoot) {
         if (!StringUtil.isEmpty(tmRoot)) {
-            this.tmRoot = tmRoot;
+            tmDir.setRelativeOrAbsolute(tmRoot);
         }
     }
     
   
     /** Returns The Translation Memory (TMX) with translations to other languages Files Directory */
     public String getTMOtherLangRoot() {
-        return tmRoot + OConsts.DEFAULT_OTHERLANG + File.separator;
+        return tmDir.getAsString() + OConsts.DEFAULT_OTHERLANG + '/';
     }
 
     /** Returns The Translation Memory (TMX) Files Directory for automatically applied files. */
     public String getTMAutoRoot() {
-        return tmRoot + OConsts.AUTO_TM + File.separator;
+        return tmDir.getAsString() + OConsts.AUTO_TM + '/';
+    }
+
+    public ProjectPath getDictDir() {
+        return dictDir;
     }
 
     /** Returns The Dictionaries Files Directory */
     public String getDictRoot() {
-        return dictRoot;
+        return dictDir.getAsString();
     }
 
     /** Sets Dictionaries Files Directory */
     public void setDictRoot(String dictRoot) {
         if (!StringUtil.isEmpty(dictRoot)) {
-            this.dictRoot = dictRoot;
+            this.dictDir.setRelativeOrAbsolute(dictRoot);
         }
+    }
+
+    public String getDictRootRelative() {
+        return dictDir.getAsString();
+    }
+
+    public void setDictRootRelative(String dictRootRelative) {
+        this.dictDir.setRelativeOrAbsolute(dictRootRelative);
     }
 
     /** Returns the name of the Project */
@@ -209,36 +253,57 @@ public class ProjectProperties {
         return projectName;
     }
 
-    /** Sets the name of the Project */
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
     /** Returns The Project Root Directory */
     public String getProjectRoot() {
-        return projectRoot;
+        String p = projectRootDir.getPath().replace('\\', '/');
+        if (!p.endsWith("/")) {
+            p += '/';
+        }
+        return p;
     }
 
-    /** Sets The Project Root Directory */
-    public void setProjectRoot(String projectRoot) {
-        this.projectRoot = projectRoot;
+    public File getProjectRootDir() {
+        return projectRootDir;
+    }
+
+    /** Sets The Project Root Directory. For unit tests only !!! */
+    protected void setProjectRoot(String projectRoot) {
+        this.projectRootDir = new File(projectRoot);
     }
 
     /** Returns The Project's Translation Memory (TMX) File */
     public String getProjectInternal() {
-        return projectRoot + OConsts.DEFAULT_INTERNAL + File.separator;
+        return getProjectRoot() + OConsts.DEFAULT_INTERNAL + '/';
+    }
+
+    public File getProjectInternalDir() {
+        return new File(projectRootDir, OConsts.DEFAULT_INTERNAL);
+    }
+
+    public String getProjectInternalRelative() {
+        return OConsts.DEFAULT_INTERNAL + '/';
     }
 
     /** Returns The Source (to be translated) Files Directory */
     public String getSourceRoot() {
-        return sourceRoot;
+        return sourceDir.getAsString();
     }
 
     /** Sets The Source (to be translated) Files Directory */
     public void setSourceRoot(String sourceRoot) {
         if (!StringUtil.isEmpty(sourceRoot)) {
-            this.sourceRoot = sourceRoot;
+            sourceDir.setRelativeOrAbsolute(sourceRoot);
         }
+    }
+
+    public void setSourceRootRelative(String sourceRootRelative) {
+        if (!StringUtil.isEmpty(sourceRootRelative)) {
+            sourceDir.setRelativeOrAbsolute(sourceRootRelative);
+        }
+    }
+
+    public ProjectPath getSourceDir() {
+        return sourceDir;
     }
 
     public List<String> getSourceRootExcludes() {
@@ -343,6 +408,17 @@ public class ProjectProperties {
         this.removeTags = removeTags;
     }
 
+    public boolean hasRepositories() {
+        return repositories != null && !repositories.isEmpty();
+    }
+
+    public List<RepositoryDefinition> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(List<RepositoryDefinition> repositories) {
+        this.repositories = repositories;
+    }
 
     public SRX getProjectSRX() {
         return projectSRX;
@@ -412,9 +488,6 @@ public class ProjectProperties {
             throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_GLOSSARY_FOLDER"), glsDir));
         }
         String wGlsDir = getWriteableGlossaryDir();
-        if (!wGlsDir.endsWith(File.separator)) {
-            wGlsDir += File.separator;
-        }
         if (!wGlsDir.contains(getGlossaryRoot())) {
             throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_W_GLOSSARY"), glsDir));
         }
@@ -432,62 +505,31 @@ public class ProjectProperties {
         //
         File dict = new File(dictRoot);
         if (!dict.exists()) {
-            if (dictRoot.equals(projectRoot + OConsts.DEFAULT_DICT + File.separator)) {
+            if (getDictRoot().equals(getProjectRoot() + OConsts.DEFAULT_DICT + '/')) {
                 dict.mkdirs();
             }
         }
     }
 
-    /**
-     * Verify the correctness of a language or country code
-     * 
-     * @param code
-     *            A string containing a language or country code
-     * @return <code>true</code> or <code>false</code>
-     */
-    private static boolean verifyLangCode(String code) {
-        // Make sure all values are characters
-        for (int cp, i = 0; i < code.length(); i += Character.charCount(cp)) {
-            cp = code.codePointAt(i);
-            if (!Character.isLetter(cp)) {
-                return false;
-            }
-        }
-        return !new Language(code).getDisplayName().isEmpty();
+    public void autocreateDirectories() {
+        autocreateOneDirectory(getProjectInternalDir());
+        autocreateOneDirectory(sourceDir.getAsFile());
+        autocreateOneDirectory(targetDir.getAsFile());
+        autocreateOneDirectory(glossaryDir.getAsFile());
+        autocreateOneDirectory(tmDir.getAsFile());
+        autocreateOneDirectory(dictDir.getAsFile());
     }
 
-    /**
-     * Verifies whether the language code is OK.
-     */
-    public static boolean verifySingleLangCode(String code) {
-        int cpc = code.codePointCount(0, code.length());
-        if (cpc == 2 || cpc == 3) {
-            return verifyLangCode(code);
-        } else if (cpc == 5 || cpc == 6) {
-            int shift = 0;
-            if (cpc == 6) {
-                shift = 1;
-            }
-            int sepOffset = code.offsetByCodePoints(0, 2 + shift);
-            int sep = code.codePointAt(sepOffset);
-            return verifyLangCode(code.substring(0, sepOffset))
-                    && (sep == '-' || sep == '_')
-                    && verifyLangCode(code.substring(code.offsetByCodePoints(sepOffset, 1),
-                            code.offsetByCodePoints(sepOffset, 3)));
+    private void autocreateOneDirectory(File dir) {
+        if (!dir.exists()) {
+            Log.logInfoRB("CT_AUTOCREATE_DIRECTORY", dir);
+            dir.mkdirs();
         }
-        return false;
     }
 
     private String projectName;
-    private String projectRoot;
-    private String sourceRoot;
-    private final List<String> sourceRootExcludes = new ArrayList<>();
-    private String targetRoot;
-    private String glossaryRoot;
-    private String writeableGlossaryFile;
-    private String tmRoot;
-    private String dictRoot;
-    private String baseFilteringItems;
+    private final List<String> sourceRootExcludes = new ArrayList<String>();
+    private List<RepositoryDefinition> repositories;
 
     private Language sourceLanguage;
     private Language targetLanguage;
@@ -503,4 +545,87 @@ public class ProjectProperties {
     private Filters projectFilters;
     
     private String externalCommand;
+
+    protected File projectRootDir;
+    protected ProjectPath sourceDir = new ProjectPath(true);
+    protected ProjectPath targetDir = new ProjectPath(true);
+    protected ProjectPath glossaryDir = new ProjectPath(true);
+    protected ProjectPath writableGlossaryFile = new ProjectPath(false);
+    protected ProjectPath tmDir = new ProjectPath(true);
+    protected ProjectPath dictDir = new ProjectPath(true);
+
+    /**
+     * Class for support project path functionality, like relative path, etc.
+     */
+    public class ProjectPath {
+        private final boolean isDirectory;
+        private File fs;
+        /** Null if path is not under project root */
+        private String underRoot;
+
+        /**
+         * @param isDirectory
+         *            true if directory(i.e. should be ended by '/'), false if file
+         */
+        public ProjectPath(boolean isDirectory) {
+            this.isDirectory = isDirectory;
+        }
+
+        /**
+         * path is directory(or file) as declared in the omegat.project, but not __DEFAULT__. I.e. caller can
+         * send something like "/some/project/source", or "source", or "source/".
+         *
+         * Absolute paths from Windows will be treated as relative on Linux/MacOS, and vice versa.
+         */
+        public void setRelativeOrAbsolute(String path) {
+            underRoot = null;
+            if (FileUtil.isRelative(path)) {
+                fs = new File(projectRootDir, path);
+                if (!path.contains("..")) {
+                    underRoot = path.replace('\\', '/');
+                    if (isDirectory && !underRoot.endsWith("/")) {
+                        underRoot += '/';
+                    }
+                }
+            } else {
+                fs = new File(FileUtil.absoluteForSystem(path, Platform.getOsType()));
+                // probably relative ?
+                try {
+                    String p = FileUtil.computeRelativePath(projectRootDir, fs);
+                    if (!p.contains("..")) {
+                        underRoot = p.replace('\\', '/');
+                        if (isDirectory && !underRoot.endsWith("/")) {
+                            underRoot += '/';
+                        }
+                    }
+                } catch (IOException ex) {
+                    // absolute
+                }
+            }
+        }
+
+        public File getAsFile() {
+            return fs;
+        }
+
+        public String getAsString() {
+            String p = fs.getPath().replace('\\', '/');
+            if (isDirectory && !p.endsWith("/")) {
+                p += '/';
+            }
+            return p;
+        }
+
+        public boolean isUnderRoot() {
+            return underRoot != null;
+        }
+
+        /**
+         * Returns path under project root with '/' at the end for directories, or null if directory outside
+         * of project.
+         */
+        public String getUnderRoot() {
+            return underRoot;
+        }
+    }
 }

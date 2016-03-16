@@ -28,12 +28,12 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Font;
 import java.awt.Frame;
+import javax.swing.DefaultComboBoxModel;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -79,7 +79,7 @@ public class FontSelectionDialog extends PeroDialog {
         fontComboBox.setSelectedItem(oldFont.getName());
         sizeSpinner.setValue(oldFont.getSize());
         applyToProjectFilesCheckBox.setSelected(Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT));
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -97,7 +97,7 @@ public class FontSelectionDialog extends PeroDialog {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        fontComboBox = new javax.swing.JComboBox(StaticUtils.getFontNames());
+        fontComboBox = new javax.swing.JComboBox<String>();
         fontLabel = new javax.swing.JLabel();
         sizeSpinner = new javax.swing.JSpinner();
         sizeLabel = new javax.swing.JLabel();
@@ -118,6 +118,7 @@ public class FontSelectionDialog extends PeroDialog {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         fontComboBox.setMaximumRowCount(20);
+        fontComboBox.setModel(new DefaultComboBoxModel<>(StaticUtils.getFontNames()));
         fontComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fontComboBoxActionPerformed(evt);
@@ -258,7 +259,7 @@ public class FontSelectionDialog extends PeroDialog {
     private javax.swing.JCheckBox applyToProjectFilesCheckBox;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox fontComboBox;
+    private javax.swing.JComboBox<String> fontComboBox;
     private javax.swing.JLabel fontLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton okButton;

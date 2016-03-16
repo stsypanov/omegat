@@ -43,6 +43,9 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
@@ -52,7 +55,6 @@ import org.omegat.core.data.TMXEntry;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.core.tagvalidation.ErrorReport.TagError;
-import org.omegat.gui.HListener;
 import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
@@ -75,7 +77,7 @@ import org.openide.awt.Mnemonics;
 @SuppressWarnings("serial")
 public class TagValidationFrame extends PeroFrame {
 
-    public TagValidationFrame(MainWindow parent) {
+    public TagValidationFrame(final MainWindow parent) {
         super();
         setTitle(OStrings.getString("TF_NOTICE_BAD_TAGS"));
 
@@ -110,7 +112,30 @@ public class TagValidationFrame extends PeroFrame {
 
         m_editorPane = new JEditorPane();
         m_editorPane.setEditable(false);
-        m_editorPane.addHyperlinkListener(new HListener(parent, this, true)); // fix for bug 1542937
+        m_editorPane.addHyperlinkListener(new HyperlinkListener() { // fix for bug 1542937
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    final String desc = e.getDescription();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (desc.startsWith(FIX_URL_PREFIX)) {
+                                    int entry = Integer.parseInt(desc.substring(FIX_URL_PREFIX.length()));
+                                    String fixedSource = fixEntry(entry);
+                                    Core.getEditor().gotoEntryAfterFix(entry, fixedSource);
+                                } else {
+                                    Core.getEditor().gotoEntry(Integer.parseInt(desc));
+                                }
+                            } catch (NumberFormatException ex) {
+                            }
+                        }
+                    });
+                    parent.toFront();
+                }
+            }
+        });
         StaticUIUtils.setCaretUpdateEnabled(m_editorPane, false);
         JScrollPane scroller = new JScrollPane(m_editorPane);
 

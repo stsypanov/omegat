@@ -25,15 +25,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
 
-package org.omegat.gui.dialogs;
-
-import java.util.Arrays;
+package org.omegat.core.team2.impl;
 
 import javax.swing.JLabel;
 
-import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -41,7 +37,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author alex
  */
 @SuppressWarnings("serial")
-public class TeamUserPassDialog extends PeroDialog {
+public class SVNUserPassDialog extends javax.swing.JDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -50,7 +46,7 @@ public class TeamUserPassDialog extends PeroDialog {
     /**
      * Creates new form TeamUserPassDialog
      */
-    public TeamUserPassDialog(java.awt.Frame parent) {
+    public SVNUserPassDialog(java.awt.Frame parent) {
         super(parent, true);
 
         StaticUIUtils.setEscapeClosable(this);
@@ -61,25 +57,8 @@ public class TeamUserPassDialog extends PeroDialog {
 
         invalidate();
         pack();
-        DockingUI.displayCentered(this);
-        
-        userText.requestFocusInWindow();
     }
 
-    public void setFixedUsername(String username) {
-        userText.setText(username);
-        userText.setEditable(false);
-        userText.setEnabled(false);
-        passwordField.requestFocusInWindow();
-    }
-    
-    public char[] getPasswordCopy() {
-        char[] arrayPassword = passwordField.getPassword();
-        char[] keepPassword = Arrays.copyOf(arrayPassword, arrayPassword.length);
-        Arrays.fill(arrayPassword, '0');
-        return keepPassword;
-    }
-    
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
     public int getReturnStatus() {
         return returnStatus;
@@ -102,8 +81,6 @@ public class TeamUserPassDialog extends PeroDialog {
         jPanel1 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        cbReadOnly = new javax.swing.JCheckBox();
-        cbForceSavePlainPassword = new javax.swing.JCheckBox();
 
         setTitle(OStrings.getString("TEAM_USERPASS_TITLE")); // NOI18N
         setMinimumSize(new java.awt.Dimension(250, 200));
@@ -129,7 +106,6 @@ public class TeamUserPassDialog extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(descriptionTextArea, gridBagConstraints);
 
-        userLabel.setLabelFor(userText);
         org.openide.awt.Mnemonics.setLocalizedText(userLabel, OStrings.getString("LOGIN_USER")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -148,7 +124,6 @@ public class TeamUserPassDialog extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(userText, gridBagConstraints);
 
-        passwordLabel.setLabelFor(passwordField);
         org.openide.awt.Mnemonics.setLocalizedText(passwordLabel, OStrings.getString("LOGIN_PASSWORD")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -190,28 +165,8 @@ public class TeamUserPassDialog extends PeroDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         getContentPane().add(jPanel1, gridBagConstraints);
 
-        org.openide.awt.Mnemonics.setLocalizedText(cbReadOnly, OStrings.getString("VCS_READONLY")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        getContentPane().add(cbReadOnly, gridBagConstraints);
-
-        org.openide.awt.Mnemonics.setLocalizedText(cbForceSavePlainPassword, OStrings.getString("VCS_SAVE_PLAINPASSWORD_FORCE")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        getContentPane().add(cbForceSavePlainPassword, gridBagConstraints);
-
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -234,8 +189,6 @@ public class TeamUserPassDialog extends PeroDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    public javax.swing.JCheckBox cbForceSavePlainPassword;
-    public javax.swing.JCheckBox cbReadOnly;
     public javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton okButton;

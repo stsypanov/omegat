@@ -44,7 +44,6 @@ import javax.swing.SwingWorker;
 
 import org.omegat.core.spellchecker.DictionaryManager;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -65,7 +64,7 @@ public class DictionaryInstallerDialog extends JDialog {
     /**
      * the list model
      */
-    private final DefaultListModel listModel = new DefaultListModel();
+    private final DefaultListModel<String> listModel = new DefaultListModel<>();
     
     private SwingWorker<List<String>, Object> loader = null;
     private InstallerWorker installer = null;
@@ -80,7 +79,7 @@ public class DictionaryInstallerDialog extends JDialog {
 
         initComponents();
         
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
         
         dictionaryListValueChanged(null);
         
@@ -106,9 +105,9 @@ public class DictionaryInstallerDialog extends JDialog {
         protected void done() {
             try {
                 List<String> list = get();
-                for (String str : list) {
+                list.stream().forEach((str) -> {
                     listModel.addElement(str);
-                }
+                });
                 
                 dictionaryList.setModel(listModel);
                 dictionaryList.setEnabled(true);
@@ -119,7 +118,7 @@ public class DictionaryInstallerDialog extends JDialog {
                 }
                 progressBar.setVisible(false);
             } catch (InterruptedException | ExecutionException ex) {
-                Logger.getLogger(DictionaryInstallerDialog.LoaderWorker.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DictionaryInstallerDialog.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -136,7 +135,7 @@ public class DictionaryInstallerDialog extends JDialog {
         jPanel1 = new javax.swing.JPanel();
         listLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        dictionaryList = new javax.swing.JList();
+        dictionaryList = new javax.swing.JList<String>();
         jPanel2 = new javax.swing.JPanel();
         installButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -231,8 +230,8 @@ public class DictionaryInstallerDialog extends JDialog {
         protected List<String> doInBackground() throws Exception {
             oldCursor = getCursor();
             setCursor(HOURGLASS_CURSOR);
-            Object[] selection = dictionaryList.getSelectedValues();
-            List<String> completed = new ArrayList<String>();
+            List<String> selection = dictionaryList.getSelectedValuesList();
+            List<String> completed = new ArrayList<>();
             for (Object o : selection) {
                 // install the respective dictionaries
                 String item = (String) o;
@@ -253,20 +252,18 @@ public class DictionaryInstallerDialog extends JDialog {
 
         @Override
         protected void process(List<Object> chunks) {
-            for (Object o : chunks) {
+            chunks.stream().forEach((o) -> {
                 listModel.removeElement(o);
-            }
+            });
         }
         
         @Override
         protected void done() {
             try {
-                for (Object o : get()) {
+                get().stream().forEach((o) -> {
                     listModel.removeElement(o);
-                }
-            } catch (InterruptedException e) {
-                // Ignore
-            } catch (ExecutionException e) {
+                });
+            } catch (InterruptedException | ExecutionException e) {
                 // Ignore
             }
             setCursor(oldCursor);
@@ -288,12 +285,12 @@ public class DictionaryInstallerDialog extends JDialog {
     }//GEN-LAST:event_closeButtonActionPerformed
 
     private void dictionaryListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_dictionaryListValueChanged
-        installButton.setEnabled(dictionaryList.getSelectedValues().length > 0);
+        installButton.setEnabled(!dictionaryList.getSelectedValuesList().isEmpty());
     }//GEN-LAST:event_dictionaryListValueChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
-    private javax.swing.JList dictionaryList;
+    private javax.swing.JList<String> dictionaryList;
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JButton installButton;
     private javax.swing.JPanel jPanel1;

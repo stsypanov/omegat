@@ -33,7 +33,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
@@ -50,7 +49,6 @@ import javax.swing.event.ChangeListener;
 
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.Styles.EditorColor;
@@ -64,7 +62,7 @@ import org.omegat.util.gui.Styles.EditorColor;
 @SuppressWarnings("serial")
 public class CustomColorSelectionDialog extends javax.swing.JDialog {
 
-    private final Map<EditorColor, Color> temporaryPreferences = new EnumMap<EditorColor, Color>(EditorColor.class);
+    private final Map<EditorColor, Color> temporaryPreferences = new EnumMap<>(EditorColor.class);
     private final ChangeListener colorChangeListener = new ChangeListener() {
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -88,10 +86,10 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
             }
         });
         colorStylesListValueChanged(null);
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
         colorStylesList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                     boolean cellHasFocus) {
                 return super.getListCellRendererComponent(list, ((EditorColor) value).getDisplayName(), index,
                         isSelected, cellHasFocus);
@@ -135,7 +133,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         colorStylesLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        colorStylesList = new javax.swing.JList(Styles.EditorColor.values());
+        colorStylesList = new JList<>(Styles.EditorColor.values());
         colorChooser = new javax.swing.JColorChooser();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -253,7 +251,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
             return;
         }
 
-        ListModel model = colorStylesList.getModel();
+        ListModel<EditorColor> model = colorStylesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
             EditorColor style = (EditorColor) model.getElementAt(i);
             temporaryPreferences.put(style, style.getDefault());
@@ -276,10 +274,9 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_resetThisColorButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        for (Entry<EditorColor, Color> e : temporaryPreferences.entrySet()) {
-            EditorColor style = e.getKey();
-            style.setColor(e.getValue());
-        }
+        temporaryPreferences.entrySet().stream().forEach((e) -> {
+            e.getKey().setColor(e.getValue());
+        });
         Preferences.save();
         if (!temporaryPreferences.isEmpty()) {
             JOptionPane.showMessageDialog(this, OStrings.getString("GUI_COLORS_CHANGED_RESTART"));
@@ -394,7 +391,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JColorChooser colorChooser;
     private javax.swing.JLabel colorStylesLabel;
-    private javax.swing.JList colorStylesList;
+    private javax.swing.JList<EditorColor> colorStylesList;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

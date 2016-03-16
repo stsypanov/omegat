@@ -95,6 +95,9 @@ public class Main {
     /** Project location for load on startup. */
     protected static File projectLocation = null;
 
+    /** Remote project location. */
+    protected static String remoteProject = null;
+
     /** Execution command line parameters. */
     protected static final Map<String, String> params = new TreeMap<String, String>();
 
@@ -137,6 +140,8 @@ public class Main {
         }
 
 		loadProxySettings();
+
+        remoteProject = params.get("remote-project");
 
         applyConfigFile(params.get(CLIParameters.CONFIG_FILE));
 
@@ -331,7 +336,9 @@ public class Main {
                 // call all application startup listeners for initialize UI
                 Core.getMainWindow().getApplicationFrame().setVisible(true);
 
-                if (projectLocation != null) {
+                if (remoteProject != null) {
+                    ProjectUICommands.projectRemote(remoteProject);
+                } else if (projectLocation != null) {
                     ProjectUICommands.projectOpen(projectLocation);
                 }
             }

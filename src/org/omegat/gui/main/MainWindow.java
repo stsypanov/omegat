@@ -36,6 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -173,7 +175,23 @@ public class MainWindow extends PeroFrame implements IMainWindow {
         MainWindowUI.handlePerProjectLayouts(this);
 
         updateTitle();
-        pack();
+
+        // Set up prompt to reload if segmentation or filters settings change
+        Preferences.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (Core.getProject().isProjectLoaded()) {
+                    String prop = evt.getPropertyName();
+                    if (prop.equals(Preferences.PROPERTY_SRX)
+                            && Core.getProject().getProjectProperties().getProjectSRX() == null) {
+                        promptReload();
+                    } else if (prop.equals(Preferences.PROPERTY_FILTERS)
+                            && Core.getProject().getProjectProperties().getProjectFilters() == null) {
+                        promptReload();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -634,5 +652,17 @@ public class MainWindow extends PeroFrame implements IMainWindow {
 
     public void showMessageDialog(String message) {
         JOptionPane.showMessageDialog(this, message);
+    }
+
+    public void promptReload() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+        // asking to reload a project
+        int res = JOptionPane.showConfirmDialog(this, OStrings.getString("MW_REOPEN_QUESTION"),
+                OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            ProjectUICommands.projectReload();
+        }
     }
 }

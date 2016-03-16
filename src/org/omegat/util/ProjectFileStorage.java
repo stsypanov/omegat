@@ -31,10 +31,7 @@
 
 package org.omegat.util;
 
-import gen.core.project.Masks;
-import gen.core.project.Omegat;
-import gen.core.project.Project;
-
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,11 +39,15 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.io.FileUtils;
 import org.omegat.core.data.ProjectProperties;
-import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.TranslationException;
-import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
+
+import gen.core.project.Masks;
+import gen.core.project.Omegat;
+import gen.core.project.Project;
+import gen.core.project.Project.Repositories;
 
 /**
  * Class that reads and saves project definition file.
@@ -69,13 +70,16 @@ public class ProjectFileStorage {
         }
     }
 
+    public static Omegat parseProjectFile(byte[] projectFile) throws Exception {
+        return (Omegat) CONTEXT.createUnmarshaller().unmarshal(new ByteArrayInputStream(projectFile));
+    }
+
     public static ProjectProperties loadProjectProperties(File projectDir) throws Exception {
         ProjectProperties result = new ProjectProperties(projectDir);
 
         File inFile = new File(projectDir, OConsts.FILE_PROJECT);
 
-        Omegat om = (Omegat) CONTEXT.createUnmarshaller().unmarshal(inFile);
-        Project project = om.getProject();
+        Omegat om = parseProjectFile(FileUtils.readFileToByteArray(inFile));
 
         if (!OConsts.PROJ_CUR_VERSION.equals(om.getProject().getVersion())) {
             throw new TranslationException(StringUtil.format(
@@ -86,9 +90,12 @@ public class ProjectFileStorage {
         // if folder is in default locations, name stored as __DEFAULT__
         String m_root = inFile.getParentFile().getAbsolutePath() + File.separator;
 
-        result.setTargetRoot(computeAbsolutePath(m_root, project.getTargetDir(), OConsts.DEFAULT_TARGET));
-        result.setSourceRoot(computeAbsolutePath(m_root, project.getSourceDir(), OConsts.DEFAULT_SOURCE));
-        result.setBaseFilteringItems(computeAbsolutePath(m_root, project.getBaseFilteringItems(), OConsts.FILTERING_ITEMS_FILE_NAME, true));
+        result.setTargetRootRelative(computeRelative(om.getProject().getTargetDir(), OConsts.DEFAULT_TARGET));
+        result.setTargetRoot(computeAbsolutePath(m_root, om.getProject().getTargetDir(),
+                OConsts.DEFAULT_TARGET));
+        result.setSourceRootRelative(computeRelative(om.getProject().getSourceDir(), OConsts.DEFAULT_SOURCE));
+        result.setSourceRoot(computeAbsolutePath(m_root, om.getProject().getSourceDir(),
+                OConsts.DEFAULT_SOURCE));
         result.getSourceRootExcludes().clear();
         if (project.getSourceDirExcludes() != null) {
             result.getSourceRootExcludes().addAll(project.getSourceDirExcludes().getMask());
@@ -96,24 +103,29 @@ public class ProjectFileStorage {
             // sourceRootExclude was not defined
             result.getSourceRootExcludes().addAll(Arrays.asList(ProjectProperties.DEFAULT_EXCLUDES));
         }
-        result.setTMRoot(computeAbsolutePath(m_root, project.getTmDir(), OConsts.DEFAULT_TM));
-        result.setGlossaryRoot(computeAbsolutePath(m_root, project.getGlossaryDir(),
+        result.setTMRoot(computeAbsolutePath(m_root, om.getProject().getTmDir(), OConsts.DEFAULT_TM));
+        result.setTMRootRelative(computeRelative(om.getProject().getTmDir(), OConsts.DEFAULT_TM));
+
+        result.setGlossaryRoot(computeAbsolutePath(m_root, om.getProject().getGlossaryDir(),
+                OConsts.DEFAULT_GLOSSARY));
+        result.setGlossaryRootRelative(computeRelative(om.getProject().getGlossaryDir(),
                 OConsts.DEFAULT_GLOSSARY));
 
         // Compute glossary file location
         String glossaryFile = om.getProject().getGlossaryFile();
+        String glossaryDir = null;
+        glossaryDir = computeAbsolutePath(m_root, glossaryDir, OConsts.DEFAULT_GLOSSARY);
         if (StringUtil.isEmpty(glossaryFile)) {
             glossaryFile = OConsts.DEFAULT_FOLDER_MARKER;
         }
         if (glossaryFile.equalsIgnoreCase(OConsts.DEFAULT_FOLDER_MARKER)) {
             glossaryFile = result.computeDefaultWriteableGlossaryFile();
-        } else if (! new File(glossaryFile).isAbsolute()) {
-            String absGlossaryRoot = computeAbsolutePath(m_root, result.getGlossaryRoot(), OConsts.DEFAULT_GLOSSARY);
-            glossaryFile = new File(absGlossaryRoot, glossaryFile).getPath();
         }
         result.setWriteableGlossary(glossaryFile);
 
-        result.setDictRoot(computeAbsolutePath(m_root, project.getDictionaryDir(), OConsts.DEFAULT_DICT));
+        result.setDictRoot(computeAbsolutePath(m_root, om.getProject().getDictionaryDir(),
+                OConsts.DEFAULT_DICT));
+        result.setDictRootRelative(computeRelative(om.getProject().getDictionaryDir(), OConsts.DEFAULT_DICT));
 
         result.setSourceLanguage(project.getSourceLang());
         result.setTargetLanguage(project.getTargetLang());
@@ -132,6 +144,10 @@ public class ProjectFileStorage {
         }
         if (project.getExternalCommand() != null) {
             result.setExternalCommand(project.getExternalCommand());
+        }
+
+        if (om.getProject().getRepositories() != null) {
+            result.setRepositories(om.getProject().getRepositories().getRepository());
         }
 
         return result;
@@ -177,12 +193,37 @@ public class ProjectFileStorage {
         Omegat om = new Omegat();
         om.setProject(project);
 
+        if (props.getRepositories() != null && !props.getRepositories().isEmpty()) {
+            om.getProject().setRepositories(new Repositories());
+            om.getProject().getRepositories().getRepository().addAll(props.getRepositories());
+        }
+
         Marshaller m = CONTEXT.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         m.marshal(om, outFile);
+    }
 
-        SRX.saveTo(props.getProjectSRX(), new File(props.getProjectInternal(), SRX.CONF_SENTSEG));
-        FilterMaster.saveConfig(props.getProjectFilters(), props.getProjectInternal());
+    private static String computeRelative(String relativePath, String defaultName) {
+        if (OConsts.DEFAULT_FOLDER_MARKER.equals(relativePath)) {
+            return asDirectory(defaultName);
+        } else {
+            return asDirectory(relativePath);
+        }
+    }
+
+    /**
+     * Constructs directory name like 'some/dir/'.
+     */
+    private static String asDirectory(String path) {
+        String r = path.replace(File.separatorChar, '/');
+        r = r.replaceAll("//+", "/");
+        if (r.startsWith("/")) {
+            r = r.substring(1);
+        }
+        if (!r.endsWith("")) {
+            r += "/";
+        }
+        return r;
     }
 
     /**

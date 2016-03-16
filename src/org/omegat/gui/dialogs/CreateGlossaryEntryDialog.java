@@ -33,7 +33,7 @@ import javax.swing.JLabel;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
+import org.omegat.util.gui.StaticUIUtils;
 
 /**
  * 
@@ -60,7 +60,7 @@ public class CreateGlossaryEntryDialog extends PeroDialog {
         invalidate();
         pack();
         sourceText.requestFocus();
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */

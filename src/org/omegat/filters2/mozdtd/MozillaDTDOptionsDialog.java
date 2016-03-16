@@ -5,7 +5,7 @@
 
  Copyright (C) 2010 Alex Buloichik, Didier Briel
                2011-2012 Didier Briel
-               2014 Enrique Est�vez Fern�ndez
+               2014 Enrique Estevez Fernandez
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -31,12 +31,11 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.AbstractAction;
 
+import javax.swing.AbstractAction;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -44,7 +43,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * 
  * Code modified from the file: PoOptionsDialog.java
  * 
- * @author Enrique Est�vez (keko.gl@gmail.com)
+ * @author Enrique Estevez (keko.gl@gmail.com)
  */
 @SuppressWarnings("serial")
 public class MozillaDTDOptionsDialog extends PeroDialog {
@@ -72,7 +71,7 @@ public class MozillaDTDOptionsDialog extends PeroDialog {
                 doClose(RET_CANCEL);
             }
         });
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */

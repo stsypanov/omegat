@@ -50,14 +50,17 @@ import javax.swing.text.JTextComponent;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
+import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.NearString;
 import org.omegat.core.matching.NearString.MATCH_SOURCE;
 import org.omegat.core.search.SearchMode;
 import org.omegat.core.segmentation.SRX;
+import org.omegat.core.segmentation.Segmenter;
 import org.omegat.core.spellchecker.ISpellChecker;
 import org.omegat.core.tagvalidation.ErrorReport;
+import org.omegat.core.team2.gui.RepositoriesCredentialsController;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.dialogs.*;
@@ -913,24 +916,19 @@ public class MainWindowMenuHandler {
     public void optionsSetupFileFiltersMenuItemActionPerformed() {
         FiltersCustomizer dlg = new FiltersCustomizer(mainWindow, false,
                 FilterMaster.createDefaultFiltersConfig(),
-                FilterMaster.loadConfig(StaticUtils.getConfigDir()), null);
+                Preferences.getFilters(), null);
+        if (Core.getProject().isProjectLoaded()) {
+            // Don't highlight project in-use filters on global view if project
+            // has project-specific filters
+            if (Core.getProject().getProjectProperties().getProjectFilters() == null) {
+                dlg.setInUseFilters(FileInfo.getFilterNames(Core.getProject().getProjectFiles()));
+            }
+        }
         dlg.setVisible(true);
         if (dlg.getReturnStatus() == FiltersCustomizer.RET_OK) {
             // saving config
-            FilterMaster.saveConfig(dlg.result, StaticUtils.getConfigDir());
-
-            if (Core.getProject().isProjectLoaded()) {
-                if (FilterMaster.loadConfig(Core.getProject().getProjectProperties().getProjectInternal()) != null) {
-                    // project specific filters are in place. No need to reload project when
-                    // non-project-specific filters are changed
-                    return;
-                }
-                // asking to reload a project
-                int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
-                        OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
-                if (res == JOptionPane.YES_OPTION)
-                    ProjectUICommands.projectReload();
-            }
+            Core.setFilterMaster(new FilterMaster(dlg.result));
+            Preferences.setFilters(dlg.result);
         }
     }
 
@@ -943,14 +941,8 @@ public class MainWindowMenuHandler {
         segment_window.setVisible(true);
 
         if (segment_window.getReturnStatus() == SegmentationCustomizer.RET_OK) {
+            Core.setSegmenter(new Segmenter(segment_window.getSRX()));
             Preferences.setSRX(segment_window.getSRX());
-            if (Core.getProject().isProjectLoaded() && Core.getProject().getProjectProperties().getProjectSRX() == null) {
-                // asking to reload a project
-                int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
-                        OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
-                if (res == JOptionPane.YES_OPTION)
-                    ProjectUICommands.projectReload();
-            }
         }
     }
 
@@ -997,13 +989,7 @@ public class MainWindowMenuHandler {
                 && Core.getProject().isProjectLoaded()) {
             // Redisplay according to new view settings
             Core.getEditor().getSettings().updateTagValidationPreferences();
-
-            // asking to reload a project
-            int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
-                    OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
-            if (res == JOptionPane.YES_OPTION) {
-                ProjectUICommands.projectReload();
-            }
+            mainWindow.promptReload();
         }
     }
 
@@ -1024,13 +1010,8 @@ public class MainWindowMenuHandler {
 
         if (externalTMXOptions.getReturnStatus() == ExternalTMXMatchesDialog.RET_OK
                 && Core.getProject().isProjectLoaded()) {
-            // asking to reload a project
-            int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
-                    OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
-            if (res == JOptionPane.YES_OPTION)
-                ProjectUICommands.projectReload();
+            mainWindow.promptReload();
         }
-
     }
 
     /**
@@ -1087,6 +1068,10 @@ public class MainWindowMenuHandler {
 
     public void optionsAccessConfigDirMenuItemActionPerformed() {
         openFile(new File(StaticUtils.getConfigDir()));
+    }
+
+    public void optionsRepositoriesCredentialsItemActionPerformed() {
+        RepositoriesCredentialsController.show();
     }
 
     /**

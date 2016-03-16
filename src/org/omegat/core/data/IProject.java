@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.omegat.core.statistics.StatisticsInfo;
-import org.omegat.core.team.IRemoteRepository;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Language;
 
@@ -72,11 +71,6 @@ public interface IProject {
      * @return project properties
      */
     ProjectProperties getProjectProperties();
-    
-    /**
-     * Returns repository for team project, or null.
-     */
-    IRemoteRepository getRepository();
 
     /**
      * Get project loaded status.
@@ -249,7 +243,15 @@ public interface IProject {
         /**
          * Source text entries of the file
          */
-        public List<SourceTextEntry> entries = new ArrayList<>();
+        public List<SourceTextEntry> entries = new ArrayList<SourceTextEntry>();
+
+        public static List<String> getFilterNames(List<FileInfo> infos) {
+            List<String> result = new ArrayList<String>();
+            for (FileInfo info : infos) {
+                result.add(info.filterFileFormatName);
+            }
+            return result;
+        }
     }
 
     public interface DefaultTranslationsIterator {
@@ -285,6 +287,7 @@ public interface IProject {
      * Exception for optimistic locking fail. Used when segment changed remotely or by automatic translation,
      * but user also changed data.
      */
+    @SuppressWarnings("serial")
     public class OptimisticLockingFail extends Exception {
         private final String oldTranslationText;
         private final String newTranslationText;

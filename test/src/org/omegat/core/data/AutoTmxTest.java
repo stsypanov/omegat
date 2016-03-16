@@ -30,6 +30,8 @@ import java.util.HashMap;
 
 import org.junit.Test;
 import org.omegat.core.Core;
+import org.omegat.core.segmentation.SRX;
+import org.omegat.core.segmentation.Segmenter;
 import org.omegat.tokenizer.LuceneFrenchTokenizer;
 
 import static junit.framework.TestCase.assertEquals;
@@ -42,6 +44,11 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class AutoTmxTest {
     RealProject p;
+
+    @Override
+    protected void setUp() throws Exception {
+        Core.setSegmenter(new Segmenter(SRX.getDefault()));
+    }
 
     @Test
     public void test1() throws Exception {

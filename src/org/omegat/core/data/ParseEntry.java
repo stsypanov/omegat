@@ -270,7 +270,8 @@ public abstract class ParseEntry implements IParseCallback {
      *            source string to strip chars
      * @return result
      */
-    static String stripSomeChars(final String src, final ParseEntryResult per, boolean removeTags, boolean removeSpaces) {
+    public static String stripSomeChars(final String src, final ParseEntryResult per, boolean removeTags,
+            boolean removeSpaces) {
         String r = src;
 
         /**

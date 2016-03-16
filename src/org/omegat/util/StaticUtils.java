@@ -415,20 +415,20 @@ public class StaticUtils {
     public static String installDir() {
         if (INSTALLDIR == null) {
             String cp = System.getProperty("java.class.path");
-
+            
             // See if we are running from a JAR
             String path = extractClasspathElement(cp, File.separator + OConsts.APPLICATION_JAR);
-
+            
             if (path == null) {
                 // We're not running from a JAR; probably debug mode (in IDE, etc.)
                 path = extractClasspathElement(cp, OConsts.DEBUG_CLASSPATH);
             }
-
+            
             // WTF?!! Falling back to current directory
             if (path == null) {
                 path = ".";
             }
-
+            
             // Cache the absolute path
             INSTALLDIR = new File(path).getAbsolutePath();
         }
@@ -576,14 +576,6 @@ public class StaticUtils {
 
         // we should have a correct, existing config dir now
         return m_configDir;
-    }
-
-    /**
-     * Set the config dir path. This method is for unit testing purposes only.
-     * DO NOT CALL IT UNLESS YOU KNOW WHAT YOU'RE DOING.
-     */
-    static void setConfigDir(String path) {
-        m_configDir = path;
     }
 
     public static String getScriptDir() {
@@ -892,8 +884,7 @@ public class StaticUtils {
             return false;
         }
         File projFile = new File(f.getAbsolutePath(), OConsts.FILE_PROJECT);
-        File internal = new File(f.getAbsolutePath(), OConsts.DEFAULT_INTERNAL);
-        return projFile.isFile() && internal.isDirectory();
+        return projFile.isFile();
     }
     
 } // StaticUtils

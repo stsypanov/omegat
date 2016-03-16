@@ -34,9 +34,9 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -46,14 +46,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.omegat.core.Core;
-import org.omegat.core.data.IProject;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.FiltersTableModel;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.TableColumnSizer;
 
@@ -82,6 +79,9 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
     private final Filters defaultFilters;
     /** Filters which editable now. */
     private Filters editableFilters;
+
+    /** Names of filters to mark as in-use in the list */
+    private Collection<String> inUseFilters = Collections.emptySet();
 
     /**
      * Flag if this customizer shows project specific filters or not
@@ -129,7 +129,7 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         });
         String columnName = FiltersTableModel.COLUMN.FILTERS_FILE_FORMAT.getColumnName();
         TableColumn column = filtersTable.getColumn(columnName);
-        column.setCellRenderer(new FilterFormatCellRenderer(getInUseFormatNames()));
+        column.setCellRenderer(new FilterFormatCellRenderer());
         
         TableColumnSizer.autoSize(filtersTable, 0, true);
 
@@ -156,8 +156,12 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         filtersScrollPane.setPreferredSize(tableSize);
         pack();
         StaticUIUtils.fitInScreen(this);
-        DockingUI.displayCentered(this);
-     }    
+        setLocationRelativeTo(parent);
+    }
+
+    public void setInUseFilters(Collection<String> inUseFilters) {
+        this.inUseFilters = inUseFilters;
+    }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
     public int getReturnStatus() {
@@ -480,33 +484,11 @@ public class FiltersCustomizer extends PeroDialog implements ListSelectionListen
         dispose();
     }
 
-    private Set<String> getInUseFormatNames() {
-        Set<String> inUseFormatNames = new HashSet<String>();
-        IProject project = Core.getProject();
-        if (project.isProjectLoaded()) {
-            Filters projectSpecificFilters = Core.getProject().getProjectProperties().getProjectFilters();
-            boolean noProjectSpecificFiltersAvailable = (projectSpecificFilters == null);
-            if (isProjectSpecific || noProjectSpecificFiltersAvailable) {
-                for (IProject.FileInfo fi : project.getProjectFiles()) {
-                    inUseFormatNames.add(fi.filterFileFormatName);
-                }
-            }
-        }
-        return inUseFormatNames;
-    }
-
-    private static class FilterFormatCellRenderer extends DefaultTableCellRenderer {
-
-        private final Set<String> highlightFormatNames;
-
-        private FilterFormatCellRenderer(Set<String> highlightFormatNames) {
-            this.highlightFormatNames = highlightFormatNames;
-        }
-
+    private class FilterFormatCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (highlightFormatNames.contains(value.toString())) {
+            if (inUseFilters.contains(value.toString())) {
                 component.setFont(component.getFont().deriveFont(Font.BOLD));
             }
             return component;

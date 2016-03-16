@@ -33,6 +33,9 @@ package org.omegat.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -53,6 +56,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -65,6 +69,7 @@ import org.apache.lucene.util.Version;
 import org.omegat.CLIParameters;
 import org.omegat.core.Core;
 import org.omegat.core.data.CommandVarExpansion;
+import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.master.FilterMaster;
@@ -75,12 +80,11 @@ import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.tokenizer.DefaultTokenizer;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Language;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.LanguageComboBoxRenderer;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.StaticUIUtils;
@@ -89,6 +93,7 @@ import org.omegat.util.gui.TokenizerComboBoxRenderer;
 import org.openide.awt.Mnemonics;
 
 import gen.core.filters.Filters;
+import gen.core.project.RepositoryDefinition;
 
 /**
  * The dialog for customizing the OmegaT project (where project properties are
@@ -126,13 +131,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
          * This dialog is used to edit project's properties: where directories
          * reside, languages, etc.
          */
-        EDIT_PROJECT,
-        /**
-         * Project properties stored in omegat.project are not editable for team
-         * projects, but access is available through this dialog to the project-specific
-         * filter settings and segmentation settings.
-         */
-        EDIT_TEAM_PROJECT
+        EDIT_PROJECT
     }
 
     /**
@@ -142,7 +141,6 @@ public class ProjectPropertiesDialog extends PeroDialog {
      * <li>Resolving the project's directories (existing project with some dirs
      * missing) == {@link Mode#RESOLVE_DIRS}
      * <li>Editing project properties == {@link Mode#EDIT_PROJECT}
-     * <li>Editing filter or segmentation settings for team project == {@link Mode#EDIT_TEAM_PROJECT}
      * </ul>
      */
     private Mode dialogType;
@@ -172,7 +170,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         this.projectProperties = projectProperties;
         this.srx = projectProperties.getProjectSRX();
         this.dialogType = dialogTypeValue;
-        filters = FilterMaster.loadConfig(projectProperties.getProjectInternal());
+        this.filters = projectProperties.getProjectFilters();
         srcExcludes.addAll(projectProperties.getSourceRootExcludes());
 
         Border emptyBorder = new EmptyBorder(2, 0, 2, 0);
@@ -211,7 +209,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         bL.add(bSL);
 
         // Source language field
-        final JComboBox m_sourceLocaleField = new JComboBox(Language.LANGUAGES);
+        final JComboBox<Language> m_sourceLocaleField = new JComboBox<>(Language.LANGUAGES);
         if (m_sourceLocaleField.getMaximumRowCount() < 20) 
             m_sourceLocaleField.setMaximumRowCount(20);
         m_sourceLocaleField.setEditable(true);
@@ -229,7 +227,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         bL.add(bLL);
 
         // Target language field
-        final JComboBox m_targetLocaleField = new JComboBox(Language.LANGUAGES);
+        final JComboBox<Language> m_targetLocaleField = new JComboBox<>(Language.LANGUAGES);
         if (m_targetLocaleField.getMaximumRowCount() < 20)
             m_targetLocaleField.setMaximumRowCount(20);
         m_targetLocaleField.setEditable(true);
@@ -240,7 +238,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         // Tokenizers box
         Box bT = Box.createVerticalBox();
         localesBox.add(bT);
-        Object[] tokenizers = PluginUtils.getTokenizerClasses().toArray();
+        Class<?>[] tokenizers = PluginUtils.getTokenizerClasses().toArray(new Class<?>[0]);
 
         // Source tokenizer label
         JLabel m_sourceTokenizerLabel = new JLabel();
@@ -252,7 +250,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         bT.add(bST);
 
         // Source tokenizer field
-        final JComboBox m_sourceTokenizerField = new JComboBox(tokenizers);
+        final JComboBox<Class<?>> m_sourceTokenizerField = new JComboBox<>(tokenizers);
         if (m_sourceTokenizerField.getMaximumRowCount() < 20)
             m_sourceTokenizerField.setMaximumRowCount(20);
         m_sourceTokenizerField.setEditable(false);
@@ -262,9 +260,14 @@ public class ProjectPropertiesDialog extends PeroDialog {
 
         String cliTokSrc = Core.getParams().get(CLIParameters.TOKENIZER_SOURCE);
         if (cliTokSrc != null) {
-            m_sourceTokenizerField.setEnabled(false);
-            m_sourceTokenizerField.addItem(cliTokSrc);
-            m_sourceTokenizerField.setSelectedItem(cliTokSrc);
+            try {
+                Class<?> srcTokClass = Class.forName(cliTokSrc);
+                m_sourceTokenizerField.setEnabled(false);
+                m_sourceTokenizerField.addItem(srcTokClass);
+                m_sourceTokenizerField.setSelectedItem(cliTokSrc);
+            } catch (ClassNotFoundException | LinkageError ex) {
+                Log.log(ex);
+            }
         }
 
         m_sourceLocaleField.addActionListener(new ActionListener() {
@@ -289,7 +292,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         bT.add(bTT);
 
         // Target tokenizer field
-        final JComboBox m_targetTokenizerField = new JComboBox(tokenizers);
+        final JComboBox<Class<?>> m_targetTokenizerField = new JComboBox<>(tokenizers);
         if (m_targetTokenizerField.getMaximumRowCount() < 20)
             m_targetTokenizerField.setMaximumRowCount(20);
         m_targetTokenizerField.setEditable(false);
@@ -299,9 +302,15 @@ public class ProjectPropertiesDialog extends PeroDialog {
 
         String cliTokTrg = Core.getParams().get(CLIParameters.TOKENIZER_TARGET);
         if (cliTokTrg != null) {
-            m_targetTokenizerField.setEnabled(false);
-            m_targetTokenizerField.addItem(cliTokTrg);
-            m_targetTokenizerField.setSelectedItem(cliTokTrg);
+            try {
+                Class<?> trgTokClass = Class.forName(cliTokTrg);
+                m_targetTokenizerField.setEnabled(false);
+                m_targetTokenizerField.addItem(trgTokClass);
+                m_targetTokenizerField.setSelectedItem(cliTokTrg);
+            } catch (ClassNotFoundException | LinkageError ex) {
+                Log.log(ex);
+            }
+
         }
 
         m_targetLocaleField.addActionListener(new ActionListener() {
@@ -337,8 +346,8 @@ public class ProjectPropertiesDialog extends PeroDialog {
         } catch (Exception e) {
             srcTok = new DefaultTokenizer();
         }
-        final JComboBox m_sourceTokenizerBehaviorField = new JComboBox(
-                srcTok.getSupportedBehaviors().keySet().toArray());
+        final JComboBox<Version> m_sourceTokenizerBehaviorField = new JComboBox<>(
+                srcTok.getSupportedBehaviors().keySet().toArray(new Version[0]));
         m_sourceTokenizerBehaviorField.setEnabled(!srcTok.getSupportedBehaviors().isEmpty());
         if (m_sourceTokenizerBehaviorField.getMaximumRowCount() < 20)
             m_sourceTokenizerBehaviorField.setMaximumRowCount(20);
@@ -355,9 +364,14 @@ public class ProjectPropertiesDialog extends PeroDialog {
 
         final String cliTokSrcBehavior = Core.getParams().get(CLIParameters.TOKENIZER_BEHAVIOR_SOURCE);
         if (cliTokSrcBehavior != null) {
-            m_sourceTokenizerBehaviorField.setEnabled(false);
-            m_sourceTokenizerBehaviorField.addItem(cliTokSrcBehavior);
-            m_sourceTokenizerBehaviorField.setSelectedItem(cliTokSrcBehavior);
+            try {
+                Version cliTokSrcVersion = Version.valueOf(cliTokSrcBehavior);
+                m_sourceTokenizerBehaviorField.setEnabled(false);
+                m_sourceTokenizerBehaviorField.addItem(cliTokSrcVersion);
+                m_sourceTokenizerBehaviorField.setSelectedItem(cliTokSrcBehavior);
+            } catch (IllegalArgumentException ex) {
+                Log.log(ex);
+            }
         }
 
         m_sourceTokenizerField.addActionListener(new ActionListener() {
@@ -379,15 +393,15 @@ public class ProjectPropertiesDialog extends PeroDialog {
                     m_sourceTokenizerBehaviorField.setRenderer(
                             new TokenizerBehaviorComboBoxRenderer(newTok.getSupportedBehaviors(),
                                     newTok.getDefaultBehavior()));
-                    m_sourceTokenizerBehaviorField.setModel(new DefaultComboBoxModel(
-                            newTok.getSupportedBehaviors().keySet().toArray()));
+                    m_sourceTokenizerBehaviorField.setModel(new DefaultComboBoxModel<>(
+                            newTok.getSupportedBehaviors().keySet().toArray(new Version[0])));
                     if (m_sourceTokenizerBehaviorField.getModel().getSize() > 0) {
                         m_sourceTokenizerBehaviorField.setEnabled(true);
                         m_sourceTokenizerBehaviorField.setSelectedItem(newTok.getBehavior());
                     } else {
                         m_sourceTokenizerBehaviorField.setEnabled(false);
                     }
-                } catch (Exception ex) {
+                } catch (InstantiationException | IllegalAccessException ex) {
                 }
             }});
 
@@ -405,11 +419,11 @@ public class ProjectPropertiesDialog extends PeroDialog {
         ITokenizer trgTok;
         try {
             trgTok = (ITokenizer) trgTokClass.newInstance();
-        } catch (Exception e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             trgTok = new DefaultTokenizer();
         }
-        final JComboBox m_targetTokenizerBehaviorField = new JComboBox(
-                trgTok.getSupportedBehaviors().keySet().toArray());
+        final JComboBox<Version> m_targetTokenizerBehaviorField = new JComboBox<>(
+                trgTok.getSupportedBehaviors().keySet().toArray(new Version[0]));
         m_targetTokenizerBehaviorField.setEnabled(!trgTok.getSupportedBehaviors().isEmpty());
         if (m_targetTokenizerBehaviorField.getMaximumRowCount() < 20)
             m_targetTokenizerBehaviorField.setMaximumRowCount(20);
@@ -426,9 +440,14 @@ public class ProjectPropertiesDialog extends PeroDialog {
 
         final String cliTokTrgBehavior = Core.getParams().get(CLIParameters.TOKENIZER_BEHAVIOR_TARGET);
         if (cliTokTrgBehavior != null) {
-            m_targetTokenizerBehaviorField.setEnabled(false);
-            m_targetTokenizerBehaviorField.addItem(cliTokTrgBehavior);
-            m_targetTokenizerBehaviorField.setSelectedItem(cliTokTrgBehavior);
+            try {
+                Version cliTokTrgVersion = Version.valueOf(cliTokTrgBehavior);
+                m_targetTokenizerBehaviorField.setEnabled(false);
+                m_targetTokenizerBehaviorField.addItem(cliTokTrgVersion);
+                m_targetTokenizerBehaviorField.setSelectedItem(cliTokTrgBehavior);
+            } catch (IllegalArgumentException ex) {
+                Log.log(ex);
+            }
         }
 
         m_targetTokenizerField.addActionListener(new ActionListener() {
@@ -450,15 +469,15 @@ public class ProjectPropertiesDialog extends PeroDialog {
                     m_targetTokenizerBehaviorField.setRenderer(
                             new TokenizerBehaviorComboBoxRenderer(newTok.getSupportedBehaviors(),
                                     newTok.getDefaultBehavior()));
-                    m_targetTokenizerBehaviorField.setModel(new DefaultComboBoxModel(
-                            newTok.getSupportedBehaviors().keySet().toArray()));
+                    m_targetTokenizerBehaviorField.setModel(new DefaultComboBoxModel<Version>(
+                            newTok.getSupportedBehaviors().keySet().toArray(new Version[0])));
                     if (m_targetTokenizerBehaviorField.getModel().getSize() > 0) {
                         m_targetTokenizerBehaviorField.setEnabled(true);
                         m_targetTokenizerBehaviorField.setSelectedItem(newTok.getBehavior());
                     } else {
                         m_targetTokenizerBehaviorField.setEnabled(false);
                     }
-                } catch (Exception ex) {
+                } catch (InstantiationException | IllegalAccessException ex) {
                 }
             }});
 
@@ -466,66 +485,75 @@ public class ProjectPropertiesDialog extends PeroDialog {
 
         // options
         centerBox.add(Box.createVerticalStrut(5));
-        Box optionsBox = Box.createVerticalBox();
+        JPanel optionsBox = new JPanel(new GridBagLayout());
         optionsBox.setBorder(new EtchedBorder());
-        optionsBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), OStrings.getString("PP_OPTIONS") ));
-        
+        optionsBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                OStrings.getString("PP_OPTIONS")));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(3, 3, 3, 3);
+
         // sentence-segmenting
         final JCheckBox m_sentenceSegmentingCheckBox = new JCheckBox();
         Mnemonics
                 .setLocalizedText(m_sentenceSegmentingCheckBox, OStrings.getString("PP_SENTENCE_SEGMENTING"));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        optionsBox.add(m_sentenceSegmentingCheckBox, gbc);
 
         JButton m_sentenceSegmentingButton = new JButton();
         Mnemonics.setLocalizedText(m_sentenceSegmentingButton, OStrings.getString("MW_OPTIONSMENU_SENTSEG"));
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        optionsBox.add(m_sentenceSegmentingButton, gbc);
 
-        Box bSent = Box.createHorizontalBox();
-        bSent.add(m_sentenceSegmentingCheckBox);
-        bSent.add(Box.createHorizontalGlue());
-        bSent.add(m_sentenceSegmentingButton);
-        optionsBox.add(bSent);
-        
-        //File Filters
+        // File Filters
         JButton m_fileFiltersButton = new JButton();
         Mnemonics.setLocalizedText(m_fileFiltersButton, OStrings.getString("WM_PROJECTMENU_FILEFILTERS"));
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        optionsBox.add(m_fileFiltersButton, gbc);
 
-        Box bFF = Box.createHorizontalBox();
-        bFF.add(Box.createHorizontalGlue());
-        bFF.add(m_fileFiltersButton);
-        optionsBox.add(bFF);
+        // Repositories mapping
+        JButton m_RepositoriesButton = new JButton();
+        Mnemonics.setLocalizedText(m_RepositoriesButton, OStrings.getString("PP_REPOSITORIES"));
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        optionsBox.add(m_RepositoriesButton, gbc);
 
-        //multiple translations
+        // multiple translations
         final JCheckBox m_allowDefaultsCheckBox = new JCheckBox();
         Mnemonics.setLocalizedText(m_allowDefaultsCheckBox, OStrings.getString("PP_ALLOW_DEFAULTS"));
-        Box bMT = Box.createHorizontalBox();
-        bMT.setBorder(emptyBorder);
-        bMT.add(m_allowDefaultsCheckBox);
-        bMT.add(Box.createHorizontalGlue());
-        optionsBox.add(bMT);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        optionsBox.add(m_allowDefaultsCheckBox, gbc);
 
-        //Remove Tags
+        // Remove Tags
         final JCheckBox m_removeTagsCheckBox = new JCheckBox();
         Mnemonics.setLocalizedText(m_removeTagsCheckBox, OStrings.getString("PP_REMOVE_TAGS"));
-        Box bRT = Box.createHorizontalBox();
-        bRT.setBorder(emptyBorder);
-        bRT.add(m_removeTagsCheckBox);
-        bRT.add(Box.createHorizontalGlue());
-        optionsBox.add(bRT);
-        
-        //Post-processing
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        optionsBox.add(m_removeTagsCheckBox, gbc);
+
+        // Post-processing
         JLabel m_externalCommandLabel = new JLabel();
-        Box bEC = Box.createHorizontalBox();
-        bEC.setBorder(emptyBorder);
-        bEC.add(m_externalCommandLabel);
-        bEC.add(Box.createHorizontalGlue());
-        optionsBox.add(bEC);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        optionsBox.add(m_externalCommandLabel, gbc);
         final JTextArea m_externalCommandTextArea = new JTextArea();
         m_externalCommandTextArea.setRows(2);
         m_externalCommandTextArea.setLineWrap(true);
         m_externalCommandTextArea.setText(projectProperties.getExternalCommand());
         if (Preferences.isPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD)) {
-        	Mnemonics.setLocalizedText(m_externalCommandLabel, OStrings.getString("PP_EXTERNAL_COMMAND"));
+            Mnemonics.setLocalizedText(m_externalCommandLabel, OStrings.getString("PP_EXTERNAL_COMMAND"));
         } else {
-        	Mnemonics.setLocalizedText(m_externalCommandLabel, OStrings.getString("PP_EXTERN_CMD_DISABLED"));
+            Mnemonics.setLocalizedText(m_externalCommandLabel, OStrings.getString("PP_EXTERN_CMD_DISABLED"));
             m_externalCommandTextArea.setEditable(false);
             m_externalCommandTextArea.setToolTipText(OStrings.getString("PP_EXTERN_CMD_DISABLED_TOOLTIP"));
             m_externalCommandLabel.setToolTipText(OStrings.getString("PP_EXTERN_CMD_DISABLED_TOOLTIP"));
@@ -533,27 +561,38 @@ public class ProjectPropertiesDialog extends PeroDialog {
         }
         final JScrollPane m_externalCommandScrollPane = new JScrollPane();
         m_externalCommandScrollPane.setViewportView(m_externalCommandTextArea);
-        optionsBox.add(m_externalCommandScrollPane);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 1;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        optionsBox.add(m_externalCommandScrollPane, gbc);
         final JLabel m_variablesLabel = new javax.swing.JLabel();
-        final JComboBox m_variablesList = new javax.swing.JComboBox(CommandVarExpansion.COMMAND_VARIABLES);
+        final JComboBox<String> m_variablesList = new JComboBox<>(CommandVarExpansion.COMMAND_VARIABLES);
         final JButton m_insertButton = new javax.swing.JButton();
         // Add variable insertion controls only if project external commands are enabled.
         if (Preferences.isPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD)) {
-            Box bIC = Box.createHorizontalBox();
-            bIC.setBorder(emptyBorder);
-            Mnemonics.setLocalizedText(m_variablesLabel, OStrings.getString("EXT_TMX_MATCHES_TEMPLATE_VARIABLES"));
-            bIC.add(m_variablesLabel);
-            bIC.add(m_variablesList);
+            Mnemonics.setLocalizedText(m_variablesLabel,
+                    OStrings.getString("EXT_TMX_MATCHES_TEMPLATE_VARIABLES"));
+            gbc.gridx = 0;
+            gbc.gridy = 5;
+            gbc.anchor = GridBagConstraints.WEST;
+            optionsBox.add(m_variablesLabel, gbc);
             Mnemonics.setLocalizedText(m_insertButton, OStrings.getString("BUTTON_INSERT"));
             m_insertButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    insertButtonActionPerformed(m_externalCommandTextArea, m_variablesList);
+                    m_externalCommandTextArea.replaceSelection(m_variablesList.getSelectedItem().toString());
                 }
             });
-            bIC.add(m_insertButton);
-            bIC.add(Box.createHorizontalGlue());
-            optionsBox.add(bIC);
+            gbc.gridx = 0;
+            gbc.gridy = 6;
+            gbc.weightx = 1;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            optionsBox.add(m_insertButton, gbc);
         }
 
         centerBox.add(optionsBox, BorderLayout.WEST);
@@ -766,13 +805,25 @@ public class ProjectPropertiesDialog extends PeroDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame mainWindow = Core.getMainWindow().getApplicationFrame();
-                FiltersCustomizer dlg = new FiltersCustomizer(mainWindow, true, FilterMaster
-                        .createDefaultFiltersConfig(), FilterMaster.loadConfig(StaticUtils.getConfigDir()),
-                        filters);
+                FiltersCustomizer dlg = new FiltersCustomizer(mainWindow, true,
+                        FilterMaster.createDefaultFiltersConfig(), Preferences.getFilters(), filters);
+                dlg.setInUseFilters(FileInfo.getFilterNames(Core.getProject().getProjectFiles()));
                 dlg.setVisible(true);
                 if (dlg.getReturnStatus() == FiltersCustomizer.RET_OK) {
                     // saving config
                     filters = dlg.result;
+                }
+            }
+        });
+
+        m_RepositoriesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame mainWindow = Core.getMainWindow().getApplicationFrame();
+                List<RepositoryDefinition> r = new RepositoriesMappingController().show(mainWindow,
+                        projectProperties.getRepositories());
+                if (r != null) {
+                    projectProperties.setRepositories(r);
                 }
             }
         });
@@ -838,34 +889,8 @@ public class ProjectPropertiesDialog extends PeroDialog {
                 m_tmRootField.setForeground(Color.RED);
 
             break;
-        case EDIT_TEAM_PROJECT:
-            m_sourceLocaleField.setEnabled(false);
-            m_targetLocaleField.setEnabled(false);
-            m_sourceTokenizerField.setEnabled(false);
-            m_targetTokenizerField.setEnabled(false);
-            m_sourceTokenizerBehaviorField.setEnabled(false);
-            m_targetTokenizerBehaviorField.setEnabled(false);
-            m_sentenceSegmentingCheckBox.setEnabled(false);
-            m_allowDefaultsCheckBox.setEnabled(false);
-            m_removeTagsCheckBox.setEnabled(false);
-            m_externalCommandTextArea.setEnabled(false);
-            m_insertButton.setEnabled(false);
-            m_variablesList.setEnabled(false);
-            m_srcBrowse.setEnabled(false);
-            m_srcRootField.setEnabled(false);
-            m_tmBrowse.setEnabled(false);
-            m_tmRootField.setEnabled(false);
-            m_glosBrowse.setEnabled(false);
-            m_glosRootField.setEnabled(false);
-            m_wGlosBrowse.setEnabled(false);
-            m_writeableGlosField.setEnabled(false);
-            m_dictBrowse.setEnabled(false);
-            m_dictRootField.setEnabled(false);
-            m_locBrowse.setEnabled(false);
-            m_locRootField.setEnabled(false);
-            m_srcExcludes.setEnabled(false);
         default:
-            // Nothing
+            break;
         }
 
         updateUIText(m_messageArea);
@@ -875,7 +900,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         setSize(9 * getWidth() / 8, getHeight() + 10);
         setResizable(true);
         StaticUIUtils.fitInScreen(this);
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(Core.getMainWindow().getApplicationFrame());
     }
 
     /**
@@ -1081,13 +1106,13 @@ public class ProjectPropertiesDialog extends PeroDialog {
         }
     }
 
-    private void doOK(JComboBox m_sourceLocaleField, JComboBox m_targetLocaleField,
-            JComboBox m_sourceTokenizerField, JComboBox m_targetTokenizerField,
-            JComboBox m_sourceTokenizerBehaviorField, JComboBox m_targetTokenizerBehaviorField,
+    private void doOK(JComboBox<Language> m_sourceLocaleField, JComboBox<Language> m_targetLocaleField,
+            JComboBox<Class<?>> m_sourceTokenizerField, JComboBox<Class<?>> m_targetTokenizerField,
+            JComboBox<Version> m_sourceTokenizerBehaviorField, JComboBox<Version> m_targetTokenizerBehaviorField,
             JCheckBox m_sentenceSegmentingCheckBox, JTextField m_srcRootField, JTextField m_locRootField,
             JTextField m_glosRootField, JTextField m_writeableGlosField, JTextField m_tmRootField, JTextField m_dictRootField,
             JCheckBox m_allowDefaultsCheckBox, JCheckBox m_removeTagsCheckBox, JTextArea m_customCommandTextArea) {
-        if (!ProjectProperties.verifySingleLangCode(m_sourceLocaleField.getSelectedItem().toString())) {
+        if (!Language.verifySingleLangCode(m_sourceLocaleField.getSelectedItem().toString())) {
             JOptionPane.showMessageDialog(
                     this,
                     OStrings.getString("NP_INVALID_SOURCE_LOCALE")
@@ -1098,7 +1123,7 @@ public class ProjectPropertiesDialog extends PeroDialog {
         }
         projectProperties.setSourceLanguage(m_sourceLocaleField.getSelectedItem().toString());
 
-        if (!ProjectProperties.verifySingleLangCode(m_targetLocaleField.getSelectedItem().toString())) {
+        if (!Language.verifySingleLangCode(m_targetLocaleField.getSelectedItem().toString())) {
             JOptionPane.showMessageDialog(
                     this,
                     OStrings.getString("NP_INVALID_TARGET_LOCALE")
@@ -1227,10 +1252,6 @@ public class ProjectPropertiesDialog extends PeroDialog {
         m_dialogCancelled = true;
         setVisible(false);
     }
-    
-    private void insertButtonActionPerformed(JTextArea area, JComboBox box) {
-        area.replaceSelection(box.getSelectedItem().toString());
-    }
 
     private void updateUIText(JTextArea m_messageArea) {
         switch (dialogType) {
@@ -1243,7 +1264,6 @@ public class ProjectPropertiesDialog extends PeroDialog {
             m_messageArea.setText(OStrings.getString("PP_MESSAGE_BADPROJ"));
             break;
         case EDIT_PROJECT:
-        case EDIT_TEAM_PROJECT:
             setTitle(OStrings.getString("PP_EDIT_PROJECT"));
             m_messageArea.setText(OStrings.getString("PP_MESSAGE_EDITPROJ"));
             break;

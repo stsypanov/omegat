@@ -341,22 +341,22 @@ public class Searcher {
                         }
                     }
                 });
+                m_project.iterateByMultipleTranslations(new IProject.MultipleTranslationsIterator() {
+                    final String file = OStrings.getString("CT_ORPHAN_STRINGS");
+
+                    public void iterate(EntryKey source, TMXEntry en) {
+                        // stop searching if the max. nr of hits has been
+                        // reached
+                        if (m_numFinds >= expression.numberOfResults) {
+                            return;
+                        }
+                        checkStop.checkInterrupted();
+                        if (m_project.isOrphaned(source)) {
+                            checkEntry(en.source, en.translation, en.note, null, en, ENTRY_ORIGIN_ORPHAN, file);
+                        }
+                    }
+                });
             }
-
-            m_project.iterateByMultipleTranslations(new IProject.MultipleTranslationsIterator() {
-                final String file = OStrings.getString("CT_ORPHAN_STRINGS");
-
-                public void iterate(EntryKey source, TMXEntry en) {
-                    // stop searching if the max. nr of hits has been reached
-                    if (m_numFinds >= expression.numberOfResults) {
-                        return;
-                    }
-                    checkStop.checkInterrupted();
-                    if (m_project.isOrphaned(source)) {
-                        checkEntry(en.source, en.translation, en.note, null, en, ENTRY_ORIGIN_ORPHAN, file);
-                    }
-                }
-            });
         }
 
         // search the TM, if requested
@@ -379,7 +379,7 @@ public class Searcher {
             }
         }
 
-        // search the TM, if requested
+        // search the glossary, if requested
         if (m_searchExpression.glossary) {
             String intro = OStrings.getString("SW_GLOSSARY_RESULT");
             List<GlossaryEntry> entries = Core.getGlossaryManager().search(m_searchExpression.text);
@@ -474,39 +474,41 @@ public class Searcher {
             String comment, TMXEntry entry, int entryNum, String intro) {
         SearchMatch[] srcMatches = null;
         SearchMatch[] targetMatches = null;
+        SearchMatch[] srcOrTargetMatches = null;
         SearchMatch[] noteMatches = null;
         SearchMatch[] commentMatches = null;
 
         switch (m_searchExpression.mode) {
         case SEARCH:
-            if (locText!=null) {
-                if (!expression.searchTranslated) {
-                    return;
-                }
-            }else {
-                if (!expression.searchUntranslated) {
-                    return;
-                }
+            if (expression.searchTranslated && !expression.searchUntranslated && locText == null) {
+                return;
             }
-            if (expression.searchSource) {
-                if (searchString(srcText)) {
-                    srcMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
-                }
+            if (!expression.searchTranslated && expression.searchUntranslated && locText != null) {
+                return;
             }
-            if (expression.searchTarget) {
-                if (searchString(locText)) {
-                    targetMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
-                }
+            if (expression.searchSource && searchString(srcText)) {
+                srcMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
             }
-            if (expression.searchNotes) {
-                if (note != null && searchString(note)) {
-                    noteMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
-                }
+            if (expression.searchTarget && searchString(locText)) {
+                targetMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
             }
-            if (expression.searchComments) {
-                if (comment != null && searchString(comment)) {
-                    commentMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
-                }
+            // If
+            // - we are searching both source and target
+            // - we and haven't found a match in either so far
+            // - we have a target
+            // then we also search the concatenation of source and target per
+            // https://sourceforge.net/p/omegat/feature-requests/1185/
+            // We join with U+E000 (private use) to prevent spuriously matching
+            // e.g. "abc" in "fab" + "cat"
+            if (expression.searchSource && expression.searchTarget && locText != null && srcMatches == null
+                    && targetMatches == null && searchString(srcText + '\ue000' + locText)) {
+                srcOrTargetMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
+            }
+            if (expression.searchNotes && searchString(note)) {
+                noteMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
+            }
+            if (expression.searchComments && searchString(comment)) {
+                commentMatches = foundMatches.toArray(new SearchMatch[foundMatches.size()]);
             }
             break;
         case REPLACE:
@@ -522,12 +524,13 @@ public class Searcher {
             break;
         }
         // if the search expression is satisfied, report the hit
-        if ((srcMatches != null || targetMatches != null || noteMatches != null || commentMatches != null)
+        if ((srcMatches != null || targetMatches != null || srcOrTargetMatches != null || noteMatches != null
+                || commentMatches != null)
                 && (!expression.searchAuthor || entry != null && searchAuthor(entry))
-                && (!expression.searchDateBefore || entry != null && entry.changeDate != 0
-                        && entry.changeDate < expression.dateBefore)
-                && (!expression.searchDateAfter || entry != null && entry.changeDate != 0
-                        && entry.changeDate > expression.dateAfter)) {
+                && (!expression.searchDateBefore
+                        || entry != null && entry.changeDate != 0 && entry.changeDate < expression.dateBefore)
+                && (!expression.searchDateAfter
+                        || entry != null && entry.changeDate != 0 && entry.changeDate > expression.dateAfter)) {
             // found
             foundString(entryNum, intro, srcText, locText, note,
                     srcMatches, targetMatches, noteMatches);

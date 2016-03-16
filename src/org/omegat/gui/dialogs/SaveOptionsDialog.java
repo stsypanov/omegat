@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
@@ -70,7 +69,7 @@ public class SaveOptionsDialog extends PeroDialog {
 
         externalCommandTextArea.setText(Preferences.getPreference(Preferences.EXTERNAL_COMMAND));
         allowProjectCmdCheckBox.setSelected(Preferences.isPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD));
-        DockingUI.displayCentered(this);
+        setLocationRelativeTo(parent);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -103,7 +102,7 @@ public class SaveOptionsDialog extends PeroDialog {
         externalCommandTextArea = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         variablesLabel = new javax.swing.JLabel();
-        variablesList = new javax.swing.JComboBox();
+        variablesList = new javax.swing.JComboBox<String>();
         insertButton = new javax.swing.JButton();
         allowProjectCmdCheckBox = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
@@ -199,7 +198,7 @@ public class SaveOptionsDialog extends PeroDialog {
         org.openide.awt.Mnemonics.setLocalizedText(variablesLabel, OStrings.getString("EXT_TMX_MATCHES_TEMPLATE_VARIABLES")); // NOI18N
         jPanel4.add(variablesLabel, java.awt.BorderLayout.WEST);
 
-        variablesList.setModel(new DefaultComboBoxModel(org.omegat.core.data.CommandVarExpansion.COMMAND_VARIABLES));
+        variablesList.setModel(new DefaultComboBoxModel<>(org.omegat.core.data.CommandVarExpansion.COMMAND_VARIABLES));
         jPanel4.add(variablesList, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(insertButton, OStrings.getString("BUTTON_INSERT")); // NOI18N
@@ -320,7 +319,7 @@ public class SaveOptionsDialog extends PeroDialog {
     private javax.swing.JLabel secondsLabel;
     private javax.swing.JSpinner secondsSpinner;
     private javax.swing.JLabel variablesLabel;
-    private javax.swing.JComboBox variablesList;
+    private javax.swing.JComboBox<String> variablesList;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
