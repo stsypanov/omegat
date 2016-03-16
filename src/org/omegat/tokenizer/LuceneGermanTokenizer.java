@@ -25,16 +25,19 @@
  **************************************************************************/
 package org.omegat.tokenizer;
 
+import java.io.IOException;
 import java.io.StringReader;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.de.GermanAnalyzer;
+import org.apache.lucene.analysis.de.GermanStemFilter;
+import org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
+import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.analysis.util.CharArraySet;
 
 /**
  * @author Alex Buloichik (alex73mail@gmail.com)
@@ -42,35 +45,47 @@ import org.apache.lucene.util.Version;
  */
 @Tokenizer(languages = { "de" }, isDefault = true)
 public class LuceneGermanTokenizer extends BaseTokenizer {
-    
-    public LuceneGermanTokenizer() {
-        super();
-        defaultBehavior = Version.LUCENE_30;
-    }
-    
-    @SuppressWarnings("deprecation")
-    @Override
-    public Map<Version, String> getSupportedBehaviors() {
-        Map<Version, String> result = new LinkedHashMap<Version, String>();
-        result.putAll(super.getSupportedBehaviors());
-        result.put(Version.LUCENE_36, result.get(Version.LUCENE_36) + " (UniNE)");
-        result.put(Version.LUCENE_31, result.get(Version.LUCENE_31) + " (Snowball)");
-        result.put(Version.LUCENE_20, result.get(Version.LUCENE_20) + " (Caumanns)");
-        return result;
-    }
-    
+
     @SuppressWarnings("resource")
     @Override
-    protected TokenStream getTokenStream(final String strOrig,
-            final boolean stemsAllowed, final boolean stopWordsAllowed) {
+    protected TokenStream getTokenStream(final String strOrig, final boolean stemsAllowed,
+            final boolean stopWordsAllowed) throws IOException {
         if (stemsAllowed) {
-            Set<?> stopWords = stopWordsAllowed ? GermanAnalyzer.getDefaultStopSet()
-                    : Collections.emptySet();
-            return new GermanAnalyzer(getBehavior(), stopWords).tokenStream("", new StringReader(
-                    strOrig));
+            CharArraySet stopWords = stopWordsAllowed ? GermanAnalyzer.getDefaultStopSet() : CharArraySet.EMPTY_SET;
+            return new Lucene30GermanAnalyzer(stopWords).tokenStream("", new StringReader(strOrig));
         } else {
-            return new StandardTokenizer(getBehavior(),
-                    new StringReader(strOrig));
+            return super.getStandardTokenStream(strOrig);
         }
+    }
+
+    /**
+     * A German analyzer that recreates the behavior of the GermanAnalyzer in
+     * Lucene 3.0 and earlier.
+     * 
+     * @see <a href=
+     *      "https://groups.yahoo.com/neo/groups/OmegaT/conversations/messages/28395">
+     *      User group discussion</a>
+     * @see <a href=
+     *      "https://github.com/apache/lucene-solr/blob/e8e4245d9b36123446546ff15967ac95429ea2b0/lucene/analysis/common/src/java/org/apache/lucene/analysis/de/GermanAnalyzer.java#L172">
+     *      Behavior before version branching was removed</a>
+     */
+    private class Lucene30GermanAnalyzer extends Analyzer {
+        private final CharArraySet stopWords;
+
+        public Lucene30GermanAnalyzer(CharArraySet stopWords) {
+            this.stopWords = stopWords;
+        }
+
+        @Override
+        protected TokenStreamComponents createComponents(String arg0) {
+            final org.apache.lucene.analysis.Tokenizer source = new StandardTokenizer();
+            TokenStream result = new StandardFilter(source);
+            result = new LowerCaseFilter(result);
+            result = new StopFilter(result, stopWords);
+            result = new SetKeywordMarkerFilter(result, CharArraySet.EMPTY_SET);
+            result = new GermanStemFilter(result);
+            return new TokenStreamComponents(source, result);
+        }
+
     }
 }

@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.languagetool.JLanguageTool;
+import org.languagetool.language.AmericanEnglish;
 import org.languagetool.language.Belarusian;
-import org.languagetool.language.English;
 import org.languagetool.language.French;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.UppercaseSentenceStartRule;
@@ -47,7 +47,6 @@ public class LanguageToolTest {
     @Test
     public void testExecute() throws Exception {
         JLanguageTool lt = new JLanguageTool(new Belarusian());
-        lt.activateDefaultPatternRules();
 
         // The test string is Russian(?); originally it was actual UTF-8,
         // but that causes the test to fail when environment encodings aren't set
@@ -61,7 +60,6 @@ public class LanguageToolTest {
     @Test
     public void testFrench() throws Exception {
         JLanguageTool lt = new JLanguageTool(new French());
-        lt.activateDefaultPatternRules();
 
         List<RuleMatch> matches = lt.check("Directeur production du groupe");
         assertEquals(1, matches.size());
@@ -70,8 +68,7 @@ public class LanguageToolTest {
 
     @Test
     public void testEnglish() throws Exception {
-        JLanguageTool lt = new JLanguageTool(new English());
-        lt.activateDefaultPatternRules();
+        JLanguageTool lt = new JLanguageTool(new AmericanEnglish());
 
         List<RuleMatch> matches = lt.check("Check test");
         assertEquals(0, matches.size());

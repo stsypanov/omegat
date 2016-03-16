@@ -86,6 +86,15 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
     @Override
     public boolean processKeys(KeyEvent e) {
+        if ((StaticUtils.isKey(e, KeyEvent.VK_LEFT, 0) || StaticUtils.isKey(e, KeyEvent.VK_RIGHT, 0))
+                && completer.isVisible() && completer.didPopUpAutomatically) {
+            // Close autocompleter if user presses left or right (we can't use these anyway since it's a
+            // vertical list) and the completer appeared automatically.
+            completer.setVisible(false);
+            // Don't consume here so that the cursor movement can still take place.
+            return false;
+        }
+
         if (StaticUtils.isKey(e, KeyEvent.VK_UP, 0)) {
             // process key UP
             selectPreviousPossibleValue();
@@ -173,9 +182,9 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
         return width;
     };
     
-    protected void setData(List<AutoCompleterItem> entryList) {
-        getList().setListData(entryList.toArray(new AutoCompleterItem[entryList.size()]));
-        if (!entryList.isEmpty()) {
+    protected void setData(AutoCompleterItem... entries) {
+        getList().setListData(entries);
+        if (entries.length > 0) {
             getList().setSelectedIndex(0);
             getList().invalidate();
         }
@@ -194,14 +203,13 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     }
     
     @Override
-    public boolean updateViewData() {
+    public void updateViewData() {
         List<AutoCompleterItem> entryList = computeListData(getLeadingText(), false);    
         if (entryList.isEmpty()) {
-            entryList.add(NO_SUGGESTIONS);
+            setData(NO_SUGGESTIONS);
+        } else {
+            setData(entryList.toArray(new AutoCompleterItem[entryList.size()]));
         }
-        setData(entryList);
-        
-        return !entryList.isEmpty();
     }
     
     @Override

@@ -4,21 +4,9 @@ htmlparser.jar version 1.6 is distributed under the GNU Lesser
 General Public License version 2.1 and greater
 Sources are available in OmegaT sources, in the directory lib/sources
 
-jna.jar is distributed under the GNU Lesser General Public License  
-version 2.1 and greater
-Sources are available in OmegaT sources, in the directory lib/sources
-
 vldocking-3.0.5-SNAPSHOT.jar is distributed under the GNU Lesser General
 Public License
 Sources are available in OmegaT sources, in the directory lib/sources
-
-Hunspell is distributed under the GNU Lesser General Public License  
-version 2.1 and greater, the GNU Public License version 2.0 and  
-greater or the Mozilla Public License version 1.1
-Sources are available in OmegaT sources, in the directory lib/sources
-Some Hunspell librairies may correspond to older versions
-Sources are all available from
-https://sourceforge.net/project/showfiles.php?group_id=143754&package_id=157912
 
 swing-layout-1.0.4.jar is distributed under the GNU Lesser General  
 Public License version 2.1.
@@ -49,8 +37,6 @@ Eclipse Distribution License (EDL) v 1.0
 jsch-0.1.52.jar is distributed under the JSch License
 (required for GITRemoteRepository.java)
 
-Base64 is public domain and is included in OmegaT sources
-
 diff.jar is distributed under the GNU General Public License version 1 and greater
 Sources are available in OmegaT sources, in the directory lib/sources
 
@@ -58,30 +44,16 @@ trilead-ssh2-1.0.0-build217.jar is distributed under the Trilead SSH license
 
 lucene-*.jar are distributed under the Apache License 2.0
 
-The English tokenizers (org.omegat.tokenizer.SnowballEnglishTokenizer and
-org.omegat.tokenizer.LuceneEnglishTokenizer) use stop words originally from Okapi
-(http://okapi.sourceforge.net) under the LGPL license.
-
-tinysegmenter.jar is distributed under the Modified BSD license
+LuceneEnglishTokenizer uses stop words originally from Okapi (http://okapi.opentag.com/)
+under the LGPL license.
 
 commons-*.jar are distributed under the Apache License 2.0
 (required for LanguageTool and some parts of OmegaT)
 
-jwordSplitter-3.4.jar is distributed under the Apache License 2.0
-(required for LanguageTool)
-
-LanguageTool-data.jar and languagetool-core-2.2.jar are distributed under the LGPL license
+LanguageTool-data.jar and languagetool-core.jar are distributed under the LGPL license
 LanguageTool sources are available from https://github.com/languagetool-org/languagetool
-
-morfologik-*.jar is distributed under the Morfologik license
-(required for LanguageTool)
-
-segment-1.4.1.jar is distributed under the Segment license
-(required for LanguageTool)
-
-lucene-gosen-2.0.2-ipadic.jar is distributed under the LGPL license
-(required for LanguageTool)
-lucene-gosen sources are available via SVN from http://code.google.com/p/lucene-gosen/source/checkout
+For licenses of libraries required by LanguageTool, see
+lib/LanguageTool-*/third-party-licenses/README.txt
 
 pdfbox-app-1.8.1.jar is distributed under the Apache License 2.0
 
@@ -91,9 +63,6 @@ groovy-all-2.2.2.jar is distributed under the Apache License 2.0
 SuperTMXMerge-for_OmegaT.jar is distributed under the GNU Lesser General  
 Public License version 2.1 and greater
 Sources are available in OmegaT sources, in the directory lib/sources
-
-OmegaT code uses the method createTempDir from Google Guava
-(https://code.google.com/p/guava-libraries/), licensed under the Apache License 2.0.
 
 slf4j-*.jar is distributed under the MIT License.
 

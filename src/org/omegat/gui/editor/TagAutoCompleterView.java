@@ -29,16 +29,15 @@ package org.omegat.gui.editor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.lucene.util.Version;
-import org.omegat.tokenizer.ITokenizer;
 import org.omegat.core.Core;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.gui.editor.autocompleter.AutoCompleterItem;
 import org.omegat.gui.editor.autocompleter.AutoCompleterListView;
+import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.TagUtil;
 import org.omegat.util.TagUtil.Tag;
 import org.omegat.util.Token;
@@ -60,6 +59,10 @@ public class TagAutoCompleterView extends AutoCompleterListView {
     public List<AutoCompleterItem> computeListData(String prevText, boolean contextualOnly) {
         String wordChunk = getLastToken(prevText);
         
+        if (StringUtil.isEmpty(wordChunk)) {
+            return Collections.emptyList();
+        }
+
         List<String> missingGroups = TagUtil.getGroupedMissingTagsFromTarget();
         
         // If wordChunk is a tag, pretend we have a blank wordChunk.
@@ -118,24 +121,6 @@ public class TagAutoCompleterView extends AutoCompleterListView {
     private static class TagTokenizer implements ITokenizer {
 
         public static final String[] EMPTY_STRINGS = new String[0];
-
-        @Override
-        public Map<Version, String> getSupportedBehaviors() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public Version getBehavior() {
-            return null;
-        }
-
-        @Override
-        public void setBehavior(Version behavior) {}
-
-        @Override
-        public Version getDefaultBehavior() {
-            return null;
-        }
 
         @Override
         public Token[] tokenizeWords(String str, StemmingMode stemmingMode) {

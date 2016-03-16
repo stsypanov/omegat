@@ -39,7 +39,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 
-import org.omegat.core.Core;
 import org.omegat.gui.editor.EditorTextArea3;
 import org.omegat.gui.editor.TagAutoCompleterView;
 import org.omegat.gui.editor.autotext.AutotextAutoCompleterView;
@@ -82,7 +81,7 @@ public class AutoCompleter implements IAutoCompleter {
     
     public final static int PAGE_ROW_COUNT = 10;
     
-    private boolean didPopUpAutomatically = false;
+    boolean didPopUpAutomatically = false;
     
     /**
      * a list of the views associated with this auto-completer
@@ -150,7 +149,7 @@ public class AutoCompleter implements IAutoCompleter {
                 return false;
             }
 
-            updatePopup();
+            updatePopup(false);
             setVisible(true);
             
             return true;
@@ -168,7 +167,7 @@ public class AutoCompleter implements IAutoCompleter {
             
             if ((StaticUtils.isKey(e, KeyEvent.VK_INSERT, 0))) {
                 acceptedListItem(getSelectedValue()); 
-                updatePopup();
+                updatePopup(false);
                 return true;
             }
 
@@ -210,19 +209,21 @@ public class AutoCompleter implements IAutoCompleter {
     /**
      * Show the popup list.
      */
-    public void updatePopup() {
+    public void updatePopup(boolean onlyIfVisible) {
+        if (onlyIfVisible && !isVisible()) {
+            return;
+        }
+
         AbstractAutoCompleterView view = getCurrentView();
         
-        if (editor.isEnabled() && view.updateViewData()) {
-            scroll.setPreferredSize(new Dimension(
-                    Math.min(view.getPreferredWidth(), MAX_POPUP_WIDTH),
-                    Math.max(view.getPreferredHeight(), MIN_VIEWPORT_HEIGHT)));
-            popup.validate();
-            popup.pack();
-            if (isVisible()) {
-                Point p = getDisplayPoint();
-                popup.show(editor, p.x, p.y);
-            }
+        view.updateViewData();
+        scroll.setPreferredSize(new Dimension(Math.min(view.getPreferredWidth(), MAX_POPUP_WIDTH),
+                Math.max(view.getPreferredHeight(), MIN_VIEWPORT_HEIGHT)));
+        popup.validate();
+        popup.pack();
+        if (isVisible()) {
+            Point p = getDisplayPoint();
+            popup.show(editor, p.x, p.y);
         }
         view.onShow();
     }
@@ -327,22 +328,20 @@ public class AutoCompleter implements IAutoCompleter {
     /** go to the next view */
     private void selectNextView() {
         currentView = nextViewNumber();
-        activateView();
+        activateView(true);
     }
 
     /** activate the current view */
-    private void activateView() {
+    private void activateView(boolean onlyIfVisible) {
         scroll.setViewportView(getCurrentView().getViewContent());
         updateViewLabel();
-        if (Core.getProject().isProjectLoaded()) {
-            updatePopup();
-        }
+        updatePopup(onlyIfVisible);
     }
     
     /** select the previous view */
     private void selectPreviousView() {
         currentView = prevViewNumber();
-        activateView();
+        activateView(true);
     }
 
     public boolean isVisible() {
@@ -377,7 +376,7 @@ public class AutoCompleter implements IAutoCompleter {
     
     public void textDidChange() {
         if (isVisible() && !didPopUpAutomatically) {
-            updatePopup();
+            updatePopup(true);
             return;
         }
         if (!Preferences.isPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY)) {
@@ -390,7 +389,7 @@ public class AutoCompleter implements IAutoCompleter {
             if (views.get(i).shouldPopUp()) {
                 currentView = i;
                 didPopUpAutomatically = true;
-                activateView();
+                activateView(false);
                 setVisible(true);
                 return;
             }
