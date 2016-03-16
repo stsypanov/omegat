@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -98,6 +99,13 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                     String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntryWithProperties(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            public void addEntryWithProperties(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 if (!source.isEmpty()) {
                     result.add(source);
                 }
@@ -128,6 +136,13 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                     String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntryWithProperties(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            public void addEntryWithProperties(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 if (!source.isEmpty()) {
                     result.add(source);
                 }
@@ -148,6 +163,14 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                     String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntryWithProperties(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            @Override
+            public void addEntryWithProperties(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 String segTranslation = isFuzzy ? null : translation;
                 result.put(source, segTranslation);
                 if (translation != null) {
@@ -177,6 +200,14 @@ public abstract class TestFilterBase extends TestCore {
             }
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
                     String comment, String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntryWithProperties(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            @Override
+            public void addEntryWithProperties(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 if (source.isEmpty()) {
                     return;
                 }
@@ -185,7 +216,7 @@ public abstract class TestFilterBase extends TestCore {
                 e.source = source;
                 e.translation = translation;
                 e.isFuzzy = isFuzzy;
-                e.comment = comment;
+                e.props = props;
                 e.path = path;
                 result.add(e);
             }
@@ -300,7 +331,7 @@ public abstract class TestFilterBase extends TestCore {
         String source;
         String translation;
         boolean isFuzzy;
-        String comment;
+        String[] props;
         String path;
     }
 
@@ -336,6 +367,22 @@ public abstract class TestFilterBase extends TestCore {
         assertEquals(new EntryKey(fi.filePath, sourceText, id, prev, next, path), fi.entries.get(fiCount)
                 .getKey());
         assertEquals(comment, fi.entries.get(fiCount).getComment());
+        fiCount++;
+    }
+
+    protected void checkMultiProps(String sourceText, String id, String path, String prev, String next,
+            String... props) {
+        assertEquals(new EntryKey(fi.filePath, sourceText, id, prev, next, path),
+                fi.entries.get(fiCount).getKey());
+        List<String> expected = Arrays.asList(props);
+        String[] actual = fi.entries.get(fiCount).getRawProperties();
+        assertEquals(props.length, actual.length);
+        for (int i = 0; i < actual.length; i += 2) {
+            int keyIndex = expected.indexOf(actual[i]);
+            assertFalse(keyIndex == -1);
+            int valIndex = expected.indexOf(actual[i + 1]);
+            assertEquals(keyIndex + 1, valIndex);
+        }
         fiCount++;
     }
 

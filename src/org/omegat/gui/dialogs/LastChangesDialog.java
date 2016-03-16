@@ -27,12 +27,15 @@
 package org.omegat.gui.dialogs;
 
 import java.awt.Frame;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.help.Help;
 import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
+import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
 
@@ -99,8 +102,13 @@ public class LastChangesDialog extends PeroDialog {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         lastChangesTextPane.setEditable(false);
-        String text = FileUtil.loadTextFileFromDoc(OConsts.LAST_CHANGES_FILE);
-        lastChangesTextPane.setText(text == null ? Help.errorHaiku() : text);
+        try {
+            String text = FileUtil.readTextFile(Paths
+                    .get(StaticUtils.installDir(), OConsts.HELP_DIR, OConsts.LAST_CHANGES_FILE).toFile());
+            lastChangesTextPane.setText(text);
+        } catch (IOException ex) {
+            lastChangesTextPane.setText(Help.errorHaiku());
+        }
         scroll.setViewportView(lastChangesTextPane);
 
         getContentPane().add(scroll, java.awt.BorderLayout.CENTER);

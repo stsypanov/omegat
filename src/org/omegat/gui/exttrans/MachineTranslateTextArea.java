@@ -40,6 +40,7 @@ import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.main.DockableScrollPane;
+import org.omegat.gui.main.IMainWindow;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -65,7 +66,7 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
 
     protected String displayed;
 
-    public MachineTranslateTextArea() {
+    public MachineTranslateTextArea(IMainWindow mw) {
         super(true);
 
         setEditable(false);
@@ -75,7 +76,7 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
         setMinimumSize(new Dimension(100, 50));
 
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_MachineTranslate");
-        Core.getMainWindow().addDockable(new DockableScrollPane("MACHINE_TRANSLATE", title, this, true));
+        mw.addDockable(new DockableScrollPane("MACHINE_TRANSLATE", title, this, true));
 
         List<Class<?>> classes = PluginUtils.getMachineTranslationClasses();
         List<IMachineTranslation> tr = new ArrayList<>(classes.size());

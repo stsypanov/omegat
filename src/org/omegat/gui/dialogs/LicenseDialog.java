@@ -26,18 +26,14 @@
 
 package org.omegat.gui.dialogs;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.URL;
+import java.nio.file.Paths;
 
-
-import org.omegat.gui.common.PeroDialog;
 import org.omegat.help.Help;
 import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
+import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
 
@@ -108,8 +104,13 @@ public class LicenseDialog extends PeroDialog {
         StringBuilder sb = new StringBuilder("===================================================\n\n");
         sb.append(OStrings.getString("LICENSEDIALOG_PREFACE"));
         sb.append("\n\n===================================================\n\n");
-        String license = FileUtil.loadTextFileFromDoc(OConsts.LICENSE_FILE);
-        sb.append(license == null ? Help.errorHaiku() : license);
+        try {
+            String text = FileUtil.readTextFile(Paths
+                    .get(StaticUtils.installDir(), OConsts.HELP_DIR, OConsts.LICENSE_FILE).toFile());
+            sb.append(text);
+        } catch (IOException ex) {
+            sb.append(Help.errorHaiku());
+        }
         licenseTextPane.setText(sb.toString());
         scroll.setViewportView(licenseTextPane);
 

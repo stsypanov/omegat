@@ -57,7 +57,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.omegat.gui.main.MainWindow;
+import org.omegat.gui.main.ProjectUICommands;
 import org.omegat.util.Log;
 
 /**
@@ -226,11 +226,9 @@ public class DragTargetOverlay {
     }
     
     public static abstract class FileDropInfo implements IDropInfo {
-        private final MainWindow mw;
         private final boolean doReset;
         
-        public FileDropInfo(MainWindow mw, boolean doReset) {
-            this.mw = mw;
+        public FileDropInfo(boolean doReset) {
             this.doReset = doReset;
         }
 
@@ -269,7 +267,8 @@ public class DragTargetOverlay {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    mw.importFiles(getImportDestination(), files.toArray(new File[files.size()]), doReset);
+                    ProjectUICommands.projectImportFiles(getImportDestination(),
+                            files.toArray(new File[files.size()]), doReset);
                 }
             });
             return true;

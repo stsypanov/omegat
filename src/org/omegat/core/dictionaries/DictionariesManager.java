@@ -1,13 +1,13 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool
- with fuzzy matching, translation memory, keyword search,
- glossaries, and translation leveraging into updated projects.
+          with fuzzy matching, translation memory, keyword search,
+          glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2009 Alex Buloichik
- 2011 Didier Briel
- 2015 Aaron Madlon-Kay
- Home page: http://www.omegat.org/
- Support center: http://groups.yahoo.com/group/OmegaT/
+               2011 Didier Briel
+               2015 Aaron Madlon-Kay
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
 
  This file is part of OmegaT.
 
@@ -27,23 +27,19 @@
 
 package org.omegat.core.dictionaries;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
-import org.apache.commons.io.IOUtils;
 import org.omegat.core.Core;
 import org.omegat.gui.dictionaries.IDictionaries;
 import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
-import org.omegat.util.OConsts;
 
 /**
  * Class for load dictionaries.
@@ -110,7 +106,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         try {
             long st = System.currentTimeMillis();
             if (file.getName().equals(IGNORE_FILE)) {
-                loadIgnoredWords(file);
+                loadIgnoreWords(file);
             } else if (loadDictionary(file)) {
                 long en = System.currentTimeMillis();
                 Log.log("Loaded dictionary from '" + file.getPath() + "': " + (en - st) + "ms");
@@ -155,28 +151,11 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     /**
      * Load ignored words from 'ignore.txt' file.
      */
-    protected void loadIgnoredWords(final File f) throws IOException {
-        FileInputStream fis = null;
-        InputStreamReader isr = null;
-        BufferedReader rd = null;
-        try {
-            fis = new FileInputStream(f);
-            isr = new InputStreamReader(fis, OConsts.UTF8);
-            rd = new BufferedReader(isr);
-            synchronized (ignoreWords) {
-                ignoreWords.clear();
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    ignoreWords.add(line.trim());
-                }
-            }
-            rd.close();
-            isr.close();
-            fis.close();
-        } finally {
-            IOUtils.closeQuietly(rd);
-            IOUtils.closeQuietly(isr);
-            IOUtils.closeQuietly(fis);
+    protected void loadIgnoreWords(File file) throws IOException {
+        List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+        synchronized (ignoreWords) {
+            ignoreWords.clear();
+            lines.stream().map(String::trim).forEach((line) -> ignoreWords.add(line));
         }
     }
 
@@ -189,39 +168,19 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
             ignoreWords.add(word);
             words = new ArrayList<String>(ignoreWords);
         }
-        saveIgnoredWords(words);
+        if (monitor != null) {
+            saveIgnoreWords(words, new File(monitor.getDir(), IGNORE_FILE));
+        }
     }
 
-    private synchronized void saveIgnoredWords(Collection<String> words) {
-        if (monitor == null) {
-            Log.log("Could not save ignore words because no dictionary dir has been set.");
-            return;
-        }
-
-        File outFile = new File(monitor.getDir(), IGNORE_FILE);
-        File outFileTmp = new File(monitor.getDir(), IGNORE_FILE + ".new");
-
-        FileOutputStream fos = null;
-        OutputStreamWriter osw = null;
-        BufferedWriter wr = null;
+    private static void saveIgnoreWords(Collection<String> words, File outFile) {
         try {
-            fos = new FileOutputStream(outFileTmp);
-            osw = new OutputStreamWriter(fos, OConsts.UTF8);
-            wr = new BufferedWriter(osw);
-            for (String w : words) {
-                wr.write(w + System.getProperty("line.separator"));
-            }
-            outFile.delete();
+            File outFileTmp = new File(outFile.getPath() + ".new");
+            Files.write(outFileTmp.toPath(), words);
             FileUtil.rename(outFileTmp, outFile);
-            wr.close();
-            osw.close();
-            fos.close();
-        } catch (Exception ex) {
-            Log.log("Error saving ignore words: " + ex.getMessage());
-        } finally {
-            IOUtils.closeQuietly(wr);
-            IOUtils.closeQuietly(osw);
-            IOUtils.closeQuietly(fos);
+        } catch (IOException ex) {
+            Log.log("Error saving ignore words");
+            Log.log(ex);
         }
     }
 

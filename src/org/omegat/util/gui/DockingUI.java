@@ -35,7 +35,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.FileNotFoundException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
@@ -51,6 +50,7 @@ import org.omegat.util.Platform;
 
 import com.vlsolutions.swing.docking.AutoHidePolicy;
 import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
+import com.vlsolutions.swing.docking.DockableContainerFactory;
 import com.vlsolutions.swing.docking.ui.DockingUISettings;
 
 /**
@@ -74,6 +74,7 @@ public class DockingUI {
     public static void initialize() {
         // Install VLDocking defaults
         DockingUISettings.getInstance().installUI();
+        DockableContainerFactory.setFactory(new CustomContainerFactory());
         
         // Enable animated popup when mousing over minimized tab
         AutoHidePolicy.getPolicy().setExpandMode(ExpandMode.EXPAND_ON_ROLLOVER);
@@ -118,7 +119,7 @@ public class DockingUI {
         
         // Panel notification (blinking tabs/headers) settings
         UIManager.put("DockingDesktop.notificationBlinkCount", 2);
-        UIManager.put("DockingDesktop.notificationColor", new Color(0xFFE8E8));
+        UIManager.put("DockingDesktop.notificationColor", Styles.EditorColor.COLOR_NOTIFICATION_MAX.getColor());
         
         ensureTitlebarReadability();
     }
@@ -181,6 +182,9 @@ public class DockingUI {
                 UIManager.put("InternalFrame.inactiveTitleForeground", res);
             }
         }
+
+        UIManager.put("DockingDesktop.notificationBlinkCount", 2);
+        UIManager.put("DockingDesktop.notificationColor", Styles.EditorColor.COLOR_NOTIFICATION_MAX.getColor());
     }
     
     private static void installFlatDesign() {
@@ -298,7 +302,7 @@ public class DockingUI {
         
         // Windows only accepts a 32x32 cursor image with no semitransparency, so you basically
         // need a special image just for that.
-        UIManager.put("DragControler.detachCursor", getImage("appbar.fullscreen.cursor32x32.png"));
+        UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.cursor32x32.png"));
         
         // Use more native-looking icons on OS X
         if (Platform.isMacOSX()) {
@@ -319,7 +323,7 @@ public class DockingUI {
             UIManager.put("DockTabbedPane.menu.hide", getIcon("appbar.minus.png"));
             UIManager.put("DockTabbedPane.menu.maximize", getIcon("appbar.fullscreen.corners.png"));
             
-            UIManager.put("DragControler.detachCursor", getImage("appbar.fullscreen.png"));
+            UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.png"));
         }
     }
     
@@ -359,16 +363,8 @@ public class DockingUI {
      * @return icon instance
      */
     private static ImageIcon getIcon(String iconName) {
-        Image image = getImage(iconName);
+        Image image = ResourcesUtil.getBundledImage(iconName);
         return image == null ? null : new ImageIcon(image);
-    }
-    
-    private static Image getImage(String imageName) {
-        try {
-            return ResourcesUtil.getImage("/org/omegat/gui/resources/" + imageName);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
     }
 
     /**

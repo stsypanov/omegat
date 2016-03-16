@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -61,7 +62,7 @@ import org.omegat.core.matching.DiffDriver.TextRun;
 import org.omegat.core.matching.NearString;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.main.DockableScrollPane;
-import org.omegat.gui.main.MainWindow;
+import org.omegat.gui.main.IMainWindow;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -71,6 +72,7 @@ import org.omegat.util.StringUtil;
 import org.omegat.util.Token;
 import org.omegat.util.gui.DragTargetOverlay;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
+import org.omegat.util.gui.IPaneMenu;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -89,38 +91,34 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Yu Tang
  */
 @SuppressWarnings("serial")
-public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> implements IMatcher {
+public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> implements IMatcher, IPaneMenu {
 
     private static final String EXPLANATION = OStrings.getString("GUI_MATCHWINDOW_explanation");
 
     private static final AttributeSet ATTRIBUTES_EMPTY = Styles.createAttributeSet(null, null, null, null);
-    private static final AttributeSet ATTRIBUTES_CHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_CHANGED.getColor(), null, null,
-            null);
-    private static final AttributeSet ATTRIBUTES_UNCHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_UNCHANGED.getColor(), null, null,
-            null);
+    private static final AttributeSet ATTRIBUTES_CHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_CHANGED.getColor(), null, null, null);
+    private static final AttributeSet ATTRIBUTES_UNCHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_UNCHANGED.getColor(), null, null, null);
     private static final AttributeSet ATTRIBUTES_SELECTED = Styles.createAttributeSet(null, null, true, null);
     private static final AttributeSet ATTRIBUTES_DELETED_ACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_DEL_ACTIVE.getColor(), null, true, null, true, null);
     private static final AttributeSet ATTRIBUTES_DELETED_INACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_DEL_INACTIVE.getColor(), null, null, null, true, null);
     private static final AttributeSet ATTRIBUTES_INSERTED_ACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_INS_ACTIVE.getColor(), null, true, null, null, true);
     private static final AttributeSet ATTRIBUTES_INSERTED_INACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_INS_INACTIVE.getColor(), null, null, null, null, true);
     
+    private final DockableScrollPane scrollPane;
     private final List<NearString> matches = new ArrayList<NearString>();
 
     private final List<Integer> delimiters = new ArrayList<Integer>();
     private final List<Integer> sourcePos = new ArrayList<Integer>();
     private final List<Map<Integer, List<TextRun>>> diffInfos = new ArrayList<Map<Integer, List<TextRun>>>();
-    private int activeMatch;
-
-    private final MainWindow mw;
+    private int activeMatch = -1;
 
     /** Creates new form MatchGlossaryPane */
-    public MatchesTextArea(final MainWindow mw) {
+    public MatchesTextArea(IMainWindow mw) {
         super(true);
-        this.mw = mw;
 
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Fuzzy_Matches");
-        final DockableScrollPane scrollPane = new DockableScrollPane("MATCHES", title, this, true);
-        Core.getMainWindow().addDockable(scrollPane);
+        scrollPane = new DockableScrollPane("MATCHES", title, this, true);
+        mw.addDockable(scrollPane);
 
         setEditable(false);
         StaticUIUtils.makeCaretAlwaysVisible(this);
@@ -129,7 +127,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
 
         addMouseListener(mouseListener);
         
-        DragTargetOverlay.apply(this, new FileDropInfo(mw, false) {
+        DragTargetOverlay.apply(this, new FileDropInfo(false) {
             @Override
             public String getImportDestination() {
                 return Core.getProject().getProjectProperties().getTMRoot();
@@ -154,6 +152,12 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     }
 
     @Override
+    public void onEntryActivated(SourceTextEntry newEntry) {
+        scrollPane.stopNotifying();
+        super.onEntryActivated(newEntry);
+    }
+
+    @Override
     protected void startSearchThread(SourceTextEntry newEntry) {
         new FindMatchesThread(MatchesTextArea.this, Core.getProject(), newEntry).start();
     }
@@ -172,6 +176,10 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             return;
         }
         
+        if (!newMatches.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_FUZZY_MATCHES)) {
+            scrollPane.notify(true);
+        }
+
         Collections.sort(newMatches, Collections.reverseOrder(new NearString.NearStringComparator()));
 
         matches.addAll(newMatches);
@@ -482,7 +490,10 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
 
             // set up the menu
             if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
-                mouseRightClick(clickedItem, e.getPoint());
+                JPopupMenu popup = new JPopupMenu();
+                populateContextMenu(popup, clickedItem);
+                Point p = e.getPoint();
+                popup.show(MatchesTextArea.this, p.x, p.y);
             }
             
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1)
@@ -490,28 +501,29 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         }
     };
 
-    private void mouseRightClick(final int clickedItem, final Point clickedPoint) {
-        // create the menu
-        JPopupMenu popup = new JPopupMenu();
+    private void populateContextMenu(JPopupMenu popup, final int index) {
+        boolean projectLoaded = Core.getProject().isProjectLoaded();
 
-        NearString m = matches.get(clickedItem);
-        if (m.projs.length > 1) {
-            JMenuItem item = popup.add(OStrings.getString("MATCHES_PROJECTS"));
-            item.setEnabled(false);
-            for (int i = 0; i < m.projs.length; i++) {
-                String proj = m.projs[i];
-                StringBuilder b = new StringBuilder();
-                if (proj.isEmpty()) {
-                    b.append(OStrings.getString("MATCHES_THIS_PROJECT"));
-                } else {
-                    b.append(proj);
+        if (projectLoaded && index >= 0) {
+            NearString m = matches.get(index);
+            if (m.projs.length > 1) {
+                JMenuItem item = popup.add(OStrings.getString("MATCHES_PROJECTS"));
+                item.setEnabled(false);
+                for (int i = 0; i < m.projs.length; i++) {
+                    String proj = m.projs[i];
+                    StringBuilder b = new StringBuilder();
+                    if (proj.equals("")) {
+                        b.append(OStrings.getString("MATCHES_THIS_PROJECT"));
+                    } else {
+                        b.append(proj);
+                    }
+                    b.append(" ");
+                    b.append(m.scores[i].toString());
+                    JMenuItem pItem = popup.add(b.toString());
+                    pItem.setEnabled(false);
                 }
-                b.append(' ');
-                b.append(m.scores[i].toString());
-                JMenuItem pItem = popup.add(b.toString());
-                pItem.setEnabled(false);
+                popup.addSeparator();
             }
-            popup.addSeparator();
         }
         
         JMenuItem item = popup.add(OStrings.getString("MATCHES_INSERT"));
@@ -520,42 +532,45 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (StringUtil.isEmpty(getSelectedText())) {
-                    setActiveMatch(clickedItem);
+                    setActiveMatch(index);
                 }
-                mw.doInsertTrans();
+                Core.getMainWindow().getMainMenu().invokeAction("editInsertTranslationMenuItem", 0);
             }
         });
+        item.setEnabled(projectLoaded);
 
         item = popup.add(OStrings.getString("MATCHES_REPLACE"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (StringUtil.isEmpty(getSelectedText())) {
-                    setActiveMatch(clickedItem);
+                    setActiveMatch(index);
                 }
-                mw.doRecycleTrans();
+                Core.getMainWindow().getMainMenu().invokeAction("editOverwriteTranslationMenuItem", 0);
             }
         });
+        item.setEnabled(projectLoaded);
 
         popup.addSeparator();
 
-        final NearString ns = matches.get(clickedItem);
-        String proj = ns.projs[0];
-
         item = popup.add(OStrings.getString("MATCHES_GO_TO_SEGMENT_SOURCE"));
+        item.setEnabled(projectLoaded);
 
-        if (StringUtil.isEmpty(proj)) {
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Core.getEditor().gotoEntry(ns.source, ns.key);
-                }
-            });
-        } else {
-            item.setEnabled(false);
+        if (projectLoaded) {
+            final NearString ns = matches.get(index);
+            String proj = ns.projs[0];
+
+            if (StringUtil.isEmpty(proj)) {
+                item.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Core.getEditor().gotoEntry(ns.source, ns.key);
+                    }
+                });
+            } else {
+                item.setEnabled(false);
+            }
         }
-
-        popup.show(this, clickedPoint.x, clickedPoint.y);
     }
     
     /**
@@ -576,5 +591,29 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         if (activeMatch > 0) {
             setActiveMatch(activeMatch-1);
         }
+    }
+
+    @Override
+    public void populatePaneMenu(JPopupMenu menu) {
+        populateContextMenu(menu, activeMatch);
+        menu.addSeparator();
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_MATCHWINDOW_SETTINGS_NOTIFICATIONS"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_FUZZY_MATCHES));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_FUZZY_MATCHES, notify.isSelected());
+            }
+        });
+        menu.add(notify);
+        menu.addSeparator();
+        final JMenuItem prefs = new JMenuItem(OStrings.getString("MATCHES_OPEN_PREFERENCES"));
+        prefs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Core.getMainWindow().getMainMenu().invokeAction("optionsExtTMXMenuItem", e.getModifiers());
+            }
+        });
+        menu.add(prefs);
     }
 }

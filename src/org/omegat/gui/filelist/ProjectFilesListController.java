@@ -101,6 +101,7 @@ import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.*;
 import org.omegat.util.gui.*;
+import org.omegat.gui.main.ProjectUICommands;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -243,8 +244,8 @@ public class ProjectFilesListController {
                 propagateTableColumns();
             }
         });
-
-        DragTargetOverlay.apply(list.tableFiles, new FileDropInfo(m_parent, true) {
+        
+        DragTargetOverlay.apply(list.tableFiles, new FileDropInfo(true) {
             @Override
             public String getImportDestination() {
                 return Core.getProject().getProjectProperties().getSourceRoot();
@@ -886,11 +887,11 @@ public class ProjectFilesListController {
      * Imports the file/files/folder into project's source files.
      */
     private void doImportSourceFiles() {
-        m_parent.doPromptImportSourceFiles();
+        ProjectUICommands.doPromptImportSourceFiles();
     }
 
     private void doWikiImport() {
-        m_parent.doWikiImport();
+        ProjectUICommands.doWikiImport();
     }
 
     /** Updates the Import Files button status. */
