@@ -130,9 +130,10 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
             setText(getText() + data.result + "\n<" + data.translatorName + ">\n\n");
         }
     }
-
-    private void clear() {
-        setText("");
+    
+    @Override
+    public void clear() {
+        super.clear();
         displayed = null;
     }
 

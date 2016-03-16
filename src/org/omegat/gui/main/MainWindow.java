@@ -39,6 +39,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -64,6 +65,7 @@ import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.util.FileUtil;
 import org.omegat.util.FileUtil.ICollisionCallback;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -317,14 +319,8 @@ public class MainWindow extends PeroFrame implements IMainWindow {
         }
     }
 
-    protected SearchWindowController peekLastSearchWindow() {
-        SearchWindowController result = null;
-        synchronized (m_searches) {
-            if (!m_searches.isEmpty()) {
-                result = m_searches.get(m_searches.size() - 1);
-            }
-        }
-        return result;
+    protected List<SearchWindowController> getSearchWindows() {
+        return Collections.unmodifiableList(m_searches);
     }
 
     /**
@@ -396,10 +392,16 @@ public class MainWindow extends PeroFrame implements IMainWindow {
         String remote_url = JOptionPane.showInputDialog(this, OStrings.getString("TF_WIKI_IMPORT_PROMPT"),
                 OStrings.getString("TF_WIKI_IMPORT_TITLE"), JOptionPane.OK_CANCEL_OPTION);
         String projectsource = Core.getProject().getProjectProperties().getSourceRoot();
-        // [1762625] Only try to get MediaWiki page if a string has been entered
-        if (remote_url != null && !remote_url.trim().isEmpty()) {
+        if (remote_url == null || remote_url.trim().isEmpty()) {
+            // [1762625] Only try to get MediaWiki page if a string has been entered
+            return;
+        }
+        try {
             WikiGet.doWikiGet(remote_url, projectsource);
             ProjectUICommands.projectReload();
+        } catch (Exception ex) {
+            Log.log(ex);
+            displayErrorRB(ex, "TF_WIKI_IMPORT_FAILED");
         }
     }
 

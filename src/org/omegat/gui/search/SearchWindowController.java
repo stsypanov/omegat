@@ -87,7 +87,7 @@ import org.openide.awt.Mnemonics;
  * This is a window that appears when user'd like to search for something. For
  * each new user's request new window is created. Actual search is done by
  * SearchThread.
- *
+ * 
  * @author Keith Godfrey
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  * @author Didier Briel
@@ -179,6 +179,10 @@ public class SearchWindowController {
                 form.m_panelReplace.setVisible(true);
                 break;
         }
+    }
+
+    public SearchMode getMode() {
+        return mode;
     }
 
     final void initActions() {
@@ -715,6 +719,7 @@ public class SearchWindowController {
 
     private void doReplace() {
         String replaceString = form.m_replaceField.getEditor().getItem().toString();
+        replaceString = StringUtil.normalizeUnicode(replaceString);
         HistoryManager.addReplaceItem(replaceString);
         form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
 
@@ -725,6 +730,7 @@ public class SearchWindowController {
 
     private void doReplaceAll() {
         String replaceString = form.m_replaceField.getEditor().getItem().toString();
+        replaceString = StringUtil.normalizeUnicode(replaceString);
         HistoryManager.addReplaceItem(replaceString);
         form.m_replaceField.setModel(new DefaultComboBoxModel<>(HistoryManager.getReplaceItems()));
 
@@ -752,6 +758,7 @@ public class SearchWindowController {
         EntryListPane viewer = (EntryListPane) form.m_viewer;
 
         String queryString = form.m_searchField.getEditor().getItem().toString();
+        queryString = StringUtil.normalizeUnicode(queryString);
 
         HistoryManager.addSearchItem(queryString);
         form.m_searchField.setModel(new DefaultComboBoxModel<>(HistoryManager.getSearchItems()));

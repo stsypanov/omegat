@@ -440,15 +440,14 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     }
 
     /** Clears up the pane. */
+    @Override
     public void clear() {
-        UIThreadsUtil.mustBeSwingThread();
-
+        super.clear();
         activeMatch = -1;
         matches.clear();
         delimiters.clear();
         sourcePos.clear();
         diffInfos.clear();
-        setText(null);
     }
 
     protected MouseListener mouseListener = new MouseAdapter() {

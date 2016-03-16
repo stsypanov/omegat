@@ -144,11 +144,10 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         setText(o.toString());
     }
 
+    @Override
     public void clear() {
-        UIThreadsUtil.mustBeSwingThread();
-
+        super.clear();
         entries.clear();
-        setText(null);
     }
 
     @Override

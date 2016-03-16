@@ -92,8 +92,8 @@ public class CommentsTextArea extends EntryInfoPane implements IEntryEventListen
             }
         }
 
-        this.setText(text.toString());
-        this.setCaretPosition(0);
+        setText(text.toString());
+        setCaretPosition(0);
     }
 
     static final ICommentProvider ENTRY_COMMENT_PROVIDER = new ICommentProvider() {
@@ -138,14 +138,7 @@ public class CommentsTextArea extends EntryInfoPane implements IEntryEventListen
     @Override
     protected void onProjectClose() {
         clear();
-        this.setText(EXPLANATION);
-    }
-
-    /** Clears up the pane. */
-    public void clear() {
-        UIThreadsUtil.mustBeSwingThread();
-
-        setText(null);
+        setText(EXPLANATION);
     }
 
     @Override

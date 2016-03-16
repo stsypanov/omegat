@@ -231,9 +231,10 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     }
 
     /** Clears up the pane. */
+    @Override
     public void clear() {
-        nowEntries.clear();
-        setText(null);
+        super.clear();
+        nowEntries = Collections.emptyList();
     }
 
     List<GlossaryEntry> getDisplayedEntries() {
@@ -339,11 +340,11 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                createGlossaryEntryDialogDialog = null;
-                if (dialog.getReturnStatus() == CreateGlossaryEntryDialog.RET_OK) {
-                    String src = dialog.getSourceText().getText();
-                    String loc = dialog.getTargetText().getText();
-                    String com = dialog.getCommentText().getText();
+                createGlossaryEntryDialog = null;
+                if (dialog.getReturnStatus() == CreateGlossaryEntry.RET_OK) {
+                    String src = StringUtil.normalizeUnicode(dialog.getSourceText().getText());
+                    String loc = StringUtil.normalizeUnicode(dialog.getTargetText().getText());
+                    String com = StringUtil.normalizeUnicode(dialog.getCommentText().getText());
                     if (!StringUtil.isEmpty(src) && !StringUtil.isEmpty(loc)) {
                         try {
                             GlossaryReaderTSV.append(out, new GlossaryEntry(src, loc, com, true));

@@ -26,13 +26,13 @@
 package org.omegat.filters2;
 
 import org.omegat.core.data.ProjectProperties;
+import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.Language;
 
 /**
  * Context for filter calls.
  */
 public class FilterContext {
-    private final ProjectProperties props;
 
     private final Language sourceLang;
 
@@ -42,20 +42,28 @@ public class FilterContext {
 
     private String outEncoding;
 
-    private final boolean sentenceSegmentingEnabled;
+    private boolean sentenceSegmentingEnabled;
+
+    private boolean isRemoveAllTags;
+
+    private Class<?> sourceTokenizerClass;
+
+    private Class<?> targetTokenizerClass;
 
     public FilterContext(ProjectProperties props) {
-        this.props = props;
         this.sourceLang = props.getSourceLanguage();
         this.targetLang = props.getTargetLanguage();
         this.sentenceSegmentingEnabled = props.isSentenceSegmentingEnabled();
+        this.isRemoveAllTags = props.isRemoveTags();
+        this.sourceTokenizerClass = props.getSourceTokenizer();
+        this.targetTokenizerClass = props.getTargetTokenizer();
     }
 
     public FilterContext(Language sourceLang, Language targetLang, boolean sentenceSegmentingEnabled) {
-        this.props = null;
         this.sourceLang = sourceLang;
         this.targetLang = targetLang;
         this.sentenceSegmentingEnabled = sentenceSegmentingEnabled;
+        this.isRemoveAllTags = false;
     }
 
     /** Source language of project. */
@@ -73,8 +81,9 @@ public class FilterContext {
         return inEncoding;
     }
 
-    public void setInEncoding(String inEncoding) {
+    public FilterContext setInEncoding(String inEncoding) {
         this.inEncoding = inEncoding;
+        return this;
     }
 
     /** Target file encoding, but can be 'null'. */
@@ -82,8 +91,9 @@ public class FilterContext {
         return outEncoding;
     }
 
-    public void setOutEncoding(String outEncoding) {
+    public FilterContext setOutEncoding(String outEncoding) {
         this.outEncoding = outEncoding;
+        return this;
     }
 
     /** Is sentence segmenting enabled. */
@@ -91,7 +101,34 @@ public class FilterContext {
         return sentenceSegmentingEnabled;
     }
 
-    public ProjectProperties getProjectProperties() {
-        return props;
+    /** Should all tags be removed from segments */
+    public boolean isRemoveAllTags() {
+        return isRemoveAllTags;
+    }
+
+    public FilterContext setSourceTokenizerClass(Class<?> sourceTokenizerClass) {
+        this.sourceTokenizerClass = sourceTokenizerClass;
+        return this;
+    }
+
+    public ITokenizer getSourceTokenizer() {
+        try {
+            return (ITokenizer) sourceTokenizerClass.newInstance();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public FilterContext setTargetTokenizerClass(Class<?> targetTokenizerClass) {
+        this.targetTokenizerClass = targetTokenizerClass;
+        return this;
+    }
+
+    public ITokenizer getTargetTokenizer() {
+        try {
+            return (ITokenizer) targetTokenizerClass.newInstance();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
