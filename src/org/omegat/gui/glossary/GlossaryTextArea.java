@@ -45,6 +45,7 @@ import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -340,8 +341,8 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                createGlossaryEntryDialog = null;
-                if (dialog.getReturnStatus() == CreateGlossaryEntry.RET_OK) {
+                createGlossaryEntryDialogDialog = null;
+                if (dialog.getReturnStatus() == CreateGlossaryEntryDialog.RET_OK) {
                     String src = StringUtil.normalizeUnicode(dialog.getSourceText().getText());
                     String loc = StringUtil.normalizeUnicode(dialog.getTargetText().getText());
                     String com = StringUtil.normalizeUnicode(dialog.getCommentText().getText());
