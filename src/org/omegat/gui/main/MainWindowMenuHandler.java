@@ -39,7 +39,6 @@ import java.awt.Desktop;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -1125,11 +1124,27 @@ public class MainWindowMenuHandler {
      * Displays the dialog to configure proxy
      */
     public void optionsViewOptionsMenuLoginItemActionPerformed() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new ProxyDialog();
-			}
-		});
+        UserPassDialog proxyOptions = new UserPassDialog(mainWindow);
+
+        String encodedUser = Preferences.getPreference(Preferences.PROXY_USER_NAME);
+        String encodedPassword = Preferences.getPreference(Preferences.PROXY_PASSWORD);
+
+        try {
+            proxyOptions.userText.setText(new String(StringUtil.decodeBase64(encodedUser)));
+            proxyOptions.passwordField.setText(new String(StringUtil.decodeBase64(encodedPassword)));
+        } catch (IllegalArgumentException ex) {
+            Log.logErrorRB("LOG_DECODING_ERROR");
+            Log.log(ex);
+        }
+
+        proxyOptions.setVisible(true);
+
+        if (proxyOptions.getReturnStatus() == UserPassDialog.RET_OK) {
+            encodedUser = StringUtil.encodeBase64(proxyOptions.userText.getText().getBytes());
+            encodedPassword = StringUtil.encodeBase64(new String(proxyOptions.passwordField.getPassword()).getBytes());
+
+            Preferences.setPreference(Preferences.PROXY_USER_NAME, encodedUser);
+            Preferences.setPreference(Preferences.PROXY_PASSWORD, encodedPassword);
+        }
     }
 }
