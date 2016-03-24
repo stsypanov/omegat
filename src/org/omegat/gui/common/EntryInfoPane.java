@@ -51,7 +51,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  *            result type of found data
  */
 @SuppressWarnings("serial")
-public abstract class EntryInfoPane extends JTextPane implements IProjectEventListener {
+public abstract class EntryInfoPane<T> extends JTextPane implements IProjectEventListener {
 
     public EntryInfoPane(final boolean useApplicationFont) {
         if (useApplicationFont) {
@@ -67,6 +67,8 @@ public abstract class EntryInfoPane extends JTextPane implements IProjectEventLi
             setDragEnabled(true);
         }
         getDocument().addDocumentListener(new FontFallbackListener(this));
+        setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
+        setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
     }
 
     @Override

@@ -31,7 +31,6 @@ import java.util.Arrays;
 
 import javax.swing.JLabel;
 
-import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -40,7 +39,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author alex
  */
 @SuppressWarnings("serial")
-public class TeamUserPassDialog extends PeroDialog {
+public class GITUserPassDialog extends javax.swing.JDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */

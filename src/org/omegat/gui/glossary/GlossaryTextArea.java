@@ -36,13 +36,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -101,7 +95,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
      */
     protected List<GlossaryEntry> nowEntries;
 
-    private CreateGlossaryEntry createGlossaryEntryDialog;
+    private CreateGlossaryEntryDialog createGlossaryEntryDialog;
 
     private final DockableScrollPane scrollPane;
 
@@ -284,7 +278,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
     }
 
     public void showCreateGlossaryEntryDialog(final Frame parent) {
-        CreateGlossaryEntryDialog d = createGlossaryEntryDialogDialog;
+        CreateGlossaryEntryDialog d = createGlossaryEntryDialog;
         if (d != null) {
             d.requestFocus();
             return;
@@ -336,7 +330,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                createGlossaryEntryDialogDialog = null;
+                createGlossaryEntryDialog = null;
                 if (dialog.getReturnStatus() == CreateGlossaryEntryDialog.RET_OK) {
                     String src = StringUtil.normalizeUnicode(dialog.getSourceText().getText());
                     String loc = StringUtil.normalizeUnicode(dialog.getTargetText().getText());
@@ -351,7 +345,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
                 }
             }
         });
-        createGlossaryEntryDialogDialog = dialog;
+        createGlossaryEntryDialog = dialog;
     }
 
     @Override
@@ -381,5 +375,9 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
             }
         });
         menu.add(notify);
+    }
+
+    public List<GlossaryEntry> getNowEntries() {
+        return nowEntries;
     }
 }

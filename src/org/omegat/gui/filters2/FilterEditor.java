@@ -339,7 +339,11 @@ public class FilterEditor extends PeroDialog implements ListSelectionListener {
                 f.isTargetEncodingVariable(), f.getHint());
         ie.setVisible(true);
         if (ie.getReturnStatus() == InstanceEditor.RET_OK) {
-			Files ff = getFiles(ie);
+            Files ff = new Files();
+            ff.setSourceEncoding(setEncodingName(ie.getSourceEncoding()));
+            ff.setSourceFilenameMask(ie.getSourceFilenameMask());
+            ff.setTargetEncoding(setEncodingName(ie.getTargetEncoding()));
+            ff.setTargetFilenamePattern(ie.getTargetFilenamePattern());
             filter.getFiles().add(ff);
             instances.setModel(new OneFilterTableModel(filter));
         }

@@ -29,6 +29,7 @@ package org.omegat.gui.dialogs;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.help.Help;
 import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;

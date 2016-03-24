@@ -112,7 +112,7 @@ public class DictionariesManagerTest extends TestCase {
         List<DictionaryEntry> result = manager.findWords(Arrays.asList(IGNORE_WORD));
         assertFalse(result.isEmpty());
         
-        manager.loadIgnoredWords(IGNORE_FILE);
+        manager.loadIgnoreWords(IGNORE_FILE);
         result = manager.findWords(Arrays.asList(IGNORE_WORD));
         assertTrue(result.isEmpty());
     }
@@ -140,7 +140,7 @@ public class DictionariesManagerTest extends TestCase {
     @Test
     public void testFindWords() throws Exception {
         manager.fileChanged(DICT_FILE);
-        manager.loadIgnoredWords(IGNORE_FILE);
+        manager.loadIgnoreWords(IGNORE_FILE);
         
         String find1 = "testudo";
         String find2 = "tete";

@@ -23,13 +23,8 @@ public class GuiUtils {
 	static {
 		String resources = "/org/omegat/gui/resources/";
 		icons = new ArrayList<>(2);
-		try {
-			icons.add(ResourcesUtil.getImage(resources + "OmegaT_small.gif"));
-			icons.add(ResourcesUtil.getImage(resources + "OmegaT.gif"));
-		} catch (FileNotFoundException e) {
-			Log.log(Level.SEVERE, "failed to load image", e);
-		}
-
+		icons.add(ResourcesUtil.getImage(resources + "OmegaT_small.gif"));
+		icons.add(ResourcesUtil.getImage(resources + "OmegaT.gif"));
 	}
 
 	public static void setOmegatIcons(Window window) {

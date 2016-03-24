@@ -101,7 +101,7 @@ public class SourceTextEntry {
         m_entryNum = 0;
         protectedParts = EMPTY_PROTECTED_PARTS;
         sourceTranslation = null;
-        comment = null;
+        props = new String[0];
     }
 
     /**
@@ -196,19 +196,15 @@ public class SourceTextEntry {
     }
 
     public int getNumberOfDuplicates() {
-        SourceTextEntry other = this;
-        while (true) {
-            if (other.firstInstance != null) {
-                other = other.firstInstance;
-                continue;
+        if (firstInstance != null) {
+            return firstInstance.getNumberOfDuplicates();
             }
-            return other.duplicates == null ? 0 : other.duplicates.size();
-        }
+        return duplicates == null ? 0 : duplicates.size();
     }
 
     public List<SourceTextEntry> getDuplicates() {
         if (firstInstance != null) {
-            List<SourceTextEntry> result = new ArrayList<>(firstInstance.getDuplicates());
+            List<SourceTextEntry> result = new ArrayList<SourceTextEntry>(firstInstance.getDuplicates());
             result.remove(this);
             result.add(0, firstInstance);
             return Collections.unmodifiableList(result);

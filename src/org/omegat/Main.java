@@ -139,7 +139,6 @@ public class Main {
             }
         }
 
-		loadProxySettings();
 
         remoteProject = params.get("remote-project");
 
@@ -179,6 +178,7 @@ public class Main {
 
         ConvertConfigs.convert();
         PluginUtils.loadPlugins(params);
+        loadProxySettings();
 
         int result;
         try {

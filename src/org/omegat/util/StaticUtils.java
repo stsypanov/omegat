@@ -838,7 +838,7 @@ public class StaticUtils {
         }
         
         StringBuilder arg = new StringBuilder();
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
         
         final char noQuote = '\0';
         char currentQuote = noQuote;

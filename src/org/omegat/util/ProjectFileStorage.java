@@ -131,8 +131,8 @@ public class ProjectFileStorage {
         result.setSourceRoot(computeAbsolutePath(m_root, om.getProject().getSourceDir(),
                 OConsts.DEFAULT_SOURCE));
         result.getSourceRootExcludes().clear();
-        if (project.getSourceDirExcludes() != null) {
-            result.getSourceRootExcludes().addAll(project.getSourceDirExcludes().getMask());
+        if (om.getProject().getSourceDirExcludes() != null) {
+            result.getSourceRootExcludes().addAll(om.getProject().getSourceDirExcludes().getMask());
         } else {
             // sourceRootExclude was not defined
             result.getSourceRootExcludes().addAll(Arrays.asList(ProjectProperties.DEFAULT_EXCLUDES));
@@ -161,23 +161,23 @@ public class ProjectFileStorage {
                 OConsts.DEFAULT_DICT));
         result.setDictRootRelative(computeRelative(om.getProject().getDictionaryDir(), OConsts.DEFAULT_DICT));
 
-        result.setSourceLanguage(project.getSourceLang());
-        result.setTargetLanguage(project.getTargetLang());
+        result.setSourceLanguage(om.getProject().getSourceLang());
+        result.setTargetLanguage(om.getProject().getTargetLang());
 
-        result.setSourceTokenizer(loadTokenizer(project.getSourceTok(), result.getSourceLanguage()));
-        result.setTargetTokenizer(loadTokenizer(project.getTargetTok(), result.getTargetLanguage()));
+        result.setSourceTokenizer(loadTokenizer(om.getProject().getSourceTok(), result.getSourceLanguage()));
+        result.setTargetTokenizer(loadTokenizer(om.getProject().getTargetTok(), result.getTargetLanguage()));
 
-        if (project.isSentenceSeg() != null) {
-            result.setSentenceSegmentingEnabled(project.isSentenceSeg());
+        if (om.getProject().isSentenceSeg() != null) {
+            result.setSentenceSegmentingEnabled(om.getProject().isSentenceSeg());
         }
-        if (project.isSupportDefaultTranslations() != null) {
-            result.setSupportDefaultTranslations(project.isSupportDefaultTranslations());
+        if (om.getProject().isSupportDefaultTranslations() != null) {
+            result.setSupportDefaultTranslations(om.getProject().isSupportDefaultTranslations());
         }
-        if (project.isRemoveTags() != null) {
-            result.setRemoveTags(project.isRemoveTags());
+        if (om.getProject().isRemoveTags() != null) {
+            result.setRemoveTags(om.getProject().isRemoveTags());
         }
-        if (project.getExternalCommand() != null) {
-            result.setExternalCommand(project.getExternalCommand());
+        if (om.getProject().getExternalCommand() != null) {
+            result.setExternalCommand(om.getProject().getExternalCommand());
         }
 
         if (om.getProject().getRepositories() != null) {
@@ -194,16 +194,19 @@ public class ProjectFileStorage {
         File outFile = new File(props.getProjectRoot(), OConsts.FILE_PROJECT);
         String m_root = outFile.getParentFile().getAbsolutePath() + File.separator;
 
-        Project project = new Project();
-        project.setVersion(OConsts.PROJ_CUR_VERSION);
+        Omegat om = new Omegat();
+        om.setProject(new Project());
+        om.getProject().setVersion(OConsts.PROJ_CUR_VERSION);
 
-        project.setSourceDir(computeRelativePath(m_root, props.getSourceRoot(), OConsts.DEFAULT_SOURCE));
-        project.setSourceDirExcludes(new Masks());
-        project.getSourceDirExcludes().getMask().addAll(props.getSourceRootExcludes());
-        project.setTargetDir(computeRelativePath(m_root, props.getTargetRoot(), OConsts.DEFAULT_TARGET));
-        project.setTmDir(computeRelativePath(m_root, props.getTMRoot(), OConsts.DEFAULT_TM));
-        project.setGlossaryDir(computeRelativePath(m_root, props.getGlossaryRoot(), OConsts.DEFAULT_GLOSSARY));
-        project.setBaseFilteringItems(m_root + OConsts.FILTERING_ITEMS_FILE_NAME);
+        om.getProject().setSourceDir(
+                computeRelativePath(m_root, props.getSourceRoot(), OConsts.DEFAULT_SOURCE));
+        om.getProject().setSourceDirExcludes(new Masks());
+        om.getProject().getSourceDirExcludes().getMask().addAll(props.getSourceRootExcludes());
+        om.getProject().setTargetDir(
+                computeRelativePath(m_root, props.getTargetRoot(), OConsts.DEFAULT_TARGET));
+        om.getProject().setTmDir(computeRelativePath(m_root, props.getTMRoot(), OConsts.DEFAULT_TM));
+        om.getProject().setGlossaryDir(
+                computeRelativePath(m_root, props.getGlossaryRoot(), OConsts.DEFAULT_GLOSSARY));
 
         // Compute glossary file location
         String glossaryFile = computeRelativePath(props.getGlossaryRoot(), props.getWriteableGlossary(), null); // Rel file name
@@ -212,20 +215,18 @@ public class ProjectFileStorage {
             // Everything equals to default
             glossaryFile = OConsts.DEFAULT_FOLDER_MARKER;
         }
+        om.getProject().setGlossaryFile(glossaryFile);
 
-        project.setGlossaryFile(glossaryFile);
-        project.setDictionaryDir(computeRelativePath(m_root, props.getDictRoot(), OConsts.DEFAULT_DICT));
-        project.setSourceLang(props.getSourceLanguage().toString());
-        project.setTargetLang(props.getTargetLanguage().toString());
-        project.setSourceTok(props.getSourceTokenizer().getCanonicalName());
-        project.setTargetTok(props.getTargetTokenizer().getCanonicalName());
-        project.setSentenceSeg(props.isSentenceSegmentingEnabled());
-        project.setSupportDefaultTranslations(props.isSupportDefaultTranslations());
-        project.setRemoveTags(props.isRemoveTags());
-        project.setExternalCommand(props.getExternalCommand());
-
-        Omegat om = new Omegat();
-        om.setProject(project);
+        om.getProject().setDictionaryDir(
+                computeRelativePath(m_root, props.getDictRoot(), OConsts.DEFAULT_DICT));
+        om.getProject().setSourceLang(props.getSourceLanguage().toString());
+        om.getProject().setTargetLang(props.getTargetLanguage().toString());
+        om.getProject().setSourceTok(props.getSourceTokenizer().getCanonicalName());
+        om.getProject().setTargetTok(props.getTargetTokenizer().getCanonicalName());
+        om.getProject().setSentenceSeg(props.isSentenceSegmentingEnabled());
+        om.getProject().setSupportDefaultTranslations(props.isSupportDefaultTranslations());
+        om.getProject().setRemoveTags(props.isRemoveTags());
+        om.getProject().setExternalCommand(props.getExternalCommand());
 
         if (props.getRepositories() != null && !props.getRepositories().isEmpty()) {
             om.getProject().setRepositories(new Repositories());
@@ -268,18 +269,17 @@ public class ProjectFileStorage {
      * @param defaultName
      *            default name for such a project's folder, if relativePath is "__DEFAULT__".
      */
-
-    private static String computeAbsolutePath(String m_root, String relativePath, String defaultName, boolean isFile) {
+    private static String computeAbsolutePath(String m_root, String relativePath, String defaultName) {
         if (relativePath == null) {
             // Not exist in project file ? Use default.
             return m_root + defaultName + File.separator;
         }
         if (OConsts.DEFAULT_FOLDER_MARKER.equals(relativePath))
-            return m_root + defaultName + (isFile ? "" : File.separator);
+            return m_root + defaultName + File.separator;
         else {
             try {
                 // check if path starts with a system root
-                boolean startsWithRoot;
+                boolean startsWithRoot = false;
                 for (File root : File.listRoots()) {
                     try // Under Windows and Java 1.4, there is an exception if
                     { // using getCanonicalPath on a non-existent drive letter
@@ -306,11 +306,6 @@ public class ProjectFileStorage {
                 return relativePath;
             }
         }
-
-    }
-
-    private static String computeAbsolutePath(String m_root, String relativePath, String defaultName) {
-        return computeAbsolutePath(m_root, relativePath, defaultName, false);
     }
 
     /**

@@ -242,7 +242,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             displayedWords.add(de.getWord().toLowerCase());
             i++;
         }
-       return txt.toString();
+        setText(txt.toString());
     }
 
     protected final MouseAdapter mouseCallback = new MouseAdapter() {

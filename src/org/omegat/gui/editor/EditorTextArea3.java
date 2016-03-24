@@ -68,12 +68,10 @@ import org.omegat.gui.popup.PopupFactory;
 import org.omegat.gui.popup.dictionary.DictionaryPopup;
 import org.omegat.util.Log;
 import org.omegat.util.Platform;
-import org.omegat.util.Log;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.SwingUtils;
-import org.omegat.util.gui.Styles;
 
 /**
  * Changes of standard JEditorPane implementation for support custom behavior.
@@ -701,7 +699,6 @@ public class EditorTextArea3 extends JEditorPane {
                 setCaretPosition(end);
             }
         }
-        getAutoCompleter().updatePopup();
     }
 
     /**

@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.omegat.core.Core;
 import org.omegat.core.segmentation.SRX;
@@ -45,7 +46,7 @@ import static junit.framework.TestCase.assertTrue;
 public class AutoTmxTest {
     RealProject p;
 
-    @Override
+    @Before
     protected void setUp() throws Exception {
         Core.setSegmenter(new Segmenter(SRX.getDefault()));
     }

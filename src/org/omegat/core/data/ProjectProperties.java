@@ -89,6 +89,7 @@ public class ProjectProperties {
         setWriteableGlossary(getProjectRoot() + OConsts.DEFAULT_GLOSSARY + File.separator + OConsts.DEFAULT_W_GLOSSARY);
         setTMRoot(getProjectRoot() + OConsts.DEFAULT_TM + File.separator);
         setDictRoot(getProjectRoot() + OConsts.DEFAULT_DICT + File.separator);
+        baseFilteringItems = getProjectRoot() + OConsts.FILTERING_ITEMS_FILE_NAME;
 
         sentenceSegmentingOn = true;
         supportDefaultTranslations = true;
@@ -470,19 +471,19 @@ public class ProjectProperties {
         //
         // Now check whether these directories are where they're suposed to be.
         //
-        String srcDir = sourceRoot;
+        String srcDir = getSourceRoot();
         File src = new File(srcDir);
         if (!src.exists()) {
             throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_SOURCE_FOLDER"), srcDir));
         }
         //
-        String tgtDir = targetRoot;
+        String tgtDir = getTargetRoot();
         File tgt = new File(tgtDir);
         if (!tgt.exists()) {
             throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_TARGET_FOLDER"), tgtDir));
         }
         //
-        String glsDir = glossaryRoot;
+        String glsDir = getGlossaryRoot();
         File gls = new File(glsDir);
         if (!gls.exists()) {
             throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_GLOSSARY_FOLDER"), glsDir));
@@ -493,7 +494,7 @@ public class ProjectProperties {
         }
 
         //
-        String tmxDir = tmRoot;
+        String tmxDir = getTMRoot();
         File tmx = new File(tmxDir);
         if (!tmx.exists()) {
             throw new ProjectException(StringUtil.format(OStrings.getString("PROJECT_TM_FOLDER"), tmxDir));
@@ -503,7 +504,7 @@ public class ProjectProperties {
         // compatibility reasons.
         // There is no exception handling when a failure occurs during folder creation.
         //
-        File dict = new File(dictRoot);
+        File dict = new File(getDictRoot());
         if (!dict.exists()) {
             if (getDictRoot().equals(getProjectRoot() + OConsts.DEFAULT_DICT + '/')) {
                 dict.mkdirs();
@@ -528,6 +529,7 @@ public class ProjectProperties {
     }
 
     private String projectName;
+    private String baseFilteringItems;
     private final List<String> sourceRootExcludes = new ArrayList<String>();
     private List<RepositoryDefinition> repositories;
 

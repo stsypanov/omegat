@@ -52,7 +52,7 @@ import org.omegat.util.Token;
  */
 public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
-    private static JList<String> list;
+    private static JList<AutoCompleterItem> list;
 
     private static AutoCompleterItem NO_SUGGESTIONS = new AutoCompleterItem(
             OStrings.getString("AC_NO_SUGGESTIONS"), null, 0);

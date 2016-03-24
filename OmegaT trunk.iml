@@ -42,7 +42,54 @@
     <libelement value="jar://$MODULE_DIR$/lib/forms_rt.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/annotations.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/vldocking-3.0.5-SNAPSHOT.jar!/" />
-    <src_description expected_position="1">
+    <libelement value="jar://$MODULE_DIR$/test/lib/junit-4.12.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/test/lib/hamcrest-core-1.3.jar!/" />
+    <libelement value="file://test/lib/xmlunit-1.1.jar" />
+    <libelement value="jar://$MODULE_DIR$/lib/dictzip.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/juniversalchardet-1.0.3.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/test/lib/xmlunit-1.6.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/darcula.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/commons-io-2.4.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jsch-0.1.52.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/sequence-library-1.0.3.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/org.eclipse.jgit-4.1.1.201511131810-r.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/svnkit-1.8.11.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/trilead-ssh2-1.0.0-build220.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/commons-lang-2.6.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/lucene-analyzers-common-5.2.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/lucene-analyzers-kuromoji-5.2.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/lucene-analyzers-smartcn-5.2.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/lucene-core-5.2.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/slf4j-api-1.7.18.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/slf4j-jdk14-1.7.18.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/annotations.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/berkeleylm.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/cjftransform.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/guava.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/hamcrest-core.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/hppc.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/hunspell-native-libs.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/ictclas4j.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/jsonic.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/jwordsplitter.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/language-detector.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/languagetool-core.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/LanguageTool-data.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/lucene-backward-codecs.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/lucene-gosen-ipadic.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-fsa.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-polish.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-speller.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-stemming.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-tools.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-chunk-models.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-postag-models.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-tokenize-models.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-tools.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/openregex.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/segment.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/LanguageTool-3.2/jna.jar!/" />
+    <src_description expected_position="0">
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
       <src_folder value="file://$MODULE_DIR$/test-integration/src" expected_position="1" />
       <src_folder value="file://$MODULE_DIR$/gen/src" expected_position="2" />
@@ -61,8 +108,16 @@
       <sourceFolder url="file://$MODULE_DIR$/test/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lib-mnemonics/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library name="htmlparser.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/htmlparser.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="jmyspell-core-1.0.0-beta-2.jar">
         <CLASSES>
@@ -73,9 +128,27 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="xmlunit-1.6.jar">
+      <library name="junit-4.12.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/test/lib/xmlunit-1.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/test/lib/junit-4.12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="hamcrest-core-1.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/test/lib/hamcrest-core-1.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="xmlunit-1.1.jar">
+        <CLASSES>
+          <root url="file://test/lib/xmlunit-1.1.jar" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -91,27 +164,18 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="jsch-0.1.49.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.49.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="sequence-library-1.0.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/sequence-library-1.0.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="antlr-runtime-3.4.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/antlr-runtime-3.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="dictzip.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/dictzip.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -127,60 +191,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="lucene-analyzers-3.6.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene-analyzers-3.6.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="lucene-core-3.6.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene-core-3.6.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="lucene-kuromoji-3.6.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene-kuromoji-3.6.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="lucene-smartcn-3.6.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene-smartcn-3.6.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="tinysegmenter.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/tinysegmenter.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="commons-lang-2.4.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="commons-logging-1.1.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-logging-1.1.1.jar!/" />
@@ -190,99 +200,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="cjftransform-1.0.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/cjftransform-1.0.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="ictclas4j-1.0.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/ictclas4j-1.0.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="jwordsplitter-3.4.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/jwordsplitter-3.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="LanguageTool-data.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/LanguageTool-data.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="morfologik-fsa-1.5.4.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/morfologik-fsa-1.5.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="morfologik-speller-1.5.4.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/morfologik-speller-1.5.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="morfologik-stemming-1.5.4.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/morfologik-stemming-1.5.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="segment-1.4.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/segment-1.4.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="lucene-gosen-2.0.2-ipadic.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool/lucene-gosen-2.0.2-ipadic.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="groovy-all-2.2.2.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/groovy-all-2.2.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="KoreanAnalyzer-3x-120223.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/KoreanAnalyzer-3x-120223.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -307,33 +227,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="slf4j-api-1.7.7.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/slf4j-api-1.7.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="slf4j-jdk14-1.7.7.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/slf4j-jdk14-1.7.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="proxy-vole_20131209.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/proxy-vole_20131209.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="sqljet-1.1.10.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/sqljet-1.1.10.jar!/" />
@@ -343,18 +236,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="svnkit-1.8.5.jar">
+      <library name="vldocking-3.0.5-SNAPSHOT.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/svnkit-1.8.5.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="trilead-ssh2-1.0.0-build217.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/trilead-ssh2-1.0.0-build217.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/vldocking-3.0.5-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -378,34 +262,406 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="juniversalchardet-1.0.3" level="project" />
-    <orderEntry type="library" name="languagetool-core-2.2" level="project" />
-    <orderEntry type="library" name="junit-4.12" level="project" />
-    <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
-    <orderEntry type="library" name="commons-io-2.4" level="project" />
-    <orderEntry type="library" name="org.eclipse.jgit-3.7.1.201504261725-r" level="project" />
-    <orderEntry type="library" name="org.eclipse.jgit-3.7.1.201504261725-r" level="project" />
-    <orderEntry type="module-library" exported="">
-      <library name="htmlparser.jar">
+    <orderEntry type="module-library">
+      <library name="lib/vldocking-3.0.5-SNAPSHOT.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/htmlparser.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/vldocking-3.0.5-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="iconloader" level="project" />
+    <orderEntry type="module-library">
+      <library name="juniversalchardet-1.0.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/juniversalchardet-1.0.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library" exported="">
+      <library name="xmlunit-1.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/test/lib/xmlunit-1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="darcula.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/darcula.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-io-2.4.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-io-2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/sources/commons-io-2.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsch-0.1.52.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.52.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="sequence-library-1.0.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/sequence-library-1.0.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.eclipse.jgit-4.1.1.201511131810-r.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/org.eclipse.jgit-4.1.1.201511131810-r.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="svnkit-1.8.11.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/svnkit-1.8.11.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="trilead-ssh2-1.0.0-build220.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/trilead-ssh2-1.0.0-build220.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="commons-lang-2.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lucene-analyzers-common-5.2.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene-analyzers-common-5.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lucene-analyzers-kuromoji-5.2.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene-analyzers-kuromoji-5.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lucene-analyzers-smartcn-5.2.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene-analyzers-smartcn-5.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lucene-core-5.2.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene-core-5.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-api-1.7.18.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/slf4j-api-1.7.18.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-jdk14-1.7.18.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/slf4j-jdk14-1.7.18.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lib/LanguageTool-3.2/annotations.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/annotations.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="berkeleylm.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/berkeleylm.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="cjftransform.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/cjftransform.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="guava.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/guava.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hamcrest-core.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/hamcrest-core.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hppc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/hppc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hunspell-native-libs.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/hunspell-native-libs.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ictclas4j.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/ictclas4j.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsonic.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/jsonic.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jwordsplitter.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/jwordsplitter.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="language-detector.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/language-detector.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="languagetool-core.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/languagetool-core.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="LanguageTool-data.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/LanguageTool-data.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lucene-backward-codecs.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/lucene-backward-codecs.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lucene-gosen-ipadic.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/lucene-gosen-ipadic.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="morfologik-fsa.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-fsa.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="morfologik-polish.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-polish.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="morfologik-speller.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-speller.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="morfologik-stemming.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-stemming.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="morfologik-tools.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-tools.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="opennlp-chunk-models.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-chunk-models.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="opennlp-postag-models.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-postag-models.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="opennlp-tokenize-models.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-tokenize-models.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="opennlp-tools.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/opennlp-tools.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="openregex.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/openregex.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="segment.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/segment.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="jna.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jna.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/jna.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="darcula" level="project" />
-    <orderEntry type="library" name="vldocking-3.0.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="dictzip" level="project" />
+    <orderEntry type="library" name="proxy-vole_20131209" level="project" />
+    <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
   </component>
 </module>
