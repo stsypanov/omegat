@@ -137,12 +137,9 @@ public class ProjectFilesListController {
 
     private TableFilterPanel filterPanel;
 
-    private final MainWindow m_parent;
-
     private Font defaultFont;
 
     public ProjectFilesListController(MainWindow parent) {
-        m_parent = parent;
 
 
 
@@ -390,17 +387,32 @@ public class ProjectFilesListController {
         list.tableFiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
-                    Point p = e.getPoint();
-                    int row = list.tableFiles.rowAtPoint(p);
-                    if (row != -1) {
-                        JPopupMenu popup = createContextMenuForRow(row);
-                        if (popup != null) {
-                            popup.show(list.tableFiles, p.x, p.y);
-                        }
-                    }
-                } else {
+                if (e.getButton() == MouseEvent.BUTTON1) {
                     gotoFile(list.tableFiles.rowAtPoint(e.getPoint()));
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    doPopup(e.getPoint());
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    doPopup(e.getPoint());
+                }
+            }
+
+            private void doPopup(Point p) {
+                int row = list.tableFiles.rowAtPoint(p);
+                if (row != -1) {
+                    JPopupMenu popup = createContextMenuForRow(row);
+                    if (popup != null) {
+                        popup.show(list.tableFiles, p.x, p.y);
+                    }
                 }
             }
         });

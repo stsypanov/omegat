@@ -5,6 +5,7 @@
 
  Copyright (C) 2012 Alex Buloichik
                2014 Alex Buloichik, Aaron Madlon-Kay
+               2015 Hiroshi Miura, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -37,31 +38,89 @@ import javax.swing.JOptionPane;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.OpenSshConfig;
+import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.util.FS;
 import org.omegat.core.Core;
 import org.omegat.core.KnownException;
 import org.omegat.core.team2.ProjectTeamSettings;
 import org.omegat.core.team2.TeamSettings;
+import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
+import com.jcraft.jsch.IdentityRepository;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.agentproxy.AgentProxyException;
+import com.jcraft.jsch.agentproxy.Connector;
+import com.jcraft.jsch.agentproxy.ConnectorFactory;
+import com.jcraft.jsch.agentproxy.RemoteIdentityRepository;
+import com.jcraft.jsch.agentproxy.USocketFactory;
+import com.jcraft.jsch.agentproxy.connector.SSHAgentConnector;
+import com.jcraft.jsch.agentproxy.usocket.JNAUSocketFactory;
+
 /**
- * GIT repository credentials provider. One credentials provider created for all git instances.
- * 
- * GIT supports protocols: file://, ssh:// git:// http://.
- * 
- * See JGit Authentication Explained : http://www.codeaffine.com/2014/12/09/jgit-authentication/
+ * Git repository credentials provider. One credentials provider created for all git instances.
+ * <p>
+ * Git supports these protocols:
+ * <ul>
+ * <li>file://
+ * <li>ssh://
+ * <li>git://
+ * <li>http://
+ * </ul>
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
+ * @see <a href="http://www.codeaffine.com/2014/12/09/jgit-authentication/">JGit Authentication Explained</a>
  */
 public class GITCredentialsProvider extends CredentialsProvider {
+
+    static {
+        // Set up ssh-agent support
+        JschConfigSessionFactory sessionFactory = new JschConfigSessionFactory() {
+
+            @Override
+            protected void configure(OpenSshConfig.Host host, Session session) {
+                session.setConfig("StrictHostKeyChecking", "true");
+            }
+
+            @Override
+            protected JSch createDefaultJSch(FS fs) throws JSchException {
+                Connector con = null;
+                try {
+                    if (SSHAgentConnector.isConnectorAvailable()) {
+                        USocketFactory usf = new JNAUSocketFactory();
+                        con = new SSHAgentConnector(usf);
+                    } else {
+                        ConnectorFactory cf = ConnectorFactory.getDefault();
+                        con = cf.createConnector();
+                    }
+                } catch (AgentProxyException e) {
+                    Log.log(e);
+                }
+                JSch jsch = super.createDefaultJSch(fs);
+                if (con != null) {
+                    JSch.setConfig("PreferredAuthentications", "publickey");
+                    IdentityRepository irepo = new RemoteIdentityRepository(con);
+                    jsch.setIdentityRepository(irepo);
+                }
+                return jsch;
+            }
+        };
+        SshSessionFactory.setInstance(sessionFactory);
+    }
+
     static final String KEY_USERNAME_SUFFIX = "username";
     static final String KEY_PASSWORD_SUFFIX = "password";
     static final String KEY_FINGERPRINT_SUFFIX = "fingerprint";
 
     private ProjectTeamSettings teamSettings;
     /** Predefined in the omegat.project file. */
-    private Map<String, String> predefined = Collections.synchronizedMap(new HashMap<String, String>());
+    private final Map<String, String> predefined = Collections.synchronizedMap(new HashMap<String, String>());
 
     public void setTeamSettings(ProjectTeamSettings teamSettings) {
         this.teamSettings = teamSettings;
@@ -152,7 +211,6 @@ public class GITCredentialsProvider extends CredentialsProvider {
                     ok = true;
                 }
                 ((CredentialItem.Password) i).setValue(credentials.password.toCharArray());
-                uri.setPass(new String(credentials.password));
                 continue;
             } else if (i instanceof CredentialItem.StringType) {
                 if (i.getPromptText().equals("Password: ")) {
@@ -172,6 +230,17 @@ public class GITCredentialsProvider extends CredentialsProvider {
                     }
                     ((CredentialItem.StringType) i).setValue(credentials.password);
                     continue;
+                } else if (i.getPromptText().startsWith("Passphrase for ")) {
+                    // Private key passphrase
+                    if (!ok) {
+                        String passphrase = askPassphrase(i.getPromptText());
+                        if (passphrase == null) {
+                            throw new UnsupportedCredentialItem(uri,
+                                    OStrings.getString("TEAM_CREDENTIALS_DENIED"));
+                        }
+                        ((CredentialItem.StringType) i).setValue(passphrase);
+                        continue;
+                    }
                 }
             } else if (i instanceof CredentialItem.YesNoType) {
                 // e.g.: The authenticity of host 'mygitserver' can't be established.
@@ -221,14 +290,13 @@ public class GITCredentialsProvider extends CredentialsProvider {
     @Override
     public boolean supports(CredentialItem... items) {
         for (CredentialItem i : items) {
-            if (i instanceof CredentialItem.Username)
+            if (i instanceof CredentialItem.Username) {
                 continue;
-
-            else if (i instanceof CredentialItem.Password)
+            } else if (i instanceof CredentialItem.Password) {
                 continue;
-
-            else
+            } else {
                 return false;
+            }
         }
         return true;
     }
@@ -263,6 +331,22 @@ public class GITCredentialsProvider extends CredentialsProvider {
         }
     }
 
+    private String askPassphrase(String prompt) {
+        GITUserPassDialog userPassDialog = new GITUserPassDialog(Core.getMainWindow().getApplicationFrame());
+        userPassDialog.setLocationRelativeTo(Core.getMainWindow().getApplicationFrame());
+        userPassDialog.descriptionTextArea.setText(prompt);
+        userPassDialog.userText.setVisible(false);
+        userPassDialog.userLabel.setVisible(false);
+        userPassDialog.passwordField.requestFocusInWindow();
+        userPassDialog.setVisible(true);
+        if (userPassDialog.getReturnStatus() == GITUserPassDialog.RET_OK) {
+            return new String(userPassDialog.passwordField.getPassword());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void reset(URIish uri) {
         // reset is called after 5 authorization failures. After 3 resets, the transport gives up.
         String url = uri.toString();

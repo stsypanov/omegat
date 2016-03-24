@@ -83,7 +83,8 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> implements IPaneMenu {
+public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>>
+        implements IGlossaries, IPaneMenu {
 
     private static final String EXPLANATION = OStrings.getString("GUI_GLOSSARYWINDOW_explanation");
 
@@ -231,7 +232,8 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
         nowEntries = Collections.emptyList();
     }
 
-    List<GlossaryEntry> getDisplayedEntries() {
+    @Override
+    public List<GlossaryEntry> getDisplayedEntries() {
         return nowEntries;
     }
 
@@ -240,13 +242,23 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
      */
     protected MouseListener mouseListener = new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
-                JPopupMenu popup = new JPopupMenu();
-                populateContextMenu(popup);
-                Point p = e.getPoint();
-                popup.show(GlossaryTextArea.this, p.x, p.y);
+        public void mousePressed(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                doPopup(e.getPoint());
             }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                doPopup(e.getPoint());
+            }
+        }
+
+        private void doPopup(Point p) {
+            JPopupMenu popup = new JPopupMenu();
+            populateContextMenu(popup);
+            popup.show(GlossaryTextArea.this, p.x, p.y);
         }
     };
 
@@ -267,16 +279,12 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
         item.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                showCreateGlossaryEntryDialog();
+                showCreateGlossaryEntryDialog(Core.getMainWindow().getApplicationFrame());
             }
         });
     }
 
-    public void showCreateGlossaryEntryDialog() {
-        Frame parent = Core.getMainWindow().getApplicationFrame();
-        showCreateGlossaryEntryDialog(parent);
-    }
-
+    @Override
     public void showCreateGlossaryEntryDialog(final Frame parent) {
         CreateGlossaryEntryDialog d = createGlossaryEntryDialog;
         if (d != null) {

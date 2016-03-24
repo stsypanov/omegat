@@ -30,11 +30,14 @@ sqljet-1.1.10.jar is distributed under the GNU General Public License version 2
 (required for SVNRemoteRepository.java)
 Sources are available in OmegaT sources, in the directory lib/sources
 
-org.eclipse.jgit-4.1.1.201511131810-r.jar is distributed under the
+org.eclipse.jgit-*-r.jar is distributed under the
 Eclipse Distribution License (EDL) v 1.0 
 (required for GITRemoteRepository.java)
 
-jsch-0.1.52.jar is distributed under the JSch License
+jsch-*.jar is distributed under the JSch License
+(required for GITRemoteRepository.java)
+
+jsch-agent-proxy is distributed under the jsch-agent-proxy License
 (required for GITRemoteRepository.java)
 
 diff.jar is distributed under the GNU General Public License version 1 and greater
@@ -55,7 +58,7 @@ LanguageTool sources are available from https://github.com/languagetool-org/lang
 For licenses of libraries required by LanguageTool, see
 lib/LanguageTool-*/third-party-licenses/README.txt
 
-pdfbox-app-1.8.1.jar is distributed under the Apache License 2.0
+pdfbox-*.jar and fontbox-*.jar are distributed under the Apache License 2.0
 
 groovy-all-2.2.2.jar is distributed under the Apache License 2.0
 (required for scripting)
@@ -82,3 +85,5 @@ sources, in lib/sources/
 
 StringUtil uses code from the FullWidthConversionStep in the Okapi Framework
 (http://okapi.opentag.com/) under the GNU Public License version 2.1 or greater.
+
+mALIGNa is distributed under the MIT License (required for Aligner tool).

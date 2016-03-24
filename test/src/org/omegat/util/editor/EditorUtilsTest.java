@@ -200,13 +200,13 @@ public class EditorUtilsTest {
         entries.add(new GlossaryEntry("snowman", "sneeuwpop", "", false));
         entries.add(new GlossaryEntry("Bob", "Blub", "", false));
 
+        ITokenizer tokenizer = new LuceneEnglishTokenizer();
+        Locale locale = Locale.ENGLISH;
+
         String srcText = "Snowman Bob went to the snowman party. SnOwMaN!";
         String expected = "Sneeuwpop Blub went to the sneeuwpop party. sneeuwpop!";
-        Locale locale = Locale.ENGLISH;
-        ITokenizer tokenizer = new LuceneEnglishTokenizer();
-        assertEquals(expected, EditorUtils.replaceGlossaryEntries(srcText, entries,
-                locale, tokenizer));
-
+        assertEquals(expected, EditorUtils.replaceGlossaryEntries(srcText, entries, locale, tokenizer));
+        
         // Empty cases
         assertNull(EditorUtils.replaceGlossaryEntries(null, entries, locale, tokenizer));
         assertEquals("", EditorUtils.replaceGlossaryEntries("", entries, locale, tokenizer));
@@ -222,5 +222,11 @@ public class EditorUtilsTest {
             fail("Should give NPE when given null tokenizer");
         } catch (NullPointerException ex) {
         }
+
+        // Multiword entry
+        entries.add(0, new GlossaryEntry("snowman party", "sneeuwpop parti", "", false));
+        srcText = "Snowman Bob went to the snowman party. SnOwMaN!";
+        expected = "Sneeuwpop Blub went to the sneeuwpop parti. sneeuwpop!";
+        assertEquals(expected, EditorUtils.replaceGlossaryEntries(srcText, entries, locale, tokenizer));
     }
 }

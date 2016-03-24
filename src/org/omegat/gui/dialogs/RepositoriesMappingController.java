@@ -42,6 +42,8 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.TableColumnSizer;
 
 import gen.core.project.RepositoryDefinition;
 import gen.core.project.RepositoryMapping;
@@ -60,9 +62,16 @@ public class RepositoriesMappingController {
     private AbstractTableModel modelMapping;
     private List<RowMapping> listMapping;
 
+    private TableColumnSizer repoSizer;
+    private TableColumnSizer mappingSizer;
+
     public List<RepositoryDefinition> show(JFrame parent, List<RepositoryDefinition> input) {
         dialog = new RepositoriesMappingDialog(parent, true);
         dialog.setLocationRelativeTo(parent);
+
+        dialog.getRootPane().setDefaultButton(dialog.okButton);
+
+        StaticUIUtils.setEscapeClosable(dialog);
 
         listRepo = new ArrayList<RowRepo>();
         listMapping = new ArrayList<RowMapping>();
@@ -71,6 +80,9 @@ public class RepositoriesMappingController {
         initTableModels();
         initButtons();
         reinitRepoUrlDropdown();
+
+        repoSizer = TableColumnSizer.autoSize(dialog.tableRepositories, 1, true);
+        mappingSizer = TableColumnSizer.autoSize(dialog.tableMapping, 0, true);
 
         dialog.setVisible(true);
         return result;
@@ -106,6 +118,8 @@ public class RepositoriesMappingController {
                     reinitRepoUrlDropdown();
                     break;
                 }
+                repoSizer.reset();
+                repoSizer.adjustTableColumns();
             }
 
             @Override
@@ -181,6 +195,8 @@ public class RepositoriesMappingController {
                     r.includes = (String) aValue;
                     break;
                 }
+                mappingSizer.reset();
+                mappingSizer.adjustTableColumns();
             }
 
             @Override
@@ -242,7 +258,9 @@ public class RepositoriesMappingController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 listRepo.add(new RowRepo());
-                modelRepo.fireTableRowsInserted(listRepo.size() - 1, listRepo.size() - 1);
+                int row = listRepo.size() - 1;
+                modelRepo.fireTableRowsInserted(row, row);
+                dialog.tableRepositories.setRowSelectionInterval(row, row);
             }
         });
         dialog.btnRepoRemove.addActionListener(new ActionListener() {
@@ -259,7 +277,9 @@ public class RepositoriesMappingController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 listMapping.add(new RowMapping());
-                modelMapping.fireTableRowsInserted(listMapping.size() - 1, listMapping.size() - 1);
+                int row = listMapping.size() - 1;
+                modelMapping.fireTableRowsInserted(row, row);
+                dialog.tableMapping.setRowSelectionInterval(row, row);
             }
         });
         dialog.btnMappingRemove.addActionListener(new ActionListener() {

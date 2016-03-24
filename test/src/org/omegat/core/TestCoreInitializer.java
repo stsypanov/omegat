@@ -27,6 +27,7 @@ package org.omegat.core;
 
 import org.omegat.core.threads.IAutoSave;
 import org.omegat.gui.editor.IEditor;
+import org.omegat.gui.glossary.IGlossaries;
 import org.omegat.gui.main.IMainWindow;
 
 /**
@@ -45,5 +46,9 @@ public class TestCoreInitializer {
 
     public static void initMainWindow(IMainWindow mainWindow) {
         Core.setMainWindow(mainWindow);
+    }
+
+    public static void initGlossary(IGlossaries glossaries) {
+        Core.glossary = glossaries;
     }
 }

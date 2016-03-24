@@ -311,43 +311,43 @@ public class ProjectUICommands {
                     return null;
                 }
 
-                    try {
-                        boolean needToSaveProperties = false;
-                        if (props.hasRepositories()) {
-                            // team project - non-exist directories could be created from repo
-                            props.autocreateDirectories();
-                        } else {
-                            // not a team project - ask for non-exist directories
-                            while (!props.isProjectValid()) {
-                                needToSaveProperties = true;
-                                // something wrong with the project - display open dialog
-                                // to fix it
-                                ProjectPropertiesDialog prj = new ProjectPropertiesDialog(props, new File(
-                                        projectRootFolder, OConsts.FILE_PROJECT).getAbsolutePath(),
-                                        ProjectPropertiesDialog.Mode.RESOLVE_DIRS);
-                                prj.setVisible(true);
-                                props = prj.getResult();
-                                prj.dispose();
-                                if (props == null) {
-                                    // user clicks on 'Cancel'
-                                    mainWindow.setCursor(oldCursor);
-                                    return null;
-                                }
+                try {
+                    boolean needToSaveProperties = false;
+                    if (props.hasRepositories()) {
+                        // team project - non-exist directories could be created from repo
+                        props.autocreateDirectories();
+                    } else {
+                        // not a team project - ask for non-exist directories
+                        while (!props.isProjectValid()) {
+                            needToSaveProperties = true;
+                            // something wrong with the project - display open dialog
+                            // to fix it
+                            ProjectPropertiesDialog prj = new ProjectPropertiesDialog(props,
+                                    new File(projectRootFolder, OConsts.FILE_PROJECT).getAbsolutePath(),
+                                    ProjectPropertiesDialog.Mode.RESOLVE_DIRS);
+                            prj.setVisible(true);
+                            props = prj.getResult();
+                            prj.dispose();
+                            if (props == null) {
+                                // user clicks on 'Cancel'
+                                mainWindow.setCursor(oldCursor);
+                                return null;
                             }
                         }
-
-                        ProjectFactory.loadProject(props, true);
-                        if (needToSaveProperties) {
-                            Core.getProject().saveProjectProperties();
-                        }
-                    } catch (Exception ex) {
-                        Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                        Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                        mainWindow.setCursor(oldCursor);
-                        return null;
                     }
 
-				RecentProjects.add(projectRootFolder.getAbsolutePath());
+                    ProjectFactory.loadProject(props, true);
+                    if (needToSaveProperties) {
+                        Core.getProject().saveProjectProperties();
+                    }
+                } catch (Exception ex) {
+                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+                    mainWindow.setCursor(oldCursor);
+                    return null;
+                }
+
+                RecentProjects.add(projectRootFolder.getAbsolutePath());
 
                 mainWindow.setCursor(oldCursor);
                 return null;
@@ -363,6 +363,22 @@ public class ProjectUICommands {
                 }
             }
         }.execute();
+    }
+
+    /**
+     * Prompt the user to reload the current project
+     */
+    public static void promptReload() {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+        // asking to reload a project
+        int res = JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
+                OStrings.getString("MW_REOPEN_QUESTION"), OStrings.getString("MW_REOPEN_TITLE"),
+                JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            projectReload();
+        }
     }
 
     public static void projectReload() {

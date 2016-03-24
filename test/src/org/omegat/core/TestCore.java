@@ -29,6 +29,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.io.File;
+import java.nio.file.Files;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -38,6 +39,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.gui.main.IMainMenu;
 import org.omegat.gui.main.IMainWindow;
+import org.omegat.util.FileUtil;
 import org.omegat.util.RuntimePreferences;
 
 import com.vlsolutions.swing.docking.Dockable;
@@ -48,41 +50,39 @@ import com.vlsolutions.swing.docking.Dockable;
  * @author Alexander_Buloichik
  */
 public abstract class TestCore extends XMLTestCase {
+    protected File configDir;
+
     protected void setUp() throws Exception {
-        File configDir = new File(System.getProperty("java.io.tmpdir"), "OmegaT test config");
-        removeDir(configDir);
-
+        configDir = Files.createTempDirectory("omegat").toFile();
         RuntimePreferences.setConfigDir(configDir.getAbsolutePath());
-
-        final JMenu menu = new JMenu();
 
         final IMainMenu mainMenu = new IMainMenu() {
             public JMenu getToolsMenu() {
-                return menu;
+                return new JMenu();
             }
 
             public JMenu getProjectMenu() {
-                return menu;
+                return new JMenu();
             }
 
             public JMenu getOptionsMenu() {
-                return menu;
+                return new JMenu();
             }
 
             public JMenu getMachineTranslationMenu() {
-                return menu;
+                return new JMenu();
             }
 
             public JMenu getGlossaryMenu() {
-                return menu;
+                return new JMenu();
             }
 
 			public JMenuItem getProjectRecentMenuItem() {
-				return menu;
+                return new JMenu();
 			}
 
             public JMenu getAutoCompletionMenu() {
-                return menu;
+                return new JMenu();
             }
 
             public void invokeAction(String action, int modifiers) {
@@ -150,17 +150,8 @@ public abstract class TestCore extends XMLTestCase {
         Core.setCurrentProject(new NotLoadedProject());
     }
 
-    protected static void removeDir(File dir) {
-        File[] fs = dir.listFiles();
-        if (fs != null) {
-            for (File f : fs) {
-                if (f.isDirectory()) {
-                    removeDir(f);
-                } else {
-                    f.delete();
-                }
-            }
-        }
-        dir.delete();
+    @Override
+    protected void tearDown() throws Exception {
+        assertTrue(FileUtil.deleteTree(configDir));
     }
 }

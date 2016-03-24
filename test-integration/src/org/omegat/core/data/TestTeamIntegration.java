@@ -61,24 +61,24 @@ import gen.core.project.RepositoryMapping;
 /**
  * This is test for team project concurrent modification. It doesn't simple junit test, but looks like
  * 'integration' test.
- * <p/>
+ * 
  * This test prepare scenario, execute separate JVMs for concurrent updates, then check remote repository
  * data.
- * <p/>
+ * 
  * Each child process updates own segments with source1..5/0/1/2/3 by values from 1 and more. Segment source/0
  * updated each time, but source/1/2/3 updated once per cycle. After process will be finished, values in tmx
  * should be in right order, i.e. only by increasing order. That means user will not commit previous
  * translation for other user's segments.
- * <p/>
+ * 
  * Segment with 'concurrent' source will be modified by all users by values from 1 and more with user's
  * prefix. Conflicts should be resolved by choose higher value. After process will be finished, values in
  * 'concurrent' segment should be also increased only.
- * <p/>
+ * 
  * Each child saves Integer.MAXVALUE as last translation, but current OmegaT implementation doesn't require to
  * commit it, see "GIT_CONFLICT=Push failed. Will be synchronized next time."
- *
+ * 
  * @author Alex Buloichik (alex73mail@gmail.com)
- *         <p/>
+ * 
  *         TODO: "svn: E160028: Commit failed" during commit
  */
 public class TestTeamIntegration {
@@ -349,28 +349,34 @@ public class TestTeamIntegration {
 			repository = Git.open(dir).getRepository();
 		}
 
-		public List<String> listRevisions(String from) throws Exception {
-			LogCommand cmd = new Git(repository).log();
-			List<String> result = new ArrayList<>();
-			for (RevCommit commit : cmd.call()) {
-				if (commit.getName().equals(from)) {
-					break;
-				}
-				result.add(commit.getName());
-			}
-			Collections.reverse(result);
-			return result;
-		}
+        public List<String> listRevisions(String from) throws Exception {
+            try (Git git = new Git(repository)) {
+                LogCommand cmd = git.log();
+                List<String> result = new ArrayList<String>();
+                for (RevCommit commit : cmd.call()) {
+                    if (commit.getName().equals(from)) {
+                        break;
+                    }
+                    result.add(commit.getName());
+                }
+                Collections.reverse(result);
+                return result;
+            }
+        }
 
-		public void update() throws Exception {
-			new Git(repository).fetch().call();
-			new Git(repository).checkout().setName("origin/master").call();
-		}
+        public void update() throws Exception {
+            try (Git git = new Git(repository)) {
+                git.fetch().call();
+                git.checkout().setName("origin/master").call();
+            }
+        }
 
-		public void checkout(String rev) throws Exception {
-			new Git(repository).checkout().setName(rev).call();
-		}
-	}
+        public void checkout(String rev) throws Exception {
+            try (Git git = new Git(repository)) {
+                git.checkout().setName(rev).call();
+            }
+        }
+    }
 
 	public static class SvnTeam implements Team {
 		SVNClientManager ourClientManager;

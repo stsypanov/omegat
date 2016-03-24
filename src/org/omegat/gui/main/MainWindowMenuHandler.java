@@ -480,7 +480,7 @@ public class MainWindowMenuHandler {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        Core.getGlossary().showCreateGlossaryEntryDialog();
+        Core.getGlossary().showCreateGlossaryEntryDialog(Core.getMainWindow().getApplicationFrame());
     }
 
     public void editFindInProjectMenuItemActionPerformed() {
@@ -793,6 +793,31 @@ public class MainWindowMenuHandler {
         new StatisticsWindow(StatisticsWindow.STAT_TYPE.MATCHES_PER_FILE).setVisible(true);
     }
 
+    public void toolsAlignFilesMenuItemActionPerformed() {
+        AlignFilePickerController picker = new AlignFilePickerController();
+        if (Core.getProject().isProjectLoaded()) {
+            String srcRoot = Core.getProject().getProjectProperties().getSourceRoot();
+            String curFile = Core.getEditor().getCurrentFile();
+            if (curFile != null) {
+                picker.setSourceFile(srcRoot + curFile);
+            }
+            picker.setSourceDefaultDir(srcRoot);
+            picker.setDefaultSaveDir(Core.getProject().getProjectProperties().getTMRoot());
+            picker.setSourceLanguage(Core.getProject().getProjectProperties().getSourceLanguage());
+            picker.setTargetLanguage(Core.getProject().getProjectProperties().getTargetLanguage());
+        } else {
+            String srcLang = Preferences.getPreference(Preferences.SOURCE_LOCALE);
+            if (!StringUtil.isEmpty(srcLang)) {
+                picker.setSourceLanguage(new Language(srcLang));
+            }
+            String trgLang = Preferences.getPreference(Preferences.TARGET_LOCALE);
+            if (!StringUtil.isEmpty(trgLang)) {
+                picker.setTargetLanguage(new Language(trgLang));
+            }
+        }
+        picker.show(mainWindow);
+    }
+
     public void optionsTabAdvanceCheckBoxMenuItemActionPerformed() {
         Core.getEditor().getSettings()
                 .setUseTabForAdvance(mainWindow.menu.optionsTabAdvanceCheckBoxMenuItem.isSelected());
@@ -989,7 +1014,7 @@ public class MainWindowMenuHandler {
                 && Core.getProject().isProjectLoaded()) {
             // Redisplay according to new view settings
             Core.getEditor().getSettings().updateTagValidationPreferences();
-            mainWindow.promptReload();
+            ProjectUICommands.promptReload();
         }
     }
 
@@ -1010,7 +1035,7 @@ public class MainWindowMenuHandler {
 
         if (externalTMXOptions.getReturnStatus() == ExternalTMXMatchesDialog.RET_OK
                 && Core.getProject().isProjectLoaded()) {
-            mainWindow.promptReload();
+            ProjectUICommands.promptReload();
         }
     }
 

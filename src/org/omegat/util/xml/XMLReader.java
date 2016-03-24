@@ -29,6 +29,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.regex.Matcher;
@@ -75,7 +76,11 @@ public class XMLReader extends AbstractReader {
      *            The encoding to use if we can't autodetect.
      */
     public XMLReader(String fileName, String encoding) throws IOException {
-        reader = new BufferedReader(createReader(fileName, encoding));
+        reader = new BufferedReader(createReader(new FileInputStream(fileName), encoding));
+    }
+
+    public XMLReader(InputStream inputStream, String encoding) throws IOException {
+        reader = new BufferedReader(createReader(inputStream, encoding));
     }
 
     /**
@@ -93,9 +98,9 @@ public class XMLReader extends AbstractReader {
      * <p>
      * Note that we cannot detect UTF-16 encoding, if there's no BOM!
      */
-    private Reader createReader(String fileName, String defaultEncoding) throws IOException {
+    private Reader createReader(InputStream inputStream, String defaultEncoding) throws IOException {
         // BOM detection
-        BufferedInputStream is = new BufferedInputStream(new FileInputStream(fileName));
+        BufferedInputStream is = new BufferedInputStream(inputStream);
 
         is.mark(OConsts.READ_AHEAD_LIMIT);
 
@@ -103,12 +108,13 @@ public class XMLReader extends AbstractReader {
         int char2 = is.read();
         int char3 = is.read();
         String encoding = null;
-        if (char1 == 0xFE && char2 == 0xFF)
+        if (char1 == 0xFE && char2 == 0xFF) {
             encoding = "UTF-16BE";
-        if (char1 == 0xFF && char2 == 0xFE)
+        } else if (char1 == 0xFF && char2 == 0xFE) {
             encoding = "UTF-16LE";
-        if (char1 == 0xEF && char2 == 0xBB && char3 == 0xBF)
+        } else if (char1 == 0xEF && char2 == 0xBB && char3 == 0xBF) {
             encoding = "UTF-8";
+        }
 
         is.reset();
         if (encoding != null) {
@@ -122,8 +128,9 @@ public class XMLReader extends AbstractReader {
             String buffer = new String(buf, 0, len);
 
             Matcher matcher_xml = PatternConsts.XML_ENCODING.matcher(buffer);
-            if (matcher_xml.find())
+            if (matcher_xml.find()) {
                 encoding = matcher_xml.group(1);
+            }
         }
 
         is.reset();
@@ -137,5 +144,25 @@ public class XMLReader extends AbstractReader {
         } catch (Exception e) {
             return new InputStreamReader(is);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
+    }
+
+    boolean readFirstTime = true;
+
+    @Override
+    public int read(char[] cbuf, int off, int len) throws IOException {
+        // BOM (byte order mark) bugfix
+        if (readFirstTime) {
+            readFirstTime = false;
+            reader.mark(1);
+            int ch = reader.read();
+            if (ch != 0xFEFF)
+                reader.reset();
+        }
+        return reader.read(cbuf, off, len);
     }
 }

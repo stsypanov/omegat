@@ -25,11 +25,11 @@
 
 package org.omegat.util.xml;
 
-import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,18 +76,24 @@ public class XMLStreamReader implements Closeable {
      * pass <code>null</code> as encoding, then we'll try to auto-sense the
      * encoding.
      */
-    private void setStream(File file, String encoding) throws
-            IOException, TranslationException {
-        XMLReader ear = new XMLReader(file.getAbsolutePath(), encoding);
-        m_bufferedReader = new BufferedReader(ear);
+    private void setStream(File file, String encoding) throws FileNotFoundException,
+            UnsupportedEncodingException, IOException, TranslationException {
+        m_reader = new XMLReader(file.getAbsolutePath(), encoding);
         _setStream();
     }
 
     /**
      * Provide an interface where stream can be opened elsewhere.
      */
-    public void setStream(BufferedReader rdr) throws IOException, TranslationException {
-        m_bufferedReader = rdr;
+    public void setStream(InputStream stream) throws IOException, TranslationException {
+        setStream(stream, "UTF-8");
+    }
+
+    /**
+     * Provide an interface where stream can be opened elsewhere.
+     */
+    public void setStream(InputStream stream, String encoding) throws IOException, TranslationException {
+        m_reader = new XMLReader(stream, encoding);
         _setStream();
     }
 
@@ -244,12 +250,12 @@ public class XMLStreamReader implements Closeable {
                 char[] c = new char[2];
                 try {
                     char b;
-                    int res = m_bufferedReader.read(c, 0, 1);
+                    int res = m_reader.read(c, 0, 1);
                     if (res > 0) {
                         b = c[0];
                         if (b == 13) {
                             // convert 13 10 to 10 and 13 to 10
-                            res = m_bufferedReader.read(c, 0, 1);
+                            res = m_reader.read(c, 0, 1);
                             if (res > 0) {
                                 b = c[0];
                                 if (b != '\n') {
@@ -1204,8 +1210,8 @@ public class XMLStreamReader implements Closeable {
     /** Closes the TMX file */
     @Override
     public void close() throws IOException {
-        if (m_bufferedReader != null) {
-            m_bufferedReader.close();
+        if (m_reader != null) {
+            m_reader.close();
         }
     }
 
@@ -1213,7 +1219,7 @@ public class XMLStreamReader implements Closeable {
 
     // /////////////////////////////////////////////////////////////
 
-    private BufferedReader m_bufferedReader;
+    private XMLReader m_reader;
     private String m_stringStream;
 
     private XMLBlock m_headBlock;

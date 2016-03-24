@@ -37,20 +37,27 @@
 				<jar href="lib-mnemonics.jar" />
 				<jar href="swing-layout-1.0.4.jar" />
 				<jar href="vldocking-3.0.5-SNAPSHOT.jar" />
-				<jar href="svnkit-1.8.8.jar" />
+				<jar href="svnkit-1.8.11.jar" />
 				<jar href="antlr-runtime-3.4.jar" />
 				<jar href="sqljet-1.1.10.jar" />
-				<jar href="org.eclipse.jgit-3.7.1.201504261725-r.jar" />
+				<jar href="org.eclipse.jgit-4.2.0.201601211800-r.jar" />
 				<jar href="sequence-library-1.0.3.jar" />
-				<jar href="jsch-0.1.52.jar" />
+				<jar href="jsch-0.1.53.jar" />
+				<jar href="jsch.agentproxy.connector-factory-0.0.9.jar" />
+				<jar href="jsch.agentproxy.core-0.0.9.jar" />
+				<jar href="jsch.agentproxy.jsch-0.0.9.jar" />
+				<jar href="jsch.agentproxy.sshagent-0.0.9.jar" />
+				<jar href="jsch.agentproxy.svnkit-trilead-ssh2-0.0.9.jar" />
+				<jar href="jsch.agentproxy.usocket-jna-0.0.9.jar" />
 				<jar href="lucene-analyzers-common-5.2.1.jar" />
 				<jar href="lucene-analyzers-kuromoji-5.2.1.jar" />
 				<jar href="lucene-analyzers-smartcn-5.2.1.jar" />
-				<jar href="lucene-core-5.2.1.jar" />
+				<jar href="lucene-core-5.2.1-SNAPSHOT.jar" />
 				<jar href="commons-lang-2.6.jar"  />
 				<jar href="commons-io-2.4.jar"  />
 				<jar href="commons-logging-1.1.1.jar"  />
-				<jar href="pdfbox-app-1.8.1.jar"  />
+				<jar href="pdfbox-2.0.0.jar" />
+				<jar href="fontbox-2.0.0.jar" />
 				<jar href="groovy-all-2.2.2.jar"  />
 				<jar href="diff.jar" />
 				<jar href="SuperTMXMerge-for_OmegaT.jar" />
@@ -58,6 +65,8 @@
 				<jar href="slf4j-jdk14-1.7.18.jar" />
 				<jar href="trilead-ssh2-1.0.0-build217.jar" />
 				<jar href="juniversalchardet-1.0.3.jar" />
+                <jar href="maligna-3.0.0.jar" />
+                <jar href="dictzip.jar" />
 
 				<!-- LanguageTool -->
 				<jar href="annotations.jar"  />
@@ -75,7 +84,7 @@
 				<jar href="languagetool-core.jar"  />
 				<jar href="LanguageTool-data.jar"  />
 				<jar href="lucene-backward-codecs.jar"  />
-				<jar href="lucene-gosen-ipadic.jar"  />
+				<jar href="lucene-gosen-5.0.0-ipadic.jar"  />
 				<jar href="morfologik-fsa.jar"  />
 				<jar href="morfologik-polish.jar"  />
 				<jar href="morfologik-speller.jar"  />

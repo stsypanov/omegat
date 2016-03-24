@@ -1,9 +1,11 @@
 ----------------------------------------------------------------------
- OmegaT 3.7.0
+ OmegaT 4.0.0
 ----------------------------------------------------------------------
- 5 Enhancements
+ 13 Enhancements
+  1 Bug fix
+  0 Localisation updates
 ----------------------------------------------------------------------
-3.7.0 vs 3.6.0
+4.0.0 vs 3.6.0
 
   Implemented requests:
 
@@ -19,12 +21,39 @@
   - Update LanguageTool to 3.2 
   https://sourceforge.net/p/omegat/feature-requests/970/
 
+  - Dismiss auto-completer window after hitting right/left arrow keys
+  https://sourceforge.net/p/omegat/feature-requests/1192/
+
+  - Support ssh-agent for git public key authentication 
+  https://sourceforge.net/p/omegat/feature-requests/1126/
+
+  - Add action menus to panes
+  https://sourceforge.net/p/omegat/feature-requests/1196/
+
+  - Notify user when minimized panes have content 
+  https://sourceforge.net/p/omegat/feature-requests/1197/
+
+  - Add Segment Properties pane
+  https://sourceforge.net/p/omegat/feature-requests/1198/
+
+  - Emacs-style keyboard navigation in autocompleter
+  https://sourceforge.net/p/omegat/feature-requests/1200/
+
+  - Add GUI aligner tool
+  https://sourceforge.net/p/omegat/feature-requests/1201/
+
+  - Update Lucene to 5.2.1
+  https://sourceforge.net/p/omegat/feature-requests/1203/
+  
+
   Other changes
 
-  - Lucene updated to 5.2.1
-The tokenizer behaviour is removed in Project Properties. All behaviour
-used are "current", except for German, where "Lucene 3.0" was kept, as
-it gave better results.
+  - Replace glossary hits now supports multi-word glossary replacements
+
+  Bug fixes:
+
+  - Ctrl+click does not activate context menu on OS X 
+  https://sourceforge.net/p/omegat/bugs/805/
 
 ----------------------------------------------------------------------
  OmegaT 3.6.0 (2016-03-09)
@@ -33,7 +62,7 @@ it gave better results.
   7 Bug fixes
   5 Localisation updates
 ----------------------------------------------------------------------
-3.6.0 vs 3.5.3
+3.6.0 vs 3.5.4
 
   Implemented requests:  
 
@@ -122,12 +151,13 @@ bug comments for instructions on adding the certificate to the trust store.
 
 ----------------------------------------------------------------------
  OmegaT 3.5.3 update 1
+ OmegaT 3.5.4 (2016-03-23)
 ----------------------------------------------------------------------
-   4 Enhancements
-   8 Bug fixes
+   5 Enhancements
+   9 Bug fixes
    2 Localisation updates
 ----------------------------------------------------------------------
-3.5.3 update 1 vs 3.5.3
+3.5.4 vs 3.5.3
 
   Other changes:
 
@@ -140,6 +170,8 @@ service
 
   - When using the line length limit in the Text filter, the filter tries
 preventing cutting after "\" and ":" and before "{" and ":"
+
+  - Updated documentation
 
  Bug fixes:
 
@@ -167,6 +199,9 @@ remained at the end of lines when the line was cut on a space.
 
   - Linux install script has invalid shebang, is incompatible with dash
   https://sourceforge.net/p/omegat/bugs/801/
+
+  - Cannot open projects residing in path with symbolic link
+  https://sourceforge.net/p/omegat/bugs/804/
 
   Localisation Updates:
 
