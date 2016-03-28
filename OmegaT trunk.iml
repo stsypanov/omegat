@@ -145,24 +145,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="xmlunit-1.1.jar">
-        <CLASSES>
-          <root url="file://test/lib/xmlunit-1.1.jar" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="pdfbox-app-1.8.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/pdfbox-app-1.8.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library name="antlr-runtime-3.4.jar">
         <CLASSES>
@@ -310,27 +292,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="jsch-0.1.52.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.52.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="sequence-library-1.0.3.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/sequence-library-1.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="org.eclipse.jgit-4.1.1.201511131810-r.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/org.eclipse.jgit-4.1.1.201511131810-r.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -386,15 +350,6 @@
       <library name="lucene-analyzers-smartcn-5.2.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/lucene-analyzers-smartcn-5.2.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="lucene-core-5.2.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene-core-5.2.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -545,15 +500,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="lucene-gosen-ipadic.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/lucene-gosen-ipadic.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="morfologik-fsa.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/LanguageTool-3.2/morfologik-fsa.jar!/" />
@@ -663,5 +609,12 @@
     </orderEntry>
     <orderEntry type="library" name="proxy-vole_20131209" level="project" />
     <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
+    <orderEntry type="library" name="lucene-analyzers-smartcn-5.2.1" level="project" />
+    <orderEntry type="library" name="org.eclipse.jgit-4.2.0.201601211800-r" level="project" />
+    <orderEntry type="library" name="maligna-3.0.0" level="project" />
+    <orderEntry type="library" name="jsch-0.1.53" level="project" />
+    <orderEntry type="library" name="jsch.agentproxy.connector-factory-0.0.9" level="project" />
+    <orderEntry type="library" name="pdfbox-2.0.0" level="project" />
+    <orderEntry type="library" name="fontbox-2.0.0" level="project" />
   </component>
 </module>

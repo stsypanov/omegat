@@ -63,6 +63,7 @@ import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.core.team2.gui.RepositoriesCredentialsController;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
+import org.omegat.gui.align.AlignFilePickerController;
 import org.omegat.gui.dialogs.*;
 import org.omegat.gui.dialogs.filter.BaseFilteringController;
 import org.omegat.gui.dialogs.filter.BaseFilteringDialog;

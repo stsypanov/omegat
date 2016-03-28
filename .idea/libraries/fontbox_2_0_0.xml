@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="darcula">
+  <library name="fontbox-2.0.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/darcula.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fontbox-2.0.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

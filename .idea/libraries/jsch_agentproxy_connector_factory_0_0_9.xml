@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="jsch.agentproxy.connector-factory-0.0.9">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jsch.agentproxy.connector-factory-0.0.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsch.agentproxy.core-0.0.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsch.agentproxy.jsch-0.0.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsch.agentproxy.sshagent-0.0.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsch.agentproxy.svnkit-trilead-ssh2-0.0.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsch.agentproxy.usocket-jna-0.0.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

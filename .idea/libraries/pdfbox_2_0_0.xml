@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="iconloader">
+  <library name="pdfbox-2.0.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../Darcula-master/lib/iconloader.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/pdfbox-2.0.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

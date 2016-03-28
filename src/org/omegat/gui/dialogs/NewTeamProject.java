@@ -28,6 +28,7 @@ package org.omegat.gui.dialogs;
 
 import java.io.File;
 import java.util.concurrent.CancellationException;
+import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;

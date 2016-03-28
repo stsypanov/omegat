@@ -271,7 +271,7 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
                 JMenuItem item = popup.add(StringUtil.format(OStrings.getString("DICTIONARY_HIDE"), word));
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        manager.addIgnoreWord(word);
+                        manager.addIgnoredWord(word);
                     };
                 });
                 popup.show(DictionariesTextArea.this, p.x, p.y);
