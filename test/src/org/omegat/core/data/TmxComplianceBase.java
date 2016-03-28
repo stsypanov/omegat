@@ -52,7 +52,6 @@ import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.text.TextFilter;
 import org.omegat.util.ByteUtils;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -84,9 +83,9 @@ public abstract class TmxComplianceBase extends TestCase {
         List<String> lines1 = readTextFile(f1, charset1);
         List<String> lines2 = readTextFile(f2, charset2);
 
-        Assert.assertEquals(lines1.size(), lines2.size());
+        assertEquals(lines1.size(), lines2.size());
         for (int i = 0; i < lines1.size(); i++) {
-            Assert.assertEquals(lines1.get(i), lines2.get(i));
+            assertEquals(lines1.get(i), lines2.get(i));
         }
     }
 
@@ -137,7 +136,7 @@ public abstract class TmxComplianceBase extends TestCase {
             protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
                     String prevSegment, String nextSegment, String path) {
                 TMXEntry e = tmx.getDefaultTranslation(segmentSource);
-                Assert.assertNotNull(e);
+                assertNotNull(e);
                 return e.translation;
             }
             @Override
@@ -217,8 +216,8 @@ public abstract class TmxComplianceBase extends TestCase {
     protected void compareTMX(File orig, File created, int segmentsCount) throws Exception {
         Set<String> tmxOrig = readTmxSegments(orig);
         Set<String> tmxCreated = readTmxSegments(created);
-        Assert.assertEquals(segmentsCount, tmxCreated.size());
-        Assert.assertEquals(tmxOrig.size(), tmxCreated.size());
+        assertEquals(segmentsCount, tmxCreated.size());
+        assertEquals(tmxOrig.size(), tmxCreated.size());
 
         List<String> listOrig = new ArrayList<String>(tmxOrig);
         List<String> listCreated = new ArrayList<String>(tmxCreated);
