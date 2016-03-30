@@ -161,24 +161,8 @@ public class StaticUtils {
     public static List<String> buildRelativeFilesList(File rootDir, List<String> includes,
             List<String> excludes) throws Exception {
         List<File> files = buildFileList(rootDir, true);
-        Pattern[] includesMasks;
-        if (includes != null) {
-            includesMasks = new Pattern[includes.size()];
-            for (int i = 0; i < includes.size(); i++) {
-                includesMasks[i] = compileFileMask(includes.get(i));
-            }
-        } else {
-            includesMasks = new Pattern[0];
-        }
-        Pattern[] excludesMasks;
-        if (excludes != null) {
-            excludesMasks = new Pattern[excludes.size()];
-            for (int i = 0; i < excludes.size(); i++) {
-                excludesMasks[i] = compileFileMask(excludes.get(i));
-            }
-        } else {
-            excludesMasks = new Pattern[0];
-        }
+        Pattern[] includesMasks = compileMasks(includes);
+        Pattern[] excludesMasks = compileMasks(excludes);
         String prefix = rootDir.getCanonicalPath().replace('\\', '/');
         List<String> result = new ArrayList<String>();
         for (File f : files) {
@@ -217,24 +201,8 @@ public class StaticUtils {
             // file path should starts from '/' for checking.
             filePath = '/' + filePath;
         }
-        Pattern[] includesMasks;
-        if (includes != null) {
-            includesMasks = new Pattern[includes.size()];
-            for (int i = 0; i < includes.size(); i++) {
-                includesMasks[i] = compileFileMask(includes.get(i));
-            }
-        } else {
-            includesMasks = new Pattern[0];
-        }
-        Pattern[] excludesMasks;
-        if (excludes != null) {
-            excludesMasks = new Pattern[excludes.size()];
-            for (int i = 0; i < excludes.size(); i++) {
-                excludesMasks[i] = compileFileMask(excludes.get(i));
-            }
-        } else {
-            excludesMasks = new Pattern[0];
-        }
+        Pattern[] includesMasks = compileMasks(includes);
+        Pattern[] excludesMasks = compileMasks(excludes);
         boolean add = false;
         // check include masks
         for (Pattern p : includesMasks) {
@@ -254,6 +222,25 @@ public class StaticUtils {
             }
         }
         return add;
+    }
+
+    /**
+     * Convert string representation of include/exclude representation of masks
+     * into array of Pattern
+     * @param masks string representation of masks
+     * @return array of compiled patterns
+     */
+    private static Pattern[] compileMasks(List<String> masks) {
+        Pattern[] includesMasks;
+        if (masks != null) {
+            includesMasks = new Pattern[masks.size()];
+            for (int i = 0; i < masks.size(); i++) {
+                includesMasks[i] = compileFileMask(masks.get(i));
+            }
+        } else {
+            includesMasks = new Pattern[0];
+        }
+        return includesMasks;
     }
 
     /**
