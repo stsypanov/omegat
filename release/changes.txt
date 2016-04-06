@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------
  OmegaT 4.0.0
 ----------------------------------------------------------------------
- 14 Enhancements
-  1 Bug fix
+ 16 Enhancements
+  2 Bug fixes
   0 Localisation updates
 ----------------------------------------------------------------------
 4.0.0 vs 3.6.0
@@ -45,16 +45,49 @@
   - Update Lucene to 5.2.1
   https://sourceforge.net/p/omegat/feature-requests/1203/
 
+  - Apply aggressive font fallback to Search results
+  https://sourceforge.net/p/omegat/feature-requests/1220/
+
   Other changes
 
   - Replace glossary hits now supports multi-word glossary replacements
 
   - The default memory allocation is now 1024 MB on all platforms
 
+  - There's now a Lucene Polish tokenizer
+
   Bug fixes:
 
   - Ctrl+click does not activate context menu on OS X 
   https://sourceforge.net/p/omegat/bugs/805/
+
+  - When the list of filters was changed, an entry could lead
+to the wrong filter
+
+----------------------------------------------------------------------
+ OmegaT 3.6.0 update 1
+----------------------------------------------------------------------
+  2 Enhancements
+  1 Bug fix
+  1 Localisation update
+----------------------------------------------------------------------
+3.6.0 update 1 vs 3.6.0
+
+  Implemented requests:  
+
+  - Improve handling of tags and custom tags for RTL languages
+  https://sourceforge.net/p/omegat/feature-requests/1221/
+
+  - Add Insert Unicode Control Character menu and right-click menu
+  https://sourceforge.net/p/omegat/feature-requests/1222/
+
+  Bug fixes:
+
+  - The Okapi Filters Plugin for OmegaT could crash
+
+  Localisation Updates:
+
+  - Italian localisation updated to 3.6 (UI, documentation)
 
 ----------------------------------------------------------------------
  OmegaT 3.6.0 (2016-03-09)
@@ -151,7 +184,24 @@ bug comments for instructions on adding the certificate to the trust store.
   - Norvegian localisation updated to 3.6 (UI, scripts, readme)
 
 ----------------------------------------------------------------------
- OmegaT 3.5.3 update 1
+ OmegaT 3.5.4 update 1
+----------------------------------------------------------------------
+   1 Enhancement
+   0 Bug fix
+   1 Localisation update
+----------------------------------------------------------------------
+3.5.4 update 1 vs 3.5.4
+
+  Other changes:
+
+  - The Windows setup program can now be launched in any of the 
+supported languages, regardless of the languages installed in Windows
+
+  Localisation Updates:
+
+  - Italian localisation updated to 3.5.4 (UI, documentation, scripts)
+
+----------------------------------------------------------------------
  OmegaT 3.5.4 (2016-03-23)
 ----------------------------------------------------------------------
    5 Enhancements

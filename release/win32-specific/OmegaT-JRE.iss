@@ -19,7 +19,6 @@ OutputBaseFilename=OmegaT_@VERSION_NUMBER_SUBST@_Windows
 Source: "docs\*"; DestDir: "{app}\docs"; Flags: recursesubdirs
 Source: "images\*"; DestDir: "{app}\images"; Flags: recursesubdirs
 Source: "lib\*"; DestDir: "{app}\lib"; Flags: recursesubdirs
-Source: "native\*"; DestDir: "{app}\native"; Flags: recursesubdirs
 Source: "plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
 Source: "scripts\*"; DestDir: "{app}\scripts"; Flags: recursesubdirs
 Source: "..\..\jre\*"; DestDir: "{app}\jre"; Flags: recursesubdirs
@@ -62,6 +61,7 @@ Source: "readme*.txt"; DestDir: "{app}";
 Source: "join.html"; DestDir: "{app}"
 Source: "index.html"; DestDir: "{app}"
 Source: "changes.txt"; DestDir: "{app}"; Flags: isreadme;
+Source: "omegat.prefs"; DestDir: "{app}"; Flags: skipifsourcedoesntexist;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -103,11 +103,11 @@ Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
 ;Name: "sq"; MessagesFile: "compiler:Languages\Albanian.isl"
 ;Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
 ;Name: "ast"; MessagesFile: "compiler:Languages\Asturian.isl"
-;Name: "be"; MessagesFile: "compiler:Languages\Belarus.isl"
+Name: "be"; MessagesFile: "compiler:Languages\Belarusian.isl"
 ;Name: "bs"; MessagesFile: "compiler:Languages\Bosnian.isl"
 ;Name: "bg"; MessagesFile: "compiler:Languages\Bulgarian.isl"
-;Name: "zh_CN"; MessagesFile: "compiler:Languages\ChineseSimp.isl"
-;Name: "zh_TW"; MessagesFile: "compiler:Languages\ChineseTrad.isl"
+Name: "zh_CN"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "zh_TW"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"
 ;Name: "hr"; MessagesFile: "compiler:Languages\Croatian.isl"
 ;Name: "eo"; MessagesFile: "compiler:Languages\Esperanto.isl"
 ;Name: "et"; MessagesFile: "compiler:Languages\Estonian.isl"
@@ -152,18 +152,20 @@ procedure SetUserLanguage;
 var 
   InstallLanguage: String;
   InstallCountry: String;
-  IniFile: String;  
+  IniFileAnsi: AnsiString;
+  IniFileUnicode: String;
 begin
   if Page.Values[0] then
   begin
     InstallCountry := Copy(ActiveLanguage(), 4, 2);
     InstallLanguage := Copy(ActiveLanguage(), 0, 2);
 
-    LoadStringFromFile(ExpandConstant('{app}\OmegaT.l4J.ini'), IniFile);
-    StringChange(IniFile, '#-Duser.language=en', '-Duser.language=' + InstallLanguage);
+    LoadStringFromFile(ExpandConstant('{app}\OmegaT.l4J.ini'), IniFileAnsi);
+    IniFileUnicode := String(IniFileAnsi)
+    StringChangeEx(IniFileUnicode, '#-Duser.language=en', '-Duser.language=' + InstallLanguage, True);
     if Length(InstallCountry) > 0 then
-      StringChange(IniFile, '#-Duser.country=GB', '-Duser.country=' + InstallCountry);
-    SaveStringToFile(ExpandConstant('{app}\OmegaT.l4J.ini'), IniFile, false);
+      StringChangeEx(IniFileUnicode, '#-Duser.country=GB', '-Duser.country=' + InstallCountry, True);
+    IniFileAnsi := AnsiString(IniFileUnicode)
+    SaveStringToFile(ExpandConstant('{app}\OmegaT.l4J.ini'), IniFileAnsi, false);
   end
 end;
-

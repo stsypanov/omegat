@@ -40,9 +40,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptEngine;
@@ -65,25 +63,31 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
-import javax.swing.text.Highlighter.HighlightPainter;
+import javax.swing.text.StyledDocument;
 
+import org.apache.commons.io.FilenameUtils;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.gui.common.PeroFrame;
 import org.omegat.gui.editor.mark.Mark;
+import org.omegat.gui.scripting.highlighting.IScriptHighlighter;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -100,16 +104,13 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("serial")
 public class ScriptingWindow extends PeroFrame {
 
-    private static final long serialVersionUID = 1L;
+    public static final int SCRIPT_EDITOR_MIN_FONT_SIZE = 13;
 
-    static ScriptingWindow window;
+    private static ScriptingWindow window;
 
-    // XXX Still needed ?
-    /**
-     * @deprecated
-     */
     public static void loadPlugins() {
         CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
             @Override
@@ -129,9 +130,6 @@ public class ScriptingWindow extends PeroFrame {
         super.dispose();
     }
 
-    /**
-     * @deprecated
-     */
     public static void unloadPlugins() {
         if (window != null) {
             window.dispose();
@@ -323,7 +321,24 @@ public class ScriptingWindow extends PeroFrame {
         m_txtResult = new JEditorPane();
         JScrollPane scrollPaneResults = new JScrollPane(m_txtResult);
 
-        m_txtScriptEditor = new JTextArea();
+        m_txtScriptEditor = new JTextPane();
+        m_txtScriptEditor.setDocument(new DefaultStyledDocument());
+        m_txtScriptEditor.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                SwingUtilities.invokeLater(() -> m_highlighter.doHighlight());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                SwingUtilities.invokeLater(() -> m_highlighter.doHighlight());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        m_highlighter = IScriptHighlighter.DUMMY_HIGHLIGHTER;
         //m_txtScriptEditor.setEditable(false);
         JPopupMenu editorPopUp = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem(OStrings.getString("SCW_SAVE_SCRIPT"));
@@ -346,7 +361,7 @@ public class ScriptingWindow extends PeroFrame {
 
         m_txtScriptEditor.setComponentPopupMenu(editorPopUp);
         m_txtScriptEditor.setFont(new Font(Font.MONOSPACED, Font.PLAIN,
-                m_txtScriptEditor.getFont().getSize()));
+                Math.max(SCRIPT_EDITOR_MIN_FONT_SIZE, m_txtScriptEditor.getFont().getSize())));
         JScrollPane scrollPaneEditor = new JScrollPane(m_txtScriptEditor);
 
         JSplitPane splitPane1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneEditor, scrollPaneResults);
@@ -672,6 +687,9 @@ public class ScriptingWindow extends PeroFrame {
             m_currentScriptItem = (ScriptItem) m_scriptList.getSelectedValue();
             m_txtScriptEditor.setText(m_currentScriptItem.getText());
             m_txtScriptEditor.setCaretPosition(0);
+            String ext = FilenameUtils.getExtension(m_currentScriptItem.getFile().getName());
+            m_highlighter = IScriptHighlighter.getHighlighter(ext);
+            m_highlighter.setDocument((StyledDocument) m_txtScriptEditor.getDocument());
         } catch (IOException e) {
             logResult(OStrings.getString("SCW_CANNOT_READ_SCRIPT"));
         }
@@ -683,7 +701,8 @@ public class ScriptingWindow extends PeroFrame {
 
     private JList<ScriptItem> m_scriptList;
     private JEditorPane m_txtResult;
-    private JTextArea m_txtScriptEditor;
+    private IScriptHighlighter m_highlighter;
+    private JTextPane m_txtScriptEditor;
     private JButton m_btnRunScript;
 
     protected ScriptsMonitor monitor;

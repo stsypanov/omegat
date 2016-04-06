@@ -359,24 +359,28 @@ public class Preferences {
 	 */
 	public static final String TOK_BEHAVIOR_PREFIX = "tokenizer_behavior_";
 
-	/** glossary auto-completion */
-	public static final String AC_GLOSSARY_SHOW_SOURCE = "ac_glossary_show_source";
-	public static final String AC_GLOSSARY_SHOW_TARGET_BEFORE_SOURCE = "ac_glossary_show_target_before_source";
-	public static final String AC_GLOSSARY_SORT_BY_SOURCE = "ac_glossary_sort_by_source";
-	public static final String AC_GLOSSARY_SORT_BY_LENGTH = "ac_glossary_sort_by_length";
-	public static final String AC_GLOSSARY_SORT_ALPHABETICALLY = "ac_glossary_sort_alphabetically";
-	public static final String AC_GLOSSARY_CAPITALIZE = "ac_glossary_capitalize";
+    public static final String AC_SHOW_SUGGESTIONS_AUTOMATICALLY = "ac_show_suggestions_automatically";
+    
+    /** glossary auto-completion */
+    public static final String AC_GLOSSARY_ENABLED = "ac_glossary_enabled";
+    public static final String AC_GLOSSARY_SHOW_SOURCE = "ac_glossary_show_source";
+    public static final String AC_GLOSSARY_SHOW_TARGET_BEFORE_SOURCE = "ac_glossary_show_target_before_source";
+    public static final String AC_GLOSSARY_SORT_BY_SOURCE = "ac_glossary_sort_by_source";
+    public static final String AC_GLOSSARY_SORT_BY_LENGTH = "ac_glossary_sort_by_length";
+    public static final String AC_GLOSSARY_SORT_ALPHABETICALLY = "ac_glossary_sort_alphabetically";
+    public static final String AC_GLOSSARY_CAPITALIZE = "ac_glossary_capitalize";
 
-	/** autotext auto-completion */
-	public static final String AC_AUTOTEXT_FILE_NAME = "omegat.autotext";
-	public static final String AC_AUTOTEXT_SORT_BY_LENGTH = "ac_autotext_sort_by_length";
-	public static final String AC_AUTOTEXT_SORT_ALPHABETICALLY = "ac_autotext_sort_alphabetically";
-	public static final String AC_AUTOTEXT_SORT_FULL_TEXT = "ac_autotext_sort_full_text";
+    /** autotext auto-completion */
+    public static final String AC_AUTOTEXT_ENABLED = "ac_autotext_enabled";
+    public static final String AC_AUTOTEXT_SORT_BY_LENGTH = "ac_autotext_sort_by_length";
+    public static final String AC_AUTOTEXT_SORT_ALPHABETICALLY = "ac_autotext_sort_alphabetically";
+    public static final String AC_AUTOTEXT_SORT_FULL_TEXT = "ac_autotext_sort_full_text";
 
-	/** char table auto-completion */
-	public static final String AC_CHARTABLE_USE_CUSTOM_CHARS = "ac_chartable_use_custom_chars";
-	public static final String AC_CHARTABLE_CUSTOM_CHAR_STRING = "ac_chartable_custom_char_string";
-	public static final String AC_CHARTABLE_UNIQUE_CUSTOM_CHARS = "ac_chartable_unique_custom_chars";
+    /** char table auto-completion */
+    public static final String AC_CHARTABLE_ENABLED = "ac_chartable_enabled";
+    public static final String AC_CHARTABLE_USE_CUSTOM_CHARS = "ac_chartable_use_custom_chars";
+    public static final String AC_CHARTABLE_CUSTOM_CHAR_STRING = "ac_chartable_custom_char_string";
+    public static final String AC_CHARTABLE_UNIQUE_CUSTOM_CHARS = "ac_chartable_unique_custom_chars";
 
 	/** status bar progress mode */
 	public static final String SB_PROGRESS_MODE = "sb_progress_mode";
@@ -609,7 +613,7 @@ public class Preferences {
         m_preferences.save();
     }
 
-    interface IPreferences {
+    public interface IPreferences {
 
         String getPreference(String key);
 
@@ -631,7 +635,11 @@ public class Preferences {
         void save();
     }
 
-    static {
+    public static synchronized void init() {
+        if (didInit) {
+            return;
+        }
+        didInit = true;
         File srxFile = new File(StaticUtils.getConfigDir(), SRX.CONF_SENTSEG);
         SRX srx = SRX.loadSRX(srxFile);
         if (srx == null) {
@@ -656,7 +664,8 @@ public class Preferences {
         m_preferences = new PreferencesImpl(new PreferencesXML(loadFile, saveFile));
     }
 
-    private static final IPreferences m_preferences;
+    private static volatile boolean didInit = false;
+    private static IPreferences m_preferences;
     private static SRX m_srx;
     private static Filters m_filters;
 

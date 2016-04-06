@@ -27,8 +27,8 @@ package org.omegat.gui.dialogs;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,10 +41,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.omegat.core.Core;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.gui.editor.autotext.Autotext;
-import org.omegat.gui.editor.autotext.AutotextPair;
+import org.omegat.gui.editor.autotext.Autotext.AutotextItem;
 import org.omegat.gui.editor.autotext.AutotextTableModel;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -64,12 +63,7 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
     
     public int returnStatus = RET_CANCEL;
     
-    AutotextTableModel model = new AutotextTableModel();
-    
-    File theFile = null;
-    File files[];
-    
-    final JFileChooser fc = new JFileChooser();
+    private final JFileChooser fc = new JFileChooser();
     
     /**
      * Creates new form AutotextAutoCompleterOptionsDialog
@@ -85,15 +79,16 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         sortAlphabeticallyCheckBox.setSelected(Preferences.isPreference(Preferences.AC_AUTOTEXT_SORT_ALPHABETICALLY));
         sortFullTextCheckBox.setSelected(Preferences.isPreference(Preferences.AC_AUTOTEXT_SORT_FULL_TEXT));
         sortFullTextCheckBox.setEnabled(sortAlphabeticallyCheckBox.isSelected());
-        
+        enabledCheckBox.setSelected(Preferences.isPreferenceDefault(Preferences.AC_AUTOTEXT_ENABLED, true));
+
+        enabledCheckBoxActionPerformed(null);
+
         fc.setDialogType(JFileChooser.FILES_ONLY);
         FileFilter filter = new FileNameExtensionFilter(OStrings.getString("AC_AUTOTEXT_FILE"), "autotext");
         fc.addChoosableFileFilter(filter);
         
         //entryTextArea.setFont(this.getFont());
-        model.load();
-        entryTable.setModel(model);
-        model.addTableModelListener(entryTable);
+        entryTable.setModel(new AutotextTableModel(Autotext.getItems()));
         
         setPreferredSize(new Dimension(500, 500));
         pack();
@@ -113,12 +108,14 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        jPanel11 = new javax.swing.JPanel();
+        enabledCheckBox = new javax.swing.JCheckBox();
+        displayPanel = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         sortByLengthCheckBox = new javax.swing.JCheckBox();
         sortAlphabeticallyCheckBox = new javax.swing.JCheckBox();
         sortFullTextCheckBox = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
+        entriesPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         entryTable = new JTable() {
@@ -160,10 +157,23 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         setTitle(OStrings.getString("AC_AUTOTEXT_OPTIONS_TITLE")); // NOI18N
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        jPanel6.setLayout(new java.awt.BorderLayout());
+        jPanel6.setLayout(new javax.swing.BoxLayout(jPanel6, javax.swing.BoxLayout.PAGE_AXIS));
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(OStrings.getString("AC_AUTOTEXT_DISPLAY_PANEL"))); // NOI18N
-        jPanel3.setLayout(new java.awt.BorderLayout());
+        jPanel11.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        jPanel11.setLayout(new java.awt.BorderLayout());
+
+        enabledCheckBox.setText(OStrings.getString("AC_AUTOTEXT_ENABLED")); // NOI18N
+        enabledCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                enabledCheckBoxActionPerformed(evt);
+            }
+        });
+        jPanel11.add(enabledCheckBox, java.awt.BorderLayout.CENTER);
+
+        jPanel6.add(jPanel11);
+
+        displayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(OStrings.getString("AC_AUTOTEXT_DISPLAY_PANEL"))); // NOI18N
+        displayPanel.setLayout(new java.awt.BorderLayout());
 
         jPanel9.setLayout(new java.awt.GridBagLayout());
 
@@ -196,12 +206,12 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 25, 5, 0);
         jPanel9.add(sortFullTextCheckBox, gridBagConstraints);
 
-        jPanel3.add(jPanel9, java.awt.BorderLayout.WEST);
+        displayPanel.add(jPanel9, java.awt.BorderLayout.WEST);
 
-        jPanel6.add(jPanel3, java.awt.BorderLayout.NORTH);
+        jPanel6.add(displayPanel);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(OStrings.getString("AC_AUTOTEXT_ENTRIES_PANEL"))); // NOI18N
-        jPanel2.setLayout(new java.awt.BorderLayout());
+        entriesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(OStrings.getString("AC_AUTOTEXT_ENTRIES_PANEL"))); // NOI18N
+        entriesPanel.setLayout(new java.awt.BorderLayout());
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 0));
         jPanel8.setLayout(new java.awt.BorderLayout());
@@ -289,9 +299,9 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
 
         jPanel8.add(jPanel10, java.awt.BorderLayout.EAST);
 
-        jPanel2.add(jPanel8, java.awt.BorderLayout.CENTER);
+        entriesPanel.add(jPanel8, java.awt.BorderLayout.CENTER);
 
-        jPanel6.add(jPanel2, java.awt.BorderLayout.CENTER);
+        jPanel6.add(entriesPanel);
 
         getContentPane().add(jPanel6, java.awt.BorderLayout.CENTER);
 
@@ -322,34 +332,26 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        int result = fc.showOpenDialog(this);
-        File selectedFile;
-        
-        if (result == JFileChooser.APPROVE_OPTION) {
-            selectedFile = fc.getSelectedFile();
+        if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(this)) {
             try {
-                Core.getAutoText().load(selectedFile.getCanonicalPath());
-                model.load();
+                List<AutotextItem> data = Autotext.load(fc.getSelectedFile());
+                entryTable.setModel(new AutotextTableModel(data));
             } catch (IOException ex) {
                 Logger.getLogger(AutotextAutoCompleterOptionsDialog.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_loadButtonActionPerformed
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        Autotext autoText = new Autotext(null);
-        
-        int result = fc.showSaveDialog(this);
-        if (result != JFileChooser.APPROVE_OPTION) {
-            return;
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
+        if (JFileChooser.APPROVE_OPTION == fc.showSaveDialog(this)) {
+            try {
+                List<AutotextItem> data = ((AutotextTableModel) entryTable.getModel()).getData();
+                Autotext.save(data, fc.getSelectedFile());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, OStrings.getString("AC_AUTOTEXT_UNABLE_TO_SAVE"));
+            }
         }
-        model.store(autoText);
-        try {
-            autoText.save(fc.getSelectedFile().getCanonicalPath());
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, OStrings.getString("AC_AUTOTEXT_UNABLE_TO_SAVE"));
-        }
-    }//GEN-LAST:event_saveButtonActionPerformed
+    }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         doClose(RET_CANCEL);
@@ -361,11 +363,10 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
             editor.stopCellEditing();
         }
         
-        Autotext autoText = Core.getAutoText();
-        
-        model.store(autoText);
+        Autotext.setList(((AutotextTableModel) entryTable.getModel()).getData());
+
         try {
-            autoText.save();
+            Autotext.save();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, OStrings.getString("AC_AUTOTEXT_UNABLE_TO_SAVE"));
         }
@@ -373,6 +374,7 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
         Preferences.setPreference(Preferences.AC_AUTOTEXT_SORT_BY_LENGTH, sortByLengthCheckBox.isSelected());
         Preferences.setPreference(Preferences.AC_AUTOTEXT_SORT_ALPHABETICALLY, sortAlphabeticallyCheckBox.isSelected());
         Preferences.setPreference(Preferences.AC_AUTOTEXT_SORT_FULL_TEXT, sortFullTextCheckBox.isSelected());
+        Preferences.setPreference(Preferences.AC_AUTOTEXT_ENABLED, enabledCheckBox.isSelected());
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -381,7 +383,8 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
     }//GEN-LAST:event_sortAlphabeticallyCheckBoxActionPerformed
 
     private void addNewRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewRowButtonActionPerformed
-        int newRow = model.addRow(new AutotextPair("","",""), entryTable.getSelectedRow());
+        int newRow = ((AutotextTableModel) entryTable.getModel()).addRow(new AutotextItem(),
+                entryTable.getSelectedRow());
         entryTable.changeSelection(newRow, 0, false, false);
         entryTable.changeSelection(newRow, entryTable.getColumnCount() - 1, false, true);
         entryTable.editCellAt(newRow, 0);
@@ -390,9 +393,14 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
 
     private void removeEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeEntryButtonActionPerformed
         if (entryTable.getSelectedRow() != -1) {
-            model.removeRow(entryTable.getSelectedRow());
+            ((AutotextTableModel) entryTable.getModel()).removeRow(entryTable.getSelectedRow());
         }
     }//GEN-LAST:event_removeEntryButtonActionPerformed
+
+    private void enabledCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enabledCheckBoxActionPerformed
+        StaticUIUtils.setHierarchyEnabled(displayPanel, enabledCheckBox.isSelected());
+        StaticUIUtils.setHierarchyEnabled(entriesPanel, enabledCheckBox.isSelected());
+    }//GEN-LAST:event_enabledCheckBoxActionPerformed
 
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -403,14 +411,16 @@ public class AutotextAutoCompleterOptionsDialog extends PeroDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addNewRowButton;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JPanel displayPanel;
+    private javax.swing.JCheckBox enabledCheckBox;
+    private javax.swing.JPanel entriesPanel;
     private javax.swing.JTable entryTable;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;

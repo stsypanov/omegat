@@ -59,6 +59,10 @@ import java.util.*;
  * @author Aaron Madlon-Kay
  */
 public class SpellChecker implements ISpellChecker {
+
+    public static final File DEFAULT_DICTIONARY_DIR = new File(StaticUtils.getConfigDir(),
+            OConsts.SPELLING_DICT_DIR);
+
     /** The spell checking provider. */
     private ISpellCheckerProvider checker;
 
@@ -137,7 +141,7 @@ public class SpellChecker implements ISpellChecker {
         // initialize the spell checker - get the data from the preferences
 
         String dictionaryDir = Preferences.getPreferenceDefault(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY,
-                new File(StaticUtils.getConfigDir(), OConsts.SPELLING_DICT_DIR).getPath());
+                DEFAULT_DICTIONARY_DIR.getPath());
 
         installBundledDictionary(dictionaryDir, language);
 
@@ -145,7 +149,7 @@ public class SpellChecker implements ISpellChecker {
         File affixName = new File(dictionaryDir, language + OConsts.SC_AFFIX_EXTENSION);
         File dictionaryName = new File(dictionaryDir, language + OConsts.SC_DICTIONARY_EXTENSION);
 
-        if (!dictionaryName.isFile()) {
+        if (!isValidFile(affixName) || !isValidFile(dictionaryName)) {
             return null;
         }
         try {
@@ -166,6 +170,32 @@ public class SpellChecker implements ISpellChecker {
             Log.log("Error loading jmyspell: " + ex.getMessage());
         }
         return null;
+    }
+
+    private static boolean isValidFile(File file) {
+        try {
+            if (!file.exists()) {
+                return false;
+            }
+            if (!file.isFile()) {
+                Log.log("Spelling dictionary exists but is not a file: " + file.getPath());
+                return false;
+            }
+            if (!file.canRead()) {
+                Log.log("Can't read spelling dictionary: " + file.getPath());
+                return false;
+            }
+            if (file.length() == 0L) {
+                // On OS X, attempting to load Hunspell with a zero-length .dic file causes
+                // a native exception that crashes the whole program.
+                Log.log("Spelling dictionary appears to be empty: " + file.getPath());
+                return false;
+            }
+            return true;
+        } catch (Throwable ex) {
+            Log.log(ex);
+            return false;
+        }
     }
 
     /**

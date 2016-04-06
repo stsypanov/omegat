@@ -177,4 +177,14 @@ abstract public class AbstractAutoCompleterView {
     public void onShow(){
 
     }
+
+    /**
+     * Indicates whether the view should be considered "on" or "off". When off, the view will not be shown in
+     * any circumstances (whether automatically or manually).
+     *
+     * @return
+     */
+    protected boolean isEnabled() {
+        return true;
+    }
 }

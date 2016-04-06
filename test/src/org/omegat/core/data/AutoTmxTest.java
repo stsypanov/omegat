@@ -34,6 +34,7 @@ import org.omegat.core.Core;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.tokenizer.LuceneFrenchTokenizer;
+import org.omegat.util.Preferences;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -48,6 +49,7 @@ public class AutoTmxTest {
 
     @Before
     protected void setUp() throws Exception {
+        Preferences.init();
         Core.setSegmenter(new Segmenter(SRX.getDefault()));
     }
 

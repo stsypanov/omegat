@@ -113,7 +113,7 @@ public class ProjectUICommands {
                 newProjDialog.dispose();
 
                 IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
 
@@ -165,7 +165,7 @@ public class ProjectUICommands {
                 }
 
                 IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
                 Core.getMainWindow().showStatusMessageRB("CT_DOWNLOADING_PROJECT");
@@ -286,7 +286,7 @@ public class ProjectUICommands {
             protected Object doInBackground() throws Exception {
 
                 IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
 
@@ -391,7 +391,7 @@ public class ProjectUICommands {
 
             protected Object doInBackground() throws Exception {
                 IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
 
@@ -421,7 +421,7 @@ public class ProjectUICommands {
         new SwingWorker<Object, Void>() {
             protected Object doInBackground() throws Exception {
                 IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
 
@@ -452,7 +452,7 @@ public class ProjectUICommands {
                 Core.getMainWindow().showStatusMessageRB("MW_STATUS_SAVING");
 
                 IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
 

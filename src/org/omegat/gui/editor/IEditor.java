@@ -196,8 +196,10 @@ public interface IEditor {
      * 
      * @param fileIndex
      *            file index in project
+     * @throws IndexOutOfBoundsException
+     *             If there is no file for the given index
      */
-    void gotoFile(int fileIndex);
+    void gotoFile(int fileIndex) throws IndexOutOfBoundsException;
 
     /**
      * Goto entry with specified number. Convenience method for
@@ -295,6 +297,13 @@ public interface IEditor {
      * Must be called only from UI thread.
      */
     void insertText(String text);
+
+    /**
+     * Inserts tag at the cursor position, probably with adding bidi control chars.
+     * 
+     * Must be called only from UI thread.
+     */
+    void insertTag(String tag);
 
     /**
      * Go to next segment from history.

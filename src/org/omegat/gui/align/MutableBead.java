@@ -62,8 +62,9 @@ class MutableBead {
         this.score = score;
         this.sourceLines = new ArrayList<String>(sourceLines);
         this.targetLines = new ArrayList<String>(targetLines);
-        this.enabled = !sourceLines.equals(targetLines);
-        this.status = MutableBead.Status.DEFAULT;
+        boolean srcEqualsTrg = sourceLines.equals(targetLines);
+        this.enabled = !srcEqualsTrg;
+        this.status = srcEqualsTrg ? MutableBead.Status.ACCEPTED : MutableBead.Status.DEFAULT;
     }
 
     public MutableBead(Alignment alignment) {
@@ -78,8 +79,15 @@ class MutableBead {
         this(Arrays.asList(source), Arrays.asList(target));
     }
 
+    /**
+     * Create an empty new bead. {@link #enabled} is <code>true</code> by
+     * default because it is assumed that the caller will populate the bead with
+     * interesting data.
+     */
     public MutableBead() {
         this(Collections.emptyList(), Collections.emptyList());
+        this.enabled = true;
+        this.status = Status.DEFAULT;
     }
 
     /**
@@ -114,8 +122,8 @@ class MutableBead {
     static List<Entry<String, String>> beadsToEntries(Language srcLang, Language trgLang,
             List<MutableBead> beads) {
         return beads.stream().filter(bead -> bead.enabled).map(bead -> {
-            String srcOut = Util.join(srcLang, bead.sourceLines);
-            String trgOut = Util.join(trgLang, bead.targetLines);
+            String srcOut = bead.sourceLines.isEmpty() ? null : Util.join(srcLang, bead.sourceLines);
+            String trgOut = bead.targetLines.isEmpty() ? null : Util.join(trgLang, bead.targetLines);
             return new AbstractMap.SimpleImmutableEntry<String, String>(srcOut, trgOut);
         }).collect(Collectors.toList());
     }

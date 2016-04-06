@@ -57,7 +57,6 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     private JPanel panel;
 
     public void install(final SegmentPropertiesArea parent) {
-        UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
         panel = new ReasonablySizedPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -111,7 +110,12 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     public void notifyUser(List<Integer> notify) {
         UIThreadsUtil.mustBeSwingThread();
         for (int i : notify) {
-            ((SegmentPropertiesListCell) panel.getComponent(i / 2)).value.flash();
+            try {
+                ((SegmentPropertiesListCell) panel.getComponent(i / 2)).value.flash();
+            } catch (IndexOutOfBoundsException ex) {
+                // Contents of panel have changed. Don't bother continuing.
+                break;
+            }
         }
     }
 

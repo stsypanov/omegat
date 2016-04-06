@@ -26,9 +26,16 @@
 package org.omegat.gui.stat;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Comparator;
 
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import org.omegat.core.Core;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DataTableStyling;
 
@@ -67,15 +74,60 @@ public class StatisticsPanel extends BaseStatisticsPanel {
         if (filesData == null || filesData.length == 0) {
             return;
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                String title = OStrings.getString("CT_STATS_FILE_Statistics");
-                TitledTablePanel panel = generateTableDisplay(title, headers, filesData);
-                panel.table.getColumnModel().getColumn(0).setCellRenderer(
-                        DataTableStyling.getTextCellRenderer());
-                add(panel, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> {
+            String title = OStrings.getString("CT_STATS_FILE_Statistics");
+            TitledTablePanel panel = generateTableDisplay(title, headers, filesData);
+
+            TableModel dataModel = panel.table.getModel();
+
+            TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(dataModel);
+            Comparator<String> intComparator = (s1, s2) -> {
+                try {
+                    return Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2));
+                } catch (NumberFormatException e) {
+                    return s1.compareTo(s2);
+                }
+            };
+            for (int i = 0; i < dataModel.getColumnCount(); i++) {
+                rowSorter.setComparator(i, intComparator);
             }
+
+            panel.table.setRowSorter(rowSorter);
+
+            panel.table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                        try {
+                            int row = panel.table.rowAtPoint(e.getPoint());
+                            int fileIndex = panel.table.convertRowIndexToModel(row);
+                            gotoFile(fileIndex);
+                        } catch (IndexOutOfBoundsException ex) {
+                            // Ignore
+                        }
+                    }
+                }
+            });
+
+            panel.table.getColumnModel().getColumn(0).setCellRenderer(DataTableStyling.getTextCellRenderer());
+            add(panel, BorderLayout.CENTER);
         });
     }
+    
+    /** code mostly from from org.omegat.gui.filelist.ProjectFilesListController.gotoFile(int) */
+    private void gotoFile(int fileIndex) {
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+        Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        Cursor oldCursor = getCursor();
+        setCursor(hourglassCursor);
+        try {
+            Core.getEditor().gotoFile(fileIndex);
+            Core.getEditor().requestFocus();
+        } finally {
+            setCursor(oldCursor);
+        }
+    }
+
 }

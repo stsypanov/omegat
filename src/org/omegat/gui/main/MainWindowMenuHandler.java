@@ -568,6 +568,26 @@ public class MainWindowMenuHandler {
         Core.getMatcher().setPrevActiveMatch();
     }
 
+    public void insertCharsLRMActionPerformed() {
+        Core.getEditor().insertText("\u200E");
+    }
+
+    public void insertCharsRLMActionPerformed() {
+        Core.getEditor().insertText("\u200F");
+    }
+
+    public void insertCharsLREActionPerformed() {
+        Core.getEditor().insertText("\u202A");
+    }
+
+    public void insertCharsRLEActionPerformed() {
+        Core.getEditor().insertText("\u202B");
+    }
+
+    public void insertCharsPDFActionPerformed() {
+        Core.getEditor().insertText("\u202C");
+    }
+
     public void editMultipleDefaultActionPerformed() {
         Core.getEditor().setAlternateTranslationForCurrentEntry(false);
     }
@@ -769,7 +789,7 @@ public class MainWindowMenuHandler {
     public void editTagPainterMenuItemActionPerformed() {
         // insert tags
         for (Tag tag : TagUtil.getAllTagsMissingFromTarget()) {
-            Core.getEditor().insertText(tag.tag);
+            Core.getEditor().insertTag(tag.tag);
         }
     }
 
@@ -779,7 +799,7 @@ public class MainWindowMenuHandler {
         if (tags.isEmpty()) {
             return;
         }
-        Core.getEditor().insertText(tags.get(0).tag);
+        Core.getEditor().insertTag(tags.get(0).tag);
     }
 
     public void toolsShowStatisticsStandardMenuItemActionPerformed() {

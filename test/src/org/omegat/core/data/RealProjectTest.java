@@ -33,6 +33,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.omegat.core.Core;
 import org.omegat.tokenizer.DefaultTokenizer;
+import org.omegat.util.Preferences;
+
+import junit.framework.TestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -51,6 +54,7 @@ public class RealProjectTest {
     @Before
     public void setUp() throws Exception {
         Core.initializeConsole(new TreeMap<String, String>());
+        Preferences.init();
     }
 
     /**
