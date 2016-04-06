@@ -39,9 +39,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -75,10 +73,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.omegat.core.Core;
@@ -670,7 +665,7 @@ public class ScriptingWindow extends PeroFrame {
         m_scriptList.setListData(items.toArray(new ScriptItem[items.size()]));
     }
 
-    public HighlightPainter getPainter() {
+    public Highlighter.HighlightPainter getPainter() {
         return null;
     }
 

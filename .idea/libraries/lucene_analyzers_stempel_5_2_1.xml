@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="lucene-analyzers-stempel-5.2.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/lucene-analyzers-stempel-5.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

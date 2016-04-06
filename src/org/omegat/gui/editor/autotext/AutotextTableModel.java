@@ -48,7 +48,10 @@ import org.omegat.util.StringUtil;
 public class AutotextTableModel extends AbstractTableModel {
 
     private List<AutotextItem> data = Collections.emptyList();
-    
+
+    public AutotextTableModel() {
+    }
+
     public AutotextTableModel(Collection<AutotextItem> data) {
         this.data = new ArrayList<>(data);
     }

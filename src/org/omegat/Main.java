@@ -180,9 +180,9 @@ public class Main {
         // Do migration and load various settings. The order is important!
         ConvertConfigs.convert();
         PluginUtils.loadPlugins(params);
-        loadProxySettings();
         FilterMaster.setFilterClasses(PluginUtils.getFilterClasses());
         Preferences.init();
+        loadProxySettings();
 
         int result;
         try {

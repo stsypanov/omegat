@@ -324,8 +324,6 @@ public class Preferences {
 	/** Proxy options: Password for proxy  access */
 	public static final String PROXY_PASSWORD = "proxy_password";
 
-    public static final String AC_SHOW_SUGGESTIONS_AUTOMATICALLY = "ac_show_suggestions_automatically";
-
 	/** Automatic save interval in seconds */
 	public static final String AUTO_SAVE_INTERVAL = "auto_save_interval";
 
@@ -360,7 +358,7 @@ public class Preferences {
 	public static final String TOK_BEHAVIOR_PREFIX = "tokenizer_behavior_";
 
     public static final String AC_SHOW_SUGGESTIONS_AUTOMATICALLY = "ac_show_suggestions_automatically";
-    
+
     /** glossary auto-completion */
     public static final String AC_GLOSSARY_ENABLED = "ac_glossary_enabled";
     public static final String AC_GLOSSARY_SHOW_SOURCE = "ac_glossary_show_source";

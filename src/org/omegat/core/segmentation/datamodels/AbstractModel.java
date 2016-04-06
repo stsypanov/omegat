@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Сергей on 22.02.2015.
+ * Created by пїЅпїЅпїЅпїЅпїЅпїЅ on 22.02.2015.
  */
 public abstract class AbstractModel extends AutotextTableModel {
 
