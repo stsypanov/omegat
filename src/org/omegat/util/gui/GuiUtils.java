@@ -10,9 +10,9 @@ public class GuiUtils {
 
     static {
         String resources = "/org/omegat/gui/resources/";
-        icons = new ArrayList<>();
-        icons.add(ResourcesUtil.getIcon(resources + "OmegaT_small.gif").getImage());
-        icons.add(ResourcesUtil.getIcon(resources + "OmegaT.gif").getImage());
+		icons = new ArrayList<>(2);
+		icons.add(ResourcesUtil.getImage(resources + "OmegaT_small.gif"));
+		icons.add(ResourcesUtil.getImage(resources + "OmegaT.gif"));
     }
 
     public static void setOmegatIcons(Window window) {
