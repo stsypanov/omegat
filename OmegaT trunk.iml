@@ -652,5 +652,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="lucene-analyzers-stempel-5.2.1" level="project" />
   </component>
 </module>
