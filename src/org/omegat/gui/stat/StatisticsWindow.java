@@ -38,7 +38,7 @@ import org.omegat.core.Core;
 import org.omegat.core.statistics.CalcMatchStatistics;
 import org.omegat.core.statistics.CalcStandardStatistics;
 import org.omegat.core.threads.LongProcessThread;
-import org.omegat.gui.common.PeroFrame;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
 
@@ -50,7 +50,9 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class StatisticsWindow extends PeroFrame {
+public class StatisticsWindow extends PeroDialog {
+
+    private String textData;
 
     public static enum STAT_TYPE {
         STANDARD, MATCHES, MATCHES_PER_FILE

@@ -30,6 +30,7 @@ import java.awt.Frame;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
+import org.omegat.gui.common.OmegaTIcons;
 import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.Platform;

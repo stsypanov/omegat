@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.omegat.core.statistics.StatisticsSettings;
+import org.omegat.gui.common.PeroDialog;
 import org.omegat.util.OStrings;
 import org.omegat.util.PatternConsts;
 import org.omegat.util.Preferences;
@@ -49,7 +50,7 @@ import org.omegat.util.gui.StaticUIUtils;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class TagProcessingOptionsDialog extends JDialog {
+public class TagProcessingOptionsDialog extends PeroDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
