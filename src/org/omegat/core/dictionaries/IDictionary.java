@@ -27,6 +27,7 @@
 package org.omegat.core.dictionaries;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface for dictionary access.
@@ -47,7 +48,7 @@ import java.util.List;
  * See {@link StarDict} for an example of the recommended deferred-loading
  * implementation, and {@link LingvoDSL} for an example of an simpler, up-front
  * loading implementation.
- * 
+ *
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
@@ -68,14 +69,20 @@ public interface IDictionary {
      * will return articles for "term", "terminology", "termite", etc. The
      * default implementation simply calls {@link #readArticles(String)} for
      * backwards compatibility.
-     * 
+     *
      * @param word
      *            The word to look up in the dictionary
-     * 
+     *
      * @return List of entries. May be empty, but cannot be null.
      */
     default List<DictionaryEntry> readArticlesPredictive(String word) throws Exception {
         // Default implementation for backwards compatibility
         return readArticles(word);
     }
+
+    /**
+     *
+     * @return key set of a dictionary
+     */
+    Set<String> getKeys();
 }

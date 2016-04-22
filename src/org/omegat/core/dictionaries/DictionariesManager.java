@@ -68,6 +68,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     protected final List<IDictionaryFactory> factories = new ArrayList<IDictionaryFactory>();
     protected final Map<String, IDictionary> dictionaries = new TreeMap<String, IDictionary>();
     protected final Set<String> ignoreWords = new TreeSet<String>();
+    protected Set<String> loadedKeys;
 
     private Language indexLanguage;
     private ITokenizer tokenizer;
@@ -256,5 +257,26 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     // Implemented as method for testing purposes
     protected boolean doFuzzyMatching() {
         return Preferences.isPreferenceDefault(Preferences.DICTIONARY_FUZZY_MATCHING, true);
+    }
+
+    public Set<String> getKeys(String key) {
+        if (loadedKeys == null) {
+            loadKeys();
+        }
+        Set<String> possibleKeys = new TreeSet<>();
+        for (String loadedKey : loadedKeys) {
+            if (loadedKey.startsWith(key)) {
+                possibleKeys.add(loadedKey);
+            }
+        }
+        return possibleKeys;
+    }
+
+    private void loadKeys() {
+        loadedKeys = new HashSet<>();
+        for (IDictionary dictionary : dictionaries.values()) {
+            Set<String> strings = dictionary.getKeys();
+            loadedKeys.addAll(strings);
+        }
     }
 }

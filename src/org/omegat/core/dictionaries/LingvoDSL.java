@@ -29,8 +29,7 @@ package org.omegat.core.dictionaries;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,6 @@ import org.omegat.util.Language;
  */
 public class LingvoDSL implements IDictionaryFactory {
     protected static final Pattern RE_SKIP = Pattern.compile("\\[.+?\\]");
-    protected static final String[] EMPTY_RESULT = new String[0];
 
     @Override
     public boolean isSupportedFile(File file) {
@@ -105,6 +103,11 @@ public class LingvoDSL implements IDictionaryFactory {
         public List<DictionaryEntry> readArticlesPredictive(String word) throws Exception {
             return data.lookUpPredictive(word).stream().map(e -> new DictionaryEntry(e.getKey(), e.getValue()))
                     .collect(Collectors.toList());
+        }
+
+        @Override
+        public Set<String> getKeys() {
+            return data.keySet();
         }
     }
 }

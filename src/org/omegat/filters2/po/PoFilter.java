@@ -48,11 +48,7 @@ import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.Instance;
 import org.omegat.filters2.TranslationException;
-import org.omegat.util.Language;
-import org.omegat.util.Log;
-import org.omegat.util.OStrings;
-import org.omegat.util.PatternConsts;
-import org.omegat.util.StaticUtils;
+import org.omegat.util.*;
 
 /**
  * Filter to support po files (in various encodings).

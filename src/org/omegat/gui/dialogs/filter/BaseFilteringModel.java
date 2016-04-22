@@ -1,25 +1,21 @@
 package org.omegat.gui.dialogs.filter;
 
-import javax.swing.*;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import java.util.List;
 
 /**
  * Created by stsypanov on 12.05.2015.
  */
 public class BaseFilteringModel extends AbstractTableModel {
 
-	private List<BaseFilteringItem> items;
+	private BaseFilteringItems items;
 
-	public BaseFilteringModel(List<BaseFilteringItem> items) {
+	public BaseFilteringModel(BaseFilteringItems items) {
 		this.items = items;
 	}
 
 	@Override
 	public int getRowCount() {
-		return items.size();
+		return items.getFilteringItems().size();
 	}
 
 	@Override
@@ -31,7 +27,7 @@ public class BaseFilteringModel extends AbstractTableModel {
 	public String getColumnName(int columnIndex) {
 		switch (columnIndex) {
 			case 0: {
-				return "Apply";
+				return "Is applied";
 			}
 			case 1: {
 				return "Pattern";
@@ -49,7 +45,7 @@ public class BaseFilteringModel extends AbstractTableModel {
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 			case 0: {
-				return JCheckBox.class;
+				return Boolean.class;
 			}
 			case 1: {
 				return String.class;
@@ -66,26 +62,13 @@ public class BaseFilteringModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		switch (rowIndex) {
-			case 0: {
-				return false;
-			}
-			case 1: {
-				return true;
-			}
-			case 2: {
-				return true;
-			}
-			default: {
-				return false;
-			}
-		}
+		return true;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		BaseFilteringItem item = items.get(rowIndex);
-		switch (rowIndex) {
+		BaseFilteringItem item = items.getFilteringItems().get(rowIndex);
+		switch (columnIndex) {
 			case 0: {
 				return item.isApply();
 			}
@@ -103,27 +86,34 @@ public class BaseFilteringModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
-		BaseFilteringItem item = items.get(rowIndex);
-		switch (rowIndex) {
+		BaseFilteringItem item = items.getFilteringItems().get(rowIndex);
+		switch (columnIndex) {
 			case 0: {
-				item.setApply(((JCheckBox) value).isSelected());
+				item.setApply((Boolean) value);
+				break;
 			}
 			case 1: {
 				item.setPattern((String) value);
+				break;
 			}
 			case 2: {
 				item.setExample((String) value);
+				break;
 			}
 		}
 	}
 
-	@Override
-	public void addTableModelListener(TableModelListener l) {
-
+	public void addItem() {
+		items.getFilteringItems().add(new BaseFilteringItem(false, "", ""));
+		fireTableDataChanged();
 	}
 
-	@Override
-	public void removeTableModelListener(TableModelListener l) {
+	public void removeItem(int row) {
+		items.getFilteringItems().remove(row);
+		fireTableRowsDeleted(row, row);
+	}
 
+	public BaseFilteringItems getItems() {
+		return items;
 	}
 }

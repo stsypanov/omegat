@@ -1,6 +1,6 @@
 /**************************************************************************
  OmegaT - Computer Assisted Translation (CAT) tool 
-          with fuzzy matching, translation memory, keyword search,
+          with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, Henry Pijffers, 
@@ -39,7 +39,9 @@ import java.awt.Desktop;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -80,6 +82,7 @@ import org.omegat.gui.dialogs.UserPassDialog;
 import org.omegat.gui.dialogs.ViewOptionsDialog;
 import org.omegat.gui.dialogs.WorkflowOptionsDialog;
 import org.omegat.gui.dialogs.*;
+import org.omegat.gui.dialogs.filter.BaseFilteringController;
 import org.omegat.gui.dialogs.filter.BaseFilteringDialog;
 import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.EditorUtils;
@@ -100,9 +103,11 @@ import org.omegat.util.StringUtil;
 import org.omegat.util.TagUtil;
 import org.omegat.util.TagUtil.Tag;
 
+import javax.swing.*;
+
 /**
  * Handler for main menu items.
- *
+ * 
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -116,9 +121,9 @@ import org.omegat.util.TagUtil.Tag;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-@SuppressWarnings({"unused", "MethodMayBeStatic"})
 public class MainWindowMenuHandler {
     private final MainWindow mainWindow;
+    private BaseFilteringController baseFilteringController;
 
     public MainWindowMenuHandler(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -222,6 +227,23 @@ public class MainWindowMenuHandler {
         }
 
         ProjectUICommands.projectSingleCompile(sourcePattern);
+    }
+
+    /**
+     * Open the folder with translated files
+     */
+    public void openTargetFolderMenuItemActionPerformed(){
+        String targetFolder = Core.getProject().getProjectProperties().getTargetRoot();
+        File target = new File(targetFolder);
+        if (target.exists()) {
+            try {
+                Desktop.getDesktop().open(target);
+            } catch (IOException e) {
+                Log.log(Level.SEVERE, "failed to open target folder", e);
+            }
+        } else {
+            Log.log("failed to open target folder: the folder does not exists");
+        }
     }
 
     /** Edits project's properties */
@@ -1114,16 +1136,32 @@ public class MainWindowMenuHandler {
         MainWindowUI.resetDesktopLayout(mainWindow);
     }
 
+    /**
+     * Configure base filtering
+     */
+    public void baseFilteringMenuItemActionPerformed(){
+        if (baseFilteringController == null){
+            baseFilteringController = new BaseFilteringController(BaseFilteringDialog.getInstance());
+        }
+        baseFilteringController.loadItems();
+        baseFilteringController.adjustColumnWidth();
+        baseFilteringController.showDialog();
+    }
+
+    /**
+     * Let Omegat hide file list on project load
+     */
+    public void hideFileListMenuItemActionPerformed(){
+        boolean selected = mainWindow.menu.hideFileListMenuItem.isSelected();
+        Preferences.setPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD, selected);
+    }
+
     public void optionsAccessConfigDirMenuItemActionPerformed() {
         openFile(new File(StaticUtils.getConfigDir()));
     }
 
     public void optionsRepositoriesCredentialsItemActionPerformed() {
         RepositoriesCredentialsController.show();
-    }
-
-    public void baseFilteringMenuItemActionPerformed(){
-        new BaseFilteringDialog(mainWindow);
     }
 
     /**
@@ -1157,9 +1195,9 @@ public class MainWindowMenuHandler {
     public void helpLogMenuItemActionPerformed() {
         new LogDialog(mainWindow).setVisible(true);
     }
-
+    
     /**
-     * Displays the dialog to set login and password for proxy.
+     * Displays the dialog to configure proxy
      */
     public void optionsViewOptionsMenuLoginItemActionPerformed() {
         UserPassDialog proxyOptions = new UserPassDialog(mainWindow);

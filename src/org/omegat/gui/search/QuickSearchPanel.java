@@ -45,10 +45,10 @@ public class QuickSearchPanel extends JPanel {
     }
 
     public String getText() {
-        return textField.getText();
+        return textField.getEditor().getItem().toString();
     }
 
-    public JTextField getTextField() {
+    public JComboBox<String> getTextField() {
         return textField;
     }
 

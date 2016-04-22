@@ -286,14 +286,6 @@ public class Main {
         }
     }
 
-	private static void loadProxySettings() {
-		String setProxy = Preferences.getPreference(Preferences.SET_HTTP_PROXY);
-
-		if ("true".equals(setProxy)){
-            ProxyUtils.applyProxyPreferences();
-		}
-	}
-
 	/**
      * Execute standard GUI.
      */

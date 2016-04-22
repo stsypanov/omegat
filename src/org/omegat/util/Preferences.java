@@ -440,7 +440,9 @@ public class Preferences {
     public static final String PROPERTY_SRX = "srx";
     public static final String PROPERTY_FILTERS = "filters";
 
-	/** Proxy preferences */
+    public static final String PROXY_POLICY = "proxyPolicy";
+
+    /** Proxy preferences */
 	public static final String PROXY_SET = "proxySet";
 
 	public static final String HTTP_PROXY_HOST = "httpProxyHost";
@@ -452,6 +454,7 @@ public class Preferences {
 	 * Decide whether Omegat should show file list at project load
 	 */
 	public static final String HIDE_FILE_LIST_AT_PROJECT_LOAD = "hideFileListAtProjectLoad";
+
 
     /** Private constructor, because this file is singleton */
     private Preferences() {

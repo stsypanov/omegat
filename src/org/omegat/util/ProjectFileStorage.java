@@ -132,13 +132,13 @@ public class ProjectFileStorage {
         result.setTargetRootRelative(computeRelative(om.getProject().getTargetDir(), OConsts.DEFAULT_TARGET));
         result.setTargetRoot(computeAbsolutePath(m_root, om.getProject().getTargetDir(),
                 OConsts.DEFAULT_TARGET));
-        result.setBaseFilteringItems(computeAbsolutePath(m_root, project.getBaseFilteringItems(), OConsts.FILTERING_ITEMS_FILE_NAME, true));
+        result.setBaseFilteringItems(computeAbsolutePath(m_root, om.getProject().getBaseFilteringItems(), OConsts.FILTERING_ITEMS_FILE_NAME, true));
         result.setSourceRootRelative(computeRelative(om.getProject().getSourceDir(), OConsts.DEFAULT_SOURCE));
         result.setSourceRoot(computeAbsolutePath(m_root, om.getProject().getSourceDir(),
                 OConsts.DEFAULT_SOURCE));
         result.getSourceRootExcludes().clear();
-        if (project.getSourceDirExcludes() != null) {
-            result.getSourceRootExcludes().addAll(project.getSourceDirExcludes().getMask());
+        if (om.getProject().getSourceDirExcludes() != null) {
+            result.getSourceRootExcludes().addAll(om.getProject().getSourceDirExcludes().getMask());
         } else {
             // sourceRootExclude was not defined
             result.getSourceRootExcludes().addAll(Arrays.asList(ProjectProperties.DEFAULT_EXCLUDES));
@@ -167,23 +167,23 @@ public class ProjectFileStorage {
                 OConsts.DEFAULT_DICT));
         result.setDictRootRelative(computeRelative(om.getProject().getDictionaryDir(), OConsts.DEFAULT_DICT));
 
-        result.setSourceLanguage(project.getSourceLang());
-        result.setTargetLanguage(project.getTargetLang());
+        result.setSourceLanguage(om.getProject().getSourceLang());
+        result.setTargetLanguage(om.getProject().getTargetLang());
 
-        result.setSourceTokenizer(loadTokenizer(project.getSourceTok(), result.getSourceLanguage()));
-        result.setTargetTokenizer(loadTokenizer(project.getTargetTok(), result.getTargetLanguage()));
+        result.setSourceTokenizer(loadTokenizer(om.getProject().getSourceTok(), result.getSourceLanguage()));
+        result.setTargetTokenizer(loadTokenizer(om.getProject().getTargetTok(), result.getTargetLanguage()));
 
-        if (project.isSentenceSeg() != null) {
-            result.setSentenceSegmentingEnabled(project.isSentenceSeg());
+        if (om.getProject().isSentenceSeg() != null) {
+            result.setSentenceSegmentingEnabled(om.getProject().isSentenceSeg());
         }
-        if (project.isSupportDefaultTranslations() != null) {
-            result.setSupportDefaultTranslations(project.isSupportDefaultTranslations());
+        if (om.getProject().isSupportDefaultTranslations() != null) {
+            result.setSupportDefaultTranslations(om.getProject().isSupportDefaultTranslations());
         }
-        if (project.isRemoveTags() != null) {
-            result.setRemoveTags(project.isRemoveTags());
+        if (om.getProject().isRemoveTags() != null) {
+            result.setRemoveTags(om.getProject().isRemoveTags());
         }
-        if (project.getExternalCommand() != null) {
-            result.setExternalCommand(project.getExternalCommand());
+        if (om.getProject().getExternalCommand() != null) {
+            result.setExternalCommand(om.getProject().getExternalCommand());
         }
 
         if (om.getProject().getRepositories() != null) {

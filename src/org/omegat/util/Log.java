@@ -51,10 +51,9 @@ import org.omegat.util.logging.OmegaTFileHandler;
  */
 public class Log {
 
-    private static Logger LOGGER;
+    private static final Logger LOGGER = Logger.getLogger("global");
 
     static {
-        LOGGER = Logger.getLogger("global");
 
         boolean loaded = false;
         File usersLogSettings = new File(StaticUtils.getConfigDir(), "logger.properties");
@@ -320,5 +319,13 @@ public class Log {
             rec.setLoggerName(logger.getName());
             logger.log(rec);
         }
+    }
+
+    public static void log(Level level, String message, Throwable e) {
+        LOGGER.log(level, message, e);
+    }
+
+    public static void severe(String message, Throwable e) {
+        log(Level.SEVERE, message, e);
     }
 }

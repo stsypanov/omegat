@@ -77,7 +77,7 @@ import org.openide.awt.Mnemonics;
 
 /**
  * Class for create main menu and handle main menu events.
- *
+ * 
  * @author Keith Godfrey
  * @author Benjamin Siband
  * @author Maxym Mykhalchuk
@@ -92,14 +92,14 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
-
+ 
 /**
  * Add newly created MenuItem items to
  * /src/org/omegat/gui/main/MainMenuShortcuts.properties and
  * /src/org/omegat/gui/main/MainMenuShortcuts.mac.properties
  * with the proper shortcuts if set.
  */
-
+  
 public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     private static final Logger LOGGER = Logger.getLogger(MainWindowMenu.class.getName());
 
@@ -123,10 +123,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         invokeAction(action, evt.getModifiers());
     }
-
+    
     /**
      * Code for dispatching events from components to event handlers.
-     *
+     * 
      * @param action ActionCommand of triggering menu item
      * @param modifiers Modifier key flags (can be zero)
      */
@@ -160,7 +160,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
     /**
      * Code for dispatching events from components to event handlers.
-     *
+     * 
      * @param evt
      *            event info
      */
@@ -437,6 +437,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsRepositoriesCredentialsItem = createMenuItem("TEAM_REPOSITORIES_DIALOG"));
         optionsMenu.add(new JSeparator());
         optionsMenu.add(baseFilteringMenuItem = createMenuItem("MW_OPTIONSMENU_BASE_FILTERING"));
+        optionsMenu.add(hideFileListMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_HIDE_FILE_LIST"));
+        hideFileListMenuItem.setSelected(Boolean.valueOf(Preferences.getPreference(Preferences.HIDE_FILE_LIST_AT_PROJECT_LOAD)));
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
@@ -769,9 +771,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsColorsSelectionMenuItem;
     JMenu optionsMenu;
     JMenuItem optionsRestoreGUIMenuItem;
+    JMenuItem baseFilteringMenuItem;
+    JMenuItem hideFileListMenuItem;
     JMenuItem optionsAccessConfigDirMenuItem;
     JMenuItem optionsRepositoriesCredentialsItem;
-    JMenuItem baseFilteringMenuItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;
     JMenuItem optionsSpellCheckMenuItem;
@@ -781,8 +784,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsGlossaryTBXDisplayContextCheckBoxMenuItem;
     JMenuItem optionsGlossaryExactMatchCheckBoxMenuItem;
     JMenuItem optionsGlossaryStemmingCheckBoxMenuItem;
-    JMenuItem optionsGlossaryReplacementCheckBoxMenuItem;
     JMenuItem optionsEditGlossaryMenuItem;
+    JMenuItem optionsGlossaryReplacementCheckBoxMenuItem;
     JMenu optionsDictionaryMenu;
     JMenuItem optionsDictionaryFuzzyMatchingCheckBoxMenuItem;
     JMenu optionsTransTipsMenu;

@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
+import java.util.*;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -116,7 +116,7 @@ public class StarDict implements IDictionaryFactory {
          *            ifo file with dictionary
          */
         public StarDictDict(File ifoFile, Language language) throws Exception {
-    
+
             this.language = language;
 
             Map<String, String> header = readIFO(ifoFile);
@@ -207,6 +207,11 @@ public class StarDict implements IDictionaryFactory {
         public List<DictionaryEntry> readArticlesPredictive(String word) {
             return data.lookUpPredictive(word).stream()
                     .map(e -> new DictionaryEntry(e.getKey(), e.getValue().getArticle())).collect(Collectors.toList());
+        }
+
+        @Override
+        public Set<String> getKeys() {
+            return data.keySet();
         }
 
         /**

@@ -101,7 +101,7 @@ public class SourceTextEntry {
         m_entryNum = 0;
         protectedParts = new ProtectedPart[0];
         sourceTranslation = null;
-        comment = null;
+        props = new String[0];
     }
 
     /**
@@ -187,23 +187,11 @@ public class SourceTextEntry {
         return duplicates == null ? DUPLICATE.NONE : DUPLICATE.FIRST;
     }
 
-    public boolean hasDuplicates() {
-        return getDuplicate() != DUPLICATE.NONE;
-    }
-
-    public boolean notFirstDuplicate() {
-        return getDuplicate() != DUPLICATE.FIRST;
-    }
-
     public int getNumberOfDuplicates() {
-        SourceTextEntry other = this;
-        while (true) {
-            if (other.firstInstance != null) {
-                other = other.firstInstance;
-                continue;
-            }
-            return other.duplicates == null ? 0 : other.duplicates.size();
+        if (firstInstance != null) {
+            return firstInstance.getNumberOfDuplicates();
         }
+        return duplicates == null ? 0 : duplicates.size();
     }
 
     public List<SourceTextEntry> getDuplicates() {
@@ -234,5 +222,13 @@ public class SourceTextEntry {
 
     public ProtectedPart[] getProtectedParts() {
         return protectedParts;
+    }
+
+    public boolean hasDuplicates() {
+        return getDuplicate() != DUPLICATE.NONE;
+    }
+
+    public boolean notFirstDuplicate() {
+        return getDuplicate() != DUPLICATE.FIRST;
     }
 }

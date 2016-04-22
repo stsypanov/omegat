@@ -55,7 +55,7 @@ public class GlossaryManager implements DirectoryMonitor.Callback {
     protected DirectoryMonitor monitor;
 
     private final GlossaryTextArea pane;
-    private final Map<String, List<GlossaryEntry>> glossaries = new TreeMap<String, List<GlossaryEntry>>();
+    private static final Map<String, List<GlossaryEntry>> glossaries = new HashMap<>();
 
     protected File priorityGlossary;
     protected IGlossary[] externalGlossaries;

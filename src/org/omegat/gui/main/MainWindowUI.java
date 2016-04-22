@@ -167,7 +167,7 @@ public class MainWindowUI {
                 didApplyPerProjectLayout = true;
                 break;
             case SAVE:
-                saveScreenLayout(mainWindow, perProjLayout);
+                saveScreenLayout(mainWindow);
             default:
             }
         }
@@ -186,7 +186,7 @@ public class MainWindowUI {
         mainWindow.progressLabel = new JLabel();
         mainWindow.lengthLabel = new JLabel();
 
-        mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(Font.PLAIN));
+        mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(11f));
 
         Border border = UIManager.getBorder("OmegaTStatusArea.border");
         
@@ -260,7 +260,7 @@ public class MainWindowUI {
      * recover that and use instead (18may04).
      */
     //todo use PeroFrame
-    public static void loadScreenLayout(final MainWindow mainWindow) {
+    public static void initializeScreenLayout(MainWindow mainWindow) {
         int x, y, w, h;
         // main window
         try {
@@ -336,14 +336,6 @@ public class MainWindowUI {
 
     /**
      * Stores main window layout (width, height, position, etc.) to global preferences.
-     */
-    public static void saveScreenLayout(MainWindow mainWindow) {
-        File uiLayoutFile = new File(StaticUtils.getConfigDir(), MainWindowUI.UI_LAYOUT_FILE);
-        saveScreenLayout(mainWindow, uiLayoutFile);
-    }
-
-    /**
-     * Stores main window layout to the specified output file.
      */
     public static void saveScreenLayout(final MainWindow mainWindow) {
         File uiLayoutFile = new File(StaticUtils.getConfigDir() + MainWindowUI.UI_LAYOUT_FILE);
