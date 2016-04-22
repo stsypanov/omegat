@@ -44,10 +44,9 @@ import org.omegat.gui.main.IMainWindow;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.StaticUIUtils;
-import org.omegat.util.StringUtil;
-import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**

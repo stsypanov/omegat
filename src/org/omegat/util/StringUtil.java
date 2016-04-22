@@ -59,6 +59,13 @@ public class StringUtil {
     }
 
     /**
+     * Check if string is not empty
+     */
+    public static boolean notEmpty(String str) {
+        return !isEmpty(str);
+    }
+
+    /**
      * Returns true if the input has at least one letter and
      * all letters are lower case.
      */

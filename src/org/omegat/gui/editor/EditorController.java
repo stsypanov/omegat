@@ -91,6 +91,7 @@ import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.dialogs.ConflictDialogController;
 import org.omegat.gui.editor.autocompleter.IAutoCompleter;
+import org.omegat.gui.editor.filter.BaseFilter;
 import org.omegat.gui.editor.mark.CalcMarkersThread;
 import org.omegat.gui.editor.mark.ComesFromMTMarker;
 import org.omegat.gui.editor.mark.EntryMarks;
@@ -2204,5 +2205,13 @@ public class EditorController implements IEditor {
     @Override
     public IAutoCompleter getAutoCompleter() {
         return editor.autoCompleter;
+    }
+
+    public Document3 getDocument(){
+        return editor.getOmDocument();
+    }
+
+    public EditorTextArea3 getEditor() {
+        return editor;
     }
 }

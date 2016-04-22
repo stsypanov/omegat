@@ -30,23 +30,14 @@
 
 package org.omegat.gui.editor;
 
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JEditorPane;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.AbstractDocument;
@@ -75,12 +66,12 @@ import org.omegat.gui.main.MainWindow;
 import org.omegat.gui.popup.*;
 import org.omegat.gui.popup.PopupFactory;
 import org.omegat.gui.popup.dictionary.DictionaryPopup;
-import org.omegat.util.Log;
 import org.omegat.util.Platform;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.Styles;
+import org.omegat.util.gui.SwingUtils;
 
 /**
  * Changes of standard JEditorPane implementation for support custom behavior.
@@ -159,9 +150,9 @@ public class EditorTextArea3 extends JEditorPane {
         });
         setToolTipText("");
         setDragEnabled(true);
-        setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
-        setCaretColor(Styles.EditorColor.COLOR_FOREGROUND.getColor());
-        setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
+//        setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
+//        setCaretColor(Styles.EditorColor.COLOR_FOREGROUND.getColor());
+//        setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
     }
 
     @Override
@@ -171,15 +162,17 @@ public class EditorTextArea3 extends JEditorPane {
         if (doc != null) {
             doc.setFont(font);
         }
+    }
 
     private void addDictionaryAction() {
        addKeyListener(new KeyAdapter() {
+           private static final int INTERVAL = 250;
            private long lastShiftStroke;
 
            @Override
            public void keyReleased(KeyEvent e) {
                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= 500;
+                   boolean suits = System.currentTimeMillis() - lastShiftStroke <= INTERVAL;
                    if (suits) {
                        final DictionaryPopup popup = new DictionaryPopup();
                        new DictionaryPopupController(popup, Core.getDictionariesTextArea());
@@ -230,7 +223,7 @@ public class EditorTextArea3 extends JEditorPane {
     protected MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            autoCompleter.setVisible(false);
+            getAutoCompleter().setVisible(false);
 
             // Handle double-click
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
@@ -272,7 +265,7 @@ public class EditorTextArea3 extends JEditorPane {
         PopupMenuConstructorInfo[] cons;
         synchronized (popupConstructors) {
             /**
-             * Copy constructors - for disable blocking in the procesing
+             * Copy constructors - for disable blocking in the processing
              * time.
              */
             cons = popupConstructors.toArray(new PopupMenuConstructorInfo[popupConstructors.size()]);
@@ -293,6 +286,23 @@ public class EditorTextArea3 extends JEditorPane {
             c.constructor.addItems(popup, EditorTextArea3.this, pos, isInActiveEntry,
                     isInActiveTranslation(pos), sb);
         }
+
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Component c = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+
+                List<JPopupMenu> popups = SwingUtils.getDescendantsOfType(JPopupMenu.class, (Container) c, true);
+
+                for (JPopupMenu p : popups) {
+                    p.setVisible(false);
+                }
+            }
+        };
+
+        popup.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+        popup.getActionMap().put("ESCAPE", escapeAction);
 
         DockingUI.removeUnusedMenuSeparators(popup);
 

@@ -5,10 +5,12 @@ import org.omegat.util.Log;
 import javax.swing.text.*;
 import java.awt.*;
 
+import static org.omegat.util.StringUtil.isEmpty;
+
 public class WordSearcher {
     protected JTextComponent comp;
     protected Highlighter.HighlightPainter painter;
-    private Highlighter highlighter;
+    protected Highlighter highlighter;
 
     public WordSearcher(JTextComponent comp) {
         this.comp = comp;
@@ -31,7 +33,7 @@ public class WordSearcher {
 //        }
         highlighter.removeAllHighlights();
 
-        if (word == null || word.equals("")) {
+        if (isEmpty(word)) {
             return -1;
         }
 
@@ -65,7 +67,9 @@ public class WordSearcher {
         return firstOffset;
     }
 
-    public void removeAllHighlight(){
-        highlighter.removeAllHighlights();
+    public void removeAllHighlight() {
+        if (highlighter != null) {
+            highlighter.removeAllHighlights();
+        }
     }
 }

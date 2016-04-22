@@ -30,11 +30,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -49,7 +45,6 @@ import java.util.regex.Pattern;
 public class LingvoDSL implements IDictionaryFactory {
     protected static final String CHARSET = "UTF-16";
     protected static final Pattern RE_SKIP = Pattern.compile("\\[.+?\\]");
-    protected static final String[] EMPTY_RESULT = new String[0];
 
     @Override
     public boolean isSupportedFile(File file) {
@@ -62,8 +57,7 @@ public class LingvoDSL implements IDictionaryFactory {
     }
 
     private static Map<String, String> loadData(File file) throws Exception {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), CHARSET));
-        try {
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(new FileInputStream(file), CHARSET))) {
             Map<String, String> result = new HashMap<String, String>();
             String s;
             StringBuilder word = new StringBuilder();
@@ -72,7 +66,7 @@ public class LingvoDSL implements IDictionaryFactory {
                 if (s.isEmpty()) {
                     continue;
                 }
-                if (s.codePointAt(0) == '#') {
+                if (s.charAt(0) == '#') {
                     continue;
                 }
                 s = RE_SKIP.matcher(s).replaceAll("");
@@ -91,8 +85,6 @@ public class LingvoDSL implements IDictionaryFactory {
                 result.put(word.toString(), trans.toString());
             }
             return result;
-        } finally {
-            rd.close();
         }
     }
 
@@ -113,6 +105,11 @@ public class LingvoDSL implements IDictionaryFactory {
             List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
             result.add(entry);
             return result;
+        }
+
+        @Override
+        public Set<String> getKeys() {
+            return data.keySet();
         }
     }
 }

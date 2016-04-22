@@ -27,6 +27,7 @@
 package org.omegat.core.dictionaries;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface for dictionary access.
@@ -55,4 +56,10 @@ public interface IDictionary {
      * @return List of entries. May be empty, but cannot be null.
      */
     List<DictionaryEntry> readArticles(String word) throws Exception;
+
+    /**
+     *
+     * @return key set of a dictionary
+     */
+    Set<String> getKeys();
 }

@@ -28,53 +28,10 @@ public class ClipboardTest extends PeroFrame {
 		pack();
 	}
 
-	@Override
-	public String getPreferenceBaseName() {
-		return "clipboard_test";
-	}
-
-	private void addClipboardListener(JTextComponent component) {
-		KeyBinding.bind(component, getAction(component));
-	}
-
-	private AbstractAction getAction(final JTextComponent component) {
-		return new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("ctrl + shift + v");
-				ClipboardDialog dialog = ClipboardDialog.getInstance(owner);
-				dialog.showDialog();
-				String selected = dialog.getSelected();
-				if (component instanceof JTextArea) {
-					((JTextArea) component).insert(selected, component.getCaretPosition());
-					dialog.hideDialog();
-				}
-				if (component instanceof JEditorPane) {
-					Document document = component.getDocument();
-					try {
-						document.insertString(component.getCaretPosition(), selected, null);
-						dialog.hideDialog();
-					} catch (BadLocationException ex) {
-						Log.log(ex);
-					}
-				}
-
-			}
-		};
-	}
-
-	private static class KeyBinding {
-
-		public static void bind(JComponent component, AbstractAction action) {
-			InputMap im = component.getInputMap(JComponent.WHEN_FOCUSED);
-			ActionMap am = component.getActionMap();
-			String key = "insert from clipboard";
-			KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, true);
-			im.put(keyStroke, key);
-			am.put(key, action);
-
-		}
-	}
+    @Override
+    public String getPreferenceBaseName() {
+        return "clipboard_test";
+    }
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -85,6 +42,4 @@ public class ClipboardTest extends PeroFrame {
 			}
 		});
 	}
-
-
 }

@@ -41,9 +41,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.script.ScriptEngineFactory;
 import javax.swing.AbstractAction;
@@ -72,14 +70,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import javax.swing.text.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.gui.common.PeroFrame;
+import org.omegat.gui.editor.mark.Mark;
 import org.omegat.gui.shortcuts.PropertiesShortcuts;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
@@ -97,6 +95,7 @@ import org.openide.awt.Mnemonics;
  * @author Yu Tang
  * @author Aaron Madlon-Kay
  */
+@SuppressWarnings("serial")
 public class ScriptingWindow extends PeroFrame {
 
     static ScriptingWindow window;
@@ -127,9 +126,7 @@ public class ScriptingWindow extends PeroFrame {
     }
     
     public ScriptingWindow() {
-        setTitle(OStrings.getString("SCW_TITLE"));
-
-        StaticUIUtils.setEscapeClosable(this);
+        super(OStrings.getString("SCW_TITLE"));
 
         setScriptsDirectory(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY, DEFAULT_SCRIPTS_DIR));
         
@@ -295,7 +292,6 @@ public class ScriptingWindow extends PeroFrame {
     }
 
     private void initWindowLayout() {
-        loadPreferences();
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         m_scriptList = new JList<>();
@@ -638,14 +634,13 @@ public class ScriptingWindow extends PeroFrame {
         m_scriptList.setListData(items.toArray(new ScriptItem[items.size()]));
     }
 
-    public HighlightPainter getPainter() {
+    public Highlighter.HighlightPainter getPainter() {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Mark> getMarksForEntry(String sourceText, String translationText, boolean isActive)
             throws Exception {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private void onListSelectionChanged() {

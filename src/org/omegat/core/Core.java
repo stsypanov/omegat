@@ -337,4 +337,8 @@ public class Core {
     public static void pluginLoadingError(String errorText) {
         pluginsLoadingErrors.add(errorText);
     }
+
+    public static DictionariesTextArea getDictionariesTextArea(){
+        return dictionaries;
+    }
 }

@@ -31,15 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.omegat.core.Core;
 import org.omegat.gui.dictionaries.IDictionaries;
@@ -63,6 +55,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     protected final List<IDictionaryFactory> factories = new ArrayList<IDictionaryFactory>();
     protected final Map<String, IDictionary> dictionaries = new TreeMap<String, IDictionary>();
     protected final Set<String> ignoreWords = new TreeSet<String>();
+    protected Set<String> loadedKeys;
 
     public DictionariesManager(final IDictionaries pane) {
         this.pane = pane;
@@ -230,5 +223,26 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
             }
         }
         return result;
+    }
+
+    public Set<String> getKeys(String key) {
+        if (loadedKeys == null) {
+            loadKeys();
+        }
+        Set<String> possibleKeys = new TreeSet<>();
+        for (String loadedKey : loadedKeys) {
+            if (loadedKey.startsWith(key)) {
+                possibleKeys.add(loadedKey);
+            }
+        }
+        return possibleKeys;
+    }
+
+    private void loadKeys() {
+        loadedKeys = new HashSet<>();
+        for (IDictionary dictionary : dictionaries.values()) {
+            Set<String> strings = dictionary.getKeys();
+            loadedKeys.addAll(strings);
+        }
     }
 }
