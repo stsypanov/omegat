@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Darcula/Darcula.iml" filepath="$PROJECT_DIR$/../Darcula/Darcula.iml" />
       <module fileurl="file://$PROJECT_DIR$/OmegaT trunk.iml" filepath="$PROJECT_DIR$/OmegaT trunk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Darcula/demo/demo.iml" filepath="$PROJECT_DIR$/../Darcula/demo/demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../vldocking/vldocking.iml" filepath="$PROJECT_DIR$/../vldocking/vldocking.iml" />
     </modules>
   </component>
 </project>
