@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="demo">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Darcula/lib/demo/AppFramework.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Darcula/lib/demo/AnimatedTransitions.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Darcula/lib/demo/swing-worker.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Darcula/lib/demo/TimingFramework.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Darcula/lib/demo/swingx.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
