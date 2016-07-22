@@ -25,10 +25,7 @@
 
 package org.omegat.core.dictionaries;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.omegat.util.Language;
@@ -210,5 +207,9 @@ public class DictionaryData<T> {
      */
     public int size() {
         return data == null ? -1 : data.size();
+    }
+
+    public Set<String> keySet() {
+        return Collections.emptySet();
     }
 }
