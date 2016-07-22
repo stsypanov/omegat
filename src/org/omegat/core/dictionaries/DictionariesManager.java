@@ -31,15 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.omegat.gui.dictionaries.IDictionaries;
@@ -257,6 +249,27 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     // Implemented as method for testing purposes
     protected boolean doFuzzyMatching() {
         return Preferences.isPreferenceDefault(Preferences.DICTIONARY_FUZZY_MATCHING, true);
+    }
+
+    public Set<String> getKeys(String key) {
+        if (loadedKeys == null) {
+            loadKeys();
+        }
+        Set<String> possibleKeys = new TreeSet<>();
+        for (String loadedKey : loadedKeys) {
+            if (loadedKey.startsWith(key)) {
+                possibleKeys.add(loadedKey);
+            }
+        }
+        return possibleKeys;
+    }
+
+    private void loadKeys() {
+        loadedKeys = new HashSet<>();
+        for (IDictionary dictionary : dictionaries.values()) {
+            Set<String> strings = dictionary.getKeys();
+            loadedKeys.addAll(strings);
+        }
     }
 
     public Set<String> getKeys(String key) {

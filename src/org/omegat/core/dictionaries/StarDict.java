@@ -214,6 +214,11 @@ public class StarDict implements IDictionaryFactory {
             return data.keySet();
         }
 
+        @Override
+        public Set<String> getKeys() {
+            return data.keySet();
+        }
+
         /**
          * Read an article from the data file on disk. Convenience method that
          * dispatches on {@link #dictType} to call the appropriate
