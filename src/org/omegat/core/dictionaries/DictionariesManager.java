@@ -272,24 +272,4 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         }
     }
 
-    public Set<String> getKeys(String key) {
-        if (loadedKeys == null) {
-            loadKeys();
-        }
-        Set<String> possibleKeys = new TreeSet<>();
-        for (String loadedKey : loadedKeys) {
-            if (loadedKey.startsWith(key)) {
-                possibleKeys.add(loadedKey);
-            }
-        }
-        return possibleKeys;
-    }
-
-    private void loadKeys() {
-        loadedKeys = new HashSet<>();
-        for (IDictionary dictionary : dictionaries.values()) {
-            Set<String> strings = dictionary.getKeys();
-            loadedKeys.addAll(strings);
-        }
-    }
 }
