@@ -1,10 +1,10 @@
 package org.omegat.gui.glossary;
 
 import org.omegat.util.EncodingDetector;
-import org.omegat.util.OConsts;
 import org.omegat.util.StringUtil;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
@@ -13,7 +13,7 @@ import java.util.Collection;
 public class GlossaryTSVWriter {
 
 	public static void writeIntoFile(File file, Collection<GlossaryEntry> entries) throws IOException {
-		String encoding = OConsts.UTF8;
+		String encoding = StandardCharsets.UTF_8.name();
 		if (!file.exists()) {
 			File parentFile = file.getParentFile();
 			if (parentFile != null) {
@@ -23,7 +23,7 @@ public class GlossaryTSVWriter {
 			}
 			file.createNewFile();
 		} else {
-			encoding = EncodingDetector.detectEncodingDefault(file, OConsts.UTF8);
+			encoding = EncodingDetector.detectEncodingDefault(file, StandardCharsets.UTF_8.name());
 		}
 		try (Writer wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), encoding))) {
 			for (GlossaryEntry newEntry : entries) {
